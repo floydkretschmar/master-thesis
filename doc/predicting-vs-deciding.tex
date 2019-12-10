@@ -1,0 +1,135 @@
+\documentclass[
+	a4paper,
+	11pt
+	]{article}
+
+\usepackage{blindtext}
+
+\usepackage{enumitem}
+
+% deutsche Silbentrennung
+\usepackage[english]{babel}
+
+% Deutsche Umlaute
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+% Mathematische Pakete
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{nccmath}
+\usepackage{tikz}
+
+%more quotes
+\usepackage{csquotes}
+
+\usepackage{hyperref}% http://ctan.org/pkg/hyperref
+\usepackage{cleveref}% http://ctan.org/pkg/cleveref
+\usepackage{lipsum}% http://ctan.org/pkg/lipsum
+
+% Kopf- und Fusszeile
+\usepackage[
+	automark,
+	headsepline,
+	footsepline
+	]{scrlayer-scrpage}
+
+\usepackage{listings}
+
+% erweiterte Tabellen
+\usepackage{tabularx}
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\crefname{lemma}{Lemma}{Lemmas}
+
+\usepackage{parskip}
+
+% Codeanzeige
+\usepackage{color}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+% \newcounter{nalg}[chapter] % defines algorithm counter for chapter-level
+% \renewcommand{\thenalg}{\thechapter .\arabic{nalg}} %defines appearance of the algorithm counter
+\DeclareCaptionLabelFormat{algocaption}{Algorithm \thenalg} % defines a new caption label as Algorithm x.y
+
+\lstnewenvironment{algorithm}[1][] %defines the algorithm listing environment
+{
+    \refstepcounter{nalg} %increments algorithm number
+    \captionsetup{labelformat=algocaption,labelsep=colon} %defines the caption setup for: it ises label format as the declared caption label above and makes label and caption text to be separated by a ':'
+    \lstset{ %this is the stype
+        mathescape=true,
+        frame=tB,
+        numbers=left,
+        numberstyle=\tiny,
+        basicstyle=\scriptsize,
+        keywordstyle=\color{black}\bfseries\em,
+        keywords={,forall, fi, do, od, input, output, return, datatype, function, in, if, else, foreach, while, begin, end, } %add the keywords you want, or load a language as Rubens explains in his comment above.
+        numbers=left,
+        xleftmargin=.04\textwidth,
+        #1 % this is to add specific settings to an usage of this environment (for instance, the caption and referable label)
+    }
+}
+{}
+
+\title{Learning to predict vs. learning to decide}
+\author{Floyd Kretschmar}
+
+\begin{document}
+
+\maketitle
+
+\section{Decision making as prediction}
+\label{sec:decision_as_pred}
+Many decision making task are being supplemented or fully automated by data-driven predictive models. The most prolific approach to integrate machine learning into such decision making tasks is to split decision making into two seperate tasks: prediction and decision making based on the prediction. Within this framework data can then be utilized to train models that make prediction. Based on these predictions decisions are made according to a decision policy. There are many different decision problems that can be viewed under this lense, but this summary will focus on the case of binary classification with binary sensitive attributes as described in \cite{Kilbertus19}.
+
+Therefore let $\mathcal{X} \subseteq \mathbb{R}^{d}$ be the feature domain, $\mathcal{S} = {0,1}$ the range of sensitive attributes and $\mathcal{Y} = {0, 1}$ the set of ground truth labels. It is assumed that for each individual $\boldsymbol{x} \in \mathcal{X}$, $s \in \mathcal{S}$ and $y \in \mathcal{Y}$ are given by the joint probability distribution $P(\boldsymbol{x}, s, y) = P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)$ as defined by \cite{Kilbertus19}. Within this framework a \textbf{prediction task} is defined as training a model $Q(y \mid x, s; \theta)$ in a supervised mannor, which means solving the optimization problem 
+
+\begin{align*}
+    \argmin_{\theta} &\quad \mathcal{L}(\theta) \\
+    s.t.&\quad \mathcal{F}(y, x, s)
+\end{align*}
+
+where $\mathcal{L}$ is the loss function and $\mathcal{F}$ is a function measuring the fairness. This fairness function can be chosen in a multitude of ways and the core of this work will be about exploring different formulations of $\mathcal{F}$, their mathematical properties with regards to optimization as well as their comparative performance. The resulting model $Q(y \mid x, s; \theta)$ is a probability distribution defining the probability of an individual being a member of specific class given both their features $\boldsymbol{x}$ as well as their sensitive attribute $s$.
+
+The second part of a decision making task is actually \textbf{making a decision based on a decision policy} and the predictions of $Q(y \mid x, s; \theta)$. As seen in \cite{Kilbertus19} such a policy can be defined as a mapping $\pi: \mathcal{X} \times \mathcal{S} \rightarrow \mathcal{P}({0,1})$ that maps an individuals feature vector and sensitive attribute to a probability distribution over binary decisions $d \in {0, 1}$. That means $\pi(d \mid x, s)$ is the probability distribution over the possible decisions, which in this case are binary, given the features and sensitive attributes of an individual. The simplest choice for a decision policy is a deterministic threshold policiy of the form
+
+\begin{align*}
+    \pi_{Q}(d = 1 \mid \boldsymbol{x}, s) = \boldsymbol{1}[Q(y = 1 \mid \boldsymbol{x}, s) \geq c]
+\end{align*}
+
+where the policy $\pi_{Q}$ makes a positive decision $d = 1$ for all individuals for which the trained model $Q$ exceedes a certain cofidence threshold $c$ that the individual is part of class $y = 1$. In this scenario we assume that $Q(y = 1 \mid \boldsymbol{x}, s) \approx P(y = 1 \mid \boldsymbol{x}, s) - \delta_s$, meaning that $Q$ is approximatly equal to the true ground truth probability distribution $P(y \mid \boldsymbol{x}, s)$. This approach directly incorporates fairness constraints by allowing group specific $\delta_s$ and therefore indirectly allowing for different thresholds $c$ w.r.t. group affiliation.
+
+As discussed by \cite{Kilbertus19} this approach has been shown by \cite{Woodworth17} to often lead to better performance than post-processing a potentially unfair predictor. But the same paper argues that due to the fact that $Q(y = 1 \mid \boldsymbol{x}, s)$ and $P(y = 1 \mid \boldsymbol{x}, s) - \delta_s$ are not exactly equal the resulting policy $\pi_{Q}$ will usually be suboptimal.
+
+\section{Decision making under imperfect data}
+The methods described so far in section \ref{sec:decision_as_pred} were built assuming i.i.d. samples to optimize the parameters $\theta$ of a given model $Q$. The authors of \cite{Kilbertus19} explain that in many real-world applications this assumption is incorrect. In these applications the original data has not been sampeled from the true ground truth distribution $P(\boldsymbol{x}, s, y)$ but instead from a weighted distribution 
+
+\begin{align*}
+    P_{\pi_{Q_{0}}} = P(y \mid \boldsymbol{x}, s)\pi_{0}(d = 1 \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)
+\end{align*}
+
+where $\pi_{0}$ is some intial decision policy that is employed while collecting the data. In this scenario the decision whether or not $y ~ P(y \mid \boldsymbol{x}, s)$ comes into existence is based on the decision generated by $\pi_{0}$. An example of this is a loan decision scenario. If a bank wants to train a machine learning model to make predicitions on whether or not a potential client will default on their loan, they can only use historic data of past loans that they have given out. But this data is weighted by the historical decision rules based on which the bank has made their decisions so far, since they only have data for the scenario where they have granted a loan in the first place.
+
+The authors of \cite{Kilbertus19} argue that in such a scenario \enquote{for error based learning algorithms under no fairness constraints, learning within detmerninistic threshold policies is guaranteed to fail.}. They instead propose to directly learn a probabilistic decision policy $\pi_{\theta}$ that maximizes the utility, which can be formuated as the following optimization problem:
+
+\begin{align*}
+    \argmax_{\theta} &\quad u(\pi_{\theta}) \\
+    s.t. &\quad \mathcal{F}(y, x, s)
+\end{align*}
+
+Where $\mathcal{F}$ is again the same fairness measurement function described in \ref{sec:decision_as_pred} and $u$ is the function that measures the utility of the learned decision policy that is parameterized by $\theta$. The authors propse a utility function of the form $u_P(\pi) = \mathbb{E}_{x,y,s ~ P(\boldsymbol{x}, s, y), d ~ \pi(d \mid \boldsymbol{x}, s)}[yd - cd] = \mathbb{E}_{x,y,s ~ P(\boldsymbol{x}, s, y), d ~ \pi(d \mid \boldsymbol{x}, s)}[d(y - c)] = \mathbb{E}_{x,y,s ~ P(\boldsymbol{x}, s)}[\pi(d = 1 \mid \boldsymbol{x}, s)(P(y = 1 \mid \boldsymbol{x}, s) - c)]$
+\bibliography{library}
+\bibliographystyle{ieeetr}
+
+\end{document}
+ 
