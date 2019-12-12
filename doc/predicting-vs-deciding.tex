@@ -32,11 +32,11 @@
 \usepackage{lipsum}% http://ctan.org/pkg/lipsum
 
 % Kopf- und Fusszeile
-\usepackage[
-	automark,
-	headsepline,
-	footsepline
-	]{scrlayer-scrpage}
+% \usepackage[
+% 	automark,
+% 	headsepline,
+% 	footsepline
+% 	]{scrlayer-scrpage}
 
 \usepackage{listings}
 
@@ -146,9 +146,9 @@ The authors of \cite{Kilbertus19} argue that in such a scenario \enquote{for err
 Where $\mathcal{F}$ is again the same fairness measurement function described in \ref{sec:decision_as_pred} and $u$ is the function that measures the utility of the learned decision policy that is parameterized by $\theta$. The authors propse a utility function of the form 
 
 \begin{align*}
-    u_P(\pi) &= \mathbb{E}_{x,y,s \sim P(\boldsymbol{x}, s, y), d \sim \pi(d \mid \boldsymbol{x}, s)}[yd - cd] \\
-    &= \mathbb{E}_{x,y,s \sim P(\boldsymbol{x}, s, y), d \sim \pi(d \mid \boldsymbol{x}, s)}[d(y - c)] \\
-    &= \mathbb{E}_{x,s \sim P(\boldsymbol{x}, s)}[\pi(d = 1 \mid \boldsymbol{x}, s)(P(y = 1 \mid \boldsymbol{x}, s) - c)] \\
+    u_P(\pi) &= \mathbb{E}_{\boldsymbol{x},y,s \sim P(\boldsymbol{x}, s, y), d \sim \pi(d \mid \boldsymbol{x}, s)}[yd - cd] \\
+    &= \mathbb{E}_{\boldsymbol{x},y,s \sim P(\boldsymbol{x}, s, y), d \sim \pi(d \mid \boldsymbol{x}, s)}[d(y - c)] \\
+    &= \mathbb{E}_{\boldsymbol{x},s \sim P(\boldsymbol{x}, s)}[\pi(d = 1 \mid \boldsymbol{x}, s)(P(y = 1 \mid \boldsymbol{x}, s) - c)] \\
     &= \int \pi(d = 1 \mid \boldsymbol{x}, s)(P(y = 1 \mid \boldsymbol{x}, s) - c)P(\boldsymbol{x}, s) \mathop{dx} \mathop{ds}
 \end{align*}
 
@@ -156,13 +156,13 @@ where $c \in (0, 1)$ represents the cost considerations of the decision maker. T
 
 \begin{align*}
     u_{P}(\pi) &= \mathbb{E}_{\subalign{x,y,s &\sim P(\boldsymbol{x}, s, y) \\ d \sim \pi(d \mid \boldsymbol{x}, s)}}[d(y - c)] \\
-    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s, y) \mathop{dx} \mathop{ds} \\
-    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \mathop{dx} \mathop{ds} \\
-    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \frac{\pi_0(d \mid x,s)}{\pi_0(d \mid x,s)} \mathop{dx} \mathop{ds} \\
-    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)\pi_0(d \mid x,s)P(\boldsymbol{x}, s) \frac{1}{\pi_0(d \mid x,s)} \mathop{dx} \mathop{ds} \\
-    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y)\frac{1}{\pi_0(d \mid x,s)} \mathop{dx} \mathop{ds} \\
-    &= \int \frac{d(y - c)}{\pi_0(d \mid x,s)}\pi(d \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{ds} \\
-    &= \mathbb{E}_{\subalign{x,y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}\left[\frac{d(y - c)}{\pi_0(d \mid x,s)}\right] = u_{P_{\pi_0}}(\pi, \pi_0)
+    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{dd} \\
+    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{dd}  \\
+    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \frac{\pi_0(d \mid x,s)}{\pi_0(d \mid x,s)} \mathop{dx} \mathop{dy} \mathop{ds} \mathop{dd}  \\
+    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)\pi_0(d \mid x,s)P(\boldsymbol{x}, s) \frac{1}{\pi_0(d \mid x,s)} \mathop{dx} \mathop{dy} \mathop{ds} \mathop{dd}  \\
+    &= \int d(y - c)\pi(d \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y)\frac{1}{\pi_0(d \mid x,s)} \mathop{dx} \mathop{dy} \mathop{ds} \mathop{dd}  \\
+    &= \int \frac{d(y - c)}{\pi_0(d \mid x,s)}\pi(d \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{dd}  \\
+    &= \mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}\left[\frac{d(y - c)}{\pi_0(d \mid x,s)}\right] = u_{P_{\pi_0}}(\pi, \pi_0)
 \end{align*}
 
 which is the same as inverse propensity scoring. To formulate the optimization problem in an unconstraint way, the authors propose a combined utility function $v(\pi)$ of the form 
@@ -194,17 +194,37 @@ As talked about in section \ref{sec:decision_as_pred} the choice of the fairness
     \pi(d = 1 \mid \boldsymbol{x}, s = 0)P(\boldsymbol{x}, y \mid s = 0) = \\ \pi(d = 1 \mid \boldsymbol{x}, s = 1)P(\boldsymbol{x}, y \mid s = 1) \\ \Leftrightarrow \\
     (0\pi(d = 0 \mid \boldsymbol{x}, s = 0) + 1\pi(d = 1 \mid \boldsymbol{x}, s = 0))P(\boldsymbol{x}, y \mid s = 0) = \\ (0\pi(d = 0 \mid \boldsymbol{x}, s = 1) + 1\pi(d = 1 \mid \boldsymbol{x}, s = 1))P(\boldsymbol{x}, y \mid s = 1) \\
     \Leftrightarrow \\
-    \mathbb{E}_{\subalign{x,y &\sim P(\boldsymbol{x}, y \mid s = 0) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}[d] = \mathbb{E}_{\subalign{x,y &\sim P(\boldsymbol{x}, y \mid s = 1) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}[d]\\
+    \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 0) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}[d] = \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 1) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}[d]\\
     \Leftrightarrow \\
     b_P^0(\pi) = b_P^1(\pi) \\
     \Leftrightarrow \\
     b_P^0(\pi) - b_P^1(\pi) = 0
 \end{gather*}
 
-which gives a natural choice for the fairness function $\mathcal{F}(y, \boldsymbol{x}, s) = b_P^0(\pi) - b_P^1(\pi)$ with the utility function of the unrestrained optimization problem $v(\pi) = u(\pi) - \frac{\lambda}{2}(b_P^0(\pi) - b_P^1(\pi))^2$. 
+which gives a natural choice for the fairness function $\mathcal{F}(y, \boldsymbol{x}, s) = b_P^0(\pi) - b_P^1(\pi)$ with the utility function of the unrestrained optimization problem $v(\pi) = u(\pi) - \frac{\lambda}{2}(b_P^0(\pi) - b_P^1(\pi))^2$. This intuitive fairness function has one mayor disadvantage: It is non-convex as can be seen in the following reformulation
+
+\begin{align*}
+    &b_P^0(\pi) - b_P^1(\pi) = \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 0) \\ d &\sim \pi(d \mid \boldsymbol{x}, s=1)}}[f(d, y)] - \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 1) \\ d &\sim \pi(d \mid \boldsymbol{x}, s=1)}}[f(d, y)] \\
+    &= \int_x \int_y \underbrace{\left(\int_d f(d, y) \pi(d \mid \boldsymbol{x},s = 0)\mathop{dd}\right)}_{\text{convex function }g_0(\boldsymbol{x}, y)\footnotemark\addtocounter{footnote}{-1}}P(\boldsymbol{x}, y \mid s = 0) \mathop{dx} \mathop{dy} - \\
+    &\int_x \int_y \underbrace{\left(\int_d f(d, y) \pi(d \mid \boldsymbol{x},s = 1)\mathop{dd}\right)}_{\text{convex function }g_1(\boldsymbol{x},y)\footnotemark\addtocounter{footnote}{-1}}P(\boldsymbol{x}, y \mid s = 1) \mathop{dx} \mathop{dy} \\
+    &= \int_x \underbrace{\int_y g_0(\boldsymbol{x},y)P(\boldsymbol{x}, y \mid s = 0) \mathop{dy}}_{\text{convex function }h_0(x)\footnotemark\addtocounter{footnote}{-1}} \mathop{dx} - \int_x \underbrace{\int_y g_1(\boldsymbol{x},y)P(\boldsymbol{x}, y \mid s = 1) \mathop{dy}}_{\text{convex function }h_1(x)\footnotemark} \mathop{dx} \\
+    &= \int_x h_0(x) \mathop{dx} - \int_x h_1(x) \mathop{dx} \\
+    &= \int_x \underbrace{h_0(x) - h_1(x)}_{convex-concave} \mathop{dx} \\
+\end{align*}
+\footnotetext{According to \cite{Boyd04} $g(x) = \int_A w(y)f(x, y)dy$ is convex if $f(x,y)$ is convex in $x$ for each $y \in A$ and $w(y) \geq 0$ for each $y \in A$}
+
+where $f(d, y) = d$ for the case of demographic parity that has been discussed before.
 
 \subsection{Covariance as approximation}
-The intuitive fairness function that was talked about in section \ref{sec:diff_in_exp} has one mayor disadvantage: It is non-convex(?). For that reasons the same authors in a different paper \cite{} proposed an approximation of this 
+As seen in the last part of section \ref{sec:diff_in_exp} is the difference in expectations $b_P^0(\pi) - b_P^1(\pi)$ not (necessarily) a convex optimization constraint, therefore making the overall optimization problem hard to optimize. For that reason the authors of \cite{Zafar19} introduce a different notion of fairness, that aims to approximate the difference in expectations. For the case of disparate impact propose to formulate the fairness constraint as the covariance between the users sensitive attribute $s$ and the signed distance from the users feature vectors to the decision boundary $d_\theta(\boldsymbol{x})$.
+
+\begin{align*}
+    Cov_{DI}(s, d_{\theta}(\boldsymbol{x})) &=  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}[(s - \mathbb{E}_{s \sim P(s)}[s])(d_{\theta}(\boldsymbol{x}) - \mathbb{E}_{\boldsymbol{x} \sim P(\boldsymbol{x})}[d_{\theta}(\boldsymbol{x})])] \\
+    &=  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ d &\sim \pi(d \mid \boldsymbol{x}, s)}}[(s - \mathbb{E}_{s \sim P(s)}[s])(d - \mathbb{E}_{\boldsymbol{x} \sim P(\boldsymbol{x})}[d_{\theta}(\boldsymbol{x})])]
+\end{align*}
+
+\bibliography{library} 
+\bibliographystyle{ieeetr}
 
 \end{document}
  
