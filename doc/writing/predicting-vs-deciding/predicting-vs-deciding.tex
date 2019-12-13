@@ -1,0 +1,344 @@
+\documentclass[
+	a4paper,
+	11pt
+	]{article}
+
+\usepackage{blindtext}
+
+\usepackage{enumitem}
+
+% deutsche Silbentrennung
+\usepackage[english]{babel}
+
+% Deutsche Umlaute
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+% Mathematische Pakete
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{nccmath}
+\usepackage{tikz}
+
+
+%more quotes
+\usepackage{csquotes}
+
+\usepackage{hyperref}% http://ctan.org/pkg/hyperref
+\usepackage{cleveref}% http://ctan.org/pkg/cleveref
+\usepackage{lipsum}% http://ctan.org/pkg/lipsum
+
+% Kopf- und Fusszeile
+% \usepackage[
+% 	automark,
+% 	headsepline,
+% 	footsepline
+% 	]{scrlayer-scrpage}
+
+\usepackage{listings}
+
+% erweiterte Tabellen
+\usepackage{tabularx}
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\crefname{lemma}{Lemma}{Lemmas}
+
+\usepackage{parskip}
+
+% Codeanzeige
+\usepackage{color}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+% \newcounter{nalg}[chapter] % defines algorithm counter for chapter-level
+% \renewcommand{\thenalg}{\thechapter .\arabic{nalg}} %defines appearance of the algorithm counter
+\DeclareCaptionLabelFormat{algocaption}{Algorithm \thenalg} % defines a new caption label as Algorithm x.y
+
+\lstnewenvironment{algorithm}[1][] %defines the algorithm listing environment
+{
+    \refstepcounter{nalg} %increments algorithm number
+    \captionsetup{labelformat=algocaption,labelsep=colon} %defines the caption setup for: it ises label format as the declared caption label above and makes label and caption text to be separated by a ':'
+    \lstset{ %this is the stype
+        mathescape=true,
+        frame=tB,
+        numbers=left,
+        numberstyle=\tiny,
+        basicstyle=\scriptsize,
+        keywordstyle=\color{black}\bfseries\em,
+        keywords={,forall, fi, do, od, input, output, return, datatype, function, in, if, else, foreach, while, begin, end, } %add the keywords you want, or load a language as Rubens explains in his comment above.
+        numbers=left,
+        xleftmargin=.04\textwidth,
+        #1 % this is to add specific settings to an usage of this environment (for instance, the caption and referable label)
+    }
+}
+{}
+
+\makeatletter
+\newcommand{\subalign}[1]{%
+  \vcenter{%
+    \Let@ \restore@math@cr \default@tag
+    \baselineskip\fontdimen10 \scriptfont\tw@
+    \advance\baselineskip\fontdimen12 \scriptfont\tw@
+    \lineskip\thr@@\fontdimen8 \scriptfont\thr@@
+    \lineskiplimit\lineskip
+    \ialign{\hfil$\m@th\scriptstyle##$&$\m@th\scriptstyle{}##$\hfil\crcr
+      #1\crcr
+    }%
+  }%
+}
+\makeatother
+
+\title{Learning to predict vs. learning to decide}
+\author{Floyd Kretschmar}
+
+\begin{document}
+
+\maketitle
+
+\section{Decision making as prediction}
+\label{sec:decision_as_pred}
+Many decision making task are being supplemented or fully automated by data-driven predictive models. The most prolific approach to integrate machine learning into such decision making tasks is to split decision making into two seperate tasks: prediction and decision making based on the prediction. Within this framework data can then be utilized to train models that make prediction. Based on these predictions decisions are made according to a decision policy. There are many different decision problems that can be viewed under this lense, but this summary will focus on the case of binary classification with binary sensitive attributes as described in \cite{Kilbertus19}.
+
+Therefore let $\mathcal{X} \subseteq \mathbb{R}^{d}$ be the feature domain, $\mathcal{S} = {0,1}$ the range of sensitive attributes and $\mathcal{Y} = {0, 1}$ the set of ground truth labels. It is assumed that for each individual $\boldsymbol{x} \in \mathcal{X}$, $s \in \mathcal{S}$ and $y \in \mathcal{Y}$ are given by the joint probability distribution $P(\boldsymbol{x}, s, y) = P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)$ as defined by \cite{Kilbertus19}. Within this framework a \textbf{prediction task} is defined as training a model $Q(y \mid x, s; \theta)$ in a supervised mannor, which means solving the optimization problem 
+
+\begin{align*}
+    \argmin_{\theta} &\quad \mathcal{L}(\theta) \\
+    s.t.&\quad \mathcal{F}(\theta)
+\end{align*}
+
+where $\mathcal{L}$ is the loss function and $\mathcal{F}$ is a function measuring the fairness. This fairness function can be chosen in a multitude of ways and the core of this work will be about exploring different formulations of $\mathcal{F}$, their mathematical properties with regards to optimization as well as their comparative performance. The resulting model $Q(y \mid x, s; \theta)$ is a probability distribution defining the probability of an individual being a member of specific class given both their features $\boldsymbol{x}$ as well as their sensitive attribute $s$.
+
+The second part of a decision making task is actually \textbf{making a decision based on a decision policy} and the predictions of $Q(y \mid x, s; \theta)$. As seen in \cite{Kilbertus19} such a policy can be defined as a mapping $\pi: \mathcal{X} \times \mathcal{S} \rightarrow \mathcal{P}({0,1})$ that maps an individuals feature vector and sensitive attribute to a probability distribution over binary decisions $e \in {0, 1}$. That means $\pi(e \mid x, s)$ is the probability distribution over the possible decisions, which in this case are binary, given the features and sensitive attributes of an individual. The simplest choice for a decision policy is a deterministic threshold policiy of the form
+
+\begin{align*}
+    \pi_{Q}(e = 1 \mid \boldsymbol{x}, s) = \boldsymbol{1}[Q(y = 1 \mid \boldsymbol{x}, s) \geq c]
+\end{align*}
+
+where the policy $\pi_{Q}$ makes a positive decision $e = 1$ for all individuals for which the trained model $Q$ exceedes a certain cofidence threshold $c$ that the individual is part of class $y = 1$. In this scenario we assume that $Q(y = 1 \mid \boldsymbol{x}, s) \approx P(y = 1 \mid \boldsymbol{x}, s) - \delta_s$, meaning that $Q$ is approximatly equal to the true ground truth probability distribution $P(y \mid \boldsymbol{x}, s)$. This approach directly incorporates fairness constraints by allowing group specific $\delta_s$ and therefore indirectly allowing for different thresholds $c$ w.r.t. group affiliation.
+
+As discussed by \cite{Kilbertus19} this approach has been shown by \cite{Woodworth17} to often lead to better performance than post-processing a potentially unfair predictor. But the same paper argues that due to the fact that $Q(y = 1 \mid \boldsymbol{x}, s)$ and $P(y = 1 \mid \boldsymbol{x}, s) - \delta_s$ are not exactly equal the resulting policy $\pi_{Q}$ will usually be suboptimal.
+
+\section{Decision making under imperfect data}
+\label{sec:dec_under_imp_data}
+The methods described so far in section \ref{sec:decision_as_pred} were built assuming i.i.d. samples to optimize the parameters $\theta$ of a given model $Q$. The authors of \cite{Kilbertus19} explain that in many real-world applications this assumption is incorrect. In these applications the original data has not been sampeled from the true ground truth distribution $P(\boldsymbol{x}, s, y)$ but instead from a weighted distribution 
+
+\begin{align*}
+    P_{\pi_{Q_{0}}} = P(y \mid \boldsymbol{x}, s)\pi_{0}(e = 1 \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)
+\end{align*}
+
+where $\pi_{0}$ is some intial decision policy that is employed while collecting the data. The authors call this kind of ground truth distribution \textit{induced} by $\pi_0$. In this scenario the decision whether or not $y ~ P(y \mid \boldsymbol{x}, s)$ comes into existence is based on the decision generated by $\pi_{0}$. An example of this is a loan decision scenario. If a bank wants to train a machine learning model to make predicitions on whether or not a potential client will default on their loan, they can only use historic data of past loans that they have given out. But this data is weighted by the historical decision rules based on which the bank has made their decisions so far, since they only have data for the scenario where they have granted a loan in the first place.
+
+The authors of \cite{Kilbertus19} argue that in such a scenario \enquote{for error based learning algorithms under no fairness constraints, learning within detmerninistic threshold policies is guaranteed to fail.}. They instead propose to directly learn a probabilistic decision policy $\pi_{\theta}$ that maximizes the utility, which can be formuated as the following optimization problem:
+
+\begin{align*}
+    \argmax_{\theta} &\quad u(\pi_{\theta}) \\
+    s.t. &\quad \mathcal{F}(\pi_{\theta})
+\end{align*}
+
+Where $\mathcal{F}$ is again the same fairness measurement function described in \ref{sec:decision_as_pred} and $u$ is the function that measures the utility of the learned decision policy that is parameterized by $\theta$. The authors propse a utility function of the form 
+
+\begin{align*}
+    u_P(\pi) &= \mathbb{E}_{\boldsymbol{x},y,s \sim P(\boldsymbol{x}, s, y), e \sim \pi(e \mid \boldsymbol{x}, s)}[yd - cd] \\
+    &= \mathbb{E}_{\boldsymbol{x},y,s \sim P(\boldsymbol{x}, s, y), e \sim \pi(e \mid \boldsymbol{x}, s)}[e(y - c)] \\
+    &= \mathbb{E}_{\boldsymbol{x},s \sim P(\boldsymbol{x}, s)}[\pi(e = 1 \mid \boldsymbol{x}, s)(P(y = 1 \mid \boldsymbol{x}, s) - c)] \\
+    &= \int \pi(e = 1 \mid \boldsymbol{x}, s)(P(y = 1 \mid \boldsymbol{x}, s) - c)P(\boldsymbol{x}, s) \mathop{dx} \mathop{ds}
+\end{align*}
+
+where $c \in (0, 1)$ represents the cost considerations of the decision maker. The authors proof that the optimal decision policy $\pi^*$ can be learned only from data generated by a ground truth distribution $P_{\pi_0}$ that is induced by $\pi_0$ if this initial policy is an \textit{exploring policy}. This means, \enquote{the data collection distribution must not ignore regions where the true distribution puts mass} or more mathematecally speaking: \enquote{$\pi_0(e = 1 \mid \boldsymbol{x}, s) > 0$ must be true for any measurable subset of $\mathcal{X} \times \mathcal{S}$ with positive probability under $P$}. For an exploring policy $\pi_0$ and any arbitrary policy $\pi$ the utility is then calculated as
+
+\begin{align*}
+    u_{P}(\pi) &= \mathbb{E}_{\subalign{x,y,s &\sim P(\boldsymbol{x}, s, y) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[e(y - c)] \\
+    &= \int e(y - c)\pi(e \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de} \\
+    &= \int e(y - c)\pi(e \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int e(y - c)\pi(e \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \frac{\pi_0(e = 1 \mid x,s)}{\pi_0(e = 1 \mid x,s)} \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int e(y - c)\pi(e \mid \boldsymbol{x}, s)P(y \mid \boldsymbol{x}, s)\pi_0(e = 1 \mid x,s)P(\boldsymbol{x}, s) \frac{1}{\pi_0(e = 1 \mid x,s)} \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int e(y - c)\pi(e = 1 \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y)\frac{1}{\pi_0(e = 1 \mid x,s)} \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int \frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\pi(e \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[\frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\right] = u_{P_{\pi_0}}(\pi, \pi_0)
+\end{align*}
+
+which is the same as inverse propensity scoring. To formulate the optimization problem in an unconstraint way, the authors propose a combined utility function $v(\pi)$ of the form 
+
+\begin{align*}
+    v(\pi) = u(\pi) - \frac{\lambda}{2}(\mathcal{F}(\pi))^2
+\end{align*}
+
+which contains a penalty term that is dependend on $\mathcal{F}$. 
+
+\section{Definition of fairness and the fairness function $\mathcal{F}$}
+Fairness can be defined in multiple ways, one of which is group fairness. Group fairness encodes the idea of treating different groups equally by imposing equality contraints over different conditional probabilities given the group membership of individuals. Group fairness definitions can be subdivided into three main concepts:
+
+\begin{itemize}
+    \item \textbf{No disparate treatment:}
+    \item \textbf{No disparate impact:}
+    \item \textbf{No disparate mistreatment:}
+\end{itemize}
+
+\subsection{Difference in expectation}
+\label{sec:diff_in_exp}
+As talked about in section \ref{sec:decision_as_pred} the choice of the fairness function controls which kind of group fairness the optimization problem is constrained by. In the case of the binary classification scenario demographic parity can be defined as
+
+\begin{gather*}
+    \pi(e = 1 \mid \boldsymbol{x}, s = 0)P(\boldsymbol{x}, y \mid s = 0) = \\ \pi(e = 1 \mid \boldsymbol{x}, s = 1)P(\boldsymbol{x}, y \mid s = 1) \\ \Leftrightarrow \\
+    (0\pi(e = 0 \mid \boldsymbol{x}, s = 0) + 1\pi(e = 1 \mid \boldsymbol{x}, s = 0))P(\boldsymbol{x}, y \mid s = 0) = \\ (0\pi(e = 0 \mid \boldsymbol{x}, s = 1) + 1\pi(e = 1 \mid \boldsymbol{x}, s = 1))P(\boldsymbol{x}, y \mid s = 1) \\
+    \Leftrightarrow \\
+    \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 0) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[e] = \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 1) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[e]\\
+    \Leftrightarrow \\
+    \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 0) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[f(e, y)] = \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 1) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[f(e, y)]\\
+    \Leftrightarrow \\
+    b_P^0(\pi) = b_P^1(\pi) \\
+    \Leftrightarrow \\
+    b_P^0(\pi) - b_P^1(\pi) = 0
+\end{gather*}
+
+which gives a natural choice for the fairness function $\mathcal{F}_{diff}(\pi) = b_P^0(\pi) - b_P^1(\pi)$ with the utility function of the unrestrained optimization problem $v(\pi) = u(\pi) - \frac{\lambda}{2}(b_P^0(\pi) - b_P^1(\pi))^2$. Following an equivalent to the one regarding the utility function in section \ref{sec:dec_under_imp_data} the inverse propensity scoring has to be applied to the fairness function as well.
+
+\begin{align*}
+    b_{P}^s(\pi) &= \mathbb{E}_{\subalign{x,y,s &\sim P(\boldsymbol{x}, s, y) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[f(e, y)] \\
+    &= \mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[\frac{f(e, y)}{\pi_0(e = 1 \mid x,s)}\right] = b_{P_{\pi_0}}^s(\pi, \pi_0)
+\end{align*}
+
+This intuitive fairness function has one mayor disadvantage: It is non-convex as can be seen in the following reformulation
+
+\begin{align*}
+    &b_P^0(\pi) - b_P^1(\pi) = \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 0) \\ e &\sim \pi(e \mid \boldsymbol{x}, s=1)}}[f(e, y)] - \mathbb{E}_{\subalign{\boldsymbol{x},y &\sim P(\boldsymbol{x}, y \mid s = 1) \\ e &\sim \pi(e \mid \boldsymbol{x}, s=1)}}[f(e, y)] \\
+    &= \int_x \int_y \underbrace{\left(\int_d f(e, y) \pi(e \mid \boldsymbol{x},s = 0)\mathop{de}\right)}_{\text{convex function }g_0(\boldsymbol{x}, y)\footnotemark\addtocounter{footnote}{-1}}P(\boldsymbol{x}, y \mid s = 0) \mathop{dx} \mathop{dy} - \\
+    &\int_x \int_y \underbrace{\left(\int_d f(e, y) \pi(e \mid \boldsymbol{x},s = 1)\mathop{de}\right)}_{\text{convex function }g_1(\boldsymbol{x},y)\footnotemark\addtocounter{footnote}{-1}}P(\boldsymbol{x}, y \mid s = 1) \mathop{dx} \mathop{dy} \\
+    &= \int_x \underbrace{\int_y g_0(\boldsymbol{x},y)P(\boldsymbol{x}, y \mid s = 0) \mathop{dy}}_{\text{convex function }h_0(x)\footnotemark\addtocounter{footnote}{-1}} \mathop{dx} - \int_x \underbrace{\int_y g_1(\boldsymbol{x},y)P(\boldsymbol{x}, y \mid s = 1) \mathop{dy}}_{\text{convex function }h_1(x)\footnotemark} \mathop{dx} \\
+    &= \int_x h_0(x) \mathop{dx} - \int_x h_1(x) \mathop{dx} \\
+    &= \int_x \underbrace{h_0(x) - h_1(x)}_{convex-concave} \mathop{dx} \\
+\end{align*}
+\footnotetext{According to \cite{Boyd04} $g(x) = \int_A w(y)f(x, y)dy$ is convex if $f(x,y)$ is convex in $x$ for each $y \in A$ and $w(y) \geq 0$ for each $y \in A$}
+
+where $f(e, y) = e$ for the case of demographic parity that has been discussed before.
+
+\subsection{Covariance as approximation}
+As seen in the last part of section \ref{sec:diff_in_exp} is the difference in expectations $b_P^0(\pi) - b_P^1(\pi)$ not (necessarily) a convex optimization constraint, therefore making the overall optimization problem hard to optimize. For that reason the authors of \cite{Zafar19} introduce a different notion of fairness, that aims to approximate the difference in expectations. For the case of disparate impact propose to formulate the fairness constraint as the covariance between the users sensitive attribute $s$ and the signed distance from the users feature vectors to the decision boundary $d_\theta(\boldsymbol{x})$.
+
+\begin{align*}
+    &Cov_{DI}(s, d_{\theta}(\boldsymbol{x})) =  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])(d_{\theta}(\boldsymbol{x}) - \mathbb{E}_{\boldsymbol{x} \sim P(\boldsymbol{x})}[d_{\theta}(\boldsymbol{x})])\right] \\
+    =&  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])(e - \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[e])\right] \\
+    =&  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])e - (s - \mathbb{E}_{s \sim P(s)}[s])\mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[e]\right] \\
+    =&  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])e\right] \\
+    &- \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])\mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[e]\right]\\
+    =&  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])e\right] \\
+    &- \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[s - \mathbb{E}_{s \sim P(s)}[s]\right]\mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[\mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}[e]\right]\\
+    =&  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])e\right] \\
+    &- \underbrace{\mathbb{E}_{s \sim P(s)}\left[s - \mathbb{E}_{s \sim P(s)}[s]\right]}_{=0}\mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[e\right] \\
+    =& \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])e\right] = \mathcal{F}_{Cov}(\pi) \\
+    %\approx&  \frac{1}{N} \sum_{\boldsymbol{x}, y \in \mathcal{D}} (s - \bar{s})e
+\end{align*}
+
+where $d_{\theta}(x) = e$ is chosen to be the distance function and $\mathcal{D}$ a given set of sample data which is a convex problem. As before we use inverse propensity scoring to control for our data being drawn from the weighted ground truth distribution $P_{\pi_0}$ instead of the true ground truth distribution $P$
+
+\begin{align*}
+    \mathbb{E}_{s \sim P(s)}[s] &= \int_s sP(s) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(s \mid \boldsymbol{x}, y)P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} \frac{P(y \mid \boldsymbol{x}, s)P(s \mid \boldsymbol{x})}{P(y \mid \boldsymbol{x})} P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(y \mid \boldsymbol{x}, s)P(s \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(y \mid \boldsymbol{x}, s)\frac{P(\boldsymbol{x}, s)}{P(\boldsymbol{x})} P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)\mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} s P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)\mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} s P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)\frac{\pi_0(e = 1 \mid x,s)}{\pi_0(e = 1 \mid x,s)}\mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P(y \mid \boldsymbol{x}, s)\pi_0(e = 1 \mid x,s)P(\boldsymbol{x}, s)\mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P_{\pi_0}(\boldsymbol{x}, s, y)\mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} s P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} s P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)\frac{\pi_0(e = 1 \mid x,s)}{\pi_0(e = 1 \mid x,s)} \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P(y \mid \boldsymbol{x}, s)\pi_0(e = 1 \mid x,s)P(\boldsymbol{x}, s) \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P_{\pi_{0}}(\boldsymbol{x}, s, y) \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
+    &= \mathbb{E}_{s \sim P_{\pi_{0}}(\boldsymbol{x}, s, y)}\left[\frac{s}{\pi_0(e = 1 \mid x,s)}\right] = \mu_{s_{\pi_0}}
+\end{align*}
+
+for the expectation of the sensitive attribute $s$ and similarly for the entire fairness function
+
+\begin{align*}
+    \mathcal{F}_{Cov_P(\pi)} &= \mathbb{E}_{\subalign{x,y,s &\sim P(\boldsymbol{x}, s, y) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mu_{s_{\pi_0}})e\right] \\
+    &= \mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[\frac{(s - \mu_{s_{\pi_0}})e}{\pi_0(e = 1\mid x,s)}\right] = \mathcal{F}_{Cov_{P_{\pi_0}}}(\pi, \pi_0)
+\end{align*}
+
+\section{Learning exploring policies}
+In \cite{Kilbertus19} the authors demonstrate the concept of learning exploring policies using the specific policy class of logistic policies, meaning they choose 
+
+\begin{align*}
+    \pi_{\theta}(d=1 \mid \boldsymbol{x}, s) &= \sigma(\phi(\boldsymbol{x}, s)^T\theta) \\
+    &= \frac{1}{1 + e^{-\phi(\boldsymbol{x}, s)^T\theta}}
+\end{align*}
+
+where $\theta \in \Theta \subset \mathbb{R}^m$ are tbe model parameters and $\phi : \mathbb{R}^d \times {0,1} \rightarrow \mathbb{R}^m$ a fixed feature map that maps the features and sensitive attribute of an individual into the parameter space. The authors chose stochastic gradient descent as their optimization problem, meaning the update rule for $\theta_{t+1}$ is given by $\theta_{t+1} = \theta_{t} + \alpha_t\nabla_{\theta_{t}}v_P(\pi_{\theta_{t}})$. The gradient of the unconstraint optimization problem $\nabla_{\theta}v_P(\pi_{\theta})$ is given as
+
+\begin{align*}
+    \nabla_{\theta}v_P(\pi_{\theta}) &= \nabla_{\theta}\left(u(\pi_{\theta}) - \frac{\lambda}{2}(\mathcal{F}(\pi_{\theta}))^2\right) \\
+    &= \nabla_{\theta}u(\pi_{\theta}) - \nabla_{\theta}\frac{\lambda}{2}(\mathcal{F}(\pi_{\theta}))^2 \\
+    &= \nabla_{\theta}u(\pi_{\theta}) - \lambda(\mathcal{F}(\pi_{\theta})) \nabla_{\theta}\mathcal{F}(\pi_{\theta})
+\end{align*}
+
+Then the authors use the log-derivative trick to formulate the gradient of the utility and the fairness functions with regards to the expectation as follows
+
+\begin{align*}
+    \nabla_{\theta}u(\pi_{\theta}) &= \nabla_{\theta}\mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ e &\sim \pi_\theta(e \mid \boldsymbol{x}, s)}}\left[\frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\right] \\
+    &= \nabla_{\theta}\int \frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\pi_{\theta}(e \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int \frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\nabla_{\theta}\pi_\theta(e \mid \boldsymbol{x}, s)\frac{\pi_\theta(e \mid \boldsymbol{x}, s)}{\pi_\theta(e \mid \boldsymbol{x}, s)}P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int \frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\pi_\theta(e \mid \boldsymbol{x}, s)\frac{\nabla_{\theta}\pi_\theta(e \mid \boldsymbol{x}, s)}{\pi_\theta(e \mid \boldsymbol{x}, s)}P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int \frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\pi_\theta(e \mid \boldsymbol{x}, s)\nabla_{\theta} \log \pi_\theta(e \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \int \frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\nabla_{\theta} \log \pi_\theta(e \mid \boldsymbol{x}, s)\pi_\theta(e \mid \boldsymbol{x}, s)P_{\pi_0}(\boldsymbol{x}, s, y) \mathop{dx} \mathop{dy} \mathop{ds} \mathop{de}  \\
+    &= \mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ e &\sim \pi_\theta(e \mid \boldsymbol{x}, s)}}\left[\frac{e(y - c)}{\pi_0(e = 1 \mid x,s)}\nabla_{\theta} \log \pi_\theta(e \mid \boldsymbol{x}, s)\right] \\
+\end{align*}
+
+and equivalently for the fairness functions $\mathcal{F}_{Diff}$ and $\mathcal{F}_{Cov}$
+
+\begin{align*}
+    \nabla_{\theta}\mathcal{F}_{Diff}(\pi_{\theta}) &= \nabla_{\theta}b_P^0(\pi_{\theta}) - \nabla_{\theta}b_P^1(\pi_{\theta}) \\
+    \nabla_{\theta}b_P^s(\pi_{\theta}) &= \mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ e &\sim \pi_\theta(e \mid \boldsymbol{x}, s)}}\left[\frac{f(e, y)}{\pi_0(e = 1\mid x,s)}\nabla_{\theta} \log \pi_\theta(e \mid \boldsymbol{x}, s)\right] \\
+    \nabla_{\theta}\mathcal{F}_{Cov}(\pi) &= \mathbb{E}_{\subalign{\boldsymbol{x},y,s &\sim P_{\pi_0}(\boldsymbol{x}, s, y) \\ e &\sim \pi_\theta(e \mid \boldsymbol{x}, s)}}\left[\frac{(s - \mu_{s_{\pi_0}})e}{\pi_0(e = 1\mid x,s)}\nabla_{\theta} \log \pi_\theta(e \mid \boldsymbol{x}, s)\right]
+\end{align*}
+
+where the gradient of the logarithm can be calculated as follows
+
+\begin{align*}
+    \nabla_{\theta} \log \pi_\theta(e \mid \boldsymbol{x}, s) &= \frac{\partial}{\partial\theta_t} \log \left(\sigma(\phi_i^T\theta_t)\right) \\
+    &= \frac{\partial}{\partial\theta_t} \log \left(\frac{1}{1 + e^{-\phi_i^T\theta_t}}\right)\\
+    &= \frac{\partial}{\partial\theta_t} \log \left(\frac{1}{1 + e^{-\alpha}}\right) \\
+    &= \frac{\partial}{\partial\theta_t} \log \left(\frac{1}{\beta}\right) \\
+    &= \frac{\partial}{\partial\theta_t} \log \left(\gamma\right) \\
+    &= \frac{\partial\log(\gamma)}{\partial\gamma}\frac{\partial\gamma}{\partial\beta}\frac{\partial\beta}{\partial\alpha}\frac{\partial\alpha}{\partial\theta_t} \\
+    &= \frac{\partial\log(\gamma)}{\partial\gamma}\frac{\partial\beta^{-1}}{\partial\beta}\frac{\partial e^{-\alpha}}{\partial\alpha}\frac{\partial\phi_i^T\theta_t}{\partial\theta_t} \\
+    &= \frac{1}{\gamma}\left(-\frac{1}{\beta^2}\right)\left(-e^{-\alpha}\right)\phi_i \\
+    &= \frac{1}{\frac{1}{1 + e^{-\phi_i^T\theta_t}}}\left(-\frac{1}{(1 + e^{-\phi_i^T\theta_t})^2}\right)\left(-e^{-\phi_i^T\theta_t}\right)\phi_i \\
+    &= \left(-\frac{\left(1 + e^{-\phi_i^T\theta_t}\right)}{(1 + e^{-\phi_i^T\theta_t})^2}\right)\left(-e^{-\phi_i^T\theta_t}\right)\phi_i \\
+    &= \frac{e^{-\phi_i^T\theta_t}}{1 + e^{-\phi_i^T\theta_t}}\phi_i \\
+    &= \frac{1}{1 + e^{\phi_i^T\theta_t}}\phi_i \\
+    &= \frac{\phi_i}{1 + e^{\phi_i^T\theta_t}} \\
+\end{align*}
+
+where $\phi_i := \phi(\boldsymbol{x}_i, s_i)$ is the fixed feature map evaluated for a given sample $i$. Using Monte Carlo approximation for the estimation of the expectation we are given the following final form for the gradient of the utility function $u_P$
+
+\begin{align*}
+    \nabla_{\theta_t}u(\pi_{\theta_i}) &\approx \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{e_i(y_i - c)}{\pi_{\theta_{t-1}}(e = 1 \mid \boldsymbol{x}_i, s_i)}\nabla_{\theta} \log \pi_\theta(e \mid \boldsymbol{x}_i, s_i) \\
+    &= \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{e_i(y_i - c)}{\sigma(\phi_i^T\theta_{t-1})} \frac{\phi_i}{1 + e^{\phi_i^T\theta_t}} \\
+    &= \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1}{\frac{1}{1 + e^{-\phi_i^T\theta_{t-1}}}} e_i(y_i - c) \frac{\phi_i}{1 + e^{\phi_i^T\theta_t}} \\
+    &= \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1 + e^{-\phi_i^T\theta_{t-1}}}{1 + e^{\phi_i^T\theta_t}} e_i(y_i - c)\phi_i 
+\end{align*}
+
+and with an equivalent argument the fairness functions $\mathcal{F}_{Diff}$ and $\mathcal{F}_{Cov}$ take the following form:
+
+\begin{align*}
+    \nabla_{\theta}\mathcal{F}_{Diff}(\pi_{\theta_i}) &= \nabla_{\theta_i}b_P^0(\pi_{\theta_i}) - \nabla_{\theta_i}b_P^1(\pi_{\theta_i}) \\
+    \nabla_{\theta_i}b_P^s(\pi_{\theta_i}) &\approx \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1 + e^{-\phi_i^T\theta_{t-1}}}{1 + e^{\phi_i^T\theta_t}} f(e_i, y_i)\phi_i \\
+    \nabla_{\theta_t}\mathcal{F}_{Cov}(\pi_{\theta_i}) &\approx \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1 + e^{-\phi_i^T\theta_{t-1}}}{1 + e^{\phi_i^T\theta_t}} e_i(y_i - c)\phi_i 
+\end{align*}
+
+
+\bibliography{library} 
+\bibliographystyle{ieeetr}
+
+\end{document}
+ 
