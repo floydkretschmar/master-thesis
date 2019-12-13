@@ -56,31 +56,10 @@
 
 % Codeanzeige
 \usepackage{color}
-\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{caption}
 \usepackage{subcaption}
-% \newcounter{nalg}[chapter] % defines algorithm counter for chapter-level
-% \renewcommand{\thenalg}{\thechapter .\arabic{nalg}} %defines appearance of the algorithm counter
-\DeclareCaptionLabelFormat{algocaption}{Algorithm \thenalg} % defines a new caption label as Algorithm x.y
-
-\lstnewenvironment{algorithm}[1][] %defines the algorithm listing environment
-{
-    \refstepcounter{nalg} %increments algorithm number
-    \captionsetup{labelformat=algocaption,labelsep=colon} %defines the caption setup for: it ises label format as the declared caption label above and makes label and caption text to be separated by a ':'
-    \lstset{ %this is the stype
-        mathescape=true,
-        frame=tB,
-        numbers=left,
-        numberstyle=\tiny,
-        basicstyle=\scriptsize,
-        keywordstyle=\color{black}\bfseries\em,
-        keywords={,forall, fi, do, od, input, output, return, datatype, function, in, if, else, foreach, while, begin, end, } %add the keywords you want, or load a language as Rubens explains in his comment above.
-        numbers=left,
-        xleftmargin=.04\textwidth,
-        #1 % this is to add specific settings to an usage of this environment (for instance, the caption and referable label)
-    }
-}
-{}
 
 \makeatletter
 \newcommand{\subalign}[1]{%
@@ -235,7 +214,6 @@ As seen in the last part of section \ref{sec:diff_in_exp} is the difference in e
     =&  \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])e\right] \\
     &- \underbrace{\mathbb{E}_{s \sim P(s)}\left[s - \mathbb{E}_{s \sim P(s)}[s]\right]}_{=0}\mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[e\right] \\
     =& \mathbb{E}_{\subalign{\boldsymbol{x},y, s &\sim P(\boldsymbol{x}, y, s) \\ e &\sim \pi(e \mid \boldsymbol{x}, s)}}\left[(s - \mathbb{E}_{s \sim P(s)}[s])e\right] = \mathcal{F}_{Cov}(\pi) \\
-    %\approx&  \frac{1}{N} \sum_{\boldsymbol{x}, y \in \mathcal{D}} (s - \bar{s})e
 \end{align*}
 
 where $d_{\theta}(x) = e$ is chosen to be the distance function and $\mathcal{D}$ a given set of sample data which is a convex problem. As before we use inverse propensity scoring to control for our data being drawn from the weighted ground truth distribution $P_{\pi_0}$ instead of the true ground truth distribution $P$
@@ -335,6 +313,24 @@ and with an equivalent argument the fairness functions $\mathcal{F}_{Diff}$ and 
     \nabla_{\theta_t}\mathcal{F}_{Cov}(\pi_{\theta_i}) &\approx \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1 + e^{-\phi_i^T\theta_{t-1}}}{1 + e^{\phi_i^T\theta_t}} e_i(y_i - c)\phi_i 
 \end{align*}
 
+% Based on these approximations the authors of \cite{Kilbertus19} propose the following algorithm for learning to decide which they call \enquote{Consequential Learning}:
+
+% \begin{algorithm}[ht]
+%     \caption{Consequential Learning}
+%     \label{alg:algorithm1}
+    
+%     \begin{algorithmic}[1]
+%     \Require
+%     \Statex Cost parameter $c$, number of 
+%     \Ensure
+%     \Statex If I write $\setminus\setminus$ here, line's number will be wrong too.
+%     \Statex
+%     \If{$i = 1 \to n$}
+%       \State ${\textit{HU}}_{i} \gets {\textit{NGU}}_{i} + {HU}_{i}$ 
+%     \EndIf
+    
+%     \end{algorithmic}
+% \end{algorithm}
 
 \bibliography{library} 
 \bibliographystyle{ieeetr}
