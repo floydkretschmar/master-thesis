@@ -243,7 +243,10 @@ where $d_{\theta}(x) = e$ is chosen to be the distance function and $\mathcal{D}
 \begin{align*}
     \mathbb{E}_{s \sim P(s)}[s] &= \int_s sP(s) \mathop{ds} \\
     &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(s \mid \boldsymbol{x}, y)P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
-    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} \frac{P(y \mid \boldsymbol{x}, s)P(s \mid \boldsymbol{x})}{P(y \mid \boldsymbol{x})} P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} \frac{P(s, \boldsymbol{x}, y)}{P(\boldsymbol{x}, y)}P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} \frac{P(y \mid s, \boldsymbol{x})P(s \mid \boldsymbol{x})P(\boldsymbol{x})}{P(\boldsymbol{x}, y)}P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} \frac{P(y \mid s, \boldsymbol{x})P(s \mid \boldsymbol{x})P(\boldsymbol{x})}{P(y \mid \boldsymbol{x})P(\boldsymbol{x})}P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
+    &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} \frac{P(y \mid s, \boldsymbol{x})P(s \mid \boldsymbol{x})}{P(y \mid \boldsymbol{x})} P(y \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
     &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(y \mid \boldsymbol{x}, s)P(s \mid \boldsymbol{x})P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
     &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(y \mid \boldsymbol{x}, s)\frac{P(\boldsymbol{x}, s)}{P(\boldsymbol{x})} P(\boldsymbol{x}) \mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
     &= \int_s s \left(\int_{\boldsymbol{x}} \int_{y} P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)\mathop{d\boldsymbol{x}} \mathop{dy}\right) \mathop{ds} \\
@@ -251,10 +254,6 @@ where $d_{\theta}(x) = e$ is chosen to be the distance function and $\mathcal{D}
     &= \int_s \int_{\boldsymbol{x}} \int_{y} s P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)\frac{\pi_0(e = 1 \mid x,s)}{\pi_0(e = 1 \mid x,s)}\mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
     &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P(y \mid \boldsymbol{x}, s)\pi_0(e = 1 \mid x,s)P(\boldsymbol{x}, s)\mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
     &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P_{\pi_0}(\boldsymbol{x}, s, y)\mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
-    &= \int_s \int_{\boldsymbol{x}} \int_{y} s P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s) \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
-    &= \int_s \int_{\boldsymbol{x}} \int_{y} s P(y \mid \boldsymbol{x}, s)P(\boldsymbol{x}, s)\frac{\pi_0(e = 1 \mid x,s)}{\pi_0(e = 1 \mid x,s)} \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
-    &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P(y \mid \boldsymbol{x}, s)\pi_0(e = 1 \mid x,s)P(\boldsymbol{x}, s) \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
-    &= \int_s \int_{\boldsymbol{x}} \int_{y} \frac{s}{\pi_0(e = 1 \mid x,s)} P_{\pi_{0}}(\boldsymbol{x}, s, y) \mathop{d\boldsymbol{x}} \mathop{dy} \mathop{ds} \\
     &= \mathbb{E}_{s \sim P_{\pi_{0}}(\boldsymbol{x}, s, y)}\left[\frac{s}{\pi_0(e = 1 \mid x,s)}\right] = \mu_{s_{\pi_0}}
 \end{align*}
 
