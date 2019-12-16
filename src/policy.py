@@ -3,6 +3,7 @@ import numpy as np
 from scipy.special import expit as sigmoid
 from util import get_minibatch
 
+
 class BaseFeatureMap():
     """ The feature map phi: R^d x {0,1} -> R^m that maps the feature vector and sensitive attribute of an
     individual into the feature space of the parameters theta"""
@@ -16,6 +17,7 @@ class BaseFeatureMap():
     def map(self, features):
         raise NotImplementedError("Subclass must override map(x).")
 
+
 class IdentityFeatureMap(BaseFeatureMap):
     """ The feature map phi as an identity mapping"""
 
@@ -25,18 +27,24 @@ class IdentityFeatureMap(BaseFeatureMap):
     def map(self, features):
         return features
 
-class LogisticPolicy():
-    def __init__(self, dim_theta, cost_factor, fairness_function): 
+
+class BasePolicy():
+    def __init__(self, dim_theta, fairness_function, utility_function): 
         self.fairness_function = lambda ips_weight, **fairness_kwargs : ips_weight * fairness_function(fairness_kwargs)
-        self.utility_function = lambda ips_weight, **utility_kwargs: ips_weight * (self(utility_kwargs["features"]) * (utility_kwargs["y"] - cost_factor))
+        self.utility_function = lambda ips_weight, **utility_kwargs: ips_weight * utility_function(utility_kwargs)
 
         self.theta = np.zeros(dim_theta)
-        self.feature_map = IdentityFeatureMap(dim_theta)
-    
+
     def __call__(self, x, s):
         features = np.concatenate((x, s), axis=1)
-        probability = sigmoid(self.feature_map(features) @ self.theta)
+        probability = self.calculate_probability(features)
         return np.random.binomial(1, probability)
+
+    def calculate_probability(self, features):
+        raise NotImplementedError("Subclass must override calculate probability(features).")
+
+    def calculate_gradient(self, x, s, y, sample_theta, fairness_rate):
+        raise NotImplementedError("Subclass must override calculate calculate_gradient(self, x, s, y, sample_theta, fairness_rate).")
 
     def update(self, data, learning_rate, fairness_rate, batch_size, epochs):
         X, S, Y = data
@@ -58,6 +66,19 @@ class LogisticPolicy():
 
             # update the parameters
             self.theta += learning_rate * gradient 
+
+
+class LogisticPolicy(BasePolicy):
+    def __init__(self, dim_theta, cost_factor, fairness_function): 
+        super(LogisticPolicy, self).__init__(
+            dim_theta, 
+            fairness_function, 
+            lambda **utility_kwargs: (self(utility_kwargs["features"]) * (utility_kwargs["y"] - cost_factor)))
+
+        self.feature_map = IdentityFeatureMap(dim_theta)
+    
+    def calculate_probability(self, features):
+        return sigmoid(self.feature_map(features) @ self.theta)
 
     def calculate_gradient(self, x, s, y, sample_theta, fairness_rate):
         features = np.concatenate((x, s), axis=1)
