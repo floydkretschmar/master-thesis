@@ -46,6 +46,15 @@ class BasePolicy():
     def calculate_gradient(self, x, s, y, sample_theta, fairness_rate):
         raise NotImplementedError("Subclass must override calculate calculate_gradient(self, x, s, y, sample_theta, fairness_rate).")
 
+    def make_decisions(self, X_batch, S_batch):
+        decisions = self(X_batch, S_batch)
+
+        # only use data where positive decisions have been made for gradient calculation
+        pos_decision_idx = np.arange(X_batch.shape[0])
+        pos_decision_idx = pos_decision_idx[decisions == 1]
+
+        return pos_decision_idx
+
     def update(self, data, learning_rate, fairness_rate, batch_size, epochs):
         X, S, Y = data
         sample_theta = self.theta.clone()        
@@ -55,11 +64,7 @@ class BasePolicy():
             X_batch, S_batch, Y_batch = get_minibatch(X, S, Y, batch_size)
 
             # make decision according to current policy
-            decisions = self(X_batch, S_batch)
-
-            # only use data where positive decisions have been made for gradient calculation
-            pos_decision_idx = np.arange(Y_batch.shape[0])
-            pos_decision_idx = pos_decision_idx[decisions == 1]
+            pos_decision_idx = self.make_decisions(X_batch, S_batch)
 
             # calculate the gradient
             gradient = self.calculate_gradient(X_batch[pos_decision_idx], S_batch[pos_decision_idx], Y_batch[pos_decision_idx], sample_theta, fairness_rate)
