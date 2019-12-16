@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.special import expit as sigmoid
+from util import get_minibatch
 
 class BaseFeatureMap():
     """ The feature map phi: R^d x {0,1} -> R^m that maps the feature vector and sensitive attribute of an
@@ -24,18 +25,38 @@ class IdentityFeatureMap(BaseFeatureMap):
         return features
 
 class LogisticPolicy():
-    def __init__(self, dim_theta, num_iterations, batch_size): 
-        self.num_iterations = num_iterations
-        self.batch_size = batch_size
+    def __init__(self, dim_theta, fairness_function, fairness_gradient_function): 
+        self.fairness_function = fairness_function
+        self.fairness_gradient_function = fairness_gradient_function
 
         self.theta = np.zeros(dim_theta)
         self.feature_map = IdentityFeatureMap(dim_theta)
     
-    def __call__(self, x, s):
-        features = np.concatenate((x, s), axis=1)
+    def __call__(self, features):
         probability = sigmoid(self.feature_map(features) @ self.theta)
         return np.random.binomial(1, probability)
 
-    def update(self, data, learning_rate):
+    def update(self, data, learning_rate, batch_size, epochs):
         X, S, Y = data
-        pass
+        features = np.concatenate((X, S), axis=1)
+        sample_theta = self.theta.clone()        
+
+        for _ in range(0, epochs):
+            # Get minibatch
+            batch_features, batch_gt = get_minibatch(features, Y, batch_size)
+
+            # make decision according to current policy
+            decisions = self(batch_features)
+
+            # only use data where positive decisions have been made for gradient calculation
+            pos_decision_idx = np.arange(batch_gt.shape[0])
+            pos_decision_idx = pos_decision_idx[decisions == 1]
+
+            # calculate the gradient
+            gradient = self.calculate_gradient(batch_features[pos_decision_idx], batch_gt[pos_decision_idx], sample_theta)
+
+            # update the parameters
+            self.theta += learning_rate * gradient / pos_decision_idx.shape[0]
+
+    def calculate_gradient(self, features, gt, sample_theta):
+        return 0

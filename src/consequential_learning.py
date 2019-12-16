@@ -1,6 +1,7 @@
 import numpy as np
 from policy import LogisticPolicy
 from distribution import GroundTruthDistribution
+from util import get_minibatch
 
 '''
 pi_0 = init_policy()
@@ -17,20 +18,21 @@ NUM_ITERATIONS = 200
 BATCH_SIZE = 128
 LEARNING_RATE = 0.01
 
-if __name__== "__main__":
+def consequential_learning(fairness_function, fairness_gradient_function):
     gt_dist = GroundTruthDistribution()
-    pi = LogisticPolicy(DIM_S + DIM_X, NUM_ITERATIONS, BATCH_SIZE)
-    for t in range(0, T):
-        data = collect_data(pi, NUM_DECISIONS)
-        pi.update(data, LEARNING_RATE)
+    pi = LogisticPolicy(DIM_S + DIM_X, fairness_function, fairness_gradient_function)
+    for _ in range(0, T):        
+        data = collect_data(pi, gt_dist, NUM_DECISIONS)
+        pi.update(data, LEARNING_RATE, BATCH_SIZE, NUM_ITERATIONS)
 
 def collect_data(pi, gt_dist, N):
     X = []
     S = []
     Y = []
-    for i in range(0, N):
+    for _ in range(0, N):
         x, s = gt_dist.sample()
-        d = pi(x, s)
+        features = np.concatenate((x, s), axis=1)
+        d = pi(features)
         if d == 1:
             y = gt_dist(x, s)
             X.append(x)
