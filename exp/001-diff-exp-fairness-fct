@@ -1,0 +1,91 @@
+{
+ "nbformat": 4,
+ "nbformat_minor": 2,
+ "metadata": {
+  "language_info": {
+   "name": "python",
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "version": "3.7.4"
+  },
+  "orig_nbformat": 2,
+  "file_extension": ".py",
+  "mimetype": "text/x-python",
+  "name": "python",
+  "npconvert_exporter": "python",
+  "pygments_lexer": "ipython3",
+  "version": 3
+ },
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "from src.consequential_learning import collect_data\n",
+    "from src.policy import LogisticPolicy\n",
+    "from src.distribution import SplitDistribution\n",
+    "from src.util import get_minibatch"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "DIM_X = 1\n",
+    "DIM_S = 1\n",
+    "T = 100\n",
+    "NUM_DECISIONS = 500\n",
+    "NUM_ITERATIONS = 200\n",
+    "BATCH_SIZE = 128\n",
+    "LEARNING_RATE = 0.01\n",
+    "FAIRNESS_RATE = 0.5\n",
+    "COST_FACTOR = 0.6\n",
+    "FRACTION_PROTECTED = 0.3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def fairness_function(**fairness_kwargs):\n",
+    "    return np.zeros((fairness_kwargs['x'].shape[0], fairness_kwargs['sample_theta'].shape[0]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": "Iteration 0\nIteration 1\nIteration 2\nIteration 3\nIteration 4\nIteration 5\nIteration 6\nIteration 7\nIteration 8\nIteration 9\nIteration 10\nIteration 11\nIteration 12\nIteration 13\nIteration 14\nIteration 15\nIteration 16\nIteration 17\nIteration 18\nIteration 19\nIteration 20\nIteration 21\nIteration 22\nIteration 23\nIteration 24\nIteration 25\nIteration 26\nIteration 27\nIteration 28\nIteration 29\nIteration 30\nIteration 31\nIteration 32\nIteration 33\nIteration 34\nIteration 35\nIteration 36\nIteration 37\nIteration 38\nIteration 39\nIteration 40\nIteration 41\nIteration 42\nIteration 43\nIteration 44\nIteration 45\nIteration 46\nIteration 47\nIteration 48\nIteration 49\nIteration 50\nIteration 51\nIteration 52\nIteration 53\nIteration 54\nIteration 55\nIteration 56\nIteration 57\nIteration 58\nIteration 59\nIteration 60\nIteration 61\nIteration 62\nIteration 63\nIteration 64\nIteration 65\nIteration 66\nIteration 67\nIteration 68\nIteration 69\nIteration 70\nIteration 71\nIteration 72\nIteration 73\nIteration 74\nIteration 75\nIteration 76\nIteration 77\nIteration 78\nIteration 79\nIteration 80\nIteration 81\nIteration 82\nIteration 83\nIteration 84\nIteration 85\nIteration 86\nIteration 87\nIteration 88\nIteration 89\nIteration 90\nIteration 91\nIteration 92\nIteration 93\nIteration 94\nIteration 95\nIteration 96\nIteration 97\nIteration 98\nIteration 99\n"
+    }
+   ],
+   "source": [
+    "gt_dist = SplitDistribution()\n",
+    "pi = LogisticPolicy(DIM_S + DIM_X, COST_FACTOR, fairness_function)\n",
+    "for i in range(0, T):        \n",
+    "    data = collect_data(pi, gt_dist, NUM_DECISIONS, FRACTION_PROTECTED)\n",
+    "    pi.update(data, LEARNING_RATE, FAIRNESS_RATE, BATCH_SIZE, NUM_ITERATIONS)\n",
+    "    print(\"Iteration {}\".format(i))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ]
+}
