@@ -30,8 +30,8 @@ class IdentityFeatureMap(BaseFeatureMap):
 
 class BasePolicy():
     def __init__(self, dim_theta, fairness_function, utility_function): 
-        self.fairness_function = lambda ips_weight, **fairness_kwargs : ips_weight * fairness_function(**fairness_kwargs)
-        self.utility_function = lambda ips_weight, **utility_kwargs: ips_weight * utility_function(**utility_kwargs)
+        self.fairness_function = fairness_function
+        self.utility_function = utility_function
 
         self.theta = np.zeros(dim_theta)
 
@@ -45,6 +45,9 @@ class BasePolicy():
 
     def calculate_gradient(self, x, s, y, sample_theta, fairness_rate):
         raise NotImplementedError("Subclass must override calculate calculate_gradient(self, x, s, y, sample_theta, fairness_rate).")
+
+    def calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta):
+        raise NotImplementedError("Subclass must override calculate calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta).")
 
     def make_decisions(self, X_batch, S_batch):
         decisions = self(X_batch, S_batch)
@@ -86,37 +89,30 @@ class LogisticPolicy(BasePolicy):
         return sigmoid(self.feature_map(features) @ self.theta)
 
     def calculate_gradient(self, x, s, y, sample_theta, fairness_rate):
-        features = np.concatenate((x, s), axis=1)
-        phi = self.feature_map(features)
         num_samples = x.shape[0]
-        ones = np.ones(x.shape)
-        sample_theta = sample_theta.reshape(-1, 1)
 
         # the inverse propensity scoring weights 1/pi_t-1 = 1 + exp(-(phi_i @ theta_t-1))
         # Shape: (num_samples x 1)
-        ips_weight = ones + np.exp(-1 * (phi @ sample_theta))
+        ips_weight, phi, log_gradient_denominator = self.calculate_ips_weights_and_log_gradient(x, s, sample_theta)
 
-        # the denominator of the gradient of log pi defined as phi_i/(1+exp(phi_i @ theta_t))
-        # Shape: (num_samples x 1)
-        denominator = ones + np.exp(phi @ self.theta.reshape(-1, 1))
+        # the fraction of ips weight and denominator that is used in the utility
+        fraction = ips_weight / log_gradient_denominator
 
         # calculate the gradient of the utility function
         # Shape: (num_samples x dim_theta)
-        grad_utility = (self.utility_function(ips_weight, x=s, s=s, y=y) * phi) / denominator
+        grad_utility = fraction * (self.utility_function(x=s, s=s, y=y) * phi)
 
         fairness_params = {
             "x": x, 
             "s": s, 
-            "y": y,
             "sample_theta": sample_theta,
-            "feature_map": self.feature_map
+            "policy": self
         }
 
         # calculate the gradient of the fairness function
         # Shape: (num_samples x dim_theta)
         if fairness_rate > 0:
-            grad_fairness = (self.fairness_function(ips_weight=ips_weight, **fairness_params) * phi) / denominator
-            grad_fairness = fairness_rate * self.fairness_function(ips_weight=ips_weight, **fairness_params) * (grad_fairness)
+            grad_fairness = fairness_rate * self.fairness_function(**fairness_params, gradient=False) * self.fairness_function(**fairness_params, gradient=True)
 
         # sum the both together, sum over the batch and weigh by the number of samples
         # Shape: (1 x dim_theta)
@@ -124,3 +120,23 @@ class LogisticPolicy(BasePolicy):
         gradient = gradient.sum(axis=0) / num_samples
 
         return gradient
+
+    def calculate_ips_weights_and_log_gradient(self, x, s, sample_theta):
+        """ This function calculates 
+        
+        Args:
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
+            sample_theta: The parameters of the distribution that was used to sample the n samples.
+
+        Returns:
+            ips_weights: the inverse propensity scoring weights 1/pi_t-1 = 1 + exp(-(phi_i @ theta_t-1))
+            numerator: numerator of the gradient of log pi which is the same as phi
+            denominator: the denominator of the gradient of log pi defined as phi_i/(1+exp(phi_i @ theta_t))
+        """
+        features = np.concatenate((x, s), axis=1)
+        phi = self.feature_map(features)
+        ones = np.ones(x.shape)
+        sample_theta = sample_theta.reshape(-1, 1)
+
+        return ones + np.exp(-1 * (phi @ sample_theta)), phi, ones + np.exp(phi @ self.theta.reshape(-1, 1))
