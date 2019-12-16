@@ -30,8 +30,8 @@ class IdentityFeatureMap(BaseFeatureMap):
 
 class BasePolicy():
     def __init__(self, dim_theta, fairness_function, utility_function): 
-        self.fairness_function = lambda ips_weight, **fairness_kwargs : ips_weight * fairness_function(fairness_kwargs)
-        self.utility_function = lambda ips_weight, **utility_kwargs: ips_weight * utility_function(utility_kwargs)
+        self.fairness_function = lambda ips_weight, **fairness_kwargs : ips_weight * fairness_function(**fairness_kwargs)
+        self.utility_function = lambda ips_weight, **utility_kwargs: ips_weight * utility_function(**utility_kwargs)
 
         self.theta = np.zeros(dim_theta)
 
@@ -57,7 +57,7 @@ class BasePolicy():
 
     def update(self, data, learning_rate, fairness_rate, batch_size, epochs):
         X, S, Y = data
-        sample_theta = self.theta.clone()        
+        sample_theta = self.theta.copy()        
 
         for _ in range(0, epochs):
             # Get minibatch
@@ -78,7 +78,7 @@ class LogisticPolicy(BasePolicy):
         super(LogisticPolicy, self).__init__(
             dim_theta, 
             fairness_function, 
-            lambda **utility_kwargs: (self(utility_kwargs["features"]) * (utility_kwargs["y"] - cost_factor)))
+            lambda **utility_kwargs: self(utility_kwargs["x"], utility_kwargs["s"]).reshape(-1, 1) * (utility_kwargs["y"] - cost_factor))
 
         self.feature_map = IdentityFeatureMap(dim_theta)
     
@@ -89,7 +89,8 @@ class LogisticPolicy(BasePolicy):
         features = np.concatenate((x, s), axis=1)
         phi = self.feature_map(features)
         num_samples = x.shape[0]
-        ones = np.ones(num_samples)
+        ones = np.ones(x.shape)
+        sample_theta = sample_theta.reshape(-1, 1)
 
         # the inverse propensity scoring weights 1/pi_t-1 = 1 + exp(-(phi_i @ theta_t-1))
         # Shape: (num_samples x 1)
@@ -97,11 +98,11 @@ class LogisticPolicy(BasePolicy):
 
         # the denominator of the gradient of log pi defined as phi_i/(1+exp(phi_i @ theta_t))
         # Shape: (num_samples x 1)
-        denominator = ones + np.exp((phi @ self.theta))
+        denominator = ones + np.exp(phi @ self.theta.reshape(-1, 1))
 
         # calculate the gradient of the utility function
         # Shape: (num_samples x dim_theta)
-        grad_utility = (self.utility_function(ips_weight, features=features, y=y) * phi) / denominator
+        grad_utility = (self.utility_function(ips_weight, x=s, s=s, y=y) * phi) / denominator
 
         fairness_params = {
             "x": x, 
@@ -113,8 +114,9 @@ class LogisticPolicy(BasePolicy):
 
         # calculate the gradient of the fairness function
         # Shape: (num_samples x dim_theta)
-        grad_fairness = (self.fairness_function(ips_weight=ips_weight, **fairness_params) * phi) / denominator
-        grad_fairness = fairness_rate * self.fairness_function(ips_weight=ips_weight, **fairness_params) * (grad_fairness)
+        if fairness_rate > 0:
+            grad_fairness = (self.fairness_function(ips_weight=ips_weight, **fairness_params) * phi) / denominator
+            grad_fairness = fairness_rate * self.fairness_function(ips_weight=ips_weight, **fairness_params) * (grad_fairness)
 
         # sum the both together, sum over the batch and weigh by the number of samples
         # Shape: (1 x dim_theta)
