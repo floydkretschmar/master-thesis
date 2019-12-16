@@ -310,7 +310,8 @@ and with an equivalent argument the fairness functions $\mathcal{F}_{Diff}$ and 
 \begin{align*}
     \nabla_{\theta}\mathcal{F}_{Diff}(\pi_{\theta_i}) &= \nabla_{\theta_i}b_P^0(\pi_{\theta_i}) - \nabla_{\theta_i}b_P^1(\pi_{\theta_i}) \\
     \nabla_{\theta_i}b_P^s(\pi_{\theta_i}) &\approx \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1 + e^{-\phi_i^T\theta_{t-1}}}{1 + e^{\phi_i^T\theta_t}} f(e_i, y_i)\phi_i \\
-    \nabla_{\theta_t}\mathcal{F}_{Cov}(\pi_{\theta_i}) &\approx \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1 + e^{-\phi_i^T\theta_{t-1}}}{1 + e^{\phi_i^T\theta_t}} e_i(s_i - \mu_{s_{\pi_0}})\phi_i 
+    \nabla_{\theta_t}\mathcal{F}_{Cov}(\pi_{\theta_i}) &\approx \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} \frac{1 + e^{-\phi_i^T\theta_{t-1}}}{1 + e^{\phi_i^T\theta_t}} e_i(s_i - \mu_{s_{\pi_{\theta{t-1}}}})\phi_i \\
+    \mu_{s_{\pi_{\theta{t-1}}}} &\approx  \frac{1}{n_{t-1}} \sum_{i=1}^{n_{t-1}} (1 + e^{-\phi_i^T\theta_{t-1}})s \\
 \end{align*}
 
 % Based on these approximations the authors of \cite{Kilbertus19} propose the following algorithm for learning to decide which they call \enquote{Consequential Learning}:
