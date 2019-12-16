@@ -26,10 +26,9 @@ class IdentityFeatureMap(BaseFeatureMap):
         return features
 
 class LogisticPolicy():
-    def __init__(self, dim_theta, cost_factor, fairness_function, fairness_gradient_function): 
-        self.fairness_function = fairness_function
-        self.fairness_gradient_function = fairness_gradient_function
-        self.cost_factor = cost_factor
+    def __init__(self, dim_theta, cost_factor, fairness_function): 
+        self.fairness_function = lambda ips_weight, **fairness_kwargs : ips_weight * fairness_function(fairness_kwargs)
+        self.utility_function = lambda ips_weight, **utility_kwargs: ips_weight * (self(utility_kwargs["features"]) * (utility_kwargs["y"] - cost_factor))
 
         self.theta = np.zeros(dim_theta)
         self.feature_map = IdentityFeatureMap(dim_theta)
@@ -66,19 +65,33 @@ class LogisticPolicy():
         num_samples = x.shape[0]
         ones = np.ones(num_samples)
 
-        numerator = ones + np.exp(-1 * (phi @ sample_theta))
+        # the inverse propensity scoring weights 1/pi_t-1 = 1 + exp(-(phi_i @ theta_t-1))
+        # Shape: (num_samples x 1)
+        ips_weight = ones + np.exp(-1 * (phi @ sample_theta))
+
+        # the denominator of the gradient of log pi defined as phi_i/(1+exp(phi_i @ theta_t))
+        # Shape: (num_samples x 1)
         denominator = ones + np.exp((phi @ self.theta))
 
-        difference = numerator / denominator
+        # calculate the gradient of the utility function
+        # Shape: (num_samples x dim_theta)
+        grad_utility = (self.utility_function(ips_weight, features=features, y=y) * phi) / denominator
 
-        # calculate the gradient of the utility function (always the same)
-        grad_utility = difference * self(features) * (y - self.cost_factor) * phi
+        fairness_params = {
+            "x": x, 
+            "s": s, 
+            "y": y,
+            "sample_theta": sample_theta,
+            "feature_map": self.feature_map
+        }
 
-        # calculate the gradient of the fairness function (changable)
-        grad_fairness = difference * self.fairness_gradient_function(x=x, s=s, y=y, sample_theta=sample_theta) * phi
-        grad_fairness = fairness_rate * self.fairness_function(x=x, s=s, y=y) * (grad_fairness)
+        # calculate the gradient of the fairness function
+        # Shape: (num_samples x dim_theta)
+        grad_fairness = (self.fairness_function(ips_weight=ips_weight, **fairness_params) * phi) / denominator
+        grad_fairness = fairness_rate * self.fairness_function(ips_weight=ips_weight, **fairness_params) * (grad_fairness)
 
         # sum the both together, sum over the batch and weigh by the number of samples
+        # Shape: (1 x dim_theta)
         gradient = grad_utility + grad_fairness
         gradient = gradient.sum(axis=0) / num_samples
 

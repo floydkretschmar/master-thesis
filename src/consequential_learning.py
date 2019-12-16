@@ -3,13 +3,6 @@ from policy import LogisticPolicy
 from distribution import GroundTruthDistribution
 from util import get_minibatch
 
-'''
-pi_0 = init_policy()
-for t = 0...T-1 do
-    Dt = collect_data(pi_t, N)
-    p_t+1 = update_policy(pi_t, Dt, M, B, alpha)
-'''
-
 DIM_X = 1
 DIM_S = 1
 T = 100
@@ -17,13 +10,20 @@ NUM_DECISIONS = 500
 NUM_ITERATIONS = 200
 BATCH_SIZE = 128
 LEARNING_RATE = 0.01
+FAIRNESS_RATE = 0.5
+COST_FACTOR = 0.6
 
-def consequential_learning(fairness_function, fairness_gradient_function):
+def consequential_learning(fairness_function):    
+    """This is the main training loop for consequential learning.
+
+    Keyword arguments:
+    fairness_function -- The function defining the fairness penalty.
+    """
     gt_dist = GroundTruthDistribution()
-    pi = LogisticPolicy(DIM_S + DIM_X, fairness_function, fairness_gradient_function)
+    pi = LogisticPolicy(DIM_S + DIM_X, COST_FACTOR, fairness_function)
     for _ in range(0, T):        
         data = collect_data(pi, gt_dist, NUM_DECISIONS)
-        pi.update(data, LEARNING_RATE, BATCH_SIZE, NUM_ITERATIONS)
+        pi.update(data, LEARNING_RATE, FAIRNESS_RATE, BATCH_SIZE, NUM_ITERATIONS)
 
 def collect_data(pi, gt_dist, N):
     X = []
