@@ -1,11 +1,12 @@
 import numpy as np
 
-def get_minibatch(features, ground_truth, batch_size):
-    indices = np.arange(ground_truth.shape[0])
+def get_minibatch(X, S, Y, batch_size):
+    indices = np.arange(Y.shape[0])
     np.random.shuffle(indices)
     batch_indices = indices[0:batch_size]
 
-    features_batch = features[batch_indices]
-    gt_batch = ground_truth[batch_indices]
+    X_batch = X[batch_indices]
+    S_batch = S[batch_indices]
+    Y_batch = Y[batch_indices]
 
-    return features_batch, gt_batch
+    return X_batch, S_batch, Y_batch
