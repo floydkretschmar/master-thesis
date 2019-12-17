@@ -87,6 +87,7 @@ class LogisticPolicy(BasePolicy):
         # calculate the gradient of the utility function
         # Shape: (num_samples x dim_theta)
         gradient = fraction * (self.utility_function(x=s, s=s, y=y) * phi)
+        #print("Util gradient {}".format(gradient.mean(axis=0)))
 
         fairness_params = {
             "x": x, 
@@ -101,9 +102,11 @@ class LogisticPolicy(BasePolicy):
             grad_fairness = self.fairness_rate * self.fairness_function(**fairness_params, gradient=False) * self.fairness_function(**fairness_params, gradient=True)
             # sum the both together, sum over the batch and weigh by the number of samples
             # Shape: (1 x dim_theta)
-            gradient += grad_fairness
+            gradient -= grad_fairness
+            #print("Fairness gradient {}".format(grad_fairness.mean(axis=0)))
 
-        gradient = gradient.sum(axis=0) / num_samples
+        #gradient = gradient.sum(axis=0) / num_samples
+        gradient = gradient.mean(axis=0)
         return gradient
 
     def calculate_ips_weights_and_log_gradient(self, x, s, sample_theta):
@@ -135,4 +138,6 @@ class LogisticPolicy(BasePolicy):
             "policy": self,
             "gradient": False
         }
-        return (self.utility_function(x=s, s=s, y=y) - (self.fairness_rate * self.fairness_function(**fairness_params))/2).mean()
+        fairness_pen = (self.fairness_rate * self.fairness_function(**fairness_params)**2)/2
+        #print("Fairness penalty: {}".format(fairness_pen))
+        return (self.utility_function(x=s, s=s, y=y) - (fairness_pen)).mean()
