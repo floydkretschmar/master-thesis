@@ -25,9 +25,16 @@ def collect_data(pi, gt_dist, num_samples, fraction_protected):
 
 def train(**training_args):
     gt_dist = SplitDistribution()
+    learning_parameters = training_args["learning_parameters"]
     pi = LogisticPolicy(training_args["dim_theta"], training_args["fairness_rate"], training_args["cost_factor"], training_args["fairness_function"], training_args["feature_map"])
 
-    for i in range(0, training_args["time_steps"]):        
+    learning_rate = learning_parameters["learning_rate"]
+
+    for i in range(1, training_args["time_steps"] + 1):        
+        if i % learning_parameters['decay_step'] == 0:
+            learning_rate *= learning_parameters['decay_rate']
+
         data = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
-        pi.update(data, training_args["learning_rate"], training_args["batch_size"])
-        print("Time step {}".format(i))
+        utility = pi.update(data, learning_rate, training_args["batch_size"])
+
+        print("Time step {}: Utility {}".format(i, utility))

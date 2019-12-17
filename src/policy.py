@@ -54,7 +54,7 @@ class BasePolicy():
             # update the parameters
             self.theta += learning_rate * gradient 
 
-        print("Utility: {}".format(self.utility(x, s, y, sample_theta)))
+        return self.utility(x, s, y, sample_theta)
 
     def utility(self, x, s, y, sample_theta):
         raise NotImplementedError("Subclass must override loss(self, x, s, y, sample_theta).")
