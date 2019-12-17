@@ -17,6 +17,12 @@ class BasePolicy():
         self.utility_function = utility_function
         self.theta = np.zeros(dim_theta)
 
+    def benefit_difference(self, s, x, sample_theta, gradient):
+        raise NotImplementedError("Subclass must override calculate benefit_difference(self, s, x, sample_theta, gradient).")
+    
+    def benefit_function(self, x_s, s, sample_theta, gradient):
+        raise NotImplementedError("Subclass must override calculate benefit_function(self, x_s, s, sample_theta, gradient).")
+
     def __call__(self, x, s):
         features = np.concatenate((x, s), axis=1)
         probability = self.calculate_probability(features)
@@ -70,13 +76,30 @@ class LogisticPolicy(BasePolicy):
         self.feature_map = feature_map
         self.fairness_rate = fairness_rate
         self.cost_factor = cost_factor
+
+    def benefit_function(self, x_s, s, sample_theta, gradient):
+        ips_weight, phi, log_gradient_denominator = self.calculate_ips_weights_and_log_gradient(x_s, s, sample_theta)
+        decision = self(x_s, s).reshape(-1, 1)
+
+        if gradient:
+            grad_benefit = ((ips_weight/log_gradient_denominator) * decision * phi).sum(axis=0) / x_s.shape[0]
+            return grad_benefit
+        else:
+            benefit = (ips_weight * decision).sum(axis=0) / x_s.shape[0]
+            return benefit
+
+    def benefit_difference(self, x, s, sample_theta, gradient):
+        pos_decision_idx = np.arange(s.shape[0]).reshape(-1, 1)
+
+        s_0_idx = pos_decision_idx[s == 0]
+        s_1_idx = pos_decision_idx[s == 1]
+
+        return self.benefit_function(x[s_0_idx], s[s_0_idx], sample_theta, gradient) - self.benefit_function(x[s_1_idx], s[s_1_idx], sample_theta, gradient)
     
     def calculate_probability(self, features):
         return sigmoid(self.feature_map(features) @ self.theta)
 
     def calculate_gradient(self, x, s, y, sample_theta):
-        num_samples = x.shape[0]
-
         # the inverse propensity scoring weights 1/pi_t-1 = 1 + exp(-(phi_i @ theta_t-1))
         # Shape: (num_samples x 1)
         ips_weight, phi, log_gradient_denominator = self.calculate_ips_weights_and_log_gradient(x, s, sample_theta)
@@ -105,7 +128,6 @@ class LogisticPolicy(BasePolicy):
             gradient -= grad_fairness
             #print("Fairness gradient {}".format(grad_fairness.mean(axis=0)))
 
-        #gradient = gradient.sum(axis=0) / num_samples
         gradient = gradient.mean(axis=0)
         return gradient
 
