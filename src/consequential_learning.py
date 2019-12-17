@@ -23,10 +23,11 @@ def collect_data(pi, gt_dist, num_samples, fraction_protected):
 
     return x, s, y
 
-def train(DIM_S, DIM_X, DIM_THETA, COST_FACTOR, NUM_DECISIONS, FRACTION_PROTECTED, LEARNING_RATE, FAIRNESS_RATE, BATCH_SIZE, NUM_ITERATIONS, T, fairness_function, feature_map):
+def train(**training_args):
     gt_dist = SplitDistribution()
-    pi = LogisticPolicy(DIM_THETA, FAIRNESS_RATE, COST_FACTOR, fairness_function, feature_map)
-    for i in range(0, T):        
-        data = collect_data(pi, gt_dist, NUM_DECISIONS, FRACTION_PROTECTED)
-        pi.update(data, LEARNING_RATE, BATCH_SIZE, NUM_ITERATIONS)
+    pi = LogisticPolicy(training_args["dim_theta"], training_args["fairness_rate"], training_args["cost_factor"], training_args["fairness_function"], training_args["feature_map"])
+
+    for i in range(0, training_args["time_steps"]):        
+        data = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+        pi.update(data, training_args["learning_rate"], training_args["batch_size"])
         print("Time step {}".format(i))

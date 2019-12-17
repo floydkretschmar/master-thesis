@@ -8,7 +8,6 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 import numpy as np
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
-# from src.util import get_minibatch
 from src.util import iterate_minibatches
 
 
@@ -41,13 +40,9 @@ class BasePolicy():
 
         return pos_decision_idx
 
-    def update(self, data, learning_rate, batch_size, epochs):
+    def update(self, data, learning_rate, batch_size):
         x, s, y = data
         sample_theta = self.theta.copy()        
-
-        # for _ in range(0, epochs):
-        #     # Get minibatch
-        #     X_batch, S_batch, Y_batch = get_minibatch(x, s, y, batch_size)
 
         for X_batch, S_batch, Y_batch in iterate_minibatches(x, s, y, batch_size):
             # make decision according to current policy
