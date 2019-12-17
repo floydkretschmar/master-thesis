@@ -1,37 +1,21 @@
+import sys
+import os
+
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
 import numpy as np
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
-from util import get_minibatch
-
-
-class BaseFeatureMap():
-    """ The feature map phi: R^d x {0,1} -> R^m that maps the feature vector and sensitive attribute of an
-    individual into the feature space of the parameters theta"""
-
-    def __init__(self, dim_theta):
-        self.dim_theta = dim_theta
-
-    def __call__(self, features):
-        return self.map(features)
-
-    def map(self, features):
-        raise NotImplementedError("Subclass must override map(x).")
-
-
-class IdentityFeatureMap(BaseFeatureMap):
-    """ The feature map phi as an identity mapping"""
-
-    def __init__(self, dim_theta):
-        super(IdentityFeatureMap, self).__init__(dim_theta)
-
-    def map(self, features):
-        return features
+from src.util import get_minibatch
 
 
 class BasePolicy():
-    def __init__(self, dim_theta, fairness_function, utility_function): 
+    def __init__(self, dim_theta, fairness_function, utility_function, feature_map): 
         self.fairness_function = fairness_function
         self.utility_function = utility_function
+        self.feature_map = feature_map
 
         self.theta = np.zeros(dim_theta)
 
@@ -77,13 +61,12 @@ class BasePolicy():
 
 
 class LogisticPolicy(BasePolicy):
-    def __init__(self, dim_theta, cost_factor, fairness_function): 
+    def __init__(self, dim_theta, cost_factor, fairness_function, feature_map): 
         super(LogisticPolicy, self).__init__(
             dim_theta, 
             fairness_function, 
-            lambda **utility_kwargs: self(utility_kwargs["x"], utility_kwargs["s"]).reshape(-1, 1) * (utility_kwargs["y"] - cost_factor))
-
-        self.feature_map = IdentityFeatureMap(dim_theta)
+            lambda **utility_kwargs: self(utility_kwargs["x"], utility_kwargs["s"]).reshape(-1, 1) * (utility_kwargs["y"] - cost_factor),
+            feature_map)
     
     def calculate_probability(self, features):
         return sigmoid(self.feature_map(features) @ self.theta)
@@ -122,7 +105,8 @@ class LogisticPolicy(BasePolicy):
         return gradient
 
     def calculate_ips_weights_and_log_gradient(self, x, s, sample_theta):
-        """ This function calculates 
+        """ This function calculates the concrete gradient of the logarithm of pi as well as the concrete
+        inverse propensity scroring weights for the logisitic policy.
         
         Args:
             x: The features of the n samples
