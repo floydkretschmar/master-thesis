@@ -31,9 +31,6 @@ class BasePolicy():
     def calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta):
         raise NotImplementedError("Subclass must override calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta).")
 
-    def loss(self, x, s, y):
-        raise NotImplementedError("Subclass must override loss(self, x, s, y).")
-
     def make_decisions(self, X_batch, S_batch):
         decisions = self(X_batch, S_batch)
 
@@ -44,12 +41,12 @@ class BasePolicy():
         return pos_decision_idx
 
     def update(self, data, learning_rate, batch_size, epochs):
-        X, S, Y = data
+        x, s, y = data
         sample_theta = self.theta.copy()        
 
         for _ in range(0, epochs):
             # Get minibatch
-            X_batch, S_batch, Y_batch = get_minibatch(X, S, Y, batch_size)
+            X_batch, S_batch, Y_batch = get_minibatch(x, s, y, batch_size)
 
             # make decision according to current policy
             pos_decision_idx = self.make_decisions(X_batch, S_batch)
@@ -59,6 +56,11 @@ class BasePolicy():
 
             # update the parameters
             self.theta += learning_rate * gradient 
+
+        print("Utility: {}".format(self.utility(x, s, y, sample_theta)))
+
+    def utility(self, x, s, y, sample_theta):
+        raise NotImplementedError("Subclass must override loss(self, x, s, y, sample_theta).")
 
 
 class LogisticPolicy(BasePolicy):
@@ -129,5 +131,12 @@ class LogisticPolicy(BasePolicy):
 
         return ones + np.exp(-1 * (phi @ sample_theta)), phi, ones + np.exp(phi @ self.theta.reshape(-1, 1))
 
-    def loss(self, x, s, y):
-        return 0
+    def utility(self, x, s, y, sample_theta):
+        fairness_params = {
+            "x": x, 
+            "s": s, 
+            "sample_theta": sample_theta,
+            "policy": self,
+            "gradient": False
+        }
+        return (self.utility_function(x=s, s=s, y=y) - (self.fairness_rate * self.fairness_function(**fairness_params))/2).mean()

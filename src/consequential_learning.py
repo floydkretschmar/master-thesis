@@ -29,4 +29,4 @@ def train(DIM_S, DIM_X, DIM_THETA, COST_FACTOR, NUM_DECISIONS, FRACTION_PROTECTE
     for i in range(0, T):        
         data = collect_data(pi, gt_dist, NUM_DECISIONS, FRACTION_PROTECTED)
         pi.update(data, LEARNING_RATE, BATCH_SIZE, NUM_ITERATIONS)
-        print("Iteration {}".format(i))
+        print("Time step {}".format(i))
