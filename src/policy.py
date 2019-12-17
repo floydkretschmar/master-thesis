@@ -8,7 +8,8 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 import numpy as np
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
-from src.util import get_minibatch
+# from src.util import get_minibatch
+from src.util import iterate_minibatches
 
 
 class BasePolicy():
@@ -44,10 +45,11 @@ class BasePolicy():
         x, s, y = data
         sample_theta = self.theta.copy()        
 
-        for _ in range(0, epochs):
-            # Get minibatch
-            X_batch, S_batch, Y_batch = get_minibatch(x, s, y, batch_size)
+        # for _ in range(0, epochs):
+        #     # Get minibatch
+        #     X_batch, S_batch, Y_batch = get_minibatch(x, s, y, batch_size)
 
+        for X_batch, S_batch, Y_batch in iterate_minibatches(x, s, y, batch_size):
             # make decision according to current policy
             pos_decision_idx = self.make_decisions(X_batch, S_batch)
 
@@ -89,7 +91,7 @@ class LogisticPolicy(BasePolicy):
 
         # calculate the gradient of the utility function
         # Shape: (num_samples x dim_theta)
-        grad_utility = fraction * (self.utility_function(x=s, s=s, y=y) * phi)
+        gradient = fraction * (self.utility_function(x=s, s=s, y=y) * phi)
 
         fairness_params = {
             "x": x, 
@@ -102,12 +104,11 @@ class LogisticPolicy(BasePolicy):
         # Shape: (num_samples x dim_theta)
         if self.fairness_rate > 0:
             grad_fairness = self.fairness_rate * self.fairness_function(**fairness_params, gradient=False) * self.fairness_function(**fairness_params, gradient=True)
+            # sum the both together, sum over the batch and weigh by the number of samples
+            # Shape: (1 x dim_theta)
+            gradient += grad_fairness
 
-        # sum the both together, sum over the batch and weigh by the number of samples
-        # Shape: (1 x dim_theta)
-        gradient = grad_utility + grad_fairness
         gradient = gradient.sum(axis=0) / num_samples
-
         return gradient
 
     def calculate_ips_weights_and_log_gradient(self, x, s, sample_theta):
