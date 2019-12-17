@@ -12,11 +12,9 @@ from src.util import get_minibatch
 
 
 class BasePolicy():
-    def __init__(self, dim_theta, fairness_function, utility_function, feature_map): 
+    def __init__(self, dim_theta, fairness_function, utility_function): 
         self.fairness_function = fairness_function
         self.utility_function = utility_function
-        self.feature_map = feature_map
-
         self.theta = np.zeros(dim_theta)
 
     def __call__(self, x, s):
@@ -27,11 +25,14 @@ class BasePolicy():
     def calculate_probability(self, features):
         raise NotImplementedError("Subclass must override calculate probability(features).")
 
-    def calculate_gradient(self, x, s, y, sample_theta, fairness_rate):
-        raise NotImplementedError("Subclass must override calculate calculate_gradient(self, x, s, y, sample_theta, fairness_rate).")
+    def calculate_gradient(self, x, s, y, sample_theta):
+        raise NotImplementedError("Subclass must override calculate calculate_gradient(self, x, s, y, sample_theta).")
 
     def calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta):
-        raise NotImplementedError("Subclass must override calculate calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta).")
+        raise NotImplementedError("Subclass must override calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta).")
+
+    def loss(self, x, s, y):
+        raise NotImplementedError("Subclass must override loss(self, x, s, y).")
 
     def make_decisions(self, X_batch, S_batch):
         decisions = self(X_batch, S_batch)
@@ -42,7 +43,7 @@ class BasePolicy():
 
         return pos_decision_idx
 
-    def update(self, data, learning_rate, fairness_rate, batch_size, epochs):
+    def update(self, data, learning_rate, batch_size, epochs):
         X, S, Y = data
         sample_theta = self.theta.copy()        
 
@@ -54,24 +55,27 @@ class BasePolicy():
             pos_decision_idx = self.make_decisions(X_batch, S_batch)
 
             # calculate the gradient
-            gradient = self.calculate_gradient(X_batch[pos_decision_idx], S_batch[pos_decision_idx], Y_batch[pos_decision_idx], sample_theta, fairness_rate)
+            gradient = self.calculate_gradient(X_batch[pos_decision_idx], S_batch[pos_decision_idx], Y_batch[pos_decision_idx], sample_theta)
 
             # update the parameters
             self.theta += learning_rate * gradient 
 
 
 class LogisticPolicy(BasePolicy):
-    def __init__(self, dim_theta, cost_factor, fairness_function, feature_map): 
+    def __init__(self, dim_theta, fairness_rate, cost_factor, fairness_function, feature_map): 
         super(LogisticPolicy, self).__init__(
-            dim_theta, 
+            dim_theta,
             fairness_function, 
-            lambda **utility_kwargs: self(utility_kwargs["x"], utility_kwargs["s"]).reshape(-1, 1) * (utility_kwargs["y"] - cost_factor),
-            feature_map)
+            lambda **utility_kwargs: self(utility_kwargs["x"], utility_kwargs["s"]).reshape(-1, 1) * (utility_kwargs["y"] - cost_factor))
+
+        self.feature_map = feature_map
+        self.fairness_rate = fairness_rate
+        self.cost_factor = cost_factor
     
     def calculate_probability(self, features):
         return sigmoid(self.feature_map(features) @ self.theta)
 
-    def calculate_gradient(self, x, s, y, sample_theta, fairness_rate):
+    def calculate_gradient(self, x, s, y, sample_theta):
         num_samples = x.shape[0]
 
         # the inverse propensity scoring weights 1/pi_t-1 = 1 + exp(-(phi_i @ theta_t-1))
@@ -94,8 +98,8 @@ class LogisticPolicy(BasePolicy):
 
         # calculate the gradient of the fairness function
         # Shape: (num_samples x dim_theta)
-        if fairness_rate > 0:
-            grad_fairness = fairness_rate * self.fairness_function(**fairness_params, gradient=False) * self.fairness_function(**fairness_params, gradient=True)
+        if self.fairness_rate > 0:
+            grad_fairness = self.fairness_rate * self.fairness_function(**fairness_params, gradient=False) * self.fairness_function(**fairness_params, gradient=True)
 
         # sum the both together, sum over the batch and weigh by the number of samples
         # Shape: (1 x dim_theta)
@@ -124,3 +128,6 @@ class LogisticPolicy(BasePolicy):
         sample_theta = sample_theta.reshape(-1, 1)
 
         return ones + np.exp(-1 * (phi @ sample_theta)), phi, ones + np.exp(phi @ self.theta.reshape(-1, 1))
+
+    def loss(self, x, s, y):
+        return 0

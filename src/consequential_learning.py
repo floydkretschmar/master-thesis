@@ -23,10 +23,10 @@ def collect_data(pi, gt_dist, num_samples, fraction_protected):
 
     return x, s, y
 
-def train(DIM_S, DIM_X, COST_FACTOR, NUM_DECISIONS, FRACTION_PROTECTED, LEARNING_RATE, FAIRNESS_RATE, BATCH_SIZE, NUM_ITERATIONS, T, fairness_function, feature_map):
+def train(DIM_S, DIM_X, DIM_THETA, COST_FACTOR, NUM_DECISIONS, FRACTION_PROTECTED, LEARNING_RATE, FAIRNESS_RATE, BATCH_SIZE, NUM_ITERATIONS, T, fairness_function, feature_map):
     gt_dist = SplitDistribution()
-    pi = LogisticPolicy(DIM_S + DIM_X, COST_FACTOR, fairness_function, feature_map)
+    pi = LogisticPolicy(DIM_THETA, FAIRNESS_RATE, COST_FACTOR, fairness_function, feature_map)
     for i in range(0, T):        
         data = collect_data(pi, gt_dist, NUM_DECISIONS, FRACTION_PROTECTED)
-        pi.update(data, LEARNING_RATE, FAIRNESS_RATE, BATCH_SIZE, NUM_ITERATIONS)
+        pi.update(data, LEARNING_RATE, BATCH_SIZE, NUM_ITERATIONS)
         print("Iteration {}".format(i))
