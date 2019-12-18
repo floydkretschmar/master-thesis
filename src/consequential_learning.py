@@ -35,6 +35,6 @@ def train(**training_args):
             learning_rate *= learning_parameters['decay_rate']
 
         data = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
-        utility = pi.update(data, learning_rate, training_args["batch_size"])
+        utility, benefit_delta = pi.update(data, learning_rate, training_args["batch_size"])
 
-        print("Time step {}: Utility {}".format(i, utility))
+        yield utility, benefit_delta

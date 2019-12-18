@@ -16,9 +16,6 @@ class BasePolicy():
         self.fairness_function = fairness_function
         self.utility_function = utility_function
         self.theta = np.zeros(dim_theta)
-
-    def benefit_difference(self, s, x, sample_theta, gradient):
-        raise NotImplementedError("Subclass must override calculate benefit_difference(self, s, x, sample_theta, gradient).")
     
     def benefit_function(self, x_s, s, sample_theta, gradient):
         raise NotImplementedError("Subclass must override calculate benefit_function(self, x_s, s, sample_theta, gradient).")
@@ -28,6 +25,12 @@ class BasePolicy():
         probability = self.calculate_probability(features)
         return np.random.binomial(1, probability)
 
+    def calculate_benefit_delta(self, x, s, sample_theta):
+        return np.absolute(self.calculate_benefit_difference(x, s, sample_theta, False)).mean()
+
+    def calculate_benefit_difference(self, x, s, sample_theta, gradient):
+        raise NotImplementedError("Subclass must override calculate benefit_difference(self, s, x, sample_theta, gradient).")
+
     def calculate_probability(self, features):
         raise NotImplementedError("Subclass must override calculate probability(features).")
 
@@ -36,6 +39,9 @@ class BasePolicy():
 
     def calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta):
         raise NotImplementedError("Subclass must override calculate_ips_weights_and_log_gradient(self, x, s, y, sample_theta).")
+
+    def calculate_utility(self, x, s, y, sample_theta):
+        raise NotImplementedError("Subclass must override loss(self, x, s, y, sample_theta).")
 
     def make_decisions(self, X_batch, S_batch):
         decisions = self(X_batch, S_batch)
@@ -60,10 +66,7 @@ class BasePolicy():
             # update the parameters
             self.theta += learning_rate * gradient 
 
-        return self.utility(x, s, y, sample_theta)
-
-    def utility(self, x, s, y, sample_theta):
-        raise NotImplementedError("Subclass must override loss(self, x, s, y, sample_theta).")
+        return self.calculate_utility(x, s, y, sample_theta), self.calculate_benefit_delta(x, s, sample_theta)
 
 
 class LogisticPolicy(BasePolicy):
@@ -88,7 +91,7 @@ class LogisticPolicy(BasePolicy):
             benefit = (ips_weight * decision).sum(axis=0) / x_s.shape[0]
             return benefit
 
-    def benefit_difference(self, x, s, sample_theta, gradient):
+    def calculate_benefit_difference(self, x, s, sample_theta, gradient):
         pos_decision_idx = np.arange(s.shape[0]).reshape(-1, 1)
 
         s_0_idx = pos_decision_idx[s == 0]
@@ -152,7 +155,7 @@ class LogisticPolicy(BasePolicy):
 
         return ones + np.exp(-1 * (phi @ sample_theta)), phi, ones + np.exp(phi @ self.theta.reshape(-1, 1))
 
-    def utility(self, x, s, y, sample_theta):
+    def calculate_utility(self, x, s, y, sample_theta):
         fairness_params = {
             "x": x, 
             "s": s, 
