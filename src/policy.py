@@ -12,9 +12,8 @@ from src.util import iterate_minibatches
 
 
 class BasePolicy():
-    def __init__(self, dim_theta, fairness_function, utility_function): 
+    def __init__(self, dim_theta, fairness_function): 
         self.fairness_function = fairness_function
-        self.utility_function = utility_function
         self.theta = np.zeros(dim_theta)
     
     def benefit_function(self, x_s, s, sample_theta, gradient):
@@ -68,13 +67,15 @@ class BasePolicy():
 
         return self.calculate_utility(x, s, y, sample_theta), self.calculate_benefit_delta(x, s, sample_theta)
 
+    def utility_function(self, x, s, y, sample_theta, gradient):
+        raise NotImplementedError("Subclass must override calculate utility_function(self, x, s, y, sample_theta, gradient).")
+
 
 class LogisticPolicy(BasePolicy):
     def __init__(self, dim_theta, fairness_rate, cost_factor, fairness_function, feature_map): 
         super(LogisticPolicy, self).__init__(
             dim_theta,
-            fairness_function, 
-            lambda **utility_kwargs: self(utility_kwargs["x"], utility_kwargs["s"]).reshape(-1, 1) * (utility_kwargs["y"] - cost_factor))
+            fairness_function)
 
         self.feature_map = feature_map
         self.fairness_rate = fairness_rate
@@ -103,17 +104,8 @@ class LogisticPolicy(BasePolicy):
         return sigmoid(self.feature_map(features) @ self.theta)
 
     def calculate_gradient(self, x, s, y, sample_theta):
-        # the inverse propensity scoring weights 1/pi_t-1 = 1 + exp(-(phi_i @ theta_t-1))
-        # Shape: (num_samples x 1)
-        ips_weight, phi, log_gradient_denominator = self.calculate_ips_weights_and_log_gradient(x, s, sample_theta)
-
-        # the fraction of ips weight and denominator that is used in the utility
-        fraction = ips_weight / log_gradient_denominator
-
-        # calculate the gradient of the utility function
-        # Shape: (num_samples x dim_theta)
-        gradient = fraction * (self.utility_function(x=s, s=s, y=y) * phi)
-        #print("Util gradient {}".format(gradient.mean(axis=0)))
+        # get the gradient value of the utility function
+        gradient = self.utility_function(x, s, y, sample_theta, True)
 
         fairness_params = {
             "x": x, 
@@ -122,14 +114,11 @@ class LogisticPolicy(BasePolicy):
             "policy": self
         }
 
-        # calculate the gradient of the fairness function
+        # get the gradient value of the fairness function
         # Shape: (num_samples x dim_theta)
         if self.fairness_rate > 0:
             grad_fairness = self.fairness_rate * self.fairness_function(**fairness_params, gradient=False) * self.fairness_function(**fairness_params, gradient=True)
-            # sum the both together, sum over the batch and weigh by the number of samples
-            # Shape: (1 x dim_theta)
             gradient -= grad_fairness
-            #print("Fairness gradient {}".format(grad_fairness.mean(axis=0)))
 
         gradient = gradient.mean(axis=0)
         return gradient
@@ -165,4 +154,20 @@ class LogisticPolicy(BasePolicy):
         }
         fairness_pen = (self.fairness_rate * self.fairness_function(**fairness_params)**2)/2
         #print("Fairness penalty: {}".format(fairness_pen))
-        return (self.utility_function(x=s, s=s, y=y) - (fairness_pen)).mean()
+        return (self.utility_function(x=s, s=s, y=y, sample_theta=sample_theta, gradient=False) - (fairness_pen)).mean()
+
+
+    def utility_function(self, x, s, y, sample_theta, gradient):
+        ips_weight, phi, log_gradient_denominator = self.calculate_ips_weights_and_log_gradient(x, s, sample_theta)
+        utility_value = self(x, s).reshape(-1, 1) * (y - self.cost_factor)
+
+        if gradient:
+            # calculate the gradient of the utility function
+            # Shape: (num_samples x dim_theta)
+            return (ips_weight * utility_value * phi) / log_gradient_denominator
+        else:
+            # calculate the the utility function value
+            # Shape: (num_samples x 1)
+            return ips_weight * utility_value
+
+        
