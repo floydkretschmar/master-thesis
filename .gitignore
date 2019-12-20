@@ -390,3 +390,6 @@ TSWLatexianTemp*
 
 # End of https://www.gitignore.io/api/tex,python,visualstudiocode
 doc/reading/Bishop - Pattern Recognition and Machine Learning.pdf
+
+### ignore backup files
+.bak
