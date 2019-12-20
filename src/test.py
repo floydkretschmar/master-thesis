@@ -10,7 +10,15 @@ from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
 
 def fairness_function(**fairness_kwargs):
-    return fairness_kwargs['policy'].benefit_difference(fairness_kwargs['features_tuple'], fairness_kwargs['decisions_tuple'], fairness_kwargs['y_tuple'], fairness_kwargs['gradient'], fairness_kwargs['sampling_theta'])
+    policy = fairness_kwargs["policy"]
+    x = fairness_kwargs["x"]
+    y = fairness_kwargs["y"]
+    s = fairness_kwargs["s"]
+    decisions = fairness_kwargs["decisions"]
+    gradient = fairness_kwargs["gradient"]
+    sampling_theta = fairness_kwargs["sampling_theta"]
+
+    return policy._benefit_difference(x, s, y, decisions, gradient, sampling_theta)
 
 i = 1
 training_parameters = {
@@ -24,7 +32,7 @@ training_parameters = {
         'decay_rate': 0.8,
         'decay_step': 30
     },
-    'fairness_rate':0,
+    'fairness_rate':10,
     'fraction_protected':0.3,
     'num_test_samples': 5000,
     'bias': True,

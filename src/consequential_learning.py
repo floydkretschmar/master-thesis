@@ -12,8 +12,7 @@ from src.distribution import SplitDistribution
 def collect_data(pi, gt_dist, num_samples, fraction_protected):
     x, s, y = collect_unbiased_data(gt_dist, num_samples, fraction_protected)
 
-    features = pi.extract_features(x, s)
-    decisions = pi(features)
+    decisions = pi(x, s)
     pos_decision_idx = np.arange(x.shape[0])
     pos_decision_idx = pos_decision_idx[decisions == 1]
 
@@ -38,15 +37,13 @@ def train(**training_args):
         if i % learning_parameters['decay_step'] == 0:
             learning_rate *= learning_parameters['decay_rate']
 
-        data = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
-        pi.update(data, learning_rate, training_args["batch_size"])
+        x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+        pi.update(x, s, y, learning_rate, training_args["batch_size"])
 
         # make decision according to current policy
-        features = pi.extract_features(x_test, s_test)
-        decisions = pi(features)
 
-        regularized_utility = pi.regularized_utility(features, decisions, s_test, y_test)
-        utility = pi.utility(features, decisions, y_test)
-        benefit_delta = pi.benefit_delta(features, decisions, s_test, y_test)
+        regularized_utility = pi.regularized_utility(x_test, s_test, y_test)
+        utility = pi.utility(x_test, s_test, y_test)
+        benefit_delta = pi.benefit_delta(x_test, s_test, y_test)
 
         yield regularized_utility, utility, benefit_delta

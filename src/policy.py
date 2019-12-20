@@ -30,7 +30,7 @@ class BasePolicy():
 
         self.theta = np.zeros(dim_theta)
 
-    def __call__(self, features):
+    def __call__(self, x, s):
         """ Returns the decisions made by the policy for x and s.
         
         Args:
@@ -40,53 +40,34 @@ class BasePolicy():
         Returns:
             decisions: The decisions.
         """
-        probability = self.probability(features)
+        features = self._extract_features(x, s)
+        probability = self._probability(features)
 
         return np.random.binomial(1, probability).astype(float)
-    
-    def benefit(self, features_s, decisions_s, y_s, gradient=False, sampling_theta=None):
-        """ Calculates the benefit value or the benefit gradient according to the benefit value function callback specified
-        in the constructor.
-        
-        Args:
-            x_s: The features of the n_s samples where s is the same.
-            s: The sensitive attributes of the n_s samples
-            y_s: The ground truth labels of the n_s samples where s is the same.
 
-        Returns:
-            benefit: The benefit value or gradient of the policy.
-        """
-        raise NotImplementedError("Subclass must override calculate benefit_function(self, x_s, s, sample_theta, gradient).")
-
-    def benefit_delta(self, features, decisions, s, y):
-        features_tuple, decisions_tuple, y_tuple = self.extract_fairness_tuples(features, decisions, s, y)
-        return np.absolute(self.benefit_difference(features_tuple, decisions_tuple, y_tuple))
-
-    def benefit_difference(self, features_tuple, decisions_tuple, y_tuple, gradient=False, sampling_theta=None):
-        """ Calculates the difference of benefits or the difference of benefit gradients of the given policy.
+    def _benefit_difference(self, x, s, y, decisions, gradient=False, sampling_theta=None):
+        """ Calculates the difference of benefits of the given policy for the provided data.
         
         Args:
             x: The features of the n samples
             s: The sensitive attribute of the n samples
             y: The ground truth labels of the n samples
-            gradient: The flag specifying whether the gradient should be calculated instead of the function value.
-            sample_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
+            sampling_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
             the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
 
         Returns:
             benefit_difference: The difference in benefits of the policy.
         """
-        return self.benefit(features_tuple[0], decisions_tuple[0], y_tuple[0], gradient, sampling_theta) - self.benefit(features_tuple[1], decisions_tuple[1], y_tuple[1], gradient, sampling_theta)
+        s_idx = np.arange(s.shape[0]).reshape(-1, 1)
+        s_0_idx = s_idx[s == 0]
+        s_1_idx = s_idx[s == 1]
 
-    def copy(self):
-        """ Creates a deep copy of the policy.
-        
-        Returns:
-            copy: The created deep copy.
-        """
-        raise NotImplementedError("Subclass must override copy(self).")
+        benefit_s0 = self._process_function_result(x[s_0_idx], s[s_0_idx], self.benefit_value_function(decisions_s=decisions[s_0_idx], y_s=y[s_0_idx]), gradient, sampling_theta)
+        benefit_s1 = self._process_function_result(x[s_1_idx], s[s_1_idx], self.benefit_value_function(decisions_s=decisions[s_1_idx], y_s=y[s_1_idx]), gradient, sampling_theta)
 
-    def extract_features(self, x, s):
+        return benefit_s0 - benefit_s1
+
+    def _extract_features(self, x, s):
         """ Extracts the relevant features from the sample.
         
         Args:
@@ -103,62 +84,10 @@ class BasePolicy():
 
         return features
 
-    def extract_fairness_tuples(self, features, decisions, s, y):
-        s_idx = np.arange(s.shape[0]).reshape(-1, 1)
-        s_0_idx = s_idx[s == 0]
-        s_1_idx = s_idx[s == 1]
-        decisions_tuple = [decisions[s_0_idx], decisions[s_1_idx]]
-        y_tuple = [y[s_0_idx], y[s_1_idx]]
-        features_tuple = [features[s_0_idx], features[s_1_idx]]
+    def _fairness_function(self, x, s, y, decisions, gradient=False, sampling_theta=None):
+        return self.fairness_function(x=x, s=s, y=y, decisions=decisions, gradient=gradient, sampling_theta=sampling_theta, policy=self)
 
-        return features_tuple, decisions_tuple, y_tuple
-
-    def fairness(self, features_tuple, decisions_tuple, y_tuple, gradient=False, sampling_theta=None):
-        """ Calculates the fairness value or the fairness gradient according to the fairness value function callback specified
-        in the constructor.
-        
-        Args:
-            x: The features of the n samples \n
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            gradient: The flag specifying whether the gradient should be calculated instead of the function value.
-            sample_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
-            the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
-
-        Returns:
-            fairness: The fairness value or gradient of the policy.
-        """
-        return self.fairness_function(features_tuple=features_tuple, decisions_tuple=decisions_tuple, y_tuple=y_tuple, gradient=gradient, sampling_theta=sampling_theta, policy=self)
-
-    def policy_gradient(self, x, s, y, sampling_theta=None):
-        """ Calculates the overall gradient of the policy.
-        
-        Args:
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            sample_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
-            the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
-
-
-        Returns:
-            gradient: The gradient of the policy.
-        """
-        # make decision according to current policy
-        features = self.extract_features(x, s)
-        decisions = self(features)
-
-        gradient = self.utility(features, decisions, y, gradient=True, sampling_theta=sampling_theta)
-
-        if self.fairness_rate > 0:
-            features_tuple, decisions_tuple, y_tuple = self.extract_fairness_tuples(features, decisions, s, y)
-
-            grad_fairness_penalty = self.fairness(features_tuple, decisions_tuple, y_tuple, gradient=False, sampling_theta=sampling_theta) * self.fairness(features_tuple, decisions_tuple, y_tuple, gradient=True, sampling_theta=sampling_theta)
-            gradient += self.fairness_rate * grad_fairness_penalty
-
-        return gradient
-
-    def probability(self, features):
+    def _probability(self, features):
         """ Calculates the probability of a positiv decision given the specified features.
         
         Args:
@@ -169,13 +98,14 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override calculate probability(features).")
 
-    def process_function_result(self, features, target, gradient=False, sampling_theta=None):
+    def _process_function_result(self, x, s, target, gradient=False, sampling_theta=None):
         """ Further processes the result of the utility, benefit and fairness value functions by applying inverse propensity scoring, 
         calculating the gradient or both. Applies IPS according to the formula E[target/pi_theta(e = 1 | x, s)] and/or calculates the 
         gradient of the specified function value according to the formula E[target * \log \grad policy(e | x, s)].
         
         Args:
-            features: The features of the n samples
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
             target: The function result for which the gradient will be calculated.
             gradient: The flag specifying whether the gradient should be calculated instead of the function value.
             sample_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
@@ -184,43 +114,91 @@ class BasePolicy():
         Returns:
             gradient: The gradient of the target.
         """
-        raise NotImplementedError("Subclass must override target_gradient(self, x, s, target, sampling_theta=None).")
+        raise NotImplementedError("Subclass must override _process_function_result(self, x, s, target, gradient=False, sampling_theta=None).")
 
-    def regularized_utility(self, features, decisions, s, y, sampling_theta=None):
+    def benefit_delta(self, x, s, y, sampling_theta=None):
+        """ Calculates the absolute difference of benefits of the given policy for the provided data.
+        
+        Args:
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
+            y: The ground truth labels of the n samples
+            sampling_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
+            the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
+
+        Returns:
+            benefit_difference: The difference in benefits of the policy.
+        """
+        decisions = self(x, s)        
+        return np.absolute(self._benefit_difference(x, s, y, decisions, sampling_theta))
+
+    def copy(self):
+        """ Creates a deep copy of the policy.
+        
+        Returns:
+            copy: The created deep copy.
+        """
+        raise NotImplementedError("Subclass must override copy(self).")
+
+    def policy_gradient(self, x, s, y, sampling_theta=None):
+        """ Calculates the gradient of the policy given the data.
+        
+        Args:
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
+            y: The ground truth labels of the n samples
+            sampling_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
+            the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
+
+        Returns:
+            gradient: The gradient of the policy.
+        """
+        # make decision according to current policy
+        decisions = self(x, s)
+        gradient = self._process_function_result(x, s, self.utility_value_function(decisions=decisions, y=y), gradient=True, sampling_theta=sampling_theta) 
+
+        if self.fairness_rate > 0:
+            fairness_value = self._fairness_function(x, s, y, decisions, gradient=False, sampling_theta=sampling_theta)
+            fairness_gradient_value = self._fairness_function(x, s, y, decisions, gradient=True, sampling_theta=sampling_theta)
+            grad_fairness = self.fairness_rate * fairness_value * fairness_gradient_value
+            gradient += grad_fairness
+
+        return gradient
+
+    def regularized_utility(self, x, s, y, sampling_theta=None):
         """ Calculates the overall utility of the policy regularized by the fairness constraint.
         
         Args:
             x: The features of the n samples
             s: The sensitive attribute of the n samples
             y: The ground truth labels of the n samples
+            sampling_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
+            the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
 
         Returns:
             utility: The utility of the policy.
         """
-        regularized_utility = self.utility(features, decisions, y, sampling_theta=sampling_theta)
+        decisions = self(x, s)
+        regularized_utility = self._process_function_result(x, s, self.utility_value_function(decisions=decisions, y=y), sampling_theta=sampling_theta)
 
         if self.fairness_rate > 0:
-            features_tuple, decisions_tuple, y_tuple = self.extract_fairness_tuples(features, decisions, s, y)   
-            fairness_penalty = (self.fairness_rate/2) * (self.fairness(features_tuple, decisions_tuple, y_tuple, sampling_theta=sampling_theta)**2)
+            fairness_value = self._fairness_function(x, s, y, decisions, sampling_theta=sampling_theta)
+            fairness_penalty = (self.fairness_rate/2) * (fairness_value**2)
             regularized_utility -= fairness_penalty
 
         return regularized_utility
 
-    def update(self, data, learning_rate, batch_size):
+    def update(self, x, s, y, learning_rate, batch_size):
         """ Updates the policy parameters using stochastic gradient descent.
         
         Args:
             x: The features of the n samples
             s: The sensitive attribute of the n samples
-            target: The function result for which the gradient will be calculated.
-            sample_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
-            the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
+            y: The ground truth labels of the n samples
+            learning_rate: The rate with which the parameters will be updated.
+            batch_size: The minibatch size of SGD.
 
-
-        Returns:
-            gradient: The gradient of the target.
         """
-        x, s, y = data
         sampling_theta = self.theta.copy()    
         #print("Sampling Theta {}".format(sampling_theta))
 
@@ -230,9 +208,8 @@ class BasePolicy():
 
             # update the parameters
             self.theta += learning_rate * gradient 
-            #print("Updated Theta {}".format(self.theta))
 
-    def utility(self, features, decisions, y, gradient=False, sampling_theta=None):
+    def utility(self, x, s, y, sampling_theta=None):
         """ Calculates the utility value or the utility gradient according to the utility vaue function callback specified
         in the constructor.
         
@@ -240,14 +217,14 @@ class BasePolicy():
             x: The features of the n samples
             s: The sensitive attribute of the n samples
             y: The ground truth labels of the n samples
-            gradient: The flag specifying whether the gradient should be calculated instead of the function value.
-            sample_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
+            sampling_theta: The parameters of the distribution that was used to sample the n samples and therefore defines
             the policy by which the samples will be inverse propensity scored. If sample_theta=None no IPS is applied.
 
         Returns:
             utility: The utility value or gradient of the policy.
         """
-        raise NotImplementedError("Subclass must override utility(self, x, s, gradient=False, sampling_theta=None).")
+        decisions = self(x, s)
+        return self._process_function_result(x, s, self.utility_value_function(decisions=decisions, y=y), sampling_theta=sampling_theta)
 
 class LogisticPolicy(BasePolicy):
     """ The implementation of the logistic policy. """
@@ -261,16 +238,7 @@ class LogisticPolicy(BasePolicy):
             dim_x,
             dim_s)
 
-        self.feature_map = feature_map
-    
-    def benefit(self, features_s, decisions_s, y_s, gradient=False, sampling_theta=None):
-        benefit_params = {
-            "features_s": features_s, 
-            "decisions_s": decisions_s, 
-            "y_s": y_s
-        }
-        benefit_value = self.benefit_value_function(**benefit_params)        
-        return self.process_function_result(features_s, benefit_value, gradient, sampling_theta)
+        self.feature_map = feature_map    
 
     def copy(self):
         approx_policy = LogisticPolicy(
@@ -284,30 +252,18 @@ class LogisticPolicy(BasePolicy):
         approx_policy.theta = self.theta.copy()
         return approx_policy
 
-    def probability(self, features):
+    def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self.theta))
 
-    def process_function_result(self, features, target, gradient=False, sampling_theta=None):
-        phi = self.feature_map(features)
+    def _process_function_result(self, x, s, target, gradient=False, sampling_theta=None):
+        phi = self.feature_map(self._extract_features(x, s))
         ones = np.ones((target.shape[0], 1))
 
         if sampling_theta is not None:
             sampling_theta = sampling_theta.reshape(-1, 1)
-            ips_weight = ones + np.exp(-np.matmul(phi, sampling_theta))
-            target *= ips_weight
+            target *= ones + np.exp(-np.matmul(phi, sampling_theta))
 
         if gradient:
-            log_gradient_denomniator = ones + np.exp(np.matmul(phi, self.theta.reshape(-1, 1)))
-            target = (target * phi)/log_gradient_denomniator
+            target = (target * phi)/(ones + np.exp(np.matmul(phi, self.theta.reshape(-1, 1))))
             
         return target.mean(axis=0)
-
-    def utility(self, features, decisions, y, gradient=False, sampling_theta=None):
-        utility_params = {
-            "features": features, 
-            "decisions": decisions, 
-            "y": y
-        }
-        utility_value = self.utility_value_function(**utility_params)        
-        return self.process_function_result(features, utility_value, gradient, sampling_theta)
-
