@@ -10,7 +10,7 @@ from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
 
 def fairness_function(**fairness_kwargs):
-    return fairness_kwargs['policy'].benefit_difference(fairness_kwargs['x'], fairness_kwargs['s'], fairness_kwargs['y'], fairness_kwargs['gradient'], fairness_kwargs['sampling_theta'])
+    return fairness_kwargs['policy'].benefit_difference(fairness_kwargs['features_tuple'], fairness_kwargs['decisions_tuple'], fairness_kwargs['y_tuple'], fairness_kwargs['gradient'], fairness_kwargs['sampling_theta'])
 
 i = 1
 training_parameters = {
@@ -26,15 +26,23 @@ training_parameters = {
     },
     'fairness_rate':0,
     'fraction_protected':0.3,
-    'num_test_samples': 5000
+    'num_test_samples': 5000,
+    'bias': True,
+    'fairness_function': fairness_function,
+    'benefit_value_function': demographic_parity
 }
-training_parameters['dim_theta'] = training_parameters['dim_x'] + training_parameters['dim_s'] if training_parameters['dim_s'] else training_parameters['dim_x']
-training_parameters['feature_map'] = IdentityFeatureMap(training_parameters['dim_theta'])
+training_parameters['dim_x'] = training_parameters['dim_x'] + 1 if training_parameters['bias'] else training_parameters['dim_x']
+dim_theta = training_parameters['dim_x'] + training_parameters['dim_s'] if training_parameters['dim_s'] else training_parameters['dim_x']
+training_parameters['feature_map'] = IdentityFeatureMap(dim_theta)
 training_parameters['num_decisions'] = training_parameters['num_iterations'] * training_parameters['batch_size']
-training_parameters['fairness_function'] = fairness_function
-training_parameters['benefit_value_function'] = demographic_parity
 training_parameters['utility_value_function'] = lambda **util_params : cost_utility(cost_factor=0.55, **util_params)
 
-for utility, benefit_delta in train(**training_parameters):
+for regularized, utility, benefit_delta in train(**training_parameters):
     print("Time step {}: Utility {} \n\t Benefit Delta {}".format(i, utility, benefit_delta))
     i += 1
+
+# approx_policy_plus = self.copy()
+# approx_policy_plus.theta += epsilon
+# approx_policy_minus = self.copy()
+# approx_policy_minus.theta -= epsilon
+# approx_gradient = (approx_policy_plus.regularized_utility(X_batch[pos_decision_idx], S_batch[pos_decision_idx], Y_batch[pos_decision_idx], sampling_theta) - approx_policy_minus.regularized_utility(X_batch[pos_decision_idx], S_batch[pos_decision_idx], Y_batch[pos_decision_idx], sampling_theta)) / (2 * epsilon)

@@ -12,7 +12,8 @@ from src.distribution import SplitDistribution
 def collect_data(pi, gt_dist, num_samples, fraction_protected):
     x, s, y = collect_unbiased_data(gt_dist, num_samples, fraction_protected)
 
-    decisions = pi(x, s)
+    features = pi.extract_features(x, s)
+    decisions = pi(features)
     pos_decision_idx = np.arange(x.shape[0])
     pos_decision_idx = pos_decision_idx[decisions == 1]
 
@@ -25,7 +26,7 @@ def collect_unbiased_data(gt_dist, num_samples, fraction_protected):
     return x, s, y
 
 def train(**training_args):
-    gt_dist = SplitDistribution()
+    gt_dist = SplitDistribution(bias=training_args["bias"])
     learning_parameters = training_args["learning_parameters"]
 
     pi = LogisticPolicy(training_args["fairness_function"], training_args["benefit_value_function"], training_args["utility_value_function"], training_args["feature_map"], training_args["fairness_rate"], training_args["dim_x"], training_args["dim_s"])
@@ -40,4 +41,12 @@ def train(**training_args):
         data = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
         pi.update(data, learning_rate, training_args["batch_size"])
 
-        yield pi.regularized_utility(x_test, s_test, y_test), pi.benefit_delta(x_test, s_test, y_test)
+        # make decision according to current policy
+        features = pi.extract_features(x_test, s_test)
+        decisions = pi(features)
+
+        regularized_utility = pi.regularized_utility(features, decisions, s_test, y_test)
+        utility = pi.utility(features, decisions, y_test)
+        benefit_delta = pi.benefit_delta(features, decisions, s_test, y_test)
+
+        yield regularized_utility, utility, benefit_delta

@@ -6,6 +6,9 @@ from scipy.special import expit as sigmoid
 # region Synthetic 1D Distribution for Proof of Concept (Split)
 # -------------------------------------------------------------------------
 class SplitDistribution():
+    def __init__(self, bias=False):
+        self.bias = bias
+
     def sample_features(self, n, fraction_protected):
         """
         Draw examples only for the features of the true distribution.
@@ -22,11 +25,21 @@ class SplitDistribution():
         ).astype(int)
         x = 3.5 * np.random.randn(n, 1) + 3 * (s - 0.5)
 
-        return x.reshape((n, -1)), s.reshape((n, -1))
+        x = x.reshape((n, -1))
+        s = s.reshape((n, -1))
+
+        if self.bias:
+            ones = np.ones((n, 1))
+            x = np.hstack((ones, x))
+
+        return x, s 
 
     def sample_labels(self, x, s):
+        if self.bias:
+            x = x[:,1]
+
         yprob = 0.8 * sigmoid(0.6 * (x + 3)) * sigmoid(
             -5 * (x - 3)
         ) + sigmoid(x - 5)
 
-        return np.random.binomial(1, yprob)
+        return np.random.binomial(1, yprob).reshape(-1, 1)
