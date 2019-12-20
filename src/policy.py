@@ -62,8 +62,8 @@ class BasePolicy():
         s_0_idx = s_idx[s == 0]
         s_1_idx = s_idx[s == 1]
 
-        benefit_s0 = self._process_function_result(x[s_0_idx], s[s_0_idx], self.benefit_value_function(decisions_s=decisions[s_0_idx], y_s=y[s_0_idx]), gradient, sampling_theta)
-        benefit_s1 = self._process_function_result(x[s_1_idx], s[s_1_idx], self.benefit_value_function(decisions_s=decisions[s_1_idx], y_s=y[s_1_idx]), gradient, sampling_theta)
+        benefit_s0 = self._calculate_expectation(x[s_0_idx], s[s_0_idx], self.benefit_value_function(decisions_s=decisions[s_0_idx], y_s=y[s_0_idx]), gradient, sampling_theta)
+        benefit_s1 = self._calculate_expectation(x[s_1_idx], s[s_1_idx], self.benefit_value_function(decisions_s=decisions[s_1_idx], y_s=y[s_1_idx]), gradient, sampling_theta)
 
         return benefit_s0 - benefit_s1
 
@@ -98,7 +98,7 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override calculate probability(features).")
 
-    def _process_function_result(self, x, s, target, gradient=False, sampling_theta=None):
+    def _calculate_expectation(self, x, s, target, gradient=False, sampling_theta=None):
         """ Further processes the result of the utility, benefit and fairness value functions by applying inverse propensity scoring, 
         calculating the gradient or both. Applies IPS according to the formula E[target/pi_theta(e = 1 | x, s)] and/or calculates the 
         gradient of the specified function value according to the formula E[target * \log \grad policy(e | x, s)].
@@ -114,7 +114,7 @@ class BasePolicy():
         Returns:
             gradient: The gradient of the target.
         """
-        raise NotImplementedError("Subclass must override _process_function_result(self, x, s, target, gradient=False, sampling_theta=None).")
+        raise NotImplementedError("Subclass must override _calculate_expectation(self, x, s, target, gradient=False, sampling_theta=None).")
 
     def benefit_delta(self, x, s, y, sampling_theta=None):
         """ Calculates the absolute difference of benefits of the given policy for the provided data.
@@ -155,7 +155,7 @@ class BasePolicy():
         """
         # make decision according to current policy
         decisions = self(x, s)
-        gradient = self._process_function_result(x, s, self.utility_value_function(decisions=decisions, y=y), gradient=True, sampling_theta=sampling_theta) 
+        gradient = self._calculate_expectation(x, s, self.utility_value_function(decisions=decisions, y=y), gradient=True, sampling_theta=sampling_theta) 
 
         if self.fairness_rate > 0:
             fairness_value = self._fairness_function(x, s, y, decisions, gradient=False, sampling_theta=sampling_theta)
@@ -179,7 +179,7 @@ class BasePolicy():
             utility: The utility of the policy.
         """
         decisions = self(x, s)
-        regularized_utility = self._process_function_result(x, s, self.utility_value_function(decisions=decisions, y=y), sampling_theta=sampling_theta)
+        regularized_utility = self._calculate_expectation(x, s, self.utility_value_function(decisions=decisions, y=y), sampling_theta=sampling_theta)
 
         if self.fairness_rate > 0:
             fairness_value = self._fairness_function(x, s, y, decisions, sampling_theta=sampling_theta)
@@ -224,7 +224,7 @@ class BasePolicy():
             utility: The utility value or gradient of the policy.
         """
         decisions = self(x, s)
-        return self._process_function_result(x, s, self.utility_value_function(decisions=decisions, y=y), sampling_theta=sampling_theta)
+        return self._calculate_expectation(x, s, self.utility_value_function(decisions=decisions, y=y), sampling_theta=sampling_theta)
 
 class LogisticPolicy(BasePolicy):
     """ The implementation of the logistic policy. """
@@ -255,7 +255,7 @@ class LogisticPolicy(BasePolicy):
     def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self.theta))
 
-    def _process_function_result(self, x, s, target, gradient=False, sampling_theta=None):
+    def _calculate_expectation(self, x, s, target, gradient=False, sampling_theta=None):
         phi = self.feature_map(self._extract_features(x, s))
         ones = np.ones((target.shape[0], 1))
 

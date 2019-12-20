@@ -40,8 +40,6 @@ def train(**training_args):
         x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
         pi.update(x, s, y, learning_rate, training_args["batch_size"])
 
-        # make decision according to current policy
-
         regularized_utility = pi.regularized_utility(x_test, s_test, y_test)
         utility = pi.utility(x_test, s_test, y_test)
         benefit_delta = pi.benefit_delta(x_test, s_test, y_test)

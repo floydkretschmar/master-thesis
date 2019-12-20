@@ -14,11 +14,14 @@ def fairness_function(**fairness_kwargs):
     x = fairness_kwargs["x"]
     y = fairness_kwargs["y"]
     s = fairness_kwargs["s"]
-    decisions = fairness_kwargs["decisions"]
+    decisions = fairness_kwargs["decisions"].reshape(-1, 1)
     gradient = fairness_kwargs["gradient"]
     sampling_theta = fairness_kwargs["sampling_theta"]
 
-    return policy._benefit_difference(x, s, y, decisions, gradient, sampling_theta)
+    mu_s = policy._calculate_expectation(x, s, s.astype(float), False, sampling_theta).reshape(-1, 1)
+    covariance = (s - mu_s) * decisions
+
+    return policy._calculate_expectation(x, s, covariance, gradient, sampling_theta)
 
 i = 1
 training_parameters = {
