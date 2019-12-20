@@ -28,7 +28,7 @@ def train(**training_args):
     gt_dist = SplitDistribution(bias=training_args["bias"])
     learning_parameters = training_args["learning_parameters"]
 
-    pi = LogisticPolicy(training_args["fairness_function"], training_args["benefit_value_function"], training_args["utility_value_function"], training_args["feature_map"], training_args["fairness_rate"], training_args["dim_x"], training_args["dim_s"])
+    pi = LogisticPolicy(training_args["dim_theta"], training_args["fairness_function"], training_args["benefit_value_function"], training_args["utility_value_function"], training_args["feature_map"], training_args["fairness_rate"], training_args["use_sensitve_attributes"])
 
     learning_rate = learning_parameters["learning_rate"]
     x_test, s_test, y_test = collect_unbiased_data(gt_dist, training_args["num_test_samples"], training_args["fraction_protected"])

@@ -13,21 +13,14 @@ from src.util import iterate_minibatches
 class BasePolicy():
     """ The base implementation of a policy """
 
-    def __init__(self, fairness_function, benefit_value_function, utility_value_function, fairness_rate, dim_x, dim_s=None): 
+    def __init__(self, dim_theta, fairness_function, benefit_value_function, utility_value_function, fairness_rate, use_sensitive_attributes): 
         self.fairness_function = fairness_function
         self.benefit_value_function = benefit_value_function
         self.utility_value_function = utility_value_function
-        self.use_s = False
+        self.use_sensitive_attributes = False
         self.fairness_rate = fairness_rate
 
-        dim_theta = dim_x
-        self.dim_x = dim_x
-        self.dim_s = None
-        if dim_s is not None:
-            self.use_s = True
-            dim_theta += dim_s
-            self.dim_s = dim_s
-
+        self.use_sensitive_attributes = use_sensitive_attributes
         self.theta = np.zeros(dim_theta)
 
     def __call__(self, x, s):
@@ -77,7 +70,7 @@ class BasePolicy():
         Returns:
             features: The relevant features of the samples.
         """
-        if self.use_s:
+        if self.use_sensitive_attributes:
             features = np.concatenate((x, s), axis=1)
         else:
             features = x
@@ -229,26 +222,26 @@ class BasePolicy():
 class LogisticPolicy(BasePolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, fairness_function, benefit_value_function, utility_value_function, feature_map, fairness_rate, dim_x, dim_s=None): 
+    def __init__(self, dim_theta, fairness_function, benefit_value_function, utility_value_function, feature_map, fairness_rate, use_sensitive_attribute): 
         super(LogisticPolicy, self).__init__(
+            dim_theta,
             fairness_function,
             benefit_value_function,
             utility_value_function,
             fairness_rate,
-            dim_x,
-            dim_s)
+            use_sensitive_attribute)
 
         self.feature_map = feature_map    
 
     def copy(self):
         approx_policy = LogisticPolicy(
+            self.theta.shape[0],
             self.fairness_function, 
             self.benefit_value_function, 
             self.utility_value_function, 
             self.feature_map, 
             self.fairness_rate, 
-            self.dim_x, 
-            self.dim_s) 
+            self.use_sensitive_attributes) 
         approx_policy.theta = self.theta.copy()
         return approx_policy
 
