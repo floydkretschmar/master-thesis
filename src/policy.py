@@ -254,6 +254,7 @@ class LogisticPolicy(BasePolicy):
 
         if sampling_theta is not None:
             sampling_theta = sampling_theta.reshape(-1, 1)
+            print(ones + np.exp(-np.matmul(phi, sampling_theta)))
             target *= ones + np.exp(-np.matmul(phi, sampling_theta))
 
         if gradient:

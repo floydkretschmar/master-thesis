@@ -33,13 +33,25 @@ def train(**training_args):
     learning_rate = learning_parameters["learning_rate"]
     x_test, s_test, y_test = collect_unbiased_data(gt_dist, training_args["num_test_samples"], training_args["fraction_protected"])
 
+    # Initial data collection
+    x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+
     for i in range(1, training_args["time_steps"] + 1):        
         if i % learning_parameters['decay_step'] == 0:
             learning_rate *= learning_parameters['decay_rate']
-
-        x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+        # train the policy
         pi.update(x, s, y, learning_rate, training_args["batch_size"])
 
+        # Collect new data
+        if training_args["keep_collected_data"]:
+            new_x, new_s, new_y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+            x = np.vstack((x, new_x))
+            s = np.vstack((s, new_s))
+            y = np.vstack((y, new_y))
+        else:
+            x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+
+        # evaluate the policy performance
         regularized_utility = pi.regularized_utility(x_test, s_test, y_test)
         utility = pi.utility(x_test, s_test, y_test)
         benefit_delta = pi.benefit_delta(x_test, s_test, y_test)
