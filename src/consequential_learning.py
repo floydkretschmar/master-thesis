@@ -40,7 +40,7 @@ def train(**training_args):
         if i % learning_parameters['decay_step'] == 0:
             learning_rate *= learning_parameters['decay_rate']
         # train the policy
-        pi.update(x, s, y, learning_rate, training_args["batch_size"])
+        pi.update(x, s, y, learning_rate, training_args["batch_size"], training_args["num_iterations"])
 
         # Collect new data
         if training_args["keep_collected_data"]:

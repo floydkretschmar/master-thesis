@@ -181,7 +181,7 @@ class BasePolicy():
 
         return regularized_utility
 
-    def update(self, x, s, y, learning_rate, batch_size):
+    def update(self, x, s, y, learning_rate, batch_size, epochs):
         """ Updates the policy parameters using stochastic gradient descent.
         
         Args:
@@ -195,7 +195,7 @@ class BasePolicy():
         sampling_theta = self.theta.copy()    
         #print("Sampling Theta {}".format(sampling_theta))
 
-        for X_batch, S_batch, Y_batch in iterate_minibatches(x, s, y, batch_size):  
+        for X_batch, S_batch, Y_batch in iterate_minibatches(x, s, y, batch_size, epochs):  
             # calculate the gradient
             gradient = self.policy_gradient(X_batch, S_batch, Y_batch, sampling_theta)            
 
@@ -254,10 +254,23 @@ class LogisticPolicy(BasePolicy):
 
         if sampling_theta is not None:
             sampling_theta = sampling_theta.reshape(-1, 1)
-            print(ones + np.exp(-np.matmul(phi, sampling_theta)))
-            target *= ones + np.exp(-np.matmul(phi, sampling_theta))
+            distance = np.matmul(phi, sampling_theta)
+            #print(distance.min(), distance.max())
+            #distance = np.minimum(np.matmul(phi, sampling_theta), 1e5)
+            #distance = np.maximum(distance, -1e5)
+            #print(distance)
+            exp = np.exp(-distance)
+            target *= ones + exp
+
+            # ips_weight = sigmoid(np.matmul(phi, sampling_theta))
+            # target /= ips_weight
 
         if gradient:
-            target = (target * phi)/(ones + np.exp(np.matmul(phi, self.theta.reshape(-1, 1))))
-            
+            #distance = np.minimum(np.matmul(phi, self.theta.reshape(-1, 1)), 1e5)
+            #distance = np.maximum(distance, -1e5)
+            #exp = np.minimum(np.exp(distance), 1e20)
+            #target = (target * phi)/(ones + exp)
+            target = target * sigmoid(-np.matmul(phi, self.theta.reshape(-1, 1))) * phi
+            #print(target.mean(axis=0))
+
         return target.mean(axis=0)
