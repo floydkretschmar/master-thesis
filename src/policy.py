@@ -1,5 +1,6 @@
 import sys
 import os
+import pandas as pd
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -83,8 +84,24 @@ class BasePolicy():
         s_0_idx = s_idx[s == 0]
         s_1_idx = s_idx[s == 1]
 
-        benefit_s0 = self._calculate_expectation(x[s_0_idx], s[s_0_idx], self.benefit_value_function(decisions_s=decisions[s_0_idx], y_s=y[s_0_idx]), gradient, sampling_data)
-        benefit_s1 = self._calculate_expectation(x[s_1_idx], s[s_1_idx], self.benefit_value_function(decisions_s=decisions[s_1_idx], y_s=y[s_1_idx]), gradient, sampling_data)
+        if sampling_data is not None and self.learn_on_entire_history:
+            sampling_data_s0 = {
+                "theta_idx": sampling_data["theta_idx"][s_0_idx],
+                "sampling_thetas": sampling_data["sampling_thetas"]
+            }
+            sampling_data_s1 = {
+                "theta_idx": sampling_data["theta_idx"][s_1_idx],
+                "sampling_thetas": sampling_data["sampling_thetas"]
+            }
+        elif sampling_data is not None:
+            sampling_data_s0 = sampling_data
+            sampling_data_s1 = sampling_data
+        else:
+            sampling_data_s0 = None
+            sampling_data_s1 = None
+
+        benefit_s0 = self._calculate_expectation(x[s_0_idx], s[s_0_idx], self.benefit_value_function(decisions_s=decisions[s_0_idx], y_s=y[s_0_idx]), gradient, sampling_data_s0)
+        benefit_s1 = self._calculate_expectation(x[s_1_idx], s[s_1_idx], self.benefit_value_function(decisions_s=decisions[s_1_idx], y_s=y[s_1_idx]), gradient, sampling_data_s1)
 
         return benefit_s0 - benefit_s1
 
@@ -159,6 +176,7 @@ class BasePolicy():
             fairness_value = self._fairness_function(x, s, y, decisions, gradient=False, sampling_data=sampling_data)
             fairness_gradient_value = self._fairness_function(x, s, y, decisions, gradient=True, sampling_data=sampling_data)
             grad_fairness = self.fairness_rate * fairness_value * fairness_gradient_value
+            print(grad_fairness)
             gradient += grad_fairness
 
         return gradient
@@ -237,7 +255,7 @@ class BasePolicy():
                 "x": x,
                 "s": s,
                 "y": y,
-                "theta_idx": np.zeros((x.shape[0], 1)),
+                "theta_idx": np.zeros((x.shape[0], 1), dtype=int),
                 "sampling_thetas": [self.theta.copy()]
             }
         elif self.learn_on_entire_history:
@@ -248,7 +266,7 @@ class BasePolicy():
             self.data_history["x"] = x
             self.data_history["y"] = y
             self.data_history["s"] = s
-            self.data_history["theta_idx"] = np.vstack((self.data_history["theta_idx"], np.full((x.shape[0], 1), theta_idx)))
+            self.data_history["theta_idx"] = np.vstack((self.data_history["theta_idx"], np.full((x.shape[0], 1), theta_idx, dtype=int)))
             self.data_history["sampling_thetas"].append(self.theta.copy())
         else:
             sampling_data = self.theta.copy()    
@@ -294,14 +312,15 @@ class BasePolicy():
 class LogisticPolicy(BasePolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, dim_theta, fairness_function, benefit_value_function, utility_value_function, feature_map, fairness_rate, use_sensitive_attribute): 
+    def __init__(self, dim_theta, fairness_function, benefit_value_function, utility_value_function, feature_map, fairness_rate, use_sensitive_attributes, learn_on_entire_history): 
         super(LogisticPolicy, self).__init__(
             dim_theta,
             fairness_function,
             benefit_value_function,
             utility_value_function,
             fairness_rate,
-            use_sensitive_attribute)
+            use_sensitive_attributes,
+            learn_on_entire_history)
 
         self.feature_map = feature_map    
 
@@ -313,7 +332,8 @@ class LogisticPolicy(BasePolicy):
             self.utility_value_function, 
             self.feature_map, 
             self.fairness_rate, 
-            self.use_sensitive_attributes) 
+            self.use_sensitive_attributes,
+            self.learn_on_entire_history) 
         approx_policy.theta = self.theta.copy()
         return approx_policy
 
@@ -324,23 +344,28 @@ class LogisticPolicy(BasePolicy):
         phi = self.feature_map(self._extract_features(x, s))
         ones = np.ones((function_value.shape[0], 1))
 
-        def weighting(row):
-            pass
-
         if sampling_data is not None and self.learn_on_entire_history:
-            np.apply_along_axis(weighting, 1, function_value)
+            theta_idx = sampling_data["theta_idx"]
+            sampling_thetas = sampling_data["sampling_thetas"]
+
+            tmp = np.hstack((phi, theta_idx))
+
+            def weighting(row):
+                distance = np.matmul(row[:-1], sampling_thetas[int(row[-1])])
+                return np.exp(-distance)
+
+            exp = np.apply_along_axis(weighting, 1, tmp).reshape(-1, 1)
+            function_value *= (ones + exp)
         elif sampling_data is not None:
-            sampling_theta = sampling_theta.reshape(-1, 1)
+            sampling_theta = sampling_data.reshape(-1, 1)
             distance = np.matmul(phi, sampling_theta)
             exp = np.exp(-distance)
             function_value *= (ones + exp)
 
         if gradient:
-            #distance = np.minimum(np.matmul(phi, self.theta.reshape(-1, 1)), 1e5)
-            #distance = np.maximum(distance, -1e5)
-            #exp = np.minimum(np.exp(distance), 1e20)
-            #target = (target * phi)/(ones + exp)
+            # distance = np.matmul(phi, self.theta.reshape(-1, 1))
+            # exp = np.exp(distance)
+            # function_value = (function_value * phi)/(ones + exp)
             function_value = function_value * sigmoid(-np.matmul(phi, self.theta.reshape(-1, 1))) * phi
-            #print(target.mean(axis=0))
 
         return function_value.mean(axis=0)
