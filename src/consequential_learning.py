@@ -54,8 +54,9 @@ def train(**training_args):
         x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
 
         # evaluate the policy performance
-        regularized_utility = pi.regularized_utility(x_test, s_test, y_test)
-        utility = pi.utility(x_test, s_test, y_test)
-        benefit_delta = pi.benefit_delta(x_test, s_test, y_test)
+        decisions_test = pi(x_test, s_test)
+        regularized_utility = pi.regularized_utility(x_test, s_test, y_test, decisions_test)
+        utility = pi.utility(x_test, s_test, y_test, decisions_test)
+        benefit_delta = pi.benefit_delta(x_test, s_test, y_test, decisions_test)
 
         yield regularized_utility, utility, benefit_delta

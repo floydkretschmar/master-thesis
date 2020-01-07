@@ -38,7 +38,7 @@ def fairness_function(**fairness_kwargs):
 i = 1
 dim_x = 1
 training_parameters = {
-    'keep_collected_data': True,
+    'keep_collected_data': False,
     'use_sensitve_attributes': False,
     'time_steps':200,
     'batch_size':512,

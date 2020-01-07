@@ -176,7 +176,6 @@ class BasePolicy():
             fairness_value = self._fairness_function(x, s, y, decisions, gradient=False, sampling_data=sampling_data)
             fairness_gradient_value = self._fairness_function(x, s, y, decisions, gradient=True, sampling_data=sampling_data)
             grad_fairness = self.fairness_rate * fairness_value * fairness_gradient_value
-            print(grad_fairness)
             gradient += grad_fairness
 
         return gradient
@@ -192,7 +191,7 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override calculate probability(features).")
 
-    def benefit_delta(self, x, s, y):
+    def benefit_delta(self, x, s, y, decisions):
         """ Calculates the absolute difference of benefits of the given policy for the provided data.
         
         Args:
@@ -204,8 +203,7 @@ class BasePolicy():
 
         Returns:
             benefit_difference: The difference in benefits of the policy.
-        """
-        decisions = self(x, s)        
+        """    
         return np.absolute(self._benefit_difference(x, s, y, decisions))
 
     def copy(self):
@@ -216,7 +214,7 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override copy(self).")
 
-    def regularized_utility(self, x, s, y):
+    def regularized_utility(self, x, s, y, decisions):
         """ Calculates the overall utility of the policy regularized by the fairness constraint.
         
         Args:
@@ -227,7 +225,6 @@ class BasePolicy():
         Returns:
             utility: The utility of the policy.
         """
-        decisions = self(x, s)
         regularized_utility = self._calculate_expectation(x, s, self.utility_value_function(decisions=decisions, y=y))
 
         if self.fairness_rate > 0:
@@ -292,9 +289,9 @@ class BasePolicy():
             gradient = self._policy_gradient(X_batch, S_batch, Y_batch, sampling_data)            
 
             # update the parameters
-            self.theta += learning_rate * gradient 
+            self.theta += learning_rate * gradient
 
-    def utility(self, x, s, y):
+    def utility(self, x, s, y, decisions):
         """ Calculates the utility value or the utility gradient according to the utility vaue function callback specified
         in the constructor.
         
@@ -306,7 +303,6 @@ class BasePolicy():
         Returns:
             utility: The utility value or gradient of the policy.
         """
-        decisions = self(x, s)
         return self._calculate_expectation(x, s, self.utility_value_function(decisions=decisions, y=y))
 
 class LogisticPolicy(BasePolicy):
@@ -344,6 +340,11 @@ class LogisticPolicy(BasePolicy):
         phi = self.feature_map(self._extract_features(x, s))
         ones = np.ones((function_value.shape[0], 1))
 
+        if gradient:
+            distance = np.matmul(phi, self.theta.reshape(-1, 1))
+            function_value /= (ones + np.exp(distance))
+            function_value = phi * function_value
+
         if sampling_data is not None and self.learn_on_entire_history:
             theta_idx = sampling_data["theta_idx"]
             sampling_thetas = sampling_data["sampling_thetas"]
@@ -359,13 +360,7 @@ class LogisticPolicy(BasePolicy):
         elif sampling_data is not None:
             sampling_theta = sampling_data.reshape(-1, 1)
             distance = np.matmul(phi, sampling_theta)
-            exp = np.exp(-distance)
-            function_value *= (ones + exp)
+            function_value *= (ones + np.exp(-distance))
 
-        if gradient:
-            # distance = np.matmul(phi, self.theta.reshape(-1, 1))
-            # exp = np.exp(distance)
-            # function_value = (function_value * phi)/(ones + exp)
-            function_value = function_value * sigmoid(-np.matmul(phi, self.theta.reshape(-1, 1))) * phi
 
         return function_value.mean(axis=0)
