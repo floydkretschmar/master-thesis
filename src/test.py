@@ -38,7 +38,7 @@ def fairness_function(**fairness_kwargs):
 i = 1
 dim_x = 1
 training_parameters = {
-    'keep_collected_data': False,
+    'keep_collected_data': True,
     'use_sensitve_attributes': False,
     'time_steps':200,
     'batch_size':512,
@@ -48,8 +48,8 @@ training_parameters = {
         'decay_rate': 0.8,
         'decay_step': 30
     },
-    'fairness_rate':0,
-    'fraction_protected':0.3,
+    'fairness_rate':1000,
+    'fraction_protected':0.5,
     'num_test_samples': 5000,
     'bias': True,
     'benefit_value_function': demographic_parity
