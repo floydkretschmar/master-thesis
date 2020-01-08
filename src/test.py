@@ -16,13 +16,13 @@ from src.functions import cost_utility, demographic_parity
 #     s = fairness_kwargs["s"]
 #     decisions = fairness_kwargs["decisions"].reshape(-1, 1)
 #     gradient = fairness_kwargs["gradient"]
-#     sampling_data = fairness_kwargs["sampling_data"]
+#     ips_weights = fairness_kwargs["ips_weights"]
 
-#     mu_s = policy._calculate_expectation(x, s, s.astype(float), False, sampling_data).reshape(-1, 1)
+#     mu_s = policy._calculate_expectation(x, s, s.astype(float), False, ips_weights).reshape(-1, 1)
 #     covariance = (s - mu_s) * decisions
 #     #print(covariance.max())
 
-#     return policy._calculate_expectation(x, s, covariance, gradient, sampling_data)
+#     return policy._calculate_expectation(x, s, covariance, gradient, ips_weights)
 
 def fairness_function(**fairness_kwargs):
     policy = fairness_kwargs["policy"]
@@ -31,14 +31,14 @@ def fairness_function(**fairness_kwargs):
     s = fairness_kwargs["s"]
     decisions = fairness_kwargs["decisions"]
     gradient = fairness_kwargs["gradient"]
-    sampling_data = fairness_kwargs["sampling_data"]
+    ips_weights = fairness_kwargs["ips_weights"]
 
-    return policy._benefit_difference(x, s, y, decisions, gradient, sampling_data)
+    return policy._benefit_difference(x, s, y, decisions, gradient, ips_weights)
 
 i = 1
 dim_x = 1
 training_parameters = {
-    'keep_collected_data': False,
+    'keep_collected_data': True,
     'use_sensitve_attributes': False,
     'time_steps':200,
     'batch_size':512,
@@ -61,6 +61,7 @@ def util_func(**util_params):
 training_parameters['dim_theta'] = dim_x + 1 if training_parameters['bias'] else dim_x
 training_parameters['feature_map'] = IdentityFeatureMap(training_parameters['dim_theta'])
 training_parameters['num_decisions'] = training_parameters['num_iterations'] * training_parameters['batch_size']
+#training_parameters['num_decisions'] = 2500
 training_parameters['utility_value_function'] = util_func
 training_parameters['fairness_function'] = fairness_function
 
