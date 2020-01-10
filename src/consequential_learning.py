@@ -29,7 +29,7 @@ def train(**training_args):
     learning_parameters = training_args["learning_parameters"]
 
     pi = LogisticPolicy(
-        training_args["dim_theta"], 
+        training_args["theta"], 
         training_args["fairness_function"], 
         training_args["benefit_value_function"], 
         training_args["utility_value_function"], 
@@ -55,8 +55,8 @@ def train(**training_args):
 
         # evaluate the policy performance
         decisions_test = pi(x_test, s_test)
-        regularized_utility = pi.regularized_utility(x_test, s_test, y_test, decisions_test)
+        # regularized_utility = pi.regularized_utility(x_test, s_test, y_test, decisions_test)
         utility = pi.utility(x_test, s_test, y_test, decisions_test)
         benefit_delta = pi.benefit_delta(x_test, s_test, y_test, decisions_test)
 
-        yield regularized_utility, utility, benefit_delta
+        yield utility, benefit_delta

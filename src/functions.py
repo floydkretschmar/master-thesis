@@ -1,11 +1,12 @@
 ####################### BENEFIT FUNCTIONS #######################
 def demographic_parity(**benefit_parameters):
-    decisions = benefit_parameters["decisions_s"].reshape(-1, 1)
+    decisions = benefit_parameters["decisions"].reshape(-1, 1)
     return decisions
 
 def equal_opportunity(**benefit_parameters):
-    y_s = benefit_parameters["y_s"]
-    return y_s * demographic_parity(**benefit_parameters)
+    y_s = benefit_parameters["y"]
+    decisions = benefit_parameters["decisions"].reshape(-1, 1)
+    return y_s * decisions
 
 ####################### UTILITY FUNCTIONS #######################
 
