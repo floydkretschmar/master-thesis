@@ -9,52 +9,58 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 from src.consequential_learning import train
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
+from src.plotting import plot_results_over_time
+
+# def fairness_function(**fairness_kwargs):
+#     policy = fairness_kwargs["policy"]
+#     x = fairness_kwargs["x"]
+#     s = fairness_kwargs["s"]
+#     y = fairness_kwargs["y"]
+#     decisions = fairness_kwargs["decisions"].reshape(-1, 1)
+#     ips_weights = fairness_kwargs["ips_weights"]
+
+#     phi = policy.feature_map(policy._extract_features(x, s))
+#     denominator = (1.0 + np.exp(np.matmul(phi, policy.theta))).reshape(-1, 1)
+#     benefit = policy.benefit_function(decisions=decisions, y=y)
+
+#     # if ips_weights is not None:
+#     #     mu_s = np.mean(s * ips_weights, axis=0)
+#     # else:
+#     #     mu_s = np.mean(s, axis=0)
+#     mu_s = np.mean(s, axis=0)
+
+#     covariance = (s - mu_s) * benefit
+#     covariance_grad = covariance * phi
+
+#     if ips_weights is not None:
+#         #covariance *= ips_weights
+#         covariance_grad *= ips_weights/denominator
+#     else:
+#         covariance_grad /= denominator
+
+#     return np.mean(covariance, axis=0) * np.mean(covariance_grad, axis=0)
 
 def fairness_function(**fairness_kwargs):
     policy = fairness_kwargs["policy"]
     x = fairness_kwargs["x"]
     s = fairness_kwargs["s"]
+    y = fairness_kwargs["y"]
     decisions = fairness_kwargs["decisions"].reshape(-1, 1)
     ips_weights = fairness_kwargs["ips_weights"]
 
+    benefit = policy.benefit_function(decisions=decisions, y=y)
     phi = policy.feature_map(policy._extract_features(x, s))
     denominator = (1.0 + np.exp(np.matmul(phi, policy.theta))).reshape(-1, 1)
 
-    # if ips_weights is not None:
-    #     mu_s = np.mean(s * ips_weights, axis=0)
-    # else:
-    mu_s = np.mean(s, axis=0)
-
-    covariance = (s - mu_s) * decisions
-    covariance_grad = (covariance * phi)/denominator
+    benefit /= denominator
+    benefit_grad = benefit * phi#/denominator
 
     if ips_weights is not None:
-        #covariance *= ips_weights
-        covariance_grad *= ips_weights
-
-    return np.mean(covariance, axis=0) * np.mean(covariance_grad, axis=0)
-
-# def fairness_function(**fairness_kwargs):
-#     policy = fairness_kwargs["policy"]
-#     x = fairness_kwargs["x"]
-#     y = fairness_kwargs["y"]
-#     s = fairness_kwargs["s"]
-#     decisions = fairness_kwargs["decisions"]
-#     ips_weights = fairness_kwargs["ips_weights"]
-
-#     benefit = policy.benefit_function(decisions=decisions, y=y)
-#     phi = policy.feature_map(policy._extract_features(x, s))
-#     denominator = (1.0 + np.exp(np.matmul(phi, policy.theta))).reshape(-1, 1)
-
-#     benefit_grad = ((benefit * phi)/denominator)
-#     benefit = benefit/denominator
-
-#     if ips_weights is not None:
-#         #benefit = benefit * ips_weights
-#         benefit_grad = benefit_grad * ips_weights
+        #benefit *= ips_weights
+        benefit_grad *= ips_weights
         
-#     # benefit-difference * grad-benefit-difference
-#     return policy._mean_difference(benefit, s) * policy._mean_difference(benefit_grad, s)
+    # benefit-difference * grad-benefit-difference
+    return policy._mean_difference(benefit, s) * policy._mean_difference(benefit_grad, s)
 
 i = 1
 dim_x = 1
@@ -87,9 +93,26 @@ training_parameters['num_decisions'] = training_parameters['num_iterations'] * t
 training_parameters['utility_value_function'] = util_func
 training_parameters['fairness_function'] = fairness_function
 
-for utility, benefit_delta in train(**training_parameters):
-    print("Time step {}: Utility {} \n\t Benefit Delta {}".format(i, utility, benefit_delta))
-    i += 1
+benefit_deltas = []
+utilities = []
+
+for i in range(1, 21):
+    benefit_delta = []
+    utility = []
+    j = 0
+
+    print("Current iteration: {}".format(i))
+
+    for u, bd in train(**training_parameters):
+        benefit_delta.append(bd)
+        utility.append(u)
+        #print("Time step {}: Utility {} \n\t Benefit Delta {}".format(j, u, bd))
+        j += 1
+
+    benefit_deltas.append(np.array(benefit_delta))
+    utilities.append(np.array(utility))
+
+plot_results_over_time(np.array(utilities), np.array(benefit_deltas))
 
 # approx_policy_plus = self.copy()
 # approx_policy_plus.theta += epsilon
