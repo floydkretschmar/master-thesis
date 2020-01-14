@@ -25,9 +25,6 @@ class SplitDistribution():
         ).astype(int)
         x = 3.5 * np.random.randn(n, 1) + 3 * (s - 0.5)
 
-        x = x.reshape((n, -1))
-        s = s.reshape((n, -1))
-
         if self.bias:
             ones = np.ones((n, 1))
             x = np.hstack((ones, x))
@@ -42,4 +39,4 @@ class SplitDistribution():
             -5 * (x - 3)
         ) + sigmoid(x - 5)
 
-        return np.random.binomial(1, yprob).reshape(-1, 1)
+        return np.expand_dims(np.random.binomial(1, yprob), axis=1)

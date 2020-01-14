@@ -16,11 +16,11 @@ from src.plotting import plot_results_over_time
 #     x = fairness_kwargs["x"]
 #     s = fairness_kwargs["s"]
 #     y = fairness_kwargs["y"]
-#     decisions = fairness_kwargs["decisions"].reshape(-1, 1)
+#     decisions = fairness_kwargs["decisions"]
 #     ips_weights = fairness_kwargs["ips_weights"]
 
 #     phi = policy.feature_map(policy._extract_features(x, s))
-#     denominator = (1.0 + np.exp(np.matmul(phi, policy.theta))).reshape(-1, 1)
+#     denominator = np.expand_dims((1.0 + np.exp(np.matmul(phi, policy.theta))), axis=1)
 #     benefit = policy.benefit_function(decisions=decisions, y=y)
 
 #     # if ips_weights is not None:
@@ -45,12 +45,12 @@ def fairness_function(**fairness_kwargs):
     x = fairness_kwargs["x"]
     s = fairness_kwargs["s"]
     y = fairness_kwargs["y"]
-    decisions = fairness_kwargs["decisions"].reshape(-1, 1)
+    decisions = fairness_kwargs["decisions"]
     ips_weights = fairness_kwargs["ips_weights"]
 
     benefit = policy.benefit_function(decisions=decisions, y=y)
     phi = policy.feature_map(policy._extract_features(x, s))
-    denominator = (1.0 + np.exp(np.matmul(phi, policy.theta))).reshape(-1, 1)
+    denominator = np.expand_dims((1.0 + np.exp(np.matmul(phi, policy.theta))), axis=1)
 
     benefit /= denominator
     benefit_grad = benefit * phi#/denominator
@@ -106,7 +106,7 @@ for i in range(1, 21):
     for u, bd in train(**training_parameters):
         benefit_delta.append(bd)
         utility.append(u)
-        #print("Time step {}: Utility {} \n\t Benefit Delta {}".format(j, u, bd))
+        print("Time step {}: Utility {} \n\t Benefit Delta {}".format(j, u, bd))
         j += 1
 
     benefit_deltas.append(np.array(benefit_delta))

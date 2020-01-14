@@ -46,7 +46,7 @@ class BasePolicy():
         self.use_sensitive_attributes = use_sensitive_attributes
         self.learn_on_entire_history = learn_on_entire_history
         self.data_history = None
-        self.theta = theta
+        self.theta = np.array(theta)
 
     def __call__(self, x, s):
         """ Returns the decisions made by the policy for x and s.
@@ -61,7 +61,7 @@ class BasePolicy():
         features = self._extract_features(x, s)
         probability = self._probability(features)
 
-        return np.random.binomial(1, probability).astype(float)
+        return np.expand_dims(np.random.binomial(1, probability).astype(float), axis=1)
 
     def _extract_features(self, x, s):
         """ Extracts the relevant features from the sample.
@@ -103,7 +103,7 @@ class BasePolicy():
         Returns:
             mean_difference: The mean difference of the target
         """
-        s_idx = np.arange(s.shape[0]).reshape(-1, 1)
+        s_idx = np.expand_dims(np.arange(s.shape[0]), axis=1)
         s_0_idx = s_idx[s == 0]
         s_1_idx = s_idx[s == 1]
 
@@ -291,15 +291,15 @@ class LogisticPolicy(BasePolicy):
     def _ips_weights(self, x, s, sampling_distribution):
         phi = sampling_distribution.feature_map(sampling_distribution._extract_features(x, s))
 
-        sampling_theta = np.array(sampling_distribution.theta.copy()).reshape(-1,1)
+        sampling_theta = np.expand_dims(sampling_distribution.theta.copy(), axis=1)
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
         #weights = 1 / sigmoid(np.matmul(phi, sampling_theta))
 
-        return weights.reshape(-1,1)
+        return weights
 
     def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
         phi = self.feature_map(self._extract_features(x, s))
-        denominator = (1.0 + np.exp(np.matmul(phi, self.theta))).reshape(-1, 1)
+        denominator = np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)
         utility = self.utility_function(decisions=decisions, y=y)
 
         if ips_weights is not None:

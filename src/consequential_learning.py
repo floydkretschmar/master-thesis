@@ -13,7 +13,7 @@ def collect_data(pi, gt_dist, num_samples, fraction_protected):
     x, s, y = collect_unbiased_data(gt_dist, num_samples, fraction_protected)
 
     decisions = pi(x, s)
-    pos_decision_idx = np.arange(x.shape[0])
+    pos_decision_idx = np.expand_dims(np.arange(decisions.shape[0]), axis=1)
     pos_decision_idx = pos_decision_idx[decisions == 1]
 
     return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
