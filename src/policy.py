@@ -36,9 +36,6 @@ class BasePolicy():
             used overall or just in evaluating the fairness penalty.
             learn_on_entire_history: A flag that indicates whether or not the policy should be trained on the data
             of all timesteps t < t' or only on the data of the current time step.
-
-        Returns:
-            decisions: The decisions.
         """
         self.fairness_gradient_function = fairness_gradient_function
         self.benefit_function = benefit_function
@@ -229,6 +226,10 @@ class BasePolicy():
             self.data_history["s"] = s
 
         for _ in range(0, epochs):
+            # only train if there is a large enough sample size to build at least one full batch
+            if x.shape[0] < batch_size:
+                break
+
             # minibatching     
             indices = np.random.permutation(x.shape[0])   
             for batch_start in range(0, len(indices), batch_size):
@@ -240,7 +241,7 @@ class BasePolicy():
                 ips_weights_batch = ips_weights[batch_start:batch_end]
 
                 # calculate the gradient
-                gradient = self._policy_gradient(X_batch, S_batch, Y_batch, ips_weights_batch)            
+                gradient = self._policy_gradient(X_batch, S_batch, Y_batch, ips_weights_batch)   
                 # update the parameters
                 self.theta += learning_rate * gradient
 
@@ -299,12 +300,14 @@ class LogisticPolicy(BasePolicy):
     def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
         phi = self.feature_map(self._extract_features(x, s))
         denominator = (1.0 + np.exp(np.matmul(phi, self.theta))).reshape(-1, 1)
-        utility = self.utility_function(decisions=decisions, y=y) / denominator
+        utility = self.utility_function(decisions=decisions, y=y)
 
         if ips_weights is not None:
             utility = ips_weights * utility       
         
-        return np.mean(phi * utility, axis=0)
+        utility_grad = utility * phi/denominator
+        
+        return np.mean(utility_grad, axis=0)
 
     def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self.theta))
