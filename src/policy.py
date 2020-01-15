@@ -159,7 +159,7 @@ class BasePolicy():
                 decisions=decisions, 
                 policy=self)
             grad_fairness = self.fairness_rate * fairness_gradient
-            gradient += grad_fairness
+            gradient -= grad_fairness
 
         return gradient
 
@@ -293,7 +293,6 @@ class LogisticPolicy(BasePolicy):
 
         sampling_theta = np.expand_dims(sampling_distribution.theta.copy(), axis=1)
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
-        #weights = 1 / sigmoid(np.matmul(phi, sampling_theta))
 
         return weights
 
@@ -305,8 +304,7 @@ class LogisticPolicy(BasePolicy):
         if ips_weights is not None:
             utility = ips_weights * utility       
         
-        utility_grad = utility * phi/denominator
-        
+        utility_grad = utility * phi/denominator        
         return np.mean(utility_grad, axis=0)
 
     def _probability(self, features):
