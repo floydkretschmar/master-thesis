@@ -26,3 +26,8 @@ def iterate_minibatches(X, S, Y, batch_size, epochs):
         Y_batch = Y[batch_indices]
 
         yield X_batch, S_batch, Y_batch
+
+def sigmoid(x):
+    return np.where(x >= 0, 
+                    1 / (1 + np.exp(-x)), 
+                    np.exp(x) / (1 + np.exp(x)))
