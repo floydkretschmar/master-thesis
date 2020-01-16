@@ -1,4 +1,5 @@
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
 # def iterate_minibatches(X, S, Y, batch_size):
 #     indices = np.arange(Y.shape[0])
