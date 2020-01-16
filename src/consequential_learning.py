@@ -25,33 +25,32 @@ def collect_unbiased_data(gt_dist, num_samples, fraction_protected):
     return x, s, y
 
 def consequential_learning(**training_args):
-    gt_dist = SplitDistribution(bias=training_args["bias"])
-    learning_parameters = training_args["learning_parameters"]
+    gt_dist = SplitDistribution(bias=training_args["model"]["bias"])
 
     pi = LogisticPolicy(
-        training_args["theta"], 
-        training_args["fairness_function"], 
-        training_args["benefit_value_function"], 
-        training_args["utility_value_function"], 
-        training_args["feature_map"], 
-        training_args["fairness_rate"], 
-        training_args["use_sensitve_attributes"],
-        training_args["keep_collected_data"])
+        training_args["model"]["theta"], 
+        training_args["model"]["fairness_function"], 
+        training_args["model"]["benefit_value_function"], 
+        training_args["model"]["utility_value_function"], 
+        training_args["model"]["feature_map"], 
+        training_args["optimization"]["fairness_rate"], 
+        training_args["model"]["use_sensitve_attributes"],
+        training_args["model"]["keep_collected_data"])
 
-    learning_rate = learning_parameters["learning_rate"]
-    x_test, s_test, y_test = collect_unbiased_data(gt_dist, training_args["num_test_samples"], training_args["fraction_protected"])
+    learning_rate = training_args["optimization"]["learning_rate"]
+    x_test, s_test, y_test = collect_unbiased_data(gt_dist, training_args["data"]["num_test_samples"], training_args["data"]["fraction_protected"])
 
     # Initial data collection
-    x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+    x, s, y = collect_data(pi, gt_dist, training_args["data"]["num_decisions"], training_args["data"]["fraction_protected"])
 
-    for i in range(1, training_args["time_steps"] + 1):        
-        if i % learning_parameters['decay_step'] == 0:
-            learning_rate *= learning_parameters['decay_rate']
+    for i in range(1, training_args["optimization"]["time_steps"] + 1):        
+        if i % training_args["optimization"]['decay_step'] == 0:
+            learning_rate *= training_args["optimization"]['decay_rate']
         # train the policy
-        pi.update(x, s, y, learning_rate, training_args["batch_size"], training_args["num_iterations"])
+        pi.update(x, s, y, learning_rate, training_args["optimization"]["batch_size"], training_args["optimization"]["epochs"])
 
         # Collect new data
-        x, s, y = collect_data(pi, gt_dist, training_args["num_decisions"], training_args["fraction_protected"])
+        x, s, y = collect_data(pi, gt_dist, training_args["data"]["num_decisions"], training_args["data"]["fraction_protected"])
 
         # evaluate the policy performance
         decisions_test = pi(x_test, s_test)

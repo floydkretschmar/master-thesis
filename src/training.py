@@ -21,19 +21,19 @@ def train_single(training_parameters):
 
     return utility, benefit_delta
 
-def train_multiple(training_parameters, iterations, lambdas=[0.0], verbose=False, asynchronous=True):
+def train_multiple(training_parameters, iterations, verbose=False, asynchronous=True):
     mean_utilities = []
     stddev_utilites = []
     mean_benefit_delta = []
     stddev_benefit_delta = []
 
-    for fairness_rate in lambdas:
+    for fairness_rate in training_parameters["optimization"]["fairness_rates"]:
         global result_list
 
         print("Processing Lambda: {}".format(fairness_rate))
         benefit_deltas = []
         utilities = []
-        training_parameters["fairness_rate"] = fairness_rate
+        training_parameters["optimization"]["fairness_rate"] = fairness_rate
         
         # multithreaded runs of training
         if asynchronous:
