@@ -9,7 +9,6 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 import numpy as np
 #pylint: disable=no-name-in-module
 from src.util import sigmoid
-from src.util import iterate_minibatches
 
 class BasePolicy():
     """ The base implementation of a policy """
