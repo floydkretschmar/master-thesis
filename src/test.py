@@ -92,5 +92,6 @@ training_parameters['utility_value_function'] = util_func
 training_parameters['fairness_function'] = fairness_function
 
 lambdas = np.logspace(-1, 5, base=10, endpoint=True, num=10)
+lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-results = train_multiple(training_parameters, iterations=5, lambdas=lambdas)
+results = train_multiple(training_parameters, iterations=5, lambdas=lambdas, verbose=True)

@@ -23,11 +23,9 @@ def train_single(training_parameters):
 
 def train_multiple(training_parameters, iterations, lambdas=[0.0], verbose=False):
     mean_utilities = []
-    max_utilities = []
-    min_utilities = []
+    stddev_utilites = []
     mean_benefit_delta = []
-    max_benefit_delta = []
-    min_benefit_delta = []
+    stddev_benefit_delta = []
 
     for fairness_rate in lambdas:
         global result_list
@@ -43,32 +41,34 @@ def train_multiple(training_parameters, iterations, lambdas=[0.0], verbose=False
             pool.apply_async(train_single, args=(training_parameters,), callback=result_worker) 
         pool.close()
         pool.join()
+        # for _ in range(0, iterations):
+        #     result = train_single(training_parameters)
+        #     result_worker(result)
 
         results = np.array(result_list).squeeze()
         result_list = []
+
         utilities = results[:,0]
         benefit_deltas = results[:,1]
 
         mean_utilities.append(utilities.mean())
-        max_utilities.append(utilities.max())
-        min_utilities.append(utilities.min())
+        stddev_utilites.append(utilities.std())
         mean_benefit_delta.append(benefit_deltas.mean())
-        max_benefit_delta.append(benefit_deltas.max())
-        min_benefit_delta.append(benefit_deltas.min())
+        stddev_benefit_delta.append(benefit_deltas.std())
 
         if verbose:
             print("Mean utility: {}".format(utilities.mean()))
+            print("Stddev utility: {}".format(utilities.std()))
             print("Mean benefit delta: {}".format(benefit_deltas.mean()))
+            print("Stddev benefit delta: {}".format(benefit_deltas.std()))
 
     return {
         "utility_stats": {
-            "mean": mean_utilities,
-            "min": min_utilities,
-            "max": max_utilities
+            "mean": np.array(mean_utilities),
+            "stddev": np.array(stddev_utilites)
         },
         "benefit_delta_stats": {
-            "mean": mean_benefit_delta,
-            "min": max_benefit_delta,
-            "max": min_benefit_delta
+            "mean": np.array(mean_benefit_delta),
+            "stddev": np.array(stddev_benefit_delta)
         }
     }
