@@ -8,7 +8,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 import numpy as np
 #pylint: disable=no-name-in-module
-from scipy.special import expit as sigmoid
+from src.util import sigmoid
 from src.util import iterate_minibatches
 
 class BasePolicy():
@@ -92,6 +92,20 @@ class BasePolicy():
             ips_weights: The weights for inverse propensity scoring.
         """
         raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
+
+    def _log_gradient(self, x, s):
+        """ Calculates the gradient of the logarithm of the current policy used to calculate the utility
+        and fairness gradients.
+        
+        Args:
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
+            sampling_distribution: The distribution pi_0 under which the data has been collected.
+
+        Returns:
+            log_gradient: The gradient of the logarithm of the current policy.
+        """
+        raise NotImplementedError("Subclass must override _log_gradient(self, x, s).")
 
     def _mean_difference(self, target, s):
         """ Calculates the mean difference of the target with regards to the sensitive attribute.
@@ -296,15 +310,19 @@ class LogisticPolicy(BasePolicy):
 
         return weights
 
-    def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
+    def _log_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
-        denominator = np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)
+        #return phi * np.expand_dims(sigmoid(-np.matmul(phi, self.theta)), axis=1)
+        return phi/np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
+
+    def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
+        log_gradient = self._log_gradient(x, s)
         utility = self.utility_function(decisions=decisions, y=y)
 
         if ips_weights is not None:
             utility = ips_weights * utility       
         
-        utility_grad = utility * phi/denominator        
+        utility_grad = utility * log_gradient      
         return np.mean(utility_grad, axis=0)
 
     def _probability(self, features):

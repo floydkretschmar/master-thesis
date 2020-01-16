@@ -50,10 +50,9 @@ def fairness_function(**fairness_kwargs):
     ips_weights = fairness_kwargs["ips_weights"]
 
     benefit = policy.benefit_function(decisions=decisions, y=y)
-    phi = policy.feature_map(policy._extract_features(x, s))
-    denominator = np.expand_dims((1.0 + np.exp(np.matmul(phi, policy.theta))), axis=1)
-
-    benefit_grad = benefit * phi/denominator
+    log_gradient = policy._log_gradient(x, s)
+    
+    benefit_grad = benefit * log_gradient
 
     if ips_weights is not None:
         benefit *= ips_weights
@@ -92,6 +91,6 @@ training_parameters['utility_value_function'] = util_func
 training_parameters['fairness_function'] = fairness_function
 
 lambdas = np.logspace(-1, 5, base=10, endpoint=True, num=10)
-lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
+#lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-results = train_multiple(training_parameters, iterations=5, lambdas=lambdas, verbose=True)
+results = train_multiple(training_parameters, iterations=5, lambdas=[100.0], verbose=True, asynchronous=False)
