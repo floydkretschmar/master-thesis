@@ -24,7 +24,7 @@ def collect_unbiased_data(gt_dist, num_samples, fraction_protected):
 
     return x, s, y
 
-def train(**training_args):
+def consequential_learning(**training_args):
     gt_dist = SplitDistribution(bias=training_args["bias"])
     learning_parameters = training_args["learning_parameters"]
 
