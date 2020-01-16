@@ -21,7 +21,7 @@ def train_single(training_parameters):
 
     return utility, benefit_delta
 
-def train_multiple(training_parameters, iterations, lambdas=[0.0], verbose=False):
+def train_multiple(training_parameters, iterations, lambdas=[0.0], verbose=False, asynchronous=True):
     mean_utilities = []
     stddev_utilites = []
     mean_benefit_delta = []
@@ -36,14 +36,16 @@ def train_multiple(training_parameters, iterations, lambdas=[0.0], verbose=False
         training_parameters["fairness_rate"] = fairness_rate
         
         # multithreaded runs of training
-        pool = mp.Pool(mp.cpu_count())
-        for _ in range(0, iterations):
-            pool.apply_async(train_single, args=(training_parameters,), callback=result_worker) 
-        pool.close()
-        pool.join()
-        # for _ in range(0, iterations):
-        #     result = train_single(training_parameters)
-        #     result_worker(result)
+        if asynchronous:
+            pool = mp.Pool(mp.cpu_count())
+            for _ in range(0, iterations):
+                pool.apply_async(train_single, args=(training_parameters,), callback=result_worker) 
+            pool.close()
+            pool.join()
+        else:
+            for _ in range(0, iterations):
+                result = train_single(training_parameters)
+                result_worker(result)
 
         results = np.array(result_list).squeeze()
         result_list = []
