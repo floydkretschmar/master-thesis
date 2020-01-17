@@ -392,7 +392,10 @@ TSWLatexianTemp*
 doc/reading/Bishop - Pattern Recognition and Machine Learning.pdf
 
 ### ignore backup files
-.bak
+*.bak
 
 ### ignore external files
 */ext/*
+
+### ignore saved models
+*.json
