@@ -6,10 +6,61 @@ if module_path not in sys.path:
 
 import numpy as np
 import multiprocessing as mp
+import copy
 
 from src.consequential_learning import consequential_learning
+from src.util import save_dictionary, load_dictionary
 
 result_list = []
+
+def generate_data_set(training_parameters):
+    # if "save_path" in training_parameters["data"]:
+    #     data_path = "{}/data.json".format(training_parameters["data"]["save_path"])
+    #     data = load_dictionary(data_path)
+
+    #     if data is not None:
+    #         data["training_datasets"] = np.array(data["training_datasets"])
+    #         data["test_dataset"] = np.array(data["test_dataset"])
+    #         return data
+           
+    num_decisions = training_parameters["data"]["num_decisions"]
+
+    test_dataset = training_parameters["data"]["distribution"].sample_dataset(
+        training_parameters["data"]["num_test_samples"], 
+        training_parameters["data"]["fraction_protected"])
+    train_x, train_s, train_y = training_parameters["data"]["distribution"].sample_dataset(
+        num_decisions * training_parameters["optimization"]["time_steps"], 
+        training_parameters["data"]["fraction_protected"])
+
+    train_datasets = []
+    # train_datasets_for_saving = []
+    for i in range(0, train_x.shape[0], num_decisions):
+        train_datasets.append((train_x[i:i+num_decisions], train_s[i:i+num_decisions], train_y[i:i+num_decisions]))
+
+        # if "save_path" in training_parameters["data"]:
+        #     train_datasets_for_saving.append((train_x[i:i+num_decisions].tolist(), train_s[i:i+num_decisions].tolist(), train_y[i:i+num_decisions].tolist()))
+        
+    data = {
+        'keep_data_across_lambdas': True,
+        'training_datasets': train_datasets,
+        'test_dataset': test_dataset
+    }
+    # if "save_path" in training_parameters["data"]:
+    #     save_data = {
+    #         'keep_data_across_lambdas': True,
+    #         'training_datasets': train_datasets_for_saving,
+    #         'test_dataset': (test_dataset[0].tolist(), test_dataset[1].tolist(), test_dataset[2].tolist())
+    #     }
+    #     save_dictionary(save_data, data_path)
+        
+    return data
+
+def get_model_save_path(training_parameters, iteration):
+    if "save_path" in training_parameters["model"]:
+        return "{}/lambda{}_model{}.json".format(training_parameters["model"]["save_path"], training_parameters["optimization"]["fairness_rate"], iteration)
+    else:
+        return None
+
 def result_worker(result):
     global result_list
     result_list.append(result)
@@ -26,25 +77,37 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
     stddev_utilites = []
     mean_benefit_delta = []
     stddev_benefit_delta = []
+    current_train_parameters = copy.deepcopy(training_parameters)
 
-    for fairness_rate in training_parameters["optimization"]["fairness_rates"]:
+    if current_train_parameters["data"]["keep_data_across_lambdas"]:
+        current_train_parameters["data"] = generate_data_set(training_parameters)
+
+    for fairness_rate in current_train_parameters["optimization"]["fairness_rates"]:
         global result_list
 
         print("Processing Lambda: {}".format(fairness_rate))
         benefit_deltas = []
         utilities = []
-        training_parameters["optimization"]["fairness_rate"] = fairness_rate
+        current_train_parameters["optimization"]["fairness_rate"] = fairness_rate
         
         # multithreaded runs of training
         if asynchronous:
             pool = mp.Pool(mp.cpu_count())
-            for _ in range(0, iterations):
-                pool.apply_async(train_single, args=(training_parameters,), callback=result_worker) 
+            for j in range(0, iterations):
+                model_save_path = get_model_save_path(training_parameters, j)
+                if model_save_path is not None:
+                    current_train_parameters["model"]["save_path"] = model_save_path
+
+                pool.apply_async(train_single, args=(current_train_parameters,), callback=result_worker) 
             pool.close()
             pool.join()
         else:
-            for _ in range(0, iterations):
-                result = train_single(training_parameters)
+            for j in range(0, iterations):
+                model_save_path = get_model_save_path(training_parameters, j)
+                if model_save_path is not None:
+                    current_train_parameters["model"]["save_path"] = model_save_path
+
+                result = train_single(current_train_parameters)
                 result_worker(result)
 
         results = np.array(result_list).squeeze()

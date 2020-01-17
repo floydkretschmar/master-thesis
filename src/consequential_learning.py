@@ -7,10 +7,10 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 import numpy as np
 from src.policy import LogisticPolicy
-from src.distribution import SplitDistribution
+from src.util import save_dictionary, load_dictionary
 
-def collect_data(pi, gt_dist, num_samples, fraction_protected):
-    x, s, y = collect_unbiased_data(gt_dist, num_samples, fraction_protected)
+def apply_policy(data, pi):
+    x, s, y = data
 
     decisions = pi(x, s)
     pos_decision_idx = np.expand_dims(np.arange(decisions.shape[0]), axis=1)
@@ -18,15 +18,7 @@ def collect_data(pi, gt_dist, num_samples, fraction_protected):
 
     return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
 
-def collect_unbiased_data(gt_dist, num_samples, fraction_protected):
-    x, s = gt_dist.sample_features(num_samples, fraction_protected)
-    y = gt_dist.sample_labels(x, s)
-
-    return x, s, y
-
 def consequential_learning(**training_args):
-    gt_dist = SplitDistribution(bias=training_args["model"]["bias"])
-
     pi = LogisticPolicy(
         training_args["model"]["theta"], 
         training_args["model"]["fairness_function"], 
@@ -38,19 +30,29 @@ def consequential_learning(**training_args):
         training_args["model"]["keep_collected_data"])
 
     learning_rate = training_args["optimization"]["learning_rate"]
-    x_test, s_test, y_test = collect_unbiased_data(gt_dist, training_args["data"]["num_test_samples"], training_args["data"]["fraction_protected"])
 
-    # Initial data collection
-    x, s, y = collect_data(pi, gt_dist, training_args["data"]["num_decisions"], training_args["data"]["fraction_protected"])
+    # Collect test data
+    if training_args["data"]["keep_data_across_lambdas"]:
+        x_test, s_test, y_test = training_args["data"]["test_dataset"]
+    else:
+        distribution = training_args["data"]["distribution"]
+        x_test, s_test, y_test = distribution.sample_dataset(training_args["data"]["num_test_samples"], training_args["data"]["fraction_protected"])
 
-    for i in range(1, training_args["optimization"]["time_steps"] + 1):        
-        if i % training_args["optimization"]['decay_step'] == 0:
-            learning_rate *= training_args["optimization"]['decay_rate']
+    for i in range(0, training_args["optimization"]["time_steps"]): 
+        # decay learning rate 
+        if i % training_args["optimization"]['decay_step'] == 0 and i != 0:
+            learning_rate *= training_args["optimization"]['decay_rate']    
+
+        # Collect training data
+        if training_args["data"]["keep_data_across_lambdas"]:
+            data = training_args["data"]["training_datasets"][i]
+        else:
+            data = distribution.sample_dataset(training_args["data"]["num_decisions"], training_args["data"]["fraction_protected"])
+        
+        x, s, y = apply_policy(data, pi)
+
         # train the policy
         pi.update(x, s, y, learning_rate, training_args["optimization"]["batch_size"], training_args["optimization"]["epochs"])
-
-        # Collect new data
-        x, s, y = collect_data(pi, gt_dist, training_args["data"]["num_decisions"], training_args["data"]["fraction_protected"])
 
         # evaluate the policy performance
         decisions_test = pi(x_test, s_test)
@@ -59,3 +61,6 @@ def consequential_learning(**training_args):
         benefit_delta = pi.benefit_delta(x_test, s_test, y_test, decisions_test)
 
         yield utility, benefit_delta
+
+    if "save_path" in training_args["model"]:
+        save_dictionary({"theta": pi.theta.tolist()}, training_args["model"]["save_path"])
