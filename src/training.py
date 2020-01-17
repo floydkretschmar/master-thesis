@@ -117,8 +117,8 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
     current_train_parameters = copy.deepcopy(training_parameters)
 
     if "save_path" in training_parameters["model"]:
-        base_path = training_parameters["model"]["save_path"]
-        runs = os.listdir(base_path)
+        base_save_path = training_parameters["model"]["save_path"]
+        runs = os.listdir(base_save_path)
 
         if len(runs) == 0:
             current_run = 0
@@ -126,8 +126,8 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
             runs.sort()
             current_run = int(runs[-1].replace("run", "")) + 1
 
-        model_save_directory = "{}/run{}/".format(base_path, current_run)
-        Path(model_save_directory).mkdir(parents=True, exist_ok=True)
+        base_save_path = "{}/run{}/".format(base_save_path, current_run)
+        Path(base_save_path).mkdir(parents=True, exist_ok=True)
     else:
         model_save_directory = None
 
@@ -137,8 +137,8 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
     for fairness_rate in current_train_parameters["optimization"]["fairness_rates"]:
         global result_list
 
-        if model_save_directory is not None:
-            model_save_directory = "{}/lambda{}/".format(model_save_directory, fairness_rate)
+        if base_save_path is not None:
+            model_save_directory = "{}/lambda{}/".format(base_save_path, fairness_rate)
             Path(model_save_directory).mkdir(parents=True, exist_ok=True)
 
         print("--------------------------------------------------")
