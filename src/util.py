@@ -9,7 +9,7 @@ def sigmoid(x):
 
 def save_dictionary(dictionary, path):
     try:
-        with open(path, 'w') as file_path:
+        with open(path, 'w+') as file_path:
             json.dump(dictionary, file_path)
     except Exception as e:
         print('Saving file {} failed with exception: \n {}'.format(path, str(e)))
