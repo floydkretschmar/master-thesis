@@ -11,6 +11,7 @@ from src.functions import cost_utility, demographic_parity
 from src.plotting import plot_results_over_time, plot_results_over_lambdas
 from src.training import train_multiple
 import multiprocessing as mp
+from src.distribution import SplitDistribution
 
 # def fairness_function(**fairness_kwargs):
 #     policy = fairness_kwargs["policy"]
@@ -62,35 +63,44 @@ def fairness_function(**fairness_kwargs):
     return policy._mean_difference(benefit, s) * policy._mean_difference(benefit_grad, s)
 
 i = 1
+bias = True
 dim_x = 1
-training_parameters = {
-    'keep_collected_data': False,
-    'use_sensitve_attributes': False,
-    'time_steps':200,
-    'batch_size':512,
-    'num_iterations': 32,
-    'learning_parameters': {
-        'learning_rate': 0.5,
-        'decay_rate': 0.8,
-        'decay_step': 30
-    },
-    'fraction_protected':0.5,
-    'num_test_samples': 2000,
-    'bias': True,
-    'benefit_value_function': demographic_parity
-}
+dim_theta = dim_x + 1 if bias else dim_x
+
+lambdas = np.logspace(1, 5, base=10, endpoint=True, num=5)
+#lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
+
 def util_func(**util_params):
     util = cost_utility(cost_factor=0.55, **util_params)
     return util
 
-dim_theta = dim_x + 1 if training_parameters['bias'] else dim_x
-training_parameters['theta'] = [-3.5, 0.6]
-training_parameters['feature_map'] = IdentityFeatureMap(dim_theta)
-training_parameters['num_decisions'] = training_parameters['num_iterations'] * training_parameters['batch_size']
-training_parameters['utility_value_function'] = util_func
-training_parameters['fairness_function'] = fairness_function
+training_parameters = {    
+    'model':{
+        'theta': [-3.5, 0.6],
+        'benefit_value_function': demographic_parity,
+        'utility_value_function': util_func,
+        'fairness_function': fairness_function,
+        'feature_map': IdentityFeatureMap(dim_theta),
+        'keep_collected_data': False,
+        'use_sensitve_attributes': False,
+        'bias': bias
+    },
+    'optimization': {
+        'time_steps':200,
+        'epochs': 32,
+        'batch_size':512,
+        'learning_rate': 0.5,
+        'decay_rate': 0.8,
+        'decay_step': 30,
+        'fairness_rates': lambdas
+    },
+    'data': {
+        'distribution': SplitDistribution(bias=bias),
+        'keep_data_across_lambdas': True,
+        'fraction_protected':0.5,
+        'num_test_samples': 2000,
+        'num_decisions': 32 * 512
+    }
+}
 
-lambdas = np.logspace(-1, 5, base=10, endpoint=True, num=10)
-#lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
-
-results = train_multiple(training_parameters, iterations=5, lambdas=[100.0], verbose=True, asynchronous=False)
+results = train_multiple(training_parameters, iterations=5, verbose=True, asynchronous=False)
