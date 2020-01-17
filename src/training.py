@@ -35,20 +35,17 @@ def generate_data_set(training_parameters):
         
     return data
 
-def get_model_save_path(training_parameters, iteration):
-    if "save_path" in training_parameters["model"]:
-        return "{}/lambda{}_model{}.json".format(training_parameters["model"]["save_path"], training_parameters["optimization"]["fairness_rate"], iteration)
-    else:
-        return None
-
 def result_worker(result):
     global result_list
     result_list.append(result)
 
 def train_single(training_parameters):
     np.random.seed()
-    for u, bd in consequential_learning(**training_parameters):
-        utility, benefit_delta = u, bd
+    for u, bd, pi in consequential_learning(**training_parameters):
+        utility, benefit_delta, policy = u, bd, pi
+
+    if "save_path" in training_parameters["model"]:
+        save_dictionary({"theta": policy.theta.tolist()}, training_parameters["model"]["save_path"])
 
     return utility, benefit_delta
 
@@ -58,6 +55,7 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
     mean_benefit_delta = []
     stddev_benefit_delta = []
     current_train_parameters = copy.deepcopy(training_parameters)
+    base_model_save_path = training_parameters["model"]["save_path"]
 
     if current_train_parameters["data"]["keep_data_across_lambdas"]:
         current_train_parameters["data"] = generate_data_set(training_parameters)
@@ -74,7 +72,7 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
         if asynchronous:
             pool = mp.Pool(mp.cpu_count())
             for j in range(0, iterations):
-                model_save_path = get_model_save_path(training_parameters, j)
+                model_save_path = "{}/lambda{}_model{}.json".format(base_model_save_path, fairness_rate, j)
                 if model_save_path is not None:
                     current_train_parameters["model"]["save_path"] = model_save_path
 
@@ -83,7 +81,7 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
             pool.join()
         else:
             for j in range(0, iterations):
-                model_save_path = get_model_save_path(training_parameters, j)
+                model_save_path = "{}/lambda{}_model{}.json".format(base_model_save_path, fairness_rate, j)
                 if model_save_path is not None:
                     current_train_parameters["model"]["save_path"] = model_save_path
 

@@ -83,7 +83,8 @@ training_parameters = {
         'feature_map': IdentityFeatureMap(dim_theta),
         'keep_collected_data': False,
         'use_sensitve_attributes': False,
-        'bias': bias
+        'bias': bias,
+        'save_path': "/home/fkretschmar/Documents/master-thesis/res/exp-004/models"
     },
     'optimization': {
         'time_steps':200,

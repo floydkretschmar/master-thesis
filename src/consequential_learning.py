@@ -60,7 +60,4 @@ def consequential_learning(**training_args):
         utility = pi.utility(x_test, s_test, y_test, decisions_test)
         benefit_delta = pi.benefit_delta(x_test, s_test, y_test, decisions_test)
 
-        yield utility, benefit_delta
-
-    if "save_path" in training_args["model"]:
-        save_dictionary({"theta": pi.theta.tolist()}, training_args["model"]["save_path"])
+        yield utility, benefit_delta, pi
