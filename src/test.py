@@ -93,7 +93,8 @@ training_parameters = {
         'learning_rate': 0.5,
         'decay_rate': 0.8,
         'decay_step': 30,
-        'fairness_rates': lambdas
+        'fairness_rates': lambdas,
+        'test_at_every_timestep': False
     },
     'data': {
         'distribution': SplitDistribution(bias=bias),
