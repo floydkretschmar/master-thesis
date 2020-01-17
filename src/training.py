@@ -14,15 +14,6 @@ from src.util import save_dictionary, load_dictionary
 result_list = []
 
 def generate_data_set(training_parameters):
-    # if "save_path" in training_parameters["data"]:
-    #     data_path = "{}/data.json".format(training_parameters["data"]["save_path"])
-    #     data = load_dictionary(data_path)
-
-    #     if data is not None:
-    #         data["training_datasets"] = np.array(data["training_datasets"])
-    #         data["test_dataset"] = np.array(data["test_dataset"])
-    #         return data
-           
     num_decisions = training_parameters["data"]["num_decisions"]
 
     test_dataset = training_parameters["data"]["distribution"].sample_dataset(
@@ -33,25 +24,14 @@ def generate_data_set(training_parameters):
         training_parameters["data"]["fraction_protected"])
 
     train_datasets = []
-    # train_datasets_for_saving = []
     for i in range(0, train_x.shape[0], num_decisions):
         train_datasets.append((train_x[i:i+num_decisions], train_s[i:i+num_decisions], train_y[i:i+num_decisions]))
-
-        # if "save_path" in training_parameters["data"]:
-        #     train_datasets_for_saving.append((train_x[i:i+num_decisions].tolist(), train_s[i:i+num_decisions].tolist(), train_y[i:i+num_decisions].tolist()))
         
     data = {
         'keep_data_across_lambdas': True,
         'training_datasets': train_datasets,
         'test_dataset': test_dataset
     }
-    # if "save_path" in training_parameters["data"]:
-    #     save_data = {
-    #         'keep_data_across_lambdas': True,
-    #         'training_datasets': train_datasets_for_saving,
-    #         'test_dataset': (test_dataset[0].tolist(), test_dataset[1].tolist(), test_dataset[2].tolist())
-    #     }
-    #     save_dictionary(save_data, data_path)
         
     return data
 
