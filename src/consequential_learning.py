@@ -18,6 +18,15 @@ def apply_policy(data, pi):
 
     return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
 
+def evaluate_on_test_data(data, policy):
+    x_test, s_test, y_test = data
+    # evaluate the policy performance
+    decisions_test = policy(x_test, s_test)
+    utility = policy.utility(x_test, s_test, y_test, decisions_test)
+    benefit_delta = policy.benefit_delta(x_test, s_test, y_test, decisions_test)
+
+    return utility, benefit_delta
+
 def consequential_learning(**training_args):
     pi = LogisticPolicy(
         training_args["model"]["theta"], 
@@ -54,10 +63,10 @@ def consequential_learning(**training_args):
         # train the policy
         pi.update(x, s, y, learning_rate, training_args["optimization"]["batch_size"], training_args["optimization"]["epochs"])
 
-        # evaluate the policy performance
-        decisions_test = pi(x_test, s_test)
-        # regularized_utility = pi.regularized_utility(x_test, s_test, y_test, decisions_test)
-        utility = pi.utility(x_test, s_test, y_test, decisions_test)
-        benefit_delta = pi.benefit_delta(x_test, s_test, y_test, decisions_test)
-
+        if training_args["optimization"]["test_at_every_timestep"]:
+            utility, benefit_delta = evaluate_on_test_data((x_test, s_test, y_test), pi)
+            yield utility, benefit_delta, pi
+    
+    if not training_args["optimization"]["test_at_every_timestep"]:
+        utility, benefit_delta = evaluate_on_test_data((x_test, s_test, y_test), pi)
         yield utility, benefit_delta, pi
