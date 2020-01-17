@@ -40,3 +40,9 @@ class SplitDistribution():
         ) + sigmoid(x - 5)
 
         return np.expand_dims(np.random.binomial(1, yprob), axis=1)
+
+    def sample_dataset(self, n, fraction_protected):
+        x, s = self.sample_features(n, fraction_protected)
+        y = self.sample_labels(x, s)
+
+        return x, s, y
