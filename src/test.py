@@ -8,10 +8,10 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
-from src.plotting import plot_results_over_time, plot_results_over_lambdas
+#from src.plotting import plot_results_over_time, plot_results_over_lambdas
 from src.training import train_multiple
 import multiprocessing as mp
-from src.distribution import SplitDistribution
+from src.distribution import SplitDistribution, UncalibratedScore
 
 # def fairness_function(**fairness_kwargs):
 #     policy = fairness_kwargs["policy"]
@@ -67,16 +67,17 @@ bias = True
 dim_x = 1
 dim_theta = dim_x + 1 if bias else dim_x
 
-lambdas = np.logspace(1, 5, base=10, endpoint=True, num=5)
+#lambdas = np.logspace(1, 5, base=10, endpoint=True, num=5)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
+lambdas = [0.0]
 
 def util_func(**util_params):
-    util = cost_utility(cost_factor=0.55, **util_params)
+    util = cost_utility(cost_factor=0.1, **util_params)
     return util
 
 training_parameters = {    
     'model':{
-        'theta': [-3.5, 0.6],
+        'theta': [-3.0, 5.0],
         'benefit_value_function': demographic_parity,
         'utility_value_function': util_func,
         'fairness_function': fairness_function,
@@ -88,20 +89,20 @@ training_parameters = {
     },
     'optimization': {
         'time_steps':200,
-        'epochs': 32,
-        'batch_size':512,
-        'learning_rate': 0.5,
-        'decay_rate': 0.8,
-        'decay_step': 30,
+        'epochs': 128,
+        'batch_size':256,
+        'learning_rate': 1,
+        'decay_rate': 1,
+        'decay_step': 300,
         'fairness_rates': lambdas,
-        'test_at_every_timestep': False
+        'test_at_every_timestep': True
     },
     'data': {
-        'distribution': SplitDistribution(bias=bias),
+        'distribution': UncalibratedScore(bias=bias),
         'keep_data_across_lambdas': True,
         'fraction_protected':0.5,
-        'num_test_samples': 2000,
-        'num_decisions': 32 * 512
+        'num_test_samples': 8192,
+        'num_decisions': 128 * 256
     }
 }
 
