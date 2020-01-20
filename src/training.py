@@ -10,7 +10,7 @@ import copy
 from pathlib import Path
 
 from src.consequential_learning import consequential_learning
-from src.util import save_dictionary, load_dictionary
+from src.util import save_dictionary, load_dictionary, serialize_dictionary
 
 class TrainingStatistics():
     def __init__(self):
@@ -73,6 +73,7 @@ class TrainingStatistics():
             }
         }
 
+
 def _generate_data_set(training_parameters):
     """ Generates one training and test dataset to be used across all lambdas.
         
@@ -104,11 +105,14 @@ def _generate_data_set(training_parameters):
     return data
 
 result_list = []
+theta_dict = {}
 def _result_worker(result):
-    global result_list
-    result_list.append(result)
+    global result_list, theta_dict
+    utility, benefit_delta, theta_tuple = result
+    result_list.append((utility, benefit_delta))
+    theta_dict[theta_tuple[0]] = theta_tuple[1]
 
-def _train_single(training_parameters, model_save_path=None, verbose=False):
+def _train_single(training_parameters, iteration, verbose=False):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds.
         
@@ -128,10 +132,7 @@ def _train_single(training_parameters, model_save_path=None, verbose=False):
         utility, benefit_delta, policy = u, bd, pi
         i += 1
 
-    if "save_path" in training_parameters["model"]:
-        save_dictionary({"theta": policy.theta.tolist()}, model_save_path)
-
-    return utility, benefit_delta
+    return utility, benefit_delta, (iteration, policy.theta.copy())
 
 def train_multiple(training_parameters, iterations, verbose=False, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
@@ -145,12 +146,12 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
         training_statistic: A TrainingStatistics object that contains statistical data about 
         the executed runs.
     """
-
     statistics = TrainingStatistics()
     current_train_parameters = copy.deepcopy(training_parameters)
 
-    if "save_path" in training_parameters["model"]:
-        base_save_path = training_parameters["model"]["save_path"]
+    if "save_path" in training_parameters:
+        base_save_path = training_parameters["save_path"]
+        Path(base_save_path).mkdir(parents=True, exist_ok=True)
         runs = os.listdir(base_save_path)
 
         if len(runs) == 0:
@@ -161,18 +162,26 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
 
         base_save_path = "{}/run{}/".format(base_save_path, current_run)
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
+
+        parameter_save_path = "{}/parameters.json".format(base_save_path)
+        save_dictionary(serialize_dictionary(training_parameters), parameter_save_path)
     else:
-        model_save_directory = None
+        base_save_path = None
 
     if current_train_parameters["data"]["keep_data_across_lambdas"]:
         current_train_parameters["data"] = _generate_data_set(training_parameters)
 
-    for fairness_rate in current_train_parameters["optimization"]["fairness_rates"]:
-        global result_list
-
         if base_save_path is not None:
-            model_save_directory = "{}/lambda{}/".format(base_save_path, fairness_rate)
-            Path(model_save_directory).mkdir(parents=True, exist_ok=True)
+            data_save_path = "{}/data.json".format(base_save_path)
+            data_dict = {
+                "x": current_train_parameters["data"]["test_dataset"][0].tolist(),
+                "s": current_train_parameters["data"]["test_dataset"][1].tolist(),
+                "y": current_train_parameters["data"]["test_dataset"][2].tolist()
+            }
+            save_dictionary(data_dict, data_save_path)
+
+    for fairness_rate in current_train_parameters["optimization"]["fairness_rates"]:
+        global result_list, theta_dict
 
         print("--------------------------------------------------")
         print("------------------- Lambda {} -------------------".format(fairness_rate))
@@ -185,18 +194,12 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
         if asynchronous:
             pool = mp.Pool(mp.cpu_count())
             for j in range(0, iterations):
-                if model_save_directory is not None:
-                    model_save_path = "{}/model_{}.json".format(model_save_directory, j)
-
-                pool.apply_async(_train_single, args=(current_train_parameters, model_save_path), callback=_result_worker) 
+                pool.apply_async(_train_single, args=(current_train_parameters, j), callback=_result_worker) 
             pool.close()
             pool.join()
         else:
             for j in range(0, iterations):
-                if model_save_directory is not None:
-                    model_save_path = "{}/model_{}.json".format(model_save_directory, j)
-
-                result = _train_single(current_train_parameters, model_save_path, verbose)
+                result = _train_single(current_train_parameters, j, verbose)
                 _result_worker(result)
 
         results = np.array(result_list).squeeze()
@@ -206,5 +209,11 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
         benefit_deltas = results[:,1]
 
         statistics.log_statistics(fairness_rate, utilities, benefit_deltas, verbose)
+
+        if base_save_path is not None:
+            lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
+            Path(lambda_path).mkdir(parents=True, exist_ok=True)
+            model_save_path = "{}/models.json".format(lambda_path)
+            save_dictionary(serialize_dictionary(theta_dict), model_save_path)
 
     return statistics.to_json()

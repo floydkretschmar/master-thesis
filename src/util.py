@@ -1,5 +1,8 @@
 import numpy as np
 import json
+import numbers
+import inspect
+import copy
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
 def sigmoid(x):
@@ -21,3 +24,17 @@ def load_dictionary(path):
     except Exception as e:
         print('Loading file {} failed with exception: \n {}'.format(path, str(e)))
         return None
+
+def serialize_dictionary(dictionary):
+    serialized_dict = copy.deepcopy(dictionary)
+    for key, value in serialized_dict.items():
+        if isinstance(value, dict):
+            serialized_dict[key] = serialize_dictionary(value)
+        elif isinstance(value, np.ndarray):
+            serialized_dict[key] = value.tolist()
+        elif inspect.isfunction(value):
+            serialized_dict[key] = value.__name__
+        elif not (isinstance(value, str) or isinstance(value, numbers.Number) or isinstance(value, list) or isinstance(value, bool)):
+            serialized_dict[key] = type(value).__name__
+
+    return serialized_dict
