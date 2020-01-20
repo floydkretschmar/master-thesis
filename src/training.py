@@ -12,8 +12,6 @@ from pathlib import Path
 from src.consequential_learning import consequential_learning
 from src.util import save_dictionary, load_dictionary
 
-result_list = []
-
 class TrainingStatistics():
     def __init__(self):
         self.mean_utilities = []
@@ -75,8 +73,15 @@ class TrainingStatistics():
             }
         }
 
+def _generate_data_set(training_parameters):
+    """ Generates one training and test dataset to be used across all lambdas.
+        
+    Args:
+        training_parameters: The parameters used to configure the consequential learning algorithm.
 
-def generate_data_set(training_parameters):
+    Returns:
+        data: A dictionary containing both the test and training dataset.
+    """
     num_decisions = training_parameters["data"]["num_decisions"]
 
     test_dataset = training_parameters["data"]["distribution"].sample_dataset(
@@ -98,14 +103,30 @@ def generate_data_set(training_parameters):
         
     return data
 
-def result_worker(result):
+result_list = []
+def _result_worker(result):
     global result_list
     result_list.append(result)
 
-def _train_single(training_parameters, model_save_path=None):
+def _train_single(training_parameters, model_save_path=None, verbose=False):
+    """ Executes multiple runs of consequential learning with the same training parameters
+    but different seeds.
+        
+    Args:
+        training_parameters: The parameters used to configure the consequential learning algorithm.
+        iterations: The number of times consequential learning will be run.
+
+    Returns:
+        utility: The utility of the trained policy on the last time step.
+        benefit_delta: The benefit delta of the trained policy on the last time step.
+    """
+    i = 0 
     np.random.seed()
     for u, bd, pi in consequential_learning(**training_parameters):
+        if verbose:
+            print("Timestep {}: \t Utility: {} \n\t Benefit Delta: {}".format(i, u, bd))
         utility, benefit_delta, policy = u, bd, pi
+        i += 1
 
     if "save_path" in training_parameters["model"]:
         save_dictionary({"theta": policy.theta.tolist()}, model_save_path)
@@ -113,6 +134,18 @@ def _train_single(training_parameters, model_save_path=None):
     return utility, benefit_delta
 
 def train_multiple(training_parameters, iterations, verbose=False, asynchronous=True):
+    """ Executes multiple runs of consequential learning with the same training parameters
+    but different seeds.
+        
+    Args:
+        training_parameters: The parameters used to configure the consequential learning algorithm.
+        iterations: The number of times consequential learning will be run.
+
+    Returns:
+        training_statistic: A TrainingStatistics object that contains statistical data about 
+        the executed runs.
+    """
+
     statistics = TrainingStatistics()
     current_train_parameters = copy.deepcopy(training_parameters)
 
@@ -132,7 +165,7 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
         model_save_directory = None
 
     if current_train_parameters["data"]["keep_data_across_lambdas"]:
-        current_train_parameters["data"] = generate_data_set(training_parameters)
+        current_train_parameters["data"] = _generate_data_set(training_parameters)
 
     for fairness_rate in current_train_parameters["optimization"]["fairness_rates"]:
         global result_list
@@ -155,7 +188,7 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
                 if model_save_directory is not None:
                     model_save_path = "{}/model_{}.json".format(model_save_directory, j)
 
-                pool.apply_async(_train_single, args=(current_train_parameters, model_save_path), callback=result_worker) 
+                pool.apply_async(_train_single, args=(current_train_parameters, model_save_path), callback=_result_worker) 
             pool.close()
             pool.join()
         else:
@@ -163,8 +196,8 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
                 if model_save_directory is not None:
                     model_save_path = "{}/model_{}.json".format(model_save_directory, j)
 
-                result = _train_single(current_train_parameters, model_save_path)
-                result_worker(result)
+                result = _train_single(current_train_parameters, model_save_path, verbose)
+                _result_worker(result)
 
         results = np.array(result_list).squeeze()
         result_list = []

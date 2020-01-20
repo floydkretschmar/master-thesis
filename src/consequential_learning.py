@@ -10,6 +10,18 @@ from src.policy import LogisticPolicy
 from src.util import save_dictionary, load_dictionary
 
 def apply_policy(data, pi):
+    """ Makes decisions for the data based on the specified policy and only returns the x, s and y of the 
+    accepted data points, emulating imperfect data collection.
+        
+    Args:
+        data: The dataset of x, s and y based on which the decisions are made.
+        pi: The policy used to make the data collection decisions.
+
+    Returns:
+        x: The features of the accepted samples
+        s: The sensitive attribute of the accepted samples
+        y: The ground truth lable of the accepted samples
+    """
     x, s, y = data
 
     decisions = pi(x, s)
@@ -18,8 +30,18 @@ def apply_policy(data, pi):
 
     return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
 
-def evaluate_on_test_data(data, policy):
-    x_test, s_test, y_test = data
+def evaluate_on_test_data(test_data, policy):
+    """ Evaluates the performance of the trained policy on the hold out test set.
+        
+    Args:
+        test_data: The held-out test dataset of x, s and y.
+        pi: The trained policy that will be evaluated.
+
+    Returns:
+        utility: The utility of the policy on the test data.
+        benefit_delta: The benefit delta of the policy on the test data.
+    """
+    x_test, s_test, y_test = test_data
     # evaluate the policy performance
     decisions_test = policy(x_test, s_test)
     utility = policy.utility(x_test, s_test, y_test, decisions_test)
@@ -28,6 +50,15 @@ def evaluate_on_test_data(data, policy):
     return utility, benefit_delta
 
 def consequential_learning(**training_args):
+    """ Executes the consequential learning algorithm according to the specified training parameters.
+        
+    Args:
+        training_args: The parameters used to configure the consequential learning algorithm.
+
+    Returns:
+        utility: The utility of the policy on the test data.
+        benefit_delta: The benefit delta of the policy on the test data.
+    """
     pi = LogisticPolicy(
         training_args["model"]["theta"], 
         training_args["model"]["fairness_function"], 
