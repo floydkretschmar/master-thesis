@@ -9,7 +9,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
 #from src.plotting import plot_results_over_time, plot_results_over_lambdas
-from src.training import train_multiple
+from src.training import train
 import multiprocessing as mp
 from src.distribution import SplitDistribution, UncalibratedScore
 
@@ -76,6 +76,7 @@ def util_func(**util_params):
     return util
 
 training_parameters = {    
+    'save_path': './res/test',
     'model':{
         'theta': [-3.0, 5.0],
         'benefit_value_function': demographic_parity,
@@ -88,13 +89,12 @@ training_parameters = {
         'save_path': "/home/fkretschmar/Documents/master-thesis/res/exp-004/models"
     },
     'optimization': {
-        'time_steps':200,
+        'time_steps':3,
         'epochs': 128,
         'batch_size':256,
         'learning_rate': 1,
         'decay_rate': 1,
         'decay_step': 300,
-        'fairness_rates': lambdas,
         'test_at_every_timestep': True
     },
     'data': {
@@ -106,4 +106,4 @@ training_parameters = {
     }
 }
 
-results = train_multiple(training_parameters, iterations=5, verbose=True, asynchronous=False)
+results = train(training_parameters, lambdas, iterations=2, store_all=False, verbose=True, asynchronous=False)
