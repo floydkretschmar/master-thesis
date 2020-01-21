@@ -27,34 +27,34 @@ class TrainingStatistics():
         self.fairness_rates = []
 
     def log_statistics(self, fairness_rate, utilities, benefit_deltas, verbose=False):
-        self.mean_utilities.append(utilities.mean())
-        self.stddev_utilites.append(utilities.std())
-        self.first_quartile_utilities.append(np.percentile(utilities, 25))
-        self.median_utilites.append(np.median(utilities))
-        self.third_quartile_utilities.append(np.percentile(utilities, 75))
-        self.mean_benefit_delta.append(benefit_deltas.mean())
-        self.stddev_benefit_delta.append(benefit_deltas.std())
-        self.first_quartile_benefit_delta.append(np.percentile(benefit_deltas, 25))
-        self.median_benefit_delta.append(np.median(benefit_deltas))
-        self.third_quartile_benefit_delta.append(np.percentile(benefit_deltas, 75))
+        self.mean_utilities.append(utilities.mean(axis=0))
+        self.stddev_utilites.append(utilities.std(axis=0))
+        self.first_quartile_utilities.append(np.percentile(utilities, 25, axis=0))
+        self.median_utilites.append(np.median(utilities, axis=0))
+        self.third_quartile_utilities.append(np.percentile(utilities, 75, axis=0))
+        self.mean_benefit_delta.append(benefit_deltas.mean(axis=0))
+        self.stddev_benefit_delta.append(benefit_deltas.std(axis=0))
+        self.first_quartile_benefit_delta.append(np.percentile(benefit_deltas, 25, axis=0))
+        self.median_benefit_delta.append(np.median(benefit_deltas, axis=0))
+        self.third_quartile_benefit_delta.append(np.percentile(benefit_deltas, 75, axis=0))
         self.fairness_rates.append(fairness_rate)
 
         if verbose:
             print("------------------- Utility ----------------------")
-            print("Mean: {}".format(utilities.mean()))
-            print("Standard deviation: {}".format(utilities.std()))
-            print("First quartile: {}".format(np.percentile(utilities, 25)))
-            print("Median: {}".format(np.median(utilities)))
-            print("Last quartile: {}".format(np.percentile(utilities, 75)))
+            print("Mean: {}".format(utilities.mean(axis=0)))
+            print("Standard deviation: {}".format(utilities.std(axis=0)))
+            print("First quartile: {}".format(np.percentile(utilities, 25, axis=0)))
+            print("Median: {}".format(np.median(utilities, axis=0)))
+            print("Last quartile: {}".format(np.percentile(utilities, 75, axis=0)))
 
             print("------------------- Benefit Delta ----------------")
-            print("Mean: {}".format(benefit_deltas.mean()))
-            print("Standard deviation: {}".format(benefit_deltas.std()))
-            print("First quartile: {}".format(np.percentile(benefit_deltas, 25)))
-            print("Median: {}".format(np.median(benefit_deltas)))
-            print("Last quartile: {}".format(np.percentile(benefit_deltas, 75)))
+            print("Mean: {}".format(benefit_deltas.mean(axis=0)))
+            print("Standard deviation: {}".format(benefit_deltas.std(axis=0)))
+            print("First quartile: {}".format(np.percentile(benefit_deltas, 25, axis=0)))
+            print("Median: {}".format(np.median(benefit_deltas, axis=0)))
+            print("Last quartile: {}".format(np.percentile(benefit_deltas, 75, axis=0)))
     
-    def to_json(self):
+    def to_dictionary(self):
         return {
             "lambdas": self.fairness_rates,
             "utility": {
@@ -72,7 +72,6 @@ class TrainingStatistics():
                 "third_quartile": np.array(self.third_quartile_benefit_delta),
             }
         }
-
 
 def _generate_data_set(training_parameters):
     """ Generates one training and test dataset to be used across all lambdas.
@@ -104,50 +103,73 @@ def _generate_data_set(training_parameters):
         
     return data
 
-result_list = []
-theta_dict = {}
-def _result_worker(result):
-    global result_list, theta_dict
-    utility, benefit_delta, theta_tuple = result
-    result_list.append((utility, benefit_delta))
-    theta_dict[theta_tuple[0]] = theta_tuple[1]
-
-def _train_single(training_parameters, iteration, verbose=False):
-    """ Executes multiple runs of consequential learning with the same training parameters
-    but different seeds.
-        
-    Args:
-        training_parameters: The parameters used to configure the consequential learning algorithm.
-        iterations: The number of times consequential learning will be run.
-
-    Returns:
-        utility: The utility of the trained policy on the last time step.
-        benefit_delta: The benefit delta of the trained policy on the last time step.
-    """
+def _training_iteration(training_parameters, store_all, verbose):
+    utilities = []
+    benefit_deltas = []
+    policy_thetas = []
     i = 0 
     np.random.seed()
-    for u, bd, pi in consequential_learning(**training_parameters):
+    for utility, benefit_delta, policy in consequential_learning(**training_parameters):
         if verbose:
-            print("Timestep {}: \t Utility: {} \n\t Benefit Delta: {}".format(i, u, bd))
-        utility, benefit_delta, policy = u, bd, pi
+            print("Timestep {}: \t Utility: {} \n\t Benefit Delta: {}".format(i, utility, benefit_delta))
+        utilities.append(utility)
+        benefit_deltas.append(benefit_delta)
+        policy_thetas.append(policy.theta.copy())
         i += 1
 
-    return utility, benefit_delta, (iteration, policy.theta.copy())
+    if store_all:
+        return utilities, benefit_deltas, policy_thetas
+    else:
+        return utilities[-1], benefit_deltas[-1], policy_thetas[-1]
 
-def train_multiple(training_parameters, iterations, verbose=False, asynchronous=True):
+def _train_over_iterations(training_parameters, iterations, store_all, verbose, asynchronous):
+    utilities_over_iterations = []
+    benefit_deltas_over_iterations = []
+    thetas_over_iterations = []
+
+    # multithreaded runs of training
+    if asynchronous:
+        apply_results = []
+        pool = mp.Pool(mp.cpu_count())
+        for _ in range(0, iterations):
+            apply_results.append(pool.apply_async(_training_iteration, args=(training_parameters, store_all, False)))
+        pool.close()
+        pool.join()
+
+        for result in apply_results:
+            utilities, benefit_deltas, thetas = result.get()
+            utilities_over_iterations.append(utilities)
+            benefit_deltas_over_iterations.append(benefit_deltas)
+            thetas_over_iterations.append(thetas)
+    else:
+        for _ in range(0, iterations):
+            utilities, benefit_deltas, thetas = _training_iteration(training_parameters, store_all, verbose)
+            utilities_over_iterations.append(utilities)
+            benefit_deltas_over_iterations.append(benefit_deltas)
+            thetas_over_iterations.append(thetas)
+
+    return np.array(utilities_over_iterations).squeeze(), np.array(benefit_deltas_over_iterations).squeeze(), thetas_over_iterations
+
+def train(training_parameters, fairness_rates, iterations=30, store_all=False, verbose=False, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
-    but different seeds.
+    but different seeds for the specified fairness rates. 
         
     Args:
         training_parameters: The parameters used to configure the consequential learning algorithm.
-        iterations: The number of times consequential learning will be run.
+        fairness_rates: An iterable containing all fairness rates for which consequential learning
+        should be run and statistics will be collected.
+        iterations: The number of times consequential learning will be run for one of the specified
+        fairness rates. The resulting statistics will be applied over the number of runs
+        store_all: A flag indicating whether the results for all time steps of the training should 
+        be saved. If false, only the performance at the last training step will be stored.
+        verbose: A flag indicating if the results of each fairness rate should be printed.
+        asynchronous: A flag indicating if the iterations should be executed asynchronously.
 
     Returns:
-        training_statistic: A TrainingStatistics object that contains statistical data about 
+        training_statistic: A dictionary that contains statistical data about 
         the executed runs.
     """
     statistics = TrainingStatistics()
-    current_train_parameters = copy.deepcopy(training_parameters)
 
     if "save_path" in training_parameters:
         base_save_path = training_parameters["save_path"]
@@ -162,58 +184,43 @@ def train_multiple(training_parameters, iterations, verbose=False, asynchronous=
 
         base_save_path = "{}/run{}/".format(base_save_path, current_run)
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
-
         parameter_save_path = "{}/parameters.json".format(base_save_path)
-        save_dictionary(serialize_dictionary(training_parameters), parameter_save_path)
+
+        serialized_dictionary = serialize_dictionary(training_parameters)
+        serialized_dictionary["lambdas"] = fairness_rates
+        save_dictionary(serialized_dictionary, parameter_save_path)
     else:
         base_save_path = None
 
-    if current_train_parameters["data"]["keep_data_across_lambdas"]:
-        current_train_parameters["data"] = _generate_data_set(training_parameters)
+    if training_parameters["data"]["keep_data_across_lambdas"]:
+        training_parameters["data"] = _generate_data_set(training_parameters)
 
         if base_save_path is not None:
             data_save_path = "{}/data.json".format(base_save_path)
             data_dict = {
-                "x": current_train_parameters["data"]["test_dataset"][0].tolist(),
-                "s": current_train_parameters["data"]["test_dataset"][1].tolist(),
-                "y": current_train_parameters["data"]["test_dataset"][2].tolist()
+                "x": training_parameters["data"]["test_dataset"][0].tolist(),
+                "s": training_parameters["data"]["test_dataset"][1].tolist(),
+                "y": training_parameters["data"]["test_dataset"][2].tolist()
             }
             save_dictionary(data_dict, data_save_path)
 
-    for fairness_rate in current_train_parameters["optimization"]["fairness_rates"]:
-        global result_list, theta_dict
-
+    for fairness_rate in fairness_rates:
         print("--------------------------------------------------")
         print("------------------- Lambda {} -------------------".format(fairness_rate))
         print("--------------------------------------------------")
-        benefit_deltas = []
-        utilities = []
-        current_train_parameters["optimization"]["fairness_rate"] = fairness_rate
+        training_parameters["optimization"]["fairness_rate"] = fairness_rate
 
-        # multithreaded runs of training
-        if asynchronous:
-            pool = mp.Pool(mp.cpu_count())
-            for j in range(0, iterations):
-                pool.apply_async(_train_single, args=(current_train_parameters, j), callback=_result_worker) 
-            pool.close()
-            pool.join()
-        else:
-            for j in range(0, iterations):
-                result = _train_single(current_train_parameters, j, verbose)
-                _result_worker(result)
-
-        results = np.array(result_list).squeeze()
-        result_list = []
-
-        utilities = results[:,0]
-        benefit_deltas = results[:,1]
+        utilities, benefit_deltas, thetas = _train_over_iterations(training_parameters, iterations, store_all, verbose, asynchronous)
 
         statistics.log_statistics(fairness_rate, utilities, benefit_deltas, verbose)
 
         if base_save_path is not None:
-            lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
+            lambda_path = "{}lambda{}/".format(base_save_path, fairness_rate)
             Path(lambda_path).mkdir(parents=True, exist_ok=True)
             model_save_path = "{}/models.json".format(lambda_path)
+
+            theta_dict = {str(i):theta for i, theta in enumerate(thetas)}
+
             save_dictionary(serialize_dictionary(theta_dict), model_save_path)
 
-    return statistics.to_json()
+    return statistics.to_dictionary()
