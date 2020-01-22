@@ -170,7 +170,7 @@ def _train_over_iterations(training_parameters, iterations, store_all, verbose, 
 
     return np.array(utilities_over_iterations).squeeze(), np.array(benefit_deltas_over_iterations).squeeze(), thetas_over_iterations
 
-def train(training_parameters, fairness_rates, iterations=30, store_all=False, verbose=False, asynchronous=True):
+def train(training_parameters, fairness_rates, iterations=30, verbose=False, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
@@ -180,8 +180,6 @@ def train(training_parameters, fairness_rates, iterations=30, store_all=False, v
         should be run and statistics will be collected.
         iterations: The number of times consequential learning will be run for one of the specified
         fairness rates. The resulting statistics will be applied over the number of runs
-        store_all: A flag indicating whether the results for all time steps of the training should 
-        be saved. If false, only the performance at the last training step will be stored.
         verbose: A flag indicating if the results of each fairness rate should be printed.
         asynchronous: A flag indicating if the iterations should be executed asynchronously.
 
@@ -189,7 +187,8 @@ def train(training_parameters, fairness_rates, iterations=30, store_all=False, v
         training_statistic: A dictionary that contains statistical data about 
         the executed runs.
     """
-    statistics = TrainingStatistics(single_lambda=(len(fairness_rates)==1))
+    single_lambda = len(fairness_rates)==1
+    statistics = TrainingStatistics(single_lambda=single_lambda)
     current_training_parameters = copy.deepcopy(training_parameters)
 
     if "save_path" in training_parameters:
@@ -231,7 +230,7 @@ def train(training_parameters, fairness_rates, iterations=30, store_all=False, v
         print("--------------------------------------------------")
         current_training_parameters["optimization"]["fairness_rate"] = fairness_rate
 
-        utilities, benefit_deltas, thetas = _train_over_iterations(current_training_parameters, iterations, store_all, verbose, asynchronous)
+        utilities, benefit_deltas, thetas = _train_over_iterations(current_training_parameters, iterations, single_lambda, verbose, asynchronous)
 
         statistics.log_statistics(fairness_rate, utilities, benefit_deltas, verbose)
 
