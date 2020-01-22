@@ -199,6 +199,7 @@ class BasePolicy():
         Returns:
             benefit_delta: The absolute difference in benefits of the policy.
         """    
+        #return self._mean_difference(self.benefit_function(decisions=decisions, x=x, s=s, y=y), s)
         return np.absolute(self._mean_difference(self.benefit_function(decisions=decisions, x=x, s=s, y=y), s))
 
     def copy(self):
@@ -244,7 +245,7 @@ class BasePolicy():
                 break
 
             # minibatching     
-            indices = np.random.permutation(x.shape[0])   
+            indices = np.random.permutation(x.shape[0]) 
             for batch_start in range(0, len(indices), batch_size):
                 batch_end = min(batch_start + batch_size, len(indices))
 
@@ -315,13 +316,14 @@ class LogisticPolicy(BasePolicy):
         return phi, np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
 
     def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
-        log_gradient = self._log_gradient(x, s)
+        numerator, denominator = self._log_gradient(x, s)
         utility = self.utility_function(decisions=decisions, y=y)
+        utility_grad = utility / denominator 
 
         if ips_weights is not None:
-            utility = ips_weights * utility       
-        
-        utility_grad = utility * log_gradient      
+            utility_grad *= ips_weights
+
+        utility_grad = numerator * utility_grad          
         return np.mean(utility_grad, axis=0)
 
     def _probability(self, features):
