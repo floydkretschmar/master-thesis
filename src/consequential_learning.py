@@ -79,9 +79,8 @@ def consequential_learning(**training_args):
         x_test, s_test, y_test = distribution.sample_dataset(training_args["data"]["num_test_samples"], training_args["data"]["fraction_protected"])
 
     for i in range(0, training_args["optimization"]["time_steps"]): 
-        if training_args["optimization"]["test_at_every_timestep"]:
-            utility, benefit_delta = evaluate_on_test_data((x_test, s_test, y_test), pi)
-            yield utility, benefit_delta, pi
+        utility, benefit_delta = evaluate_on_test_data((x_test, s_test, y_test), pi)
+        yield utility, benefit_delta, pi
 
         # decay learning rate 
         if i % training_args["optimization"]['decay_step'] == 0 and i != 0:
