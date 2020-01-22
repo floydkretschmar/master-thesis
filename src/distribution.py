@@ -60,8 +60,6 @@ class UncalibratedScore():
         self.width = 30.0
         self.height = 3.0
         self.shift = 0.1
-        self.thresh = None
-        self.is_1d = True
         self.bias = bias
 
     def pdf(self, x):
