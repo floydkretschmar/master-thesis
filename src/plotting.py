@@ -1,16 +1,16 @@
 import matplotlib.pyplot as plt
 
-def _plot_results(utility, benefit_delta, xaxis, xlable, utility_uncertainty=None, benefit_delta_uncertainty=None, file_path=None):
+def _plot_results(utility, benefit_delta, xaxis, xlable, xscale, utility_uncertainty=None, benefit_delta_uncertainty=None, file_path=None):
     f, (ax1, ax2) = plt.subplots(1, 2, sharex=True, figsize=(25, 10))
     ax1.plot(xaxis, utility)
     ax1.set_xlabel(xlable)
     ax1.set_ylabel("Utility")
-    ax1.set_xscale('log')
+    ax1.set_xscale(xscale)
     ax1.fill_between(xaxis, utility_uncertainty[0], utility_uncertainty[1], alpha=0.3, edgecolor='#060080', facecolor='#928CFF')
     ax2.plot(xaxis, benefit_delta)
     ax2.set_xlabel(xlable)
     ax2.set_ylabel("Mean Benefit Delta")
-    ax2.set_xscale('log')
+    ax2.set_xscale(xscale)
     ax2.fill_between(xaxis, benefit_delta_uncertainty[0], benefit_delta_uncertainty[1], alpha=0.3, edgecolor='#060080', facecolor='#928CFF')
 
     if file_path is None:
@@ -33,6 +33,7 @@ def plot_mean_over_lambdas(statistics, file_path=None):
         ben_mean,
         statistics["lambdas"],
         "Lambda",
+        "log",
         (util_mean - statistics["utility"]["stddev"], util_mean + statistics["utility"]["stddev"]),
         (ben_mean - statistics["benefit_delta"]["stddev"], ben_mean + statistics["benefit_delta"]["stddev"]),
         file_path)
@@ -50,6 +51,7 @@ def plot_median_over_lambdas(statistics, file_path=None):
         statistics["benefit_delta"]["median"],
         statistics["lambdas"],
         "Lambda",
+        "log",
         (statistics["utility"]["first_quartile"], statistics["utility"]["third_quartile"]),
         (statistics["benefit_delta"]["first_quartile"], statistics["benefit_delta"]["third_quartile"]),
         file_path)
@@ -66,8 +68,9 @@ def plot_median_over_time(statistics, file_path=None):
     _plot_results(
         statistics["utility"]["median"],
         statistics["benefit_delta"]["median"],
-        range(1, statistics["utility"]["median"].shape + 1),
+        range(0, statistics["utility"]["median"].shape[0]),
         "Timestep",
+        "linear",
         (statistics["utility"]["first_quartile"], statistics["utility"]["third_quartile"]),
         (statistics["benefit_delta"]["first_quartile"], statistics["benefit_delta"]["third_quartile"]),
         file_path)
@@ -86,8 +89,9 @@ def plot_mean_over_time(statistics, file_path=None):
     _plot_results(
         util_mean,
         ben_mean,
-        range(1, statistics["utility"]["median"].shape + 1),
+        range(0, statistics["utility"]["median"].shape[0]),
         "Timestep",
+        "linear",
         (util_mean - statistics["utility"]["stddev"], util_mean + statistics["utility"]["stddev"]),
         (ben_mean - statistics["benefit_delta"]["stddev"], ben_mean + statistics["benefit_delta"]["stddev"]),
         file_path)
