@@ -312,7 +312,7 @@ class LogisticPolicy(BasePolicy):
     def _log_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
         #return phi * np.expand_dims(sigmoid(-np.matmul(phi, self.theta)), axis=1)
-        return phi/np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
+        return phi, np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
 
     def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
         log_gradient = self._log_gradient(x, s)
