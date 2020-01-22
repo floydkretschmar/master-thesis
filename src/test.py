@@ -8,7 +8,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
-#from src.plotting import plot_results_over_time, plot_results_over_lambdas
+from src.plotting import plot_median_over_time
 from src.training import train
 import multiprocessing as mp
 from src.distribution import SplitDistribution, UncalibratedScore
@@ -67,16 +67,12 @@ bias = True
 dim_x = 1
 dim_theta = dim_x + 1 if bias else dim_x
 
-#lambdas = np.logspace(1, 5, base=10, endpoint=True, num=5)
-#lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
-lambdas = [0.0]
-
 def util_func(**util_params):
     util = cost_utility(cost_factor=0.1, **util_params)
     return util
 
 training_parameters = {    
-    'save_path': './res/test',
+    'save_path': "/home/fkretschmar/Documents/master-thesis/res/exp-006/uncalibrated",
     'model':{
         'theta': [-3.0, 5.0],
         'benefit_value_function': demographic_parity,
@@ -85,17 +81,16 @@ training_parameters = {
         'feature_map': IdentityFeatureMap(dim_theta),
         'keep_collected_data': False,
         'use_sensitve_attributes': False,
-        'bias': bias,
-        'save_path': "/home/fkretschmar/Documents/master-thesis/res/exp-004/models"
+        'bias': bias
     },
     'optimization': {
-        'time_steps':3,
+        'time_steps':5,
         'epochs': 128,
         'batch_size':256,
         'learning_rate': 1,
         'decay_rate': 1,
-        'decay_step': 300,
-        'test_at_every_timestep': True
+        'decay_step': 10000,
+        'test_at_every_timestep': False
     },
     'data': {
         'distribution': UncalibratedScore(bias=bias),
@@ -106,4 +101,7 @@ training_parameters = {
     }
 }
 
-results = train(training_parameters, lambdas, iterations=2, store_all=False, verbose=True, asynchronous=False)
+
+statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=2, store_all=True, verbose=True, asynchronous=False)
+
+plot_median_over_time(statistics, "{}/results_median.png".format(run_path))

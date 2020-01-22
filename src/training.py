@@ -13,7 +13,7 @@ from src.consequential_learning import consequential_learning
 from src.util import save_dictionary, load_dictionary, serialize_dictionary
 
 class TrainingStatistics():
-    def __init__(self):
+    def __init__(self, single_lambda=False):
         self.mean_utilities = []
         self.stddev_utilites = []
         self.first_quartile_utilities = []
@@ -25,6 +25,7 @@ class TrainingStatistics():
         self.median_benefit_delta = []
         self.third_quartile_benefit_delta = []
         self.fairness_rates = []
+        self.single_lambda = single_lambda
 
     def log_statistics(self, fairness_rate, utilities, benefit_deltas, verbose=False):
         self.mean_utilities.append(utilities.mean(axis=0))
@@ -55,23 +56,42 @@ class TrainingStatistics():
             print("Last quartile: {}".format(np.percentile(benefit_deltas, 75, axis=0)))
     
     def to_dictionary(self):
-        return {
-            "lambdas": self.fairness_rates,
-            "utility": {
-                "mean": np.array(self.mean_utilities),
-                "stddev": np.array(self.stddev_utilites),
-                "first_quartile": np.array(self.first_quartile_utilities),
-                "median": np.array(self.median_utilites),
-                "third_quartile": np.array(self.third_quartile_utilities),
-            },
-            "benefit_delta": {
-                "mean": np.array(self.mean_benefit_delta),
-                "stddev": np.array(self.stddev_benefit_delta),
-                "first_quartile": np.array(self.first_quartile_benefit_delta),
-                "median": np.array(self.median_benefit_delta),
-                "third_quartile": np.array(self.third_quartile_benefit_delta),
+        if not self.single_lambda:
+            return {
+                "lambdas": self.fairness_rates,
+                "utility": {
+                    "mean": np.array(self.mean_utilities),
+                    "stddev": np.array(self.stddev_utilites),
+                    "first_quartile": np.array(self.first_quartile_utilities),
+                    "median": np.array(self.median_utilites),
+                    "third_quartile": np.array(self.third_quartile_utilities),
+                },
+                "benefit_delta": {
+                    "mean": np.array(self.mean_benefit_delta),
+                    "stddev": np.array(self.stddev_benefit_delta),
+                    "first_quartile": np.array(self.first_quartile_benefit_delta),
+                    "median": np.array(self.median_benefit_delta),
+                    "third_quartile": np.array(self.third_quartile_benefit_delta),
+                }
             }
-        }
+        else:
+            return {
+                "lambdas": self.fairness_rates,
+                "utility": {
+                    "mean": self.mean_utilities[0],
+                    "stddev": self.stddev_utilites[0],
+                    "first_quartile": self.first_quartile_utilities[0],
+                    "median": self.median_utilites[0],
+                    "third_quartile": self.third_quartile_utilities[0],
+                },
+                "benefit_delta": {
+                    "mean": self.mean_benefit_delta[0],
+                    "stddev": self.stddev_benefit_delta[0],
+                    "first_quartile": self.first_quartile_benefit_delta[0],
+                    "median": self.median_benefit_delta[0],
+                    "third_quartile": self.third_quartile_benefit_delta[0],
+                }
+            }
 
 def _generate_data_set(training_parameters):
     """ Generates one training and test dataset to be used across all lambdas.
@@ -114,7 +134,7 @@ def _training_iteration(training_parameters, store_all, verbose):
             print("Timestep {}: \t Utility: {} \n\t Benefit Delta: {}".format(i, utility, benefit_delta))
         utilities.append(utility)
         benefit_deltas.append(benefit_delta)
-        policy_thetas.append(policy.theta.copy())
+        policy_thetas.append(policy.theta.copy().tolist())
         i += 1
 
     if store_all:
@@ -169,10 +189,11 @@ def train(training_parameters, fairness_rates, iterations=30, store_all=False, v
         training_statistic: A dictionary that contains statistical data about 
         the executed runs.
     """
-    statistics = TrainingStatistics()
+    statistics = TrainingStatistics(single_lambda=(len(fairness_rates)==1))
+    current_training_parameters = copy.deepcopy(training_parameters)
 
     if "save_path" in training_parameters:
-        base_save_path = training_parameters["save_path"]
+        base_save_path = "{}/runs".format(training_parameters["save_path"])
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
         runs = os.listdir(base_save_path)
 
@@ -182,7 +203,7 @@ def train(training_parameters, fairness_rates, iterations=30, store_all=False, v
             runs.sort()
             current_run = int(runs[-1].replace("run", "")) + 1
 
-        base_save_path = "{}/run{}/".format(base_save_path, current_run)
+        base_save_path = "{}/{}".format(base_save_path, current_run)
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
         parameter_save_path = "{}/parameters.json".format(base_save_path)
 
@@ -193,14 +214,14 @@ def train(training_parameters, fairness_rates, iterations=30, store_all=False, v
         base_save_path = None
 
     if training_parameters["data"]["keep_data_across_lambdas"]:
-        training_parameters["data"] = _generate_data_set(training_parameters)
+        current_training_parameters["data"] = _generate_data_set(training_parameters)
 
         if base_save_path is not None:
             data_save_path = "{}/data.json".format(base_save_path)
             data_dict = {
-                "x": training_parameters["data"]["test_dataset"][0].tolist(),
-                "s": training_parameters["data"]["test_dataset"][1].tolist(),
-                "y": training_parameters["data"]["test_dataset"][2].tolist()
+                "x": current_training_parameters["data"]["test_dataset"][0].tolist(),
+                "s": current_training_parameters["data"]["test_dataset"][1].tolist(),
+                "y": current_training_parameters["data"]["test_dataset"][2].tolist()
             }
             save_dictionary(data_dict, data_save_path)
 
@@ -208,19 +229,19 @@ def train(training_parameters, fairness_rates, iterations=30, store_all=False, v
         print("--------------------------------------------------")
         print("------------------- Lambda {} -------------------".format(fairness_rate))
         print("--------------------------------------------------")
-        training_parameters["optimization"]["fairness_rate"] = fairness_rate
+        current_training_parameters["optimization"]["fairness_rate"] = fairness_rate
 
-        utilities, benefit_deltas, thetas = _train_over_iterations(training_parameters, iterations, store_all, verbose, asynchronous)
+        utilities, benefit_deltas, thetas = _train_over_iterations(current_training_parameters, iterations, store_all, verbose, asynchronous)
 
         statistics.log_statistics(fairness_rate, utilities, benefit_deltas, verbose)
 
         if base_save_path is not None:
-            lambda_path = "{}lambda{}/".format(base_save_path, fairness_rate)
+            lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
             Path(lambda_path).mkdir(parents=True, exist_ok=True)
-            model_save_path = "{}/models.json".format(lambda_path)
+            model_save_path = "{}models.json".format(lambda_path)
 
             theta_dict = {str(i):theta for i, theta in enumerate(thetas)}
 
             save_dictionary(serialize_dictionary(theta_dict), model_save_path)
 
-    return statistics.to_dictionary()
+    return statistics.to_dictionary(), base_save_path
