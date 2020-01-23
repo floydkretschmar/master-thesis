@@ -142,7 +142,15 @@ class BasePolicy():
         Returns:
             utility_gradient: The partial gradient of the policy.
         """
-        raise NotImplementedError("Subclass must override _utility_gradient(self, x, s, y, decisions, ips_weights=None).")
+        numerator, denominator = self._log_gradient(x, s)
+        utility = self.utility_function(decisions=decisions, y=y)
+        utility_grad = utility / denominator 
+
+        if ips_weights is not None:
+            utility_grad *= ips_weights 
+
+        utility_grad = numerator * utility_grad          
+        return np.mean(utility_grad, axis=0)
 
     def _policy_gradient(self, x, s, y, ips_weights=None):
         """ Calculates the gradient of the policy given the data.
@@ -313,17 +321,6 @@ class LogisticPolicy(BasePolicy):
         phi = self.feature_map(self._extract_features(x, s))
         #return phi * np.expand_dims(sigmoid(-np.matmul(phi, self.theta)), axis=1)
         return phi, np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
-
-    def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
-        numerator, denominator = self._log_gradient(x, s)
-        utility = self.utility_function(decisions=decisions, y=y)
-        utility_grad = utility / denominator 
-
-        if ips_weights is not None:
-            utility_grad *= ips_weights 
-
-        utility_grad = numerator * utility_grad          
-        return np.mean(utility_grad, axis=0)
 
     def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self.theta))
