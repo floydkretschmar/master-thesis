@@ -130,8 +130,8 @@ def _training_iteration(training_parameters, store_all, verbose):
     i = 0 
     np.random.seed()
     for utility, benefit_delta, policy in consequential_learning(**training_parameters):
-        if verbose:
-            print("Timestep {}: \t Utility: {} \n\t Benefit Delta: {}".format(i, utility, benefit_delta))
+        #if verbose:
+        #    print("Timestep {}: \t Utility: {} \n\t Benefit Delta: {}".format(i, utility, benefit_delta))
         utilities.append(utility)
         benefit_deltas.append(benefit_delta)
         policy_thetas.append(policy.theta.copy().tolist())
@@ -206,8 +206,8 @@ def train(training_parameters, fairness_rates, iterations=30, verbose=False, asy
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
         parameter_save_path = "{}/parameters.json".format(base_save_path)
 
-        serialized_dictionary = serialize_dictionary(training_parameters)
-        serialized_dictionary["lambdas"] = fairness_rates
+        current_training_parameters["lambdas"] = fairness_rates
+        serialized_dictionary = serialize_dictionary(current_training_parameters)
         save_dictionary(serialized_dictionary, parameter_save_path)
     else:
         base_save_path = None
