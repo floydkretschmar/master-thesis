@@ -199,8 +199,7 @@ class BasePolicy():
         Returns:
             benefit_delta: The absolute difference in benefits of the policy.
         """    
-        #return self._mean_difference(self.benefit_function(decisions=decisions, x=x, s=s, y=y), s)
-        return np.absolute(self._mean_difference(self.benefit_function(decisions=decisions, x=x, s=s, y=y), s))
+        return self._mean_difference(self.benefit_function(decisions=decisions, x=x, s=s, y=y), s)
 
     def copy(self):
         """ Creates a deep copy of the policy.
@@ -321,7 +320,7 @@ class LogisticPolicy(BasePolicy):
         utility_grad = utility / denominator 
 
         if ips_weights is not None:
-            utility_grad *= ips_weights
+            utility_grad *= ips_weights 
 
         utility_grad = numerator * utility_grad          
         return np.mean(utility_grad, axis=0)
