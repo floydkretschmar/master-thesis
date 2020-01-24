@@ -24,7 +24,7 @@ class SplitDistribution():
         s = (
             np.random.rand(n, 1) < fraction_protected
         ).astype(int)
-        x = 3.5 * np.random.randn(n, 1) + 3 * (s - 0.5)
+        x = 3.5 * np.random.randn(n, 1) + 3 * (0.5 - s)
 
         if self.bias:
             ones = np.ones((n, 1))
@@ -80,7 +80,7 @@ class UncalibratedScore():
 
         shifts = s - 0.5
         x = truncnorm.rvs(
-            -self.bound - shifts, self.bound - shifts, loc=shifts
+            -self.bound + shifts, self.bound + shifts, loc=-shifts
         ).reshape(-1, 1)
 
         if self.bias:
