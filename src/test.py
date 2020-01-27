@@ -8,7 +8,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
-from src.plotting import plot_median_over_time, plot_median_over_lambdas
+from src.plotting import plot_median, plot_mean
 from src.training import train
 import multiprocessing as mp
 from src.distribution import SplitDistribution, UncalibratedScore
@@ -69,8 +69,8 @@ def util_func(**util_params):
 training_parameters = {    
     'model':{
         'theta': [-3.0, 5.0],
-        'benefit_value_function': demographic_parity,
-        'utility_value_function': util_func,
+        'benefit_function': demographic_parity,
+        'utility_function': util_func,
         'fairness_function': fairness_function,
         'feature_map': IdentityFeatureMap(dim_theta),
         'keep_collected_data': False,
@@ -78,7 +78,7 @@ training_parameters = {
         'bias': bias
     },
     'optimization': {
-        'time_steps':200,
+        'time_steps':5,
         'epochs': 1,
         'batch_size':256,
         'learning_rate': 1,
@@ -94,12 +94,17 @@ training_parameters = {
     }
 }
 
-training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/res/exp-008/uncalibrated/lambda"
-lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=100)
-lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
+training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/res/test/uncalibrated/time"
+#lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
+#lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=True)
+statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=30, asynchronous=True)
+#statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
+#statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
-plot_median_over_lambdas(statistics, "{}/results_median_lambdas.png".format(run_path))
+#plot_median(statistics, "{}/results_median_lambdas.png".format(run_path))
+#plot_mean(statistics, "{}/results_mean_lambdas.png".format(run_path))
+
+#plot_median_over_lambdas(statistics, "{}/results_median_lambdas.png".format(run_path))
 
 #plot_median_over_time(statistics, "{}/results_median.png".format(run_path))

@@ -11,87 +11,62 @@ from pathlib import Path
 
 from src.consequential_learning import consequential_learning
 from src.util import save_dictionary, load_dictionary, serialize_dictionary
+from src.evaluation import Statistics, LambdaStatistics
 
-class TrainingStatistics():
-    def __init__(self, single_lambda=False):
-        self.mean_utilities = []
-        self.stddev_utilites = []
-        self.first_quartile_utilities = []
-        self.median_utilites = []
-        self.third_quartile_utilities = []
-        self.mean_benefit_delta = []
-        self.stddev_benefit_delta = []
-        self.first_quartile_benefit_delta = []
-        self.median_benefit_delta = []
-        self.third_quartile_benefit_delta = []
-        self.fairness_rates = []
-        self.single_lambda = single_lambda
+class Trainer():    
+    def __init__(self, test_data):
+        self.observations, self.protected_attributes, self.ground_truths = test_data
+        
+    def _training_iteration(self, training_parameters):
+        np.random.seed()
 
-    def log_statistics(self, fairness_rate, utilities, benefit_deltas, verbose=False):
-        self.mean_utilities.append(utilities.mean(axis=0))
-        self.stddev_utilites.append(utilities.std(axis=0))
-        self.first_quartile_utilities.append(np.percentile(utilities, 25, axis=0))
-        self.median_utilites.append(np.median(utilities, axis=0))
-        self.third_quartile_utilities.append(np.percentile(utilities, 75, axis=0))
-        self.mean_benefit_delta.append(benefit_deltas.mean(axis=0))
-        self.stddev_benefit_delta.append(benefit_deltas.std(axis=0))
-        self.first_quartile_benefit_delta.append(np.percentile(benefit_deltas, 25, axis=0))
-        self.median_benefit_delta.append(np.median(benefit_deltas, axis=0))
-        self.third_quartile_benefit_delta.append(np.percentile(benefit_deltas, 75, axis=0))
-        self.fairness_rates.append(fairness_rate)
+        decisions_over_time = None
+        for policy in consequential_learning(**training_parameters):
+            decisions = policy(self.observations, self.protected_attributes).reshape(-1, 1)
 
-        if verbose:
-            print("------------------- Utility ----------------------")
-            print("Mean: {}".format(utilities.mean(axis=0)))
-            print("Standard deviation: {}".format(utilities.std(axis=0)))
-            print("First quartile: {}".format(np.percentile(utilities, 25, axis=0)))
-            print("Median: {}".format(np.median(utilities, axis=0)))
-            print("Last quartile: {}".format(np.percentile(utilities, 75, axis=0)))
+            if decisions_over_time is None:
+                decisions_over_time = decisions
+            else:
+                decisions_over_time = np.hstack((decisions_over_time, decisions))
 
-            print("------------------- Benefit Delta ----------------")
-            print("Mean: {}".format(benefit_deltas.mean(axis=0)))
-            print("Standard deviation: {}".format(benefit_deltas.std(axis=0)))
-            print("First quartile: {}".format(np.percentile(benefit_deltas, 25, axis=0)))
-            print("Median: {}".format(np.median(benefit_deltas, axis=0)))
-            print("Last quartile: {}".format(np.percentile(benefit_deltas, 75, axis=0)))
-    
-    def to_dictionary(self):
-        if not self.single_lambda:
-            return {
-                "lambdas": self.fairness_rates,
-                "utility": {
-                    "mean": np.array(self.mean_utilities),
-                    "stddev": np.array(self.stddev_utilites),
-                    "first_quartile": np.array(self.first_quartile_utilities),
-                    "median": np.array(self.median_utilites),
-                    "third_quartile": np.array(self.third_quartile_utilities),
-                },
-                "benefit_delta": {
-                    "mean": np.array(self.mean_benefit_delta),
-                    "stddev": np.array(self.stddev_benefit_delta),
-                    "first_quartile": np.array(self.first_quartile_benefit_delta),
-                    "median": np.array(self.median_benefit_delta),
-                    "third_quartile": np.array(self.third_quartile_benefit_delta),
-                }
-            }
+            last_theta = policy.theta.copy().tolist()
+
+        return decisions_over_time, last_theta
+
+    def train_over_iterations(self, training_parameters, iterations, asynchronous):
+        decisions_tensor = None
+        thetas_over_iterations = []
+        # multithreaded runs of training
+        if asynchronous:
+            apply_results = []
+            pool = mp.Pool(mp.cpu_count())
+            for _ in range(0, iterations):
+                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters,)))
+            pool.close()
+            pool.join()
+
+            for result in apply_results:
+                decisions_over_time, last_theta = result.get()
+                thetas_over_iterations.append(last_theta)
+                if decisions_tensor is None:
+                    decisions_tensor = decisions_over_time
+                else:
+                    decisions_tensor = np.dstack((decisions_tensor, decisions_over_time))
         else:
-            return {
-                "lambdas": self.fairness_rates,
-                "utility": {
-                    "mean": self.mean_utilities[0],
-                    "stddev": self.stddev_utilites[0],
-                    "first_quartile": self.first_quartile_utilities[0],
-                    "median": self.median_utilites[0],
-                    "third_quartile": self.third_quartile_utilities[0],
-                },
-                "benefit_delta": {
-                    "mean": self.mean_benefit_delta[0],
-                    "stddev": self.stddev_benefit_delta[0],
-                    "first_quartile": self.first_quartile_benefit_delta[0],
-                    "median": self.median_benefit_delta[0],
-                    "third_quartile": self.third_quartile_benefit_delta[0],
-                }
-            }
+            for _ in range(0, iterations):
+                decisions_over_time, last_theta = self._training_iteration(training_parameters)
+                thetas_over_iterations.append(last_theta)
+                if decisions_tensor is None:
+                    decisions_tensor = decisions_over_time
+                else:
+                    decisions_tensor = np.dstack((decisions_tensor, decisions_over_time))
+
+        return Statistics.calculate_statistics(
+            predictions=decisions_tensor, 
+            observations=self.observations,
+            protected_attributes=self.protected_attributes, 
+            ground_truths=self.ground_truths, 
+            utility_function=training_parameters["model"]["utility_function"]), thetas_over_iterations
 
 def _generate_data_set(training_parameters):
     """ Generates one training and test dataset to be used across all lambdas.
@@ -123,54 +98,7 @@ def _generate_data_set(training_parameters):
         
     return data
 
-def _training_iteration(training_parameters, store_all, verbose):
-    utilities = []
-    benefit_deltas = []
-    policy_thetas = []
-    i = 0 
-    np.random.seed()
-    for utility, benefit_delta, policy in consequential_learning(**training_parameters):
-        #if verbose:
-        #    print("Timestep {}: \t Utility: {} \n\t Benefit Delta: {}".format(i, utility, benefit_delta))
-        utilities.append(utility)
-        benefit_deltas.append(benefit_delta)
-        policy_thetas.append(policy.theta.copy().tolist())
-        i += 1
-
-    if store_all:
-        return utilities, benefit_deltas, policy_thetas
-    else:
-        return utilities[-1], benefit_deltas[-1], policy_thetas[-1]
-
-def _train_over_iterations(training_parameters, iterations, store_all, verbose, asynchronous):
-    utilities_over_iterations = []
-    benefit_deltas_over_iterations = []
-    thetas_over_iterations = []
-
-    # multithreaded runs of training
-    if asynchronous:
-        apply_results = []
-        pool = mp.Pool(mp.cpu_count())
-        for _ in range(0, iterations):
-            apply_results.append(pool.apply_async(_training_iteration, args=(training_parameters, store_all, False)))
-        pool.close()
-        pool.join()
-
-        for result in apply_results:
-            utilities, benefit_deltas, thetas = result.get()
-            utilities_over_iterations.append(utilities)
-            benefit_deltas_over_iterations.append(benefit_deltas)
-            thetas_over_iterations.append(thetas)
-    else:
-        for _ in range(0, iterations):
-            utilities, benefit_deltas, thetas = _training_iteration(training_parameters, store_all, verbose)
-            utilities_over_iterations.append(utilities)
-            benefit_deltas_over_iterations.append(benefit_deltas)
-            thetas_over_iterations.append(thetas)
-
-    return np.array(utilities_over_iterations).squeeze(), np.array(benefit_deltas_over_iterations).squeeze(), thetas_over_iterations
-
-def train(training_parameters, fairness_rates, iterations=30, verbose=False, asynchronous=True):
+def train(training_parameters, fairness_rates, iterations=30, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
@@ -187,8 +115,6 @@ def train(training_parameters, fairness_rates, iterations=30, verbose=False, asy
         training_statistic: A dictionary that contains statistical data about 
         the executed runs.
     """
-    single_lambda = len(fairness_rates)==1
-    statistics = TrainingStatistics(single_lambda=single_lambda)
     current_training_parameters = copy.deepcopy(training_parameters)
 
     if "save_path" in training_parameters:
@@ -199,8 +125,8 @@ def train(training_parameters, fairness_rates, iterations=30, verbose=False, asy
         if len(runs) == 0:
             current_run = 0
         else:
-            runs.sort()
-            current_run = int(runs[-1].replace("run", "")) + 1
+            runs.sort(key=int)
+            current_run = int(runs[-1]) + 1
 
         base_save_path = "{}/{}".format(base_save_path, current_run)
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
@@ -212,35 +138,37 @@ def train(training_parameters, fairness_rates, iterations=30, verbose=False, asy
     else:
         base_save_path = None
 
-    if training_parameters["data"]["keep_data_across_lambdas"]:
-        current_training_parameters["data"] = _generate_data_set(training_parameters)
+    current_training_parameters["data"] = _generate_data_set(training_parameters)
 
-        if base_save_path is not None:
-            data_save_path = "{}/data.json".format(base_save_path)
-            data_dict = {
-                "x": current_training_parameters["data"]["test_dataset"][0].tolist(),
-                "s": current_training_parameters["data"]["test_dataset"][1].tolist(),
-                "y": current_training_parameters["data"]["test_dataset"][2].tolist()
-            }
-            save_dictionary(data_dict, data_save_path)
+    if base_save_path is not None:
+        data_save_path = "{}/data.json".format(base_save_path)
+        data_dict = {
+            "x": current_training_parameters["data"]["test_dataset"][0].tolist(),
+            "s": current_training_parameters["data"]["test_dataset"][1].tolist(),
+            "y": current_training_parameters["data"]["test_dataset"][2].tolist()
+        }
+        save_dictionary(data_dict, data_save_path)
 
+    trainer = Trainer(test_data=current_training_parameters["data"]["test_dataset"])
+
+    overall_statistics = LambdaStatistics()
     for fairness_rate in fairness_rates:
-        print("--------------------------------------------------")
-        print("------------------- Lambda {} -------------------".format(fairness_rate))
-        print("--------------------------------------------------")
+        print("Processing Lambda {} ".format(fairness_rate))
+
         current_training_parameters["optimization"]["fairness_rate"] = fairness_rate
 
-        utilities, benefit_deltas, thetas = _train_over_iterations(current_training_parameters, iterations, single_lambda, verbose, asynchronous)
-
-        statistics.log_statistics(fairness_rate, utilities, benefit_deltas, verbose)
+        statistics, thetas_over_iterations = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
+        if len(fairness_rates) == 1:
+            overall_statistics = statistics
+        else:
+            overall_statistics.log_run(statistics=statistics, fairness_rate=fairness_rate)
 
         if base_save_path is not None:
             lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
             Path(lambda_path).mkdir(parents=True, exist_ok=True)
             model_save_path = "{}models.json".format(lambda_path)
 
-            theta_dict = {str(i):theta for i, theta in enumerate(thetas)}
-
+            theta_dict = {str(i):theta for i, theta in enumerate(thetas_over_iterations)}
             save_dictionary(serialize_dictionary(theta_dict), model_save_path)
 
-    return statistics.to_dictionary(), base_save_path
+    return overall_statistics, base_save_path
