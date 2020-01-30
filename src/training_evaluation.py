@@ -1,8 +1,51 @@
 import numpy as np
 from src.consequential_learning import consequential_learning
+from src.util import stack
+
 import multiprocessing as mp
 import numbers
+from copy import deepcopy
 
+# Result Format
+MEAN = "MEAN"
+STANDARD_DEVIATION = "STDDEV"
+MEDIAN = "MEDIAN"
+FIRST_QUARTILE = "FIRST_QUARTILE"
+THIRD_QUARTILE = "THIRD_QUARTILE"
+
+def build_result_dictionary(measure):
+    return {
+        MEAN: np.mean(measure, axis=1),
+        MEDIAN: np.median(measure, axis=1),
+        STANDARD_DEVIATION: np.std(measure, axis=1),
+        FIRST_QUARTILE: np.percentile(measure, q=25, axis=1),
+        THIRD_QUARTILE: np.percentile(measure, q=75, axis=1)
+    }
+
+class ModelParameters():
+    # Result Format
+    MEAN = MEAN
+    STANDARD_DEVIATION = STANDARD_DEVIATION
+    MEDIAN = MEDIAN
+    FIRST_QUARTILE = FIRST_QUARTILE
+    THIRD_QUARTILE = THIRD_QUARTILE
+
+    def __init__(self):
+        self.model_parameters = {}
+        self.lagrangians_over_iterations = None
+
+    def add(self, iteration, parameters, lagrangian):
+        self.model_parameters[iteration] = {
+            "model_parameters": parameters,
+            "lagrangian_multiplier": lagrangian
+        }
+        self.lagrangians_over_iterations = stack(self.lagrangians_over_iterations, lagrangian.reshape(-1, 1), axis=1)
+
+    def get_lagrangians(self, result_format):
+        return build_result_dictionary(self.lagrangians_over_iterations)[result_format]
+
+    def to_dict(self):
+        return deepcopy(self.model_parameters)
 
 class BaseStatistics():
     # Performance Measures
@@ -34,24 +77,13 @@ class BaseStatistics():
     DISPARATE_IMPACT = "DI"
     DEMOGRAPHIC_PARITY = "DP"
     EQUALITY_OF_OPPORTUNITY = "EOP"
-
+    
     # Result Format
-    EXACT_VALUE = "EXACT"
-    MEAN = "MEAN"
-    STANDARD_DEVIATION = "STDDEV"
-    MEDIAN = "MEDIAN"
-    FIRST_QUARTILE = "FIRST_QUARTILE"
-    THIRD_QUARTILE = "THIRD_QUARTILE"
-
-    @staticmethod
-    def _build_return_dictionary(measure):
-        return {
-            BaseStatistics.MEAN: np.mean(measure, axis=1),
-            BaseStatistics.MEDIAN: np.median(measure, axis=1),
-            BaseStatistics.STANDARD_DEVIATION: np.std(measure, axis=1),
-            BaseStatistics.FIRST_QUARTILE: np.percentile(measure, q=25, axis=1),
-            BaseStatistics.THIRD_QUARTILE: np.percentile(measure, q=75, axis=1)
-        }
+    MEAN = MEAN
+    STANDARD_DEVIATION = STANDARD_DEVIATION
+    MEDIAN = MEDIAN
+    FIRST_QUARTILE = FIRST_QUARTILE
+    THIRD_QUARTILE = THIRD_QUARTILE
 
     def __init__(self):
         self.results = {}
@@ -65,11 +97,11 @@ class BaseStatistics():
             prot = "unprotected"
 
         measure = self.results[prot][measure]
-        return BaseStatistics._build_return_dictionary(measure)[result_format]
+        return build_result_dictionary(measure)[result_format]
 
     def fairness(self, measure, result_format):
         measure = self.results["all"][measure]
-        return BaseStatistics._build_return_dictionary(measure)[result_format]
+        return build_result_dictionary(measure)[result_format]
 
 class Statistics(BaseStatistics):
     def __init__(self):
@@ -127,51 +159,51 @@ class Statistics(BaseStatistics):
         
         return statistics
 
-class LambdaStatistics(BaseStatistics):
+class MultipleRunStatistics(BaseStatistics):
     LAMBDAS = "LAMBDAS"
 
     def __init__(self):
-        super(LambdaStatistics, self).__init__()
-        self.results[LambdaStatistics.LAMBDAS] = []
-        self.results[LambdaStatistics.TIMESTEPS] = None
+        super(MultipleRunStatistics, self).__init__()
+        self.results[MultipleRunStatistics.LAMBDAS] = []
+        self.results[MultipleRunStatistics.TIMESTEPS] = None
 
         for prot in ["all", "unprotected", "protected"]:
             self.results[prot] = {
-                LambdaStatistics.UTILITY: None,
-                LambdaStatistics.NUM_INDIVIDUALS: None,
-                LambdaStatistics.NUM_NEGATIVES: None,
-                LambdaStatistics.NUM_POSITIVES: None,
-                LambdaStatistics.NUM_PRED_NEGATIVES: None,
-                LambdaStatistics.NUM_PRED_POSITIVES: None,
-                LambdaStatistics.TRUE_POSITIVES: None,
-                LambdaStatistics.TRUE_NEGATIVES: None,
-                LambdaStatistics.FALSE_POSITIVES: None,
-                LambdaStatistics.FALSE_NEGATIVES: None,
-                LambdaStatistics.TRUE_POSITIVE_RATE: None,
-                LambdaStatistics.FALSE_POSITIVE_RATE: None,
-                LambdaStatistics.TRUE_NEGATIVE_RATE: None,
-                LambdaStatistics.FALSE_NEGATIVE_RATE: None,
-                LambdaStatistics.POSITIVE_PREDICTIVE_VALUE: None,
-                LambdaStatistics.NEGATIVE_PREDICTIVE_VALUE: None,
-                LambdaStatistics.FALSE_DISCOVERY_RATE: None,
-                LambdaStatistics.FALSE_OMISSION_RATE: None,
-                LambdaStatistics.ACCURACY: None,
-                LambdaStatistics.ERROR_RATE: None,
-                LambdaStatistics.SELECTION_RATE: None,
-                LambdaStatistics.F1: None
+                MultipleRunStatistics.UTILITY: None,
+                MultipleRunStatistics.NUM_INDIVIDUALS: None,
+                MultipleRunStatistics.NUM_NEGATIVES: None,
+                MultipleRunStatistics.NUM_POSITIVES: None,
+                MultipleRunStatistics.NUM_PRED_NEGATIVES: None,
+                MultipleRunStatistics.NUM_PRED_POSITIVES: None,
+                MultipleRunStatistics.TRUE_POSITIVES: None,
+                MultipleRunStatistics.TRUE_NEGATIVES: None,
+                MultipleRunStatistics.FALSE_POSITIVES: None,
+                MultipleRunStatistics.FALSE_NEGATIVES: None,
+                MultipleRunStatistics.TRUE_POSITIVE_RATE: None,
+                MultipleRunStatistics.FALSE_POSITIVE_RATE: None,
+                MultipleRunStatistics.TRUE_NEGATIVE_RATE: None,
+                MultipleRunStatistics.FALSE_NEGATIVE_RATE: None,
+                MultipleRunStatistics.POSITIVE_PREDICTIVE_VALUE: None,
+                MultipleRunStatistics.NEGATIVE_PREDICTIVE_VALUE: None,
+                MultipleRunStatistics.FALSE_DISCOVERY_RATE: None,
+                MultipleRunStatistics.FALSE_OMISSION_RATE: None,
+                MultipleRunStatistics.ACCURACY: None,
+                MultipleRunStatistics.ERROR_RATE: None,
+                MultipleRunStatistics.SELECTION_RATE: None,
+                MultipleRunStatistics.F1: None
             }
         
-        self.results["all"][LambdaStatistics.DISPARATE_IMPACT] = None
-        self.results["all"][LambdaStatistics.DEMOGRAPHIC_PARITY] = None
-        self.results["all"][LambdaStatistics.EQUALITY_OF_OPPORTUNITY] = None
+        self.results["all"][MultipleRunStatistics.DISPARATE_IMPACT] = None
+        self.results["all"][MultipleRunStatistics.DEMOGRAPHIC_PARITY] = None
+        self.results["all"][MultipleRunStatistics.EQUALITY_OF_OPPORTUNITY] = None
 
     def log_run(self, statistics, fairness_rate):
-        self.results[LambdaStatistics.LAMBDAS].append(fairness_rate)
+        self.results[MultipleRunStatistics.LAMBDAS].append(fairness_rate)
             
         for (protected_key, protected_value) in statistics.results.items():
-            if protected_key == LambdaStatistics.TIMESTEPS:
+            if protected_key == MultipleRunStatistics.TIMESTEPS:
                 if self.results[Statistics.TIMESTEPS] is None:
-                    self.results[LambdaStatistics.TIMESTEPS] = protected_value
+                    self.results[MultipleRunStatistics.TIMESTEPS] = protected_value
             else:
                 for (measure_key, measure_value) in protected_value.items():
                     if isinstance(measure_value, numbers.Number):

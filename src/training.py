@@ -6,12 +6,12 @@ if module_path not in sys.path:
 
 import numpy as np
 import multiprocessing as mp
-import copy
 from pathlib import Path
+from copy import deepcopy
 
 from src.consequential_learning import consequential_learning
-from src.util import save_dictionary, load_dictionary, serialize_dictionary
-from src.evaluation import Statistics, LambdaStatistics
+from src.util import save_dictionary, load_dictionary, serialize_dictionary, stack
+from src.training_evaluation import Statistics, MultipleRunStatistics, ModelParameters
 
 class Trainer():    
     def __init__(self, test_data):
@@ -21,67 +21,48 @@ class Trainer():
         np.random.seed()
 
         decisions_over_time = None
-        lambdas_over_time = []
+        parameters_over_time = []
+        lagrangians_over_time = []
+
         for policy in consequential_learning(**training_parameters):
+            # Store decisions made in last time step ...
             decisions = policy(self.observations, self.protected_attributes).reshape(-1, 1)
+            decisions_over_time = stack(decisions_over_time, decisions, axis=1)
+            
+            # ... and the parameters of the model
+            parameters_over_time.append(policy.get_model_parameters())
+            lagrangians_over_time.append(policy.get_lagrangian_multiplier())
 
-            if decisions_over_time is None:
-                decisions_over_time = decisions
-            else:
-                decisions_over_time = np.hstack((decisions_over_time, decisions))
-
-            last_theta = policy.theta.copy().tolist()
-            lambdas_over_time.append(policy.fairness_rate)
-
-        return decisions_over_time, np.array(lambdas_over_time), last_theta
-
-    def _stack_over_iteration(self, stackable, new_stack, axis):
-        if stackable is None:
-            return new_stack
-        else:
-            if axis == 0:
-                return np.vstack((stackable, new_stack))
-            elif axis == 1:
-                return np.hstack((stackable, new_stack))
-            else:
-                return np.dstack((stackable, new_stack))
-
+        return decisions_over_time, parameters_over_time, np.array(lagrangians_over_time)
 
     def train_over_iterations(self, training_parameters, iterations, asynchronous):
         decisions_tensor = None
-        lambda_tensor = None
-        thetas_over_iterations = []
+        model_parameters = ModelParameters()
         # multithreaded runs of training
         if asynchronous:
             apply_results = []
             pool = mp.Pool(mp.cpu_count())
-            for _ in range(0, iterations):
-                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters,)))
+            for iteration in range(0, iterations):
+                apply_results.append((iteration, pool.apply_async(self._training_iteration, args=(training_parameters,))))
             pool.close()
             pool.join()
 
             for result in apply_results:
-                decisions_over_time, lambdas_over_time, last_theta = result.get()
-                thetas_over_iterations.append(last_theta)
-                decisions_tensor = self._stack_over_iteration(decisions_tensor, decisions_over_time, axis=2)
-                lambda_tensor = self._stack_over_iteration(lambda_tensor, lambdas_over_time, axis=0)
+                decisions_over_time, parameters_over_time, lagrangians_over_time = result[1].get()
+                decisions_tensor = stack(decisions_tensor, decisions_over_time, axis=2)
+                model_parameters.add(result[0], parameters_over_time, lagrangians_over_time)
         else:
-            for _ in range(0, iterations):
-                decisions_over_time, lambdas_over_time, last_theta = self._training_iteration(training_parameters)
-                thetas_over_iterations.append(last_theta)
-                decisions_tensor = self._stack_over_iteration(decisions_tensor, decisions_over_time, axis=2)
-                lambda_tensor = self._stack_over_iteration(lambda_tensor, lambdas_over_time, axis=0)
+            for iteration in range(0, iterations):
+                decisions_over_time, parameters_over_time, lagrangians_over_time = self._training_iteration(training_parameters)
+                decisions_tensor = stack(decisions_tensor, decisions_over_time, axis=2)
+                model_parameters.add(iteration, parameters_over_time, lagrangians_over_time)
 
-        return {
-            "statistics": Statistics.calculate_statistics(
+        return Statistics.calculate_statistics(
                 predictions=decisions_tensor, 
                 observations=self.observations,
                 protected_attributes=self.protected_attributes, 
                 ground_truths=self.ground_truths, 
-                utility_function=training_parameters["model"]["utility_function"]), 
-            "thetas": thetas_over_iterations,
-            "lambas": lambda_tensor
-        }
+                utility_function=training_parameters["model"]["utility_function"]), model_parameters
 
 def _generate_data_set(training_parameters):
     """ Generates one training and test dataset to be used across all lambdas.
@@ -130,7 +111,7 @@ def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=
         training_statistic: A dictionary that contains statistical data about 
         the executed runs.
     """
-    current_training_parameters = copy.deepcopy(training_parameters)
+    current_training_parameters = deepcopy(training_parameters)
 
     if "save_path" in training_parameters:
         base_save_path = "{}/runs".format(training_parameters["save_path"])
@@ -169,15 +150,12 @@ def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=
     if fairness_rates is None:
         fairness_rates = [None]
 
-    overall_statistics = LambdaStatistics()
+    overall_statistics = MultipleRunStatistics()
     for fairness_rate in fairness_rates:
         print("Processing Lambda {} ".format(fairness_rate))
 
         current_training_parameters["optimization"]["fairness_rate"] = fairness_rate
-
-        training_results = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
-        statistics = training_results["statistics"]
-        thetas_over_iterations = training_results["thetas"]
+        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
 
         if len(fairness_rates) == 1:
             overall_statistics = statistics
@@ -185,11 +163,13 @@ def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=
             overall_statistics.log_run(statistics=statistics, fairness_rate=fairness_rate)
 
         if base_save_path is not None:
+            # save the last theta for all iterations of a specified lambda:
             lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
             Path(lambda_path).mkdir(parents=True, exist_ok=True)
             model_save_path = "{}models.json".format(lambda_path)
 
-            theta_dict = {str(i):theta for i, theta in enumerate(thetas_over_iterations)}
-            save_dictionary(serialize_dictionary(theta_dict), model_save_path)
+            serialized_model_parameters = serialize_dictionary(model_parameters.to_dict())
+
+            save_dictionary(serialized_model_parameters, model_save_path)
 
     return overall_statistics, base_save_path

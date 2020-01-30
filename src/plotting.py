@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from src.evaluation import Statistics, LambdaStatistics
+from src.training_evaluation import Statistics, MultipleRunStatistics
 
 def _plot_results(utility, benefit_delta, xaxis, xlable, xscale, utility_uncertainty=None, benefit_delta_uncertainty=None, file_path=None):
     f, (ax1, ax2) = plt.subplots(1, 2, sharex=True, figsize=(25, 10))
@@ -20,12 +20,12 @@ def _plot_results(utility, benefit_delta, xaxis, xlable, xscale, utility_uncerta
         plt.savefig(file_path)
 
 def plot_median(statistics, file_path=None):
-    if isinstance(statistics, LambdaStatistics):
+    if isinstance(statistics, MultipleRunStatistics):
         # Plot median results over range of lambdas:
         _plot_results(
             statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.MEDIAN),
             statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEDIAN),
-            statistics.results[LambdaStatistics.LAMBDAS],
+            statistics.results[MultipleRunStatistics.LAMBDAS],
             "Lambdas",
             "log",
             (statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.FIRST_QUARTILE), statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.THIRD_QUARTILE)),
@@ -49,12 +49,12 @@ def plot_mean(statistics, file_path=None):
     bd_mean = statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEAN)
     bd_stddev = statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.STANDARD_DEVIATION)
 
-    if isinstance(statistics, LambdaStatistics):
+    if isinstance(statistics, MultipleRunStatistics):
         # Plot median results over range of lambdas:
         _plot_results(
             u_mean,
             bd_mean,
-            statistics.results[LambdaStatistics.LAMBDAS],
+            statistics.results[MultipleRunStatistics.LAMBDAS],
             "Lambdas",
             "log",
             (u_mean - u_stddev, u_mean + u_stddev),

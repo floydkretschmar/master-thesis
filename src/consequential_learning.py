@@ -9,7 +9,7 @@ import numpy as np
 from copy import deepcopy
 from src.policy import LogisticPolicy
 from src.util import save_dictionary, load_dictionary
-from src.training_algorithms import StochasticGradientAscent
+from src.learning_algorithms import StochasticGradientAscent
 
 def apply_policy(data, pi):
     """ Makes decisions for the data based on the specified policy and only returns the x, s and y of the 

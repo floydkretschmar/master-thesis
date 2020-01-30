@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from src.util import check_for_missing_kwargs  
 
-class BaseTrainingAlgorithm():
+class BaseLearningAlgorithm():
     def __init__(self, learn_on_entire_history):
         self.learn_on_entire_history = learn_on_entire_history
         self.data_history = None
@@ -45,7 +45,7 @@ class BaseTrainingAlgorithm():
         raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
 
 
-class StochasticGradientAscent(BaseTrainingAlgorithm):
+class StochasticGradientAscent(BaseLearningAlgorithm):
     def __init__(self, learn_on_entire_history):
         super(StochasticGradientAscent, self).__init__(learn_on_entire_history)
 

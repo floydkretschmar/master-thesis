@@ -232,6 +232,22 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override copy(self).")
 
+    def get_model_parameters(self):
+        """ Returns the model parameters theta needed to restore the model to its current state.
+        
+        Returns:
+            parameters: The the model parameters.
+        """
+        raise NotImplementedError("Subclass must override get_model_parameters(self).")
+
+    def get_lagrangian_multiplier(self):
+        """ Returns the lagrangian multiplier for the fairness penalty.
+        
+        Returns:
+            lagrangian_multiplier: The the lagrangian multiplier.
+        """
+        raise NotImplementedError("Subclass must override get_model_parameters(self).")
+
     def utility(self, x, s, y, decisions):
         """ Calculates the utility value or the utility gradient according to the utility vaue function callback specified
         in the constructor.
@@ -272,6 +288,12 @@ class LogisticPolicy(BasePolicy):
             self.use_sensitive_attributes) 
         approx_policy.theta = self.theta.copy()
         return approx_policy
+
+    def get_model_parameters(self):
+        return self.theta.copy()
+
+    def get_lagrangian_multiplier(self):
+        return self.fairness_rate
 
     def _ips_weights(self, x, s, sampling_distribution):
         phi = sampling_distribution.feature_map(sampling_distribution._extract_features(x, s))
