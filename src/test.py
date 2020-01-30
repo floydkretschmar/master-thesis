@@ -13,6 +13,30 @@ from src.training import train
 import multiprocessing as mp
 from src.distribution import SplitDistribution, UncalibratedScore
 
+# def fairness_function(**fairness_kwargs):
+#     policy = fairness_kwargs["policy"]
+#     x = fairness_kwargs["x"]
+#     s = fairness_kwargs["s"]
+#     y = fairness_kwargs["y"]
+#     decisions = fairness_kwargs["decisions"]
+#     ips_weights = fairness_kwargs["ips_weights"]
+#     numerator, denominator_log_grad = policy._log_gradient(x, s)
+
+#     benefit = policy.benefit_function(decisions=decisions, y=y)
+
+#     if ips_weights is not None:
+#         mu_s = np.mean(s * ips_weights, axis=0)
+#     else:
+#         mu_s = np.mean(s, axis=0)
+
+#     if ips_weights is not None:
+#         benefit *= ips_weights
+
+#     covariance = (s - mu_s) * benefit
+#     covariance_grad = (covariance * numerator)/denominator_log_grad
+
+#     return np.mean(covariance, axis=0), np.mean(covariance_grad, axis=0)
+
 def fairness_function(**fairness_kwargs):
     policy = fairness_kwargs["policy"]
     x = fairness_kwargs["x"]
@@ -23,39 +47,16 @@ def fairness_function(**fairness_kwargs):
     numerator, denominator_log_grad = policy._log_gradient(x, s)
 
     benefit = policy.benefit_function(decisions=decisions, y=y)
-
-    if ips_weights is not None:
-        mu_s = np.mean(s * ips_weights, axis=0)
-    else:
-        mu_s = np.mean(s, axis=0)
+    benefit_gradient = benefit / denominator_log_grad
 
     if ips_weights is not None:
         benefit *= ips_weights
+        benefit_gradient *= ips_weights
 
-    covariance = (s - mu_s) * benefit
-    covariance_grad = (covariance * numerator)/denominator_log_grad
-
-    return np.mean(covariance, axis=0) * np.mean(covariance_grad, axis=0)
-
-# def fairness_function(**fairness_kwargs):
-#     policy = fairness_kwargs["policy"]
-#     x = fairness_kwargs["x"]
-#     s = fairness_kwargs["s"]
-#     y = fairness_kwargs["y"]
-#     decisions = fairness_kwargs["decisions"]
-#     ips_weights = fairness_kwargs["ips_weights"]
-
-#     benefit = policy.benefit_function(decisions=decisions, y=y)
-#     log_gradient = policy._log_gradient(x, s)
-    
-#     benefit_grad = benefit * log_gradient
-
-#     if ips_weights is not None:
-#         benefit *= ips_weights
-#         benefit_grad *= ips_weights
+    benefit_grad = numerator * benefit_gradient
         
-#     # benefit-difference * grad-benefit-difference
-#     return policy._mean_difference(benefit, s) * policy._mean_difference(benefit_grad, s)
+    # benefit-difference * grad-benefit-difference
+    return policy._mean_difference(benefit, s), policy._mean_difference(benefit_grad, s)
 
 i = 1
 bias = True
@@ -73,17 +74,26 @@ training_parameters = {
         'utility_function': util_func,
         'fairness_function': fairness_function,
         'feature_map': IdentityFeatureMap(dim_theta),
-        'keep_collected_data': False,
+        'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
         'bias': bias
     },
     'optimization': {
-        'time_steps':5,
         'epochs': 1,
+        'time_steps':5,
         'batch_size':256,
-        'learning_rate': 1,
-        'decay_rate': 1,
-        'decay_step': 10000
+        'learning_rates' : {
+            'theta': {
+                'learning_rate': 1,
+                'decay_rate': 1,
+                'decay_step': 10000
+            },
+            'lambda': {
+                'learning_rate': 1,
+                'decay_rate': 1,
+                'decay_step': 10000
+            }
+        }
     },
     'data': {
         'distribution': UncalibratedScore(bias=bias),
@@ -98,7 +108,7 @@ training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/re
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=30, asynchronous=True)
+statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=30, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 

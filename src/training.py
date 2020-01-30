@@ -21,6 +21,7 @@ class Trainer():
         np.random.seed()
 
         decisions_over_time = None
+        lambdas_over_time = []
         for policy in consequential_learning(**training_parameters):
             decisions = policy(self.observations, self.protected_attributes).reshape(-1, 1)
 
@@ -30,11 +31,25 @@ class Trainer():
                 decisions_over_time = np.hstack((decisions_over_time, decisions))
 
             last_theta = policy.theta.copy().tolist()
+            lambdas_over_time.append(policy.fairness_rate)
 
-        return decisions_over_time, last_theta
+        return decisions_over_time, np.array(lambdas_over_time), last_theta
+
+    def _stack_over_iteration(self, stackable, new_stack, axis):
+        if stackable is None:
+            return new_stack
+        else:
+            if axis == 0:
+                return np.vstack((stackable, new_stack))
+            elif axis == 1:
+                return np.hstack((stackable, new_stack))
+            else:
+                return np.dstack((stackable, new_stack))
+
 
     def train_over_iterations(self, training_parameters, iterations, asynchronous):
         decisions_tensor = None
+        lambda_tensor = None
         thetas_over_iterations = []
         # multithreaded runs of training
         if asynchronous:
@@ -46,27 +61,27 @@ class Trainer():
             pool.join()
 
             for result in apply_results:
-                decisions_over_time, last_theta = result.get()
+                decisions_over_time, lambdas_over_time, last_theta = result.get()
                 thetas_over_iterations.append(last_theta)
-                if decisions_tensor is None:
-                    decisions_tensor = decisions_over_time
-                else:
-                    decisions_tensor = np.dstack((decisions_tensor, decisions_over_time))
+                decisions_tensor = self._stack_over_iteration(decisions_tensor, decisions_over_time, axis=2)
+                lambda_tensor = self._stack_over_iteration(lambda_tensor, lambdas_over_time, axis=0)
         else:
             for _ in range(0, iterations):
-                decisions_over_time, last_theta = self._training_iteration(training_parameters)
+                decisions_over_time, lambdas_over_time, last_theta = self._training_iteration(training_parameters)
                 thetas_over_iterations.append(last_theta)
-                if decisions_tensor is None:
-                    decisions_tensor = decisions_over_time
-                else:
-                    decisions_tensor = np.dstack((decisions_tensor, decisions_over_time))
+                decisions_tensor = self._stack_over_iteration(decisions_tensor, decisions_over_time, axis=2)
+                lambda_tensor = self._stack_over_iteration(lambda_tensor, lambdas_over_time, axis=0)
 
-        return Statistics.calculate_statistics(
-            predictions=decisions_tensor, 
-            observations=self.observations,
-            protected_attributes=self.protected_attributes, 
-            ground_truths=self.ground_truths, 
-            utility_function=training_parameters["model"]["utility_function"]), thetas_over_iterations
+        return {
+            "statistics": Statistics.calculate_statistics(
+                predictions=decisions_tensor, 
+                observations=self.observations,
+                protected_attributes=self.protected_attributes, 
+                ground_truths=self.ground_truths, 
+                utility_function=training_parameters["model"]["utility_function"]), 
+            "thetas": thetas_over_iterations,
+            "lambas": lambda_tensor
+        }
 
 def _generate_data_set(training_parameters):
     """ Generates one training and test dataset to be used across all lambdas.
@@ -98,17 +113,17 @@ def _generate_data_set(training_parameters):
         
     return data
 
-def train(training_parameters, fairness_rates, iterations=30, asynchronous=True):
+def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
     Args:
         training_parameters: The parameters used to configure the consequential learning algorithm.
         fairness_rates: An iterable containing all fairness rates for which consequential learning
-        should be run and statistics will be collected.
+        should be run and statistics will be collected. If fairness_rate=None then no preset value
+        for the fairness function is assumed and a full lagrange multiplier is executed.
         iterations: The number of times consequential learning will be run for one of the specified
         fairness rates. The resulting statistics will be applied over the number of runs
-        verbose: A flag indicating if the results of each fairness rate should be printed.
         asynchronous: A flag indicating if the iterations should be executed asynchronously.
 
     Returns:
@@ -151,13 +166,19 @@ def train(training_parameters, fairness_rates, iterations=30, asynchronous=True)
 
     trainer = Trainer(test_data=current_training_parameters["data"]["test_dataset"])
 
+    if fairness_rates is None:
+        fairness_rates = [None]
+
     overall_statistics = LambdaStatistics()
     for fairness_rate in fairness_rates:
         print("Processing Lambda {} ".format(fairness_rate))
 
         current_training_parameters["optimization"]["fairness_rate"] = fairness_rate
 
-        statistics, thetas_over_iterations = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
+        training_results = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
+        statistics = training_results["statistics"]
+        thetas_over_iterations = training_results["thetas"]
+
         if len(fairness_rates) == 1:
             overall_statistics = statistics
         else:

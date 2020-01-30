@@ -8,7 +8,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 import numpy as np
 #pylint: disable=no-name-in-module
-from src.util import sigmoid
+from src.util import sigmoid, check_for_missing_kwargs          
 
 class BasePolicy():
     """ The base implementation of a policy """
@@ -20,8 +20,7 @@ class BasePolicy():
         benefit_function, 
         utility_function, 
         fairness_rate, 
-        use_sensitive_attributes, 
-        learn_on_entire_history): 
+        use_sensitive_attributes): 
         """ Initializes a new BasePolicy object.
         
         Args:
@@ -43,8 +42,6 @@ class BasePolicy():
         self.fairness_rate = fairness_rate
 
         self.use_sensitive_attributes = use_sensitive_attributes
-        self.learn_on_entire_history = learn_on_entire_history
-        self.data_history = None
         self.theta = np.array(theta)
 
     def __call__(self, x, s):
@@ -106,6 +103,23 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override _log_gradient(self, x, s).")
 
+    def _lambda_gradient(self, x, s, y, decisions, ips_weights=None):
+        """ Calculates the gradient of the the lagrangian multiplier lambda of a policy given the data.
+        
+        Args:
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
+            y: The ground truth labels of the n samples
+            decisions: The decisions made by the policy based on the features.
+            ips_weights: The weights used for inverse propensity scoring. If sampling_data=None 
+            no IPS will be applied.
+
+        Returns:
+            lambda_gradient: The gradient of the lagrangian multiplier.
+        """
+
+        raise NotImplementedError("Subclass must override _lambda_gradient(self, x, s, y, ips_weights=None).")
+
     def _mean_difference(self, target, s):
         """ Calculates the mean difference of the target with regards to the sensitive attribute.
         
@@ -128,8 +142,52 @@ class BasePolicy():
 
         return target_s0 - target_s1
 
+    def _theta_gradient(self, x, s, y, ips_weights=None):
+        """ Calculates the gradient of the the parameters theta of a policy given the data.
+        
+        Args:
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
+            y: The ground truth labels of the n samples
+            ips_weights: The weights used for inverse propensity scoring. If sampling_data=None 
+            no IPS will be applied.
+
+        Returns:
+            gradient: The gradient of the policy.
+        """
+        # make decision according to current policy
+        decisions = self(x, s)
+
+        # calculate utility part of the gradient
+        gradient = self._utility_gradient(x, s, y, decisions, ips_weights)
+
+        if self.fairness_rate > 0:
+            fairness, fairness_gradient = self.fairness_gradient_function(
+                x=x, 
+                s=s, 
+                y=y, 
+                ips_weights=ips_weights, 
+                decisions=decisions, 
+                policy=self)
+            grad_fairness = self.fairness_rate * fairness * fairness_gradient
+            gradient -= grad_fairness
+
+        return gradient
+
+
+    def _probability(self, features):
+        """ Calculates the probability of a positiv decision given the specified features.
+        
+        Args:
+            features: The features for which the probability will be calculated
+
+        Returns:
+            probability: The Probability of a positive decision.
+        """
+        raise NotImplementedError("Subclass must override calculate probability(features).")
+
     def _utility_gradient(self, x, s, y, decisions, ips_weights=None):
-        """ Calculates the part of the gradient that is defined by the utility function.
+        """ Calculates the part of the theta gradient that is defined by the utility function.
         
         Args:
             x: The features of the n samples
@@ -151,49 +209,6 @@ class BasePolicy():
 
         utility_grad = numerator * utility_grad          
         return np.mean(utility_grad, axis=0)
-
-    def _policy_gradient(self, x, s, y, ips_weights=None):
-        """ Calculates the gradient of the policy given the data.
-        
-        Args:
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            ips_weights: The weights used for inverse propensity scoring. If sampling_data=None 
-            no IPS will be applied.
-
-        Returns:
-            gradient: The gradient of the policy.
-        """
-        # make decision according to current policy
-        decisions = self(x, s)
-
-        # calculate utility part of the gradient
-        gradient = self._utility_gradient(x, s, y, decisions, ips_weights)
-
-        if self.fairness_rate > 0:
-            fairness_gradient = self.fairness_gradient_function(
-                x=x, 
-                s=s, 
-                y=y, 
-                ips_weights=ips_weights, 
-                decisions=decisions, 
-                policy=self)
-            grad_fairness = self.fairness_rate * fairness_gradient
-            gradient -= grad_fairness
-
-        return gradient
-
-    def _probability(self, features):
-        """ Calculates the probability of a positiv decision given the specified features.
-        
-        Args:
-            features: The features for which the probability will be calculated
-
-        Returns:
-            probability: The Probability of a positive decision.
-        """
-        raise NotImplementedError("Subclass must override calculate probability(features).")
 
     def benefit_delta(self, x, s, y, decisions):
         """ Calculates the absolute difference of benefits of the given policy for the provided data.
@@ -217,55 +232,6 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override copy(self).")
 
-    def update(self, x, s, y, learning_rate, batch_size, epochs):
-        """ Updates the policy parameters using stochastic gradient descent.
-        
-        Args:
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            learning_rate: The rate with which the parameters will be updated.
-            batch_size: The minibatch size of SGD.
-
-        """
-        ips_weights = self._ips_weights(x, s, self)
-        if self.learn_on_entire_history and self.data_history is None:
-            self.data_history = {
-                "x": x,
-                "s": s,
-                "y": y,
-                "ips_weights": ips_weights
-            }
-        elif self.learn_on_entire_history:
-            x = np.vstack((self.data_history["x"], x))
-            y = np.vstack((self.data_history["y"], y))
-            s = np.vstack((self.data_history["s"], s))
-            ips_weights = np.vstack((self.data_history["ips_weights"], ips_weights))
-            self.data_history["ips_weights"] = ips_weights
-            self.data_history["x"] = x
-            self.data_history["y"] = y
-            self.data_history["s"] = s
-
-        for _ in range(0, epochs):
-            # only train if there is a large enough sample size to build at least one full batch
-            if x.shape[0] < batch_size:
-                break
-
-            # minibatching     
-            indices = np.random.permutation(x.shape[0]) 
-            for batch_start in range(0, len(indices), batch_size):
-                batch_end = min(batch_start + batch_size, len(indices))
-
-                X_batch = x[batch_start:batch_end]
-                S_batch = s[batch_start:batch_end]
-                Y_batch = y[batch_start:batch_end]
-                ips_weights_batch = ips_weights[batch_start:batch_end]
-
-                # calculate the gradient
-                gradient = self._policy_gradient(X_batch, S_batch, Y_batch, ips_weights_batch)   
-                # update the parameters
-                self.theta += learning_rate * gradient
-
     def utility(self, x, s, y, decisions):
         """ Calculates the utility value or the utility gradient according to the utility vaue function callback specified
         in the constructor.
@@ -284,15 +250,14 @@ class BasePolicy():
 class LogisticPolicy(BasePolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, theta, fairness_gradient_function, benefit_function, utility_function, feature_map, fairness_rate, use_sensitive_attributes, learn_on_entire_history): 
+    def __init__(self, theta, fairness_gradient_function, benefit_function, utility_function, feature_map, fairness_rate, use_sensitive_attributes): 
         super(LogisticPolicy, self).__init__(
             theta,
             fairness_gradient_function,
             benefit_function,
             utility_function,
             fairness_rate,
-            use_sensitive_attributes,
-            learn_on_entire_history)
+            use_sensitive_attributes)
 
         self.feature_map = feature_map    
 
@@ -304,8 +269,7 @@ class LogisticPolicy(BasePolicy):
             self.utility_function, 
             self.feature_map, 
             self.fairness_rate, 
-            self.use_sensitive_attributes,
-            self.learn_on_entire_history) 
+            self.use_sensitive_attributes) 
         approx_policy.theta = self.theta.copy()
         return approx_policy
 
@@ -316,6 +280,16 @@ class LogisticPolicy(BasePolicy):
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
 
         return weights
+
+    def _lambda_gradient(self, x, s, y, decisions, ips_weights=None):
+        fairness, _ = self.fairness_gradient_function(
+                x=x, 
+                s=s, 
+                y=y, 
+                ips_weights=ips_weights, 
+                decisions=decisions, 
+                policy=self)
+        return fairness
 
     def _log_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))

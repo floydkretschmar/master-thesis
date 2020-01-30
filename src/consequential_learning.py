@@ -6,8 +6,10 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 import numpy as np
+from copy import deepcopy
 from src.policy import LogisticPolicy
 from src.util import save_dictionary, load_dictionary
+from src.training_algorithms import StochasticGradientAscent
 
 def apply_policy(data, pi):
     """ Makes decisions for the data based on the specified policy and only returns the x, s and y of the 
@@ -47,24 +49,24 @@ def consequential_learning(**training_args):
         training_args["model"]["utility_function"], 
         training_args["model"]["feature_map"], 
         training_args["optimization"]["fairness_rate"], 
-        training_args["model"]["use_sensitve_attributes"],
-        training_args["model"]["keep_collected_data"])
+        training_args["model"]["use_sensitve_attributes"])
 
-    learning_rate = training_args["optimization"]["learning_rate"]
+    training_algorithm = StochasticGradientAscent(training_args["model"]["learn_on_entire_history"])
+    learning_rates = { key: training_args["optimization"]["learning_rates"][key]["learning_rate"] for key in training_args["optimization"]["learning_rates"] }
 
     for i in range(0, training_args["optimization"]["time_steps"]): 
         yield pi
 
-        # decay learning rate 
-        if i % training_args["optimization"]['decay_step'] == 0 and i != 0:
-            learning_rate *= training_args["optimization"]['decay_rate']    
+        # decay learning rates 
+        for parameter in learning_rates:
+            if i % training_args["optimization"]["learning_rates"][parameter]['decay_step'] == 0 and i != 0:
+                learning_rates[parameter] *= training_args["optimization"]["learning_rates"][parameter]["decay_rate"]
 
         # Collect training data
-        data = training_args["data"]["training_datasets"][i]
-        
+        data = training_args["data"]["training_datasets"][i]        
         x, s, y = apply_policy(data, pi)
 
         # train the policy
-        pi.update(x, s, y, learning_rate, training_args["optimization"]["batch_size"], training_args["optimization"]["epochs"])
-    
+        pi = training_algorithm.update(pi, x, s, y, batch_size=training_args["optimization"]["batch_size"], epochs=training_args["optimization"]["epochs"], learning_rates=learning_rates)
+        
     yield pi
