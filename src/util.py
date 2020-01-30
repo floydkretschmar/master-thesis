@@ -38,3 +38,13 @@ def serialize_dictionary(dictionary):
             serialized_dict[key] = type(value).__name__
 
     return serialized_dict
+
+def check_for_missing_kwargs(function_name, required_kwargs, kwargs):
+    missing_kwargs = []
+    for required_kwarg in required_kwargs:
+        if required_kwarg not in kwargs:
+            missing_kwargs.append(required_kwarg)
+
+    num_missing_kwargs = len(missing_kwargs)
+    if num_missing_kwargs > 0:
+        raise TypeError("{} missing {} required positional {}: {}".format(function_name, num_missing_kwargs, "argument" if num_missing_kwargs == 1 else "arguments", ", ".join(missing_kwargs)))
