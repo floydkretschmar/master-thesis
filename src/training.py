@@ -1,8 +1,8 @@
 import os
 import sys
-module_path = os.path.abspath(os.path.join('..'))
-if module_path not in sys.path:
-    sys.path.append(module_path)
+root_path = os.path.abspath(os.path.join('.'))
+if root_path not in sys.path:
+    sys.path.append(root_path)
 
 import numpy as np
 import multiprocessing as mp
@@ -163,13 +163,23 @@ def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=
             overall_statistics.log_run(statistics=statistics, fairness_rate=fairness_rate)
 
         if base_save_path is not None:
-            # save the last theta for all iterations of a specified lambda:
+            # save the model parameters to be able to restore the model
             lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
             Path(lambda_path).mkdir(parents=True, exist_ok=True)
             model_save_path = "{}models.json".format(lambda_path)
 
             serialized_model_parameters = serialize_dictionary(model_parameters.to_dict())
-
             save_dictionary(serialized_model_parameters, model_save_path)
+
+            # save the results for each lambda
+            statistics_save_path = "{}statistics.json".format(lambda_path)
+            serialized_statistics = serialize_dictionary(statistics.to_dict())
+            save_dictionary(serialized_statistics, statistics_save_path)
+
+    # and save the overall results
+    if base_save_path is not None:
+        overall_stat_save_path = "{}/overall_statistics.json".format(base_save_path)
+        serialized_statistics = serialize_dictionary(overall_statistics.to_dict())
+        save_dictionary(serialized_statistics, overall_stat_save_path)
 
     return overall_statistics, base_save_path

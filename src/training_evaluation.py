@@ -1,10 +1,16 @@
-import numpy as np
-from src.consequential_learning import consequential_learning
-from src.util import stack
+import os
+import sys
+root_path = os.path.abspath(os.path.join('.'))
+if root_path not in sys.path:
+    sys.path.append(root_path)
 
+import numpy as np
 import multiprocessing as mp
 import numbers
 from copy import deepcopy
+
+from src.consequential_learning import consequential_learning
+from src.util import stack
 
 # Result Format
 MEAN = "MEAN"
@@ -103,10 +109,12 @@ class BaseStatistics():
         measure = self.results["all"][measure]
         return build_result_dictionary(measure)[result_format]
 
+    def to_dict(self):
+        return deepcopy(self.results)
+
 class Statistics(BaseStatistics):
     def __init__(self):
         super(Statistics, self).__init__()
-        self.results = {}
 
     @staticmethod
     def calculate_statistics(predictions, observations, protected_attributes, ground_truths, utility_function):

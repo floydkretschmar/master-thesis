@@ -1,3 +1,9 @@
+import os
+import sys
+root_path = os.path.abspath(os.path.join('.'))
+if root_path not in sys.path:
+    sys.path.append(root_path)
+
 import matplotlib.pyplot as plt
 from src.training_evaluation import Statistics, MultipleRunStatistics
 

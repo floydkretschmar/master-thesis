@@ -1,16 +1,16 @@
-import sys
 import os
-import numpy as np
+import sys
+root_path = os.path.abspath(os.path.join('.'))
+if root_path not in sys.path:
+    sys.path.append(root_path)
 
-PACKAGE_PARENT = '..'
-SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+import numpy as np
+import multiprocessing as mp
 
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
 from src.plotting import plot_median, plot_mean
 from src.training import train
-import multiprocessing as mp
 from src.distribution import SplitDistribution, UncalibratedScore
 
 # def fairness_function(**fairness_kwargs):
