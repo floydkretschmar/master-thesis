@@ -68,6 +68,8 @@ def util_func(**util_params):
     return util
 
 training_parameters = {    
+    'experiment_name': 'test',
+    'save': True,
     'model':{
         'theta': [-3.0, 5.0],
         'benefit_function': demographic_parity,
@@ -104,7 +106,7 @@ training_parameters = {
     }
 }
 
-training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/res/test/uncalibrated/time"
+#training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/res/test/uncalibrated/time"
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 

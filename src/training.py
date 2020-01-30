@@ -6,11 +6,12 @@ if root_path not in sys.path:
 
 import numpy as np
 import multiprocessing as mp
+import time
 from pathlib import Path
 from copy import deepcopy
 
 from src.consequential_learning import consequential_learning
-from src.util import save_dictionary, load_dictionary, serialize_dictionary, stack
+from src.util import save_dictionary, load_dictionary, serialize_dictionary, stack, check_for_missing_kwargs
 from src.training_evaluation import Statistics, MultipleRunStatistics, ModelParameters
 
 class Trainer():    
@@ -94,6 +95,14 @@ def _generate_data_set(training_parameters):
         
     return data
 
+def _check_for_missing_training_parameters(training_parameters):
+    check_for_missing_kwargs("training()", ["experiment_name", "model", "optimization", "data"], training_parameters)
+    check_for_missing_kwargs(
+        "training()", 
+        ["theta", "benefit_function", "utility_function", "fairness_function", "feature_map", "learn_on_entire_history", "use_sensitve_attributes", "bias"], 
+        training_parameters["model"])
+    check_for_missing_kwargs("training()", ["distribution", "keep_data_across_lambdas", "fraction_protected", "num_test_samples", "num_decisions"], training_parameters["data"])
+
 def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
@@ -111,20 +120,17 @@ def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=
         training_statistic: A dictionary that contains statistical data about 
         the executed runs.
     """
+    _check_for_missing_training_parameters(training_parameters)
     current_training_parameters = deepcopy(training_parameters)
 
-    if "save_path" in training_parameters:
-        base_save_path = "{}/runs".format(training_parameters["save_path"])
+    if "save" in training_parameters and training_parameters["save"]:
+        timestamp = time.gmtime()
+        ts_folder = time.strftime("%Y-%m-%d-%H-%M-%S", timestamp)
+
+        base_save_path = "{}/res/{}".format(root_path, ts_folder)
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
-        runs = os.listdir(base_save_path)
 
-        if len(runs) == 0:
-            current_run = 0
-        else:
-            runs.sort(key=int)
-            current_run = int(runs[-1]) + 1
-
-        base_save_path = "{}/{}".format(base_save_path, current_run)
+        base_save_path = "{}/{}".format(base_save_path, training_parameters["experiment_name"])
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
         parameter_save_path = "{}/parameters.json".format(base_save_path)
 
