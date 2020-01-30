@@ -25,19 +25,31 @@ def load_dictionary(path):
         print('Loading file {} failed with exception: \n {}'.format(path, str(e)))
         return None
 
+def serialize_value(value):
+    if isinstance(value, dict):
+        return serialize_dictionary(value)
+    elif isinstance(value, list):
+        return serialize_list(value)
+    elif isinstance(value, np.ndarray):
+        return value.tolist()
+    elif inspect.isfunction(value):
+        return value.__name__
+    elif not (isinstance(value, str) or isinstance(value, numbers.Number) or isinstance(value, list) or isinstance(value, bool)):
+        return type(value).__name__
+
 def serialize_dictionary(dictionary):
     serialized_dict = copy.deepcopy(dictionary)
     for key, value in serialized_dict.items():
-        if isinstance(value, dict):
-            serialized_dict[key] = serialize_dictionary(value)
-        elif isinstance(value, np.ndarray):
-            serialized_dict[key] = value.tolist()
-        elif inspect.isfunction(value):
-            serialized_dict[key] = value.__name__
-        elif not (isinstance(value, str) or isinstance(value, numbers.Number) or isinstance(value, list) or isinstance(value, bool)):
-            serialized_dict[key] = type(value).__name__
+        serialized_dict[key] = serialize_value(value)
 
     return serialized_dict
+
+def serialize_list(unserialized_list):
+    serialized_list = []
+    for value in unserialized_list:
+        serialized_list.append(serialize_value(value))
+
+    return serialized_list
 
 def check_for_missing_kwargs(function_name, required_kwargs, kwargs):
     missing_kwargs = []
@@ -48,3 +60,14 @@ def check_for_missing_kwargs(function_name, required_kwargs, kwargs):
     num_missing_kwargs = len(missing_kwargs)
     if num_missing_kwargs > 0:
         raise TypeError("{} missing {} required positional {}: {}".format(function_name, num_missing_kwargs, "argument" if num_missing_kwargs == 1 else "arguments", ", ".join(missing_kwargs)))
+
+def stack(base_array, new_array, axis):
+    if base_array is None:
+        return new_array
+    else:
+        if axis == 0:
+            return np.vstack((base_array, new_array))
+        elif axis == 1:
+            return np.hstack((base_array, new_array))
+        else:
+            return np.dstack((base_array, new_array))
