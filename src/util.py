@@ -36,6 +36,8 @@ def serialize_value(value):
         return value.__name__
     elif not (isinstance(value, str) or isinstance(value, numbers.Number) or isinstance(value, list) or isinstance(value, bool)):
         return type(value).__name__
+    else:
+        return value
 
 def serialize_dictionary(dictionary):
     serialized_dict = copy.deepcopy(dictionary)
