@@ -34,7 +34,7 @@ class _Trainer():
             parameters_over_time.append(policy.get_model_parameters())
             lagrangians_over_time.append(policy.get_lagrangian_multiplier())
 
-        return decisions_over_time, parameters_over_time, np.array(lagrangians_over_time)
+        return decisions_over_time, parameters_over_time, np.array(lagrangians_over_time, dtype=float)
 
     def train_over_iterations(self, training_parameters, iterations, asynchronous):
         decisions_tensor = None
@@ -129,9 +129,6 @@ def train(training_parameters, iterations=30, asynchronous=True):
         
     Args:
         training_parameters: The parameters used to configure the consequential learning algorithm.
-        fairness_rates: An iterable containing all fairness rates for which consequential learning
-        should be run and statistics will be collected. If fairness_rate=None then no preset value
-        for the fairness function is assumed and a full lagrange multiplier is executed.
         iterations: The number of times consequential learning will be run for one of the specified
         fairness rates. The resulting statistics will be applied over the number of runs
         asynchronous: A flag indicating if the iterations should be executed asynchronously.
@@ -139,6 +136,9 @@ def train(training_parameters, iterations=30, asynchronous=True):
     Returns:
         training_statistic: A dictionary that contains statistical data about 
         the executed runs.
+        model_parameters: A single ModelParameters object if training both lambda and theta,
+        or None, when training with fixed lambdas. The ModelParameter object contains theta 
+        and lambda values for each timestep over all iterations.
     """
     _check_for_missing_training_parameters(training_parameters)
     current_training_parameters = deepcopy(training_parameters)
@@ -200,7 +200,7 @@ def train(training_parameters, iterations=30, asynchronous=True):
             serialized_statistics = serialize_dictionary(overall_statistics.to_dict())
             save_dictionary(serialized_statistics, overall_stat_save_path)
             
-        return overall_statistics, base_save_path
+        return overall_statistics, None, base_save_path
     # if a dict is given for lambda we try to learn the perfect lambda
     elif isinstance(current_training_parameters["optimization"]["parameters"]["lambda"], dict):
         print("---------- Training both theta and lambda ----------")
@@ -208,5 +208,5 @@ def train(training_parameters, iterations=30, asynchronous=True):
         if base_save_path is not None:
             _save_results(model_parameters, statistics, base_save_path)
 
-        return statistics, base_save_path
+        return statistics, model_parameters, base_save_path
     
