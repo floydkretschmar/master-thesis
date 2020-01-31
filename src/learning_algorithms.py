@@ -109,7 +109,7 @@ class StochasticGradientAscent(BaseLearningAlgorithm):
             # calculate the gradient for lamba
             gradient = current_policy._lambda_gradient(x, s, y, ips_weights)   
             # update lambda
-            current_policy.fairness_rate += learning_rates["lambda"] * gradient
+            current_policy.fairness_rate -= learning_rates["lambda"] * gradient
 
     def _update_core(self, current_policy, x, s, y, ips_weights, **optimization_args):
         """ Updates the policy parameters using to stochastic gradient ascent.
