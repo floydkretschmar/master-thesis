@@ -42,24 +42,29 @@ def consequential_learning(**training_args):
         benefit_delta: The benefit delta of the policy on the test data.
     """
     pi = LogisticPolicy(
-        training_args["model"]["theta"], 
+        training_args["optimization"]["parameters"]["theta"]["initial_value"], 
         training_args["model"]["fairness_function"], 
         training_args["model"]["benefit_function"], 
         training_args["model"]["utility_function"], 
         training_args["model"]["feature_map"], 
-        training_args["optimization"]["fairness_rate"], 
+        training_args["optimization"]["parameters"]["lambda"]["initial_value"], 
         training_args["model"]["use_sensitve_attributes"])
 
     training_algorithm = StochasticGradientAscent(training_args["model"]["learn_on_entire_history"])
-    learning_rates = { key: training_args["optimization"]["learning_rates"][key]["learning_rate"] for key in training_args["optimization"]["learning_rates"] }
+
+    # initialize learning rates (if a parameter is supposed to be fixed don't set the learning rate)
+    learning_rates = {}
+    for key in training_args["optimization"]["parameters"]:
+        if "fixed" not in training_args["optimization"]["parameters"][key]:
+            learning_rates[key] = training_args["optimization"]["parameters"][key]["learning_rate"]
 
     for i in range(0, training_args["optimization"]["time_steps"]): 
         yield pi
 
         # decay learning rates 
         for parameter in learning_rates:
-            if i % training_args["optimization"]["learning_rates"][parameter]['decay_step'] == 0 and i != 0:
-                learning_rates[parameter] *= training_args["optimization"]["learning_rates"][parameter]["decay_rate"]
+            if i % training_args["optimization"]["parameters"][parameter]['decay_step'] == 0 and i != 0:
+                learning_rates[parameter] *= training_args["optimization"]["parameters"][parameter]["decay_rate"]
 
         # Collect training data
         data = training_args["data"]["training_datasets"][i]        

@@ -68,10 +68,9 @@ def util_func(**util_params):
     return util
 
 training_parameters = {    
-    'experiment_name': 'test',
+    'experiment_name': "test",
     'save': True,
     'model':{
-        'theta': [-3.0, 5.0],
         'benefit_function': demographic_parity,
         'utility_function': util_func,
         'fairness_function': fairness_function,
@@ -82,35 +81,34 @@ training_parameters = {
     },
     'optimization': {
         'epochs': 1,
-        'time_steps':5,
-        'batch_size':256,
-        'learning_rates' : {
+        'time_steps':200,
+        'batch_size':512,
+        'parameters' : {
             'theta': {
+                'initial_value': [-3.0, 5.0],
                 'learning_rate': 1,
                 'decay_rate': 1,
                 'decay_step': 10000
             },
-            'lambda': {
-                'learning_rate': 1,
-                'decay_rate': 1,
-                'decay_step': 10000
-            }
+            'lambda': [0.0]
         }
     },
     'data': {
         'distribution': UncalibratedScore(bias=bias),
-        'keep_data_across_lambdas': True,
         'fraction_protected':0.5,
         'num_test_samples': 8192,
         'num_decisions': 128 * 256
     }
 }
+lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=19)
+lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
+training_parameters["optimization"]["parameters"]["lambda"] = lambdas
 
 #training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/res/test/uncalibrated/time"
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=30, asynchronous=False)
+statistics, run_path = train(training_parameters, iterations=30, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 

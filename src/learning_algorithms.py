@@ -94,12 +94,22 @@ class StochasticGradientAscent(BaseLearningAlgorithm):
             s: The sensitive attribute of the n samples
             y: The ground truth labels of the n samples
             learning_rates: The dictionary of learning rates used to update the parameters.
-                theta: The learning rate for the model parameters theta.
+                theta: The learning rate for the model parameters theta. If the learning
+                rate for theta does not exist, then theta is fixed and will not be updated.
+                lambda: The learning rate for the lagrangien multiplier lambda. If the learning
+                rate for lambda does not exist, then lambda is fixed and will not be updated.
         """
-        # calculate the gradient for theta
-        gradient = current_policy._theta_gradient(x, s, y, ips_weights)   
-        # update theta
-        current_policy.theta += learning_rates["theta"] * gradient
+        if "theta" in learning_rates:
+            # calculate the gradient for theta
+            gradient = current_policy._theta_gradient(x, s, y, ips_weights)   
+            # update theta
+            current_policy.theta += learning_rates["theta"] * gradient
+
+        if "lambda" in learning_rates:
+            # calculate the gradient for lamba
+            gradient = current_policy._lambda_gradient(x, s, y, ips_weights)   
+            # update lambda
+            current_policy.fairness_rate += learning_rates["lambda"] * gradient
 
     def _update_core(self, current_policy, x, s, y, ips_weights, **optimization_args):
         """ Updates the policy parameters using to stochastic gradient ascent.
@@ -114,54 +124,12 @@ class StochasticGradientAscent(BaseLearningAlgorithm):
                 epochs: The number of epochs the training algorithm will run.
                 batch_size: The minibatch size of SGD.
                 learning_rates: The dictionary of learning rates used to update the parameters.
-                    theta: The learning rate for the model parameters theta
+                    theta: The learning rate for the model parameters theta. If the learning
+                    rate for theta does not exist, then theta is fixed and will not be updated.
+                    lambda: The learning rate for the lagrangien multiplier lambda. If the learning
+                    rate for lambda does not exist, then lambda is fixed and will not be updated.
         """
         check_for_missing_kwargs("STGTraining.update()", ["epochs", "learning_rates", "batch_size"], optimization_args)
-        check_for_missing_kwargs("STGTraining.update()", ["theta"], optimization_args["learning_rates"])
 
         for X_batch, S_batch, Y_batch, ips_weights_batch in self._minibatch(x, s, y, ips_weights, optimization_args["epochs"], optimization_args["batch_size"]):
             self._update_parameters(current_policy, X_batch, S_batch, Y_batch, ips_weights_batch, optimization_args["learning_rates"])
-
-
-class LagrangeMultiplierSGA(StochasticGradientAscent):
-    def _update_parameters(self, current_policy, x, s, y, ips_weights, learning_rates):
-        """ Updates the policy parameters using to stochastic gradient ascent with lagrangien multiplier
-        for the fairness constraint.
-        
-        Args:
-            sample_policy: The policy from which the data has been drawn. \n
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            ips_weights: The weights used for inverse propensity scoring. If sampling_data=None 
-            learning_rates: The dictionary of learning rates used to update the parameters.
-                theta: The learning rate for the model parameters theta.
-                lambda: The learning rate for the lagrangien multiplier lambda
-        """
-        # update theta
-        super(LagrangeMultiplierSGA, self)._update_parameters(current_policy, x, s, y, ips_weights, learning_rates)
-
-        # calculate the gradient for lamba
-        gradient = current_policy._lambda_gradient(x, s, y, ips_weights)   
-        # update lambda
-        current_policy.fairness_rate += learning_rates["lambda"] * gradient
-
-    def _update_core(self, current_policy, x, s, y, ips_weights, **optimization_args):
-        """ Updates the policy parameters using to stochastic gradient ascent with lagrangien multiplier
-        for the fairness constraint.
-        
-        Args:
-            sample_policy: The policy from which the data has been drawn.
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            ips_weights: The weights used for inverse propensity scoring. If sampling_data=None 
-            optimization_args: The additional parameters for STG include:
-                epochs: The number of epochs the training algorithm will run.
-                batch_size: The minibatch size of SGD.
-                learning_rates: The dictionary of learning rates used to update the parameters.
-                    theta: The learning rate for the model parameters theta
-                    lambda: The learning rate for the lagrangien multiplier lambda
-        """
-        check_for_missing_kwargs("STGTraining.update()", ["lambda"], optimization_args["learning_rates"])
-        super(LagrangeMultiplierSGA, self)._update_core(current_policy, x, s, y, ips_weights, **optimization_args)

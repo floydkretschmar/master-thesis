@@ -14,7 +14,7 @@ from src.consequential_learning import consequential_learning
 from src.util import save_dictionary, load_dictionary, serialize_dictionary, stack, check_for_missing_kwargs
 from src.training_evaluation import Statistics, MultipleRunStatistics, ModelParameters
 
-class Trainer():    
+class _Trainer():    
     def __init__(self, test_data):
         self.observations, self.protected_attributes, self.ground_truths = test_data
         
@@ -65,6 +65,16 @@ class Trainer():
                 ground_truths=self.ground_truths, 
                 utility_function=training_parameters["model"]["utility_function"]), model_parameters
 
+def _check_for_missing_training_parameters(training_parameters):
+    check_for_missing_kwargs("training()", ["experiment_name", "model", "optimization", "data"], training_parameters)
+    check_for_missing_kwargs(
+        "training()", 
+        ["benefit_function", "utility_function", "fairness_function", "feature_map", "learn_on_entire_history", "use_sensitve_attributes", "bias"], 
+        training_parameters["model"])
+    check_for_missing_kwargs("training()", ["distribution", "fraction_protected", "num_test_samples", "num_decisions"], training_parameters["data"])
+    check_for_missing_kwargs("training()", ["time_steps", "parameters"], training_parameters["optimization"])
+    check_for_missing_kwargs("training()", ["lambda", "theta"], training_parameters["optimization"]["parameters"])
+
 def _generate_data_set(training_parameters):
     """ Generates one training and test dataset to be used across all lambdas.
         
@@ -95,15 +105,25 @@ def _generate_data_set(training_parameters):
         
     return data
 
-def _check_for_missing_training_parameters(training_parameters):
-    check_for_missing_kwargs("training()", ["experiment_name", "model", "optimization", "data"], training_parameters)
-    check_for_missing_kwargs(
-        "training()", 
-        ["theta", "benefit_function", "utility_function", "fairness_function", "feature_map", "learn_on_entire_history", "use_sensitve_attributes", "bias"], 
-        training_parameters["model"])
-    check_for_missing_kwargs("training()", ["distribution", "keep_data_across_lambdas", "fraction_protected", "num_test_samples", "num_decisions"], training_parameters["data"])
+def _save_results(model_parameters, statistics, base_save_path, fairness_rate=None):
+    # save the model parameters to be able to restore the model
+    if fairness_rate is not None:
+        lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
+        Path(lambda_path).mkdir(parents=True, exist_ok=True)
+    else:
+        lambda_path = "{}/".format(base_save_path)
 
-def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=True):
+    model_save_path = "{}models.json".format(lambda_path)
+
+    serialized_model_parameters = serialize_dictionary(model_parameters.to_dict())
+    save_dictionary(serialized_model_parameters, model_save_path)
+
+    # save the results for each lambda
+    statistics_save_path = "{}statistics.json".format(lambda_path)
+    serialized_statistics = serialize_dictionary(statistics.to_dict())
+    save_dictionary(serialized_statistics, statistics_save_path)
+
+def train(training_parameters, iterations=30, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
@@ -124,17 +144,16 @@ def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=
     current_training_parameters = deepcopy(training_parameters)
 
     if "save" in training_parameters and training_parameters["save"]:
+        base_save_path = "{}/res/{}".format(root_path, training_parameters["experiment_name"])
+        Path(base_save_path).mkdir(parents=True, exist_ok=True)
+
         timestamp = time.gmtime()
         ts_folder = time.strftime("%Y-%m-%d-%H-%M-%S", timestamp)
-
-        base_save_path = "{}/res/{}".format(root_path, ts_folder)
+        base_save_path = "{}/{}".format(base_save_path, ts_folder)
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
 
-        base_save_path = "{}/{}".format(base_save_path, training_parameters["experiment_name"])
-        Path(base_save_path).mkdir(parents=True, exist_ok=True)
         parameter_save_path = "{}/parameters.json".format(base_save_path)
 
-        current_training_parameters["lambdas"] = fairness_rates
         serialized_dictionary = serialize_dictionary(current_training_parameters)
         save_dictionary(serialized_dictionary, parameter_save_path)
     else:
@@ -151,41 +170,43 @@ def train(training_parameters, fairness_rates=None, iterations=30, asynchronous=
         }
         save_dictionary(data_dict, data_save_path)
 
-    trainer = Trainer(test_data=current_training_parameters["data"]["test_dataset"])
+    trainer = _Trainer(test_data=current_training_parameters["data"]["test_dataset"])
 
-    if fairness_rates is None:
-        fairness_rates = [None]
+    # if list of parameters is given we fix lambda over all time steps and train vor all lambdas
+    if isinstance(current_training_parameters["optimization"]["parameters"]["lambda"], list) or isinstance(current_training_parameters["optimization"]["parameters"]["lambda"], np.ndarray):
+        print("---------- Training with fixed lambda ----------")
+        fairness_rates = current_training_parameters["optimization"]["parameters"]["lambda"]
+        overall_statistics = MultipleRunStatistics()
+        for fairness_rate in fairness_rates:
+            print("Processing Lambda {} ".format(fairness_rate))
 
-    overall_statistics = MultipleRunStatistics()
-    for fairness_rate in fairness_rates:
-        print("Processing Lambda {} ".format(fairness_rate))
+            current_training_parameters["optimization"]["parameters"]["lambda"] = {
+                "initial_value": fairness_rate,
+                "fixed": True
+            }
+            statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
 
-        current_training_parameters["optimization"]["fairness_rate"] = fairness_rate
-        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
+            if len(fairness_rates) == 1:
+                overall_statistics = statistics
+            else:
+                overall_statistics.log_run(statistics=statistics, fairness_rate=fairness_rate)
 
-        if len(fairness_rates) == 1:
-            overall_statistics = statistics
-        else:
-            overall_statistics.log_run(statistics=statistics, fairness_rate=fairness_rate)
+            if base_save_path is not None:
+                _save_results(model_parameters, statistics, base_save_path, fairness_rate)
 
+        # and save the overall results
         if base_save_path is not None:
-            # save the model parameters to be able to restore the model
-            lambda_path = "{}/lambda{}/".format(base_save_path, fairness_rate)
-            Path(lambda_path).mkdir(parents=True, exist_ok=True)
-            model_save_path = "{}models.json".format(lambda_path)
+            overall_stat_save_path = "{}/overall_statistics.json".format(base_save_path)
+            serialized_statistics = serialize_dictionary(overall_statistics.to_dict())
+            save_dictionary(serialized_statistics, overall_stat_save_path)
+            
+        return overall_statistics, base_save_path
+    # if a dict is given for lambda we try to learn the perfect lambda
+    elif isinstance(current_training_parameters["optimization"]["parameters"]["lambda"], dict):
+        print("---------- Training both theta and lambda ----------")
+        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, iterations, asynchronous)
+        if base_save_path is not None:
+            _save_results(model_parameters, statistics, base_save_path)
 
-            serialized_model_parameters = serialize_dictionary(model_parameters.to_dict())
-            save_dictionary(serialized_model_parameters, model_save_path)
-
-            # save the results for each lambda
-            statistics_save_path = "{}statistics.json".format(lambda_path)
-            serialized_statistics = serialize_dictionary(statistics.to_dict())
-            save_dictionary(serialized_statistics, statistics_save_path)
-
-    # and save the overall results
-    if base_save_path is not None:
-        overall_stat_save_path = "{}/overall_statistics.json".format(base_save_path)
-        serialized_statistics = serialize_dictionary(overall_statistics.to_dict())
-        save_dictionary(serialized_statistics, overall_stat_save_path)
-
-    return overall_statistics, base_save_path
+        return statistics, base_save_path
+    
