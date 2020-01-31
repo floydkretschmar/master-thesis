@@ -309,7 +309,7 @@ class LogisticPolicy(BasePolicy):
                 ips_weights=ips_weights, 
                 decisions=decisions, 
                 policy=self)
-        return fairness
+        return -(fairness**2)/2
 
     def _log_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
