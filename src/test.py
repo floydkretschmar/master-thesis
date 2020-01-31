@@ -81,7 +81,7 @@ training_parameters = {
     },
     'optimization': {
         'epochs': 1,
-        'time_steps':200,
+        'time_steps':5,
         'batch_size':512,
         'parameters' : {
             'theta': {
@@ -90,7 +90,12 @@ training_parameters = {
                 'decay_rate': 1,
                 'decay_step': 10000
             },
-            'lambda': [0.0]
+            'lambda': {
+                'initial_value': 1,
+                'learning_rate': 0.1,
+                'decay_rate': 1,
+                'decay_step': 10000
+            }
         }
     },
     'data': {
@@ -100,19 +105,19 @@ training_parameters = {
         'num_decisions': 128 * 256
     }
 }
-lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=19)
-lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
-training_parameters["optimization"]["parameters"]["lambda"] = lambdas
+# lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=19)
+# lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
+# training_parameters["optimization"]["parameters"]["lambda"] = lambdas
 
 #training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/res/test/uncalibrated/time"
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, run_path = train(training_parameters, iterations=30, asynchronous=False)
+statistics, model_parameters, run_path = train(training_parameters, iterations=30, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
-#plot_median(statistics, "{}/results_median_lambdas.png".format(run_path))
+plot_median(statistics, "{}/results_median_lambdas.png".format(run_path), model_parameters=model_parameters)
 #plot_mean(statistics, "{}/results_mean_lambdas.png".format(run_path))
 
 #plot_median_over_lambdas(statistics, "{}/results_median_lambdas.png".format(run_path))
