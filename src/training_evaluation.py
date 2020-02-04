@@ -51,7 +51,7 @@ class ModelParameters():
                 self.lagrangians = stack(self.lagrangians, get_lambda_over_iterations(iteration_dict).reshape(1, -1), axis=0)
         # single lambda
         else:
-            self.lagrangians = get_lambda_over_iterations(iteration_dict).reshape(1, -1)
+            self.lagrangians = get_lambda_over_iterations(self.dict[0]).reshape(1, -1)
 
     def get_lagrangians(self, result_format):
         return build_result_dictionary(self.lagrangians)[result_format]
