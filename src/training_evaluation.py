@@ -9,7 +9,6 @@ import multiprocessing as mp
 import numbers
 from copy import deepcopy
 
-from src.consequential_learning import consequential_learning
 from src.util import stack
 
 # Result Format
@@ -28,34 +27,35 @@ def build_result_dictionary(measure):
         THIRD_QUARTILE: np.percentile(measure, q=75, axis=1)
     }
 
-class ModelParameters():
-    # Result Format
-    MEAN = MEAN
-    STANDARD_DEVIATION = STANDARD_DEVIATION
-    MEDIAN = MEDIAN
-    FIRST_QUARTILE = FIRST_QUARTILE
-    THIRD_QUARTILE = THIRD_QUARTILE
+# class ModelParameters():
+#     # Result Format
+#     MEAN = MEAN
+#     STANDARD_DEVIATION = STANDARD_DEVIATION
+#     MEDIAN = MEDIAN
+#     FIRST_QUARTILE = FIRST_QUARTILE
+#     THIRD_QUARTILE = THIRD_QUARTILE
 
-    def __init__(self):
-        self.model_parameters = {}
-        self.lagrangians_over_iterations = None
+#     def __init__(self):
+#         self.model_parameters = {}
+#         self.lagrangians_over_iterations = None
 
-    def add(self, iteration, parameters, lagrangian):
-        self.model_parameters[iteration] = {
-            "model_parameters": parameters,
-            "lagrangian_multiplier": lagrangian
-        }
-        self.lagrangians_over_iterations = stack(self.lagrangians_over_iterations, lagrangian.reshape(-1, 1), axis=1)
+#     def add(self, lambda_iteration, parameters, lagrangians_over_iterations):
+#         self.model_parameters[lambda_iteration] = parameters
+#         self.lagrangians_over_iterations = stack(self.lagrangians_over_iterations, lagrangian.reshape(-1, 1), axis=1)
 
-    def get_lagrangians(self, result_format):
-        return build_result_dictionary(self.lagrangians_over_iterations)[result_format]
+#     def get_lagrangians(self, result_format):
+#         return build_result_dictionary(self.lagrangians_over_iterations)[result_format]
 
-    def to_dict(self):
-        return deepcopy(self.model_parameters)
+#     def to_dict(self):
+#         return deepcopy(self.model_parameters)
 
 class BaseStatistics():
+    # Scale Measures:
+    X_VALUES = "X_VALUES"
+    X_SCALE = "X_SCALE"
+    X_NAME = "X_NAME"
+
     # Performance Measures
-    TIMESTEPS = "T"
     UTILITY = "U"
     NUM_INDIVIDUALS = "A"
     NUM_NEGATIVES = "N"
@@ -119,7 +119,10 @@ class Statistics(BaseStatistics):
     @staticmethod
     def calculate_statistics(predictions, observations, protected_attributes, ground_truths, utility_function):
         statistics = Statistics()
-        statistics.results[Statistics.TIMESTEPS] = predictions.shape[1]
+        statistics.results[Statistics.X_VALUES] = range(0, predictions.shape[1])
+        statistics.results[Statistics.X_SCALE] = "linear"
+        statistics.results[Statistics.X_NAME] = "Timestep"
+
         for prot in ["all", "unprotected", "protected"]:
             if prot == "unprotected":
                 filtered_predictions = predictions[(protected_attributes == 0).squeeze(), :, :]
@@ -167,52 +170,46 @@ class Statistics(BaseStatistics):
         
         return statistics
 
-class MultipleRunStatistics(BaseStatistics):
-    LAMBDAS = "LAMBDAS"
-
-    def __init__(self):
-        super(MultipleRunStatistics, self).__init__()
-        self.results[MultipleRunStatistics.LAMBDAS] = []
-        self.results[MultipleRunStatistics.TIMESTEPS] = None
+class MultiStatistics(BaseStatistics):
+    def __init__(self, x_scale, x_values, x_name):
+        super(MultiStatistics, self).__init__()
+        self.results[MultiStatistics.X_VALUES] = x_values
+        self.results[Statistics.X_SCALE] = x_scale
+        self.results[Statistics.X_NAME] = x_name
 
         for prot in ["all", "unprotected", "protected"]:
             self.results[prot] = {
-                MultipleRunStatistics.UTILITY: None,
-                MultipleRunStatistics.NUM_INDIVIDUALS: None,
-                MultipleRunStatistics.NUM_NEGATIVES: None,
-                MultipleRunStatistics.NUM_POSITIVES: None,
-                MultipleRunStatistics.NUM_PRED_NEGATIVES: None,
-                MultipleRunStatistics.NUM_PRED_POSITIVES: None,
-                MultipleRunStatistics.TRUE_POSITIVES: None,
-                MultipleRunStatistics.TRUE_NEGATIVES: None,
-                MultipleRunStatistics.FALSE_POSITIVES: None,
-                MultipleRunStatistics.FALSE_NEGATIVES: None,
-                MultipleRunStatistics.TRUE_POSITIVE_RATE: None,
-                MultipleRunStatistics.FALSE_POSITIVE_RATE: None,
-                MultipleRunStatistics.TRUE_NEGATIVE_RATE: None,
-                MultipleRunStatistics.FALSE_NEGATIVE_RATE: None,
-                MultipleRunStatistics.POSITIVE_PREDICTIVE_VALUE: None,
-                MultipleRunStatistics.NEGATIVE_PREDICTIVE_VALUE: None,
-                MultipleRunStatistics.FALSE_DISCOVERY_RATE: None,
-                MultipleRunStatistics.FALSE_OMISSION_RATE: None,
-                MultipleRunStatistics.ACCURACY: None,
-                MultipleRunStatistics.ERROR_RATE: None,
-                MultipleRunStatistics.SELECTION_RATE: None,
-                MultipleRunStatistics.F1: None
+                MultiStatistics.UTILITY: None,
+                MultiStatistics.NUM_INDIVIDUALS: None,
+                MultiStatistics.NUM_NEGATIVES: None,
+                MultiStatistics.NUM_POSITIVES: None,
+                MultiStatistics.NUM_PRED_NEGATIVES: None,
+                MultiStatistics.NUM_PRED_POSITIVES: None,
+                MultiStatistics.TRUE_POSITIVES: None,
+                MultiStatistics.TRUE_NEGATIVES: None,
+                MultiStatistics.FALSE_POSITIVES: None,
+                MultiStatistics.FALSE_NEGATIVES: None,
+                MultiStatistics.TRUE_POSITIVE_RATE: None,
+                MultiStatistics.FALSE_POSITIVE_RATE: None,
+                MultiStatistics.TRUE_NEGATIVE_RATE: None,
+                MultiStatistics.FALSE_NEGATIVE_RATE: None,
+                MultiStatistics.POSITIVE_PREDICTIVE_VALUE: None,
+                MultiStatistics.NEGATIVE_PREDICTIVE_VALUE: None,
+                MultiStatistics.FALSE_DISCOVERY_RATE: None,
+                MultiStatistics.FALSE_OMISSION_RATE: None,
+                MultiStatistics.ACCURACY: None,
+                MultiStatistics.ERROR_RATE: None,
+                MultiStatistics.SELECTION_RATE: None,
+                MultiStatistics.F1: None
             }
         
-        self.results["all"][MultipleRunStatistics.DISPARATE_IMPACT] = None
-        self.results["all"][MultipleRunStatistics.DEMOGRAPHIC_PARITY] = None
-        self.results["all"][MultipleRunStatistics.EQUALITY_OF_OPPORTUNITY] = None
+        self.results["all"][MultiStatistics.DISPARATE_IMPACT] = None
+        self.results["all"][MultiStatistics.DEMOGRAPHIC_PARITY] = None
+        self.results["all"][MultiStatistics.EQUALITY_OF_OPPORTUNITY] = None
 
-    def log_run(self, statistics, fairness_rate):
-        self.results[MultipleRunStatistics.LAMBDAS].append(fairness_rate)
-            
+    def log_run(self, statistics):            
         for (protected_key, protected_value) in statistics.results.items():
-            if protected_key == MultipleRunStatistics.TIMESTEPS:
-                if self.results[Statistics.TIMESTEPS] is None:
-                    self.results[MultipleRunStatistics.TIMESTEPS] = protected_value
-            else:
+            if protected_key != MultiStatistics.X_VALUES and protected_key != MultiStatistics.X_SCALE and protected_key != MultiStatistics.X_NAME:
                 for (measure_key, measure_value) in protected_value.items():
                     if isinstance(measure_value, numbers.Number):
                         value = measure_value

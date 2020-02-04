@@ -115,8 +115,18 @@ class BasePolicy():
         Returns:
             lambda_gradient: The gradient of the lagrangian multiplier.
         """
+        # make decision according to current policy
+        decisions = self(x, s)
 
-        raise NotImplementedError("Subclass must override _lambda_gradient(self, x, s, y, ips_weights=None).")
+        fairness, _ = self.fairness_gradient_function(
+                x=x, 
+                s=s, 
+                y=y, 
+                ips_weights=ips_weights, 
+                decisions=decisions, 
+                policy=self)
+                
+        return -(fairness**2)/2
 
     def _mean_difference(self, target, s):
         """ Calculates the mean difference of the target with regards to the sensitive attribute.
@@ -171,7 +181,6 @@ class BasePolicy():
             gradient -= grad_fairness
 
         return gradient
-
 
     def _probability(self, features):
         """ Calculates the probability of a positiv decision given the specified features.
@@ -231,18 +240,10 @@ class BasePolicy():
         raise NotImplementedError("Subclass must override copy(self).")
 
     def get_model_parameters(self):
-        """ Returns the model parameters theta needed to restore the model to its current state.
+        """ Returns the model parameters needed to restore the model to its current state.
         
         Returns:
-            parameters: The the model parameters.
-        """
-        raise NotImplementedError("Subclass must override get_model_parameters(self).")
-
-    def get_lagrangian_multiplier(self):
-        """ Returns the lagrangian multiplier for the fairness penalty.
-        
-        Returns:
-            lagrangian_multiplier: The the lagrangian multiplier.
+            parameters: A dictionary of model parameters.
         """
         raise NotImplementedError("Subclass must override get_model_parameters(self).")
 
@@ -288,10 +289,10 @@ class LogisticPolicy(BasePolicy):
         return approx_policy
 
     def get_model_parameters(self):
-        return self.theta.copy()
-
-    def get_lagrangian_multiplier(self):
-        return self.fairness_rate
+        return {
+            "theta": self.theta.tolist(), 
+            "lambda": self.fairness_rate
+        }
 
     def _ips_weights(self, x, s, sampling_distribution):
         phi = sampling_distribution.feature_map(sampling_distribution._extract_features(x, s))
@@ -300,16 +301,6 @@ class LogisticPolicy(BasePolicy):
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
 
         return weights
-
-    def _lambda_gradient(self, x, s, y, decisions, ips_weights=None):
-        fairness, _ = self.fairness_gradient_function(
-                x=x, 
-                s=s, 
-                y=y, 
-                ips_weights=ips_weights, 
-                decisions=decisions, 
-                policy=self)
-        return -(fairness**2)/2
 
     def _log_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))

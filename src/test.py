@@ -9,7 +9,7 @@ import multiprocessing as mp
 
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
-from src.plotting import plot_median, plot_mean
+# from src.plotting import plot_median, plot_mean
 from src.training import train
 from src.distribution import SplitDistribution, UncalibratedScore
 
@@ -77,26 +77,26 @@ training_parameters = {
         'feature_map': IdentityFeatureMap(dim_theta),
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
-        'bias': bias
+        'bias': bias,
+        'initial_theta': [-3.0, 5.0],
+        #'initial_lambda': np.array([0.0, 1.0, 10.0, 50.0])
+        'initial_lambda': 0.0
     },
-    'optimization': {
+    'parameter_optimization': {
+        'time_steps':10,
         'epochs': 1,
-        'time_steps':5,
         'batch_size':512,
-        'parameters' : {
-            'theta': {
-                'initial_value': [-3.0, 5.0],
-                'learning_rate': 1,
-                'decay_rate': 1,
-                'decay_step': 10000
-            },
-            'lambda': {
-                'initial_value': 1,
-                'learning_rate': 0.1,
-                'decay_rate': 1,
-                'decay_step': 10000
-            }
-        }
+        'learning_rate': 1,
+        'decay_rate': 1,
+        'decay_step': 10000
+    },
+    'lagrangian_optimization': {
+        'iterations': 5,
+        'epochs': 1,
+        'batch_size':512,
+        'learning_rate': 0.1,
+        'decay_rate': 1,
+        'decay_step': 10000
     },
     'data': {
         'distribution': UncalibratedScore(bias=bias),
@@ -113,11 +113,11 @@ training_parameters = {
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, model_parameters, run_path = train(training_parameters, iterations=30, asynchronous=False)
+statistics, model_parameters, run_path = train(training_parameters, iterations=5, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
-plot_median(statistics, "{}/results_median_lambdas.png".format(run_path), model_parameters=model_parameters)
+# plot_median(statistics, "{}/results_median_lambdas.png".format(run_path), model_parameters=model_parameters)
 #plot_mean(statistics, "{}/results_mean_lambdas.png".format(run_path))
 
 #plot_median_over_lambdas(statistics, "{}/results_median_lambdas.png".format(run_path))
