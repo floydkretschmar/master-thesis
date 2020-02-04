@@ -9,7 +9,7 @@ import multiprocessing as mp
 
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
-# from src.plotting import plot_median, plot_mean
+from src.plotting import plot_median, plot_mean
 from src.training import train
 from src.distribution import SplitDistribution, UncalibratedScore
 
@@ -69,7 +69,7 @@ def util_func(**util_params):
 
 training_parameters = {    
     'experiment_name': "test",
-    'save': True,
+    'save': False,
     'model':{
         'benefit_function': demographic_parity,
         'utility_function': util_func,
@@ -91,7 +91,7 @@ training_parameters = {
         'decay_step': 10000
     },
     'lagrangian_optimization': {
-        'iterations': 5,
+        'iterations': 50,
         'epochs': 1,
         'batch_size':512,
         'learning_rate': 0.1,
@@ -117,7 +117,7 @@ statistics, model_parameters, run_path = train(training_parameters, iterations=5
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
-# plot_median(statistics, "{}/results_median_lambdas.png".format(run_path), model_parameters=model_parameters)
+plot_median(statistics, model_parameters=model_parameters)
 #plot_mean(statistics, "{}/results_mean_lambdas.png".format(run_path))
 
 #plot_median_over_lambdas(statistics, "{}/results_median_lambdas.png".format(run_path))

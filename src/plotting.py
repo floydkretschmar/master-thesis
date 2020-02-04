@@ -5,7 +5,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import matplotlib.pyplot as plt
-from src.training_evaluation import Statistics, ModelParameters, MultipleRunStatistics
+from src.training_evaluation import Statistics, ModelParameters
 
 def _plot_results(utility, benefit_delta, xaxis, xlable, xscale, utility_uncertainty=None, benefit_delta_uncertainty=None, lambdas=None, lambdas_uncertainty=None, file_path=None):
     if lambdas is not None and lambdas_uncertainty is not None:
@@ -43,40 +43,21 @@ def plot_median(statistics, file_path=None, model_parameters=None):
         lambdas = None
         lambdas_uncertainty = None
 
-    if isinstance(statistics, MultipleRunStatistics):
-        # Plot median results over range of lambdas:
-        _plot_results(
-            utility=statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.MEDIAN),
-            benefit_delta=statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEDIAN),
-            xaxis=statistics.results[MultipleRunStatistics.LAMBDAS],
-            xlable="Lambdas",
-            xscale="log",
-            utility_uncertainty=
-                (statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.FIRST_QUARTILE), 
-                statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.THIRD_QUARTILE)),
-            benefit_delta_uncertainty=
-                (statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.FIRST_QUARTILE), 
-                statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.THIRD_QUARTILE)),
-            lambdas=lambdas,
-            lambdas_uncertainty=lambdas_uncertainty,
-            file_path=file_path)
-    else:
-        # Plot median results for single lambda:
-        _plot_results(
-            utility=statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.MEDIAN),
-            benefit_delta=statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEDIAN),
-            xaxis=range(0, statistics.results[Statistics.TIMESTEPS]),
-            xlable="Timestep",
-            xscale="linear",
-            utility_uncertainty=
-                (statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.FIRST_QUARTILE), 
-                statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.THIRD_QUARTILE)),
-            benefit_delta_uncertainty=
-                (statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.FIRST_QUARTILE), 
-                statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.THIRD_QUARTILE)),
-            lambdas=lambdas,
-            lambdas_uncertainty=lambdas_uncertainty,
-            file_path=file_path)
+    _plot_results(
+        utility=statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.MEDIAN),
+        benefit_delta=statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEDIAN),
+        xaxis=statistics.results[Statistics.X_VALUES],
+        xlable=statistics.results[Statistics.X_NAME],
+        xscale=statistics.results[Statistics.X_SCALE],
+        utility_uncertainty=
+            (statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.FIRST_QUARTILE), 
+            statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.THIRD_QUARTILE)),
+        benefit_delta_uncertainty=
+            (statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.FIRST_QUARTILE), 
+            statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.THIRD_QUARTILE)),
+        lambdas=lambdas,
+        lambdas_uncertainty=lambdas_uncertainty,
+        file_path=file_path)
         
 def plot_mean(statistics, file_path=None, model_parameters=None):
     u_mean = statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.MEAN)
@@ -92,29 +73,14 @@ def plot_mean(statistics, file_path=None, model_parameters=None):
         lambdas = None
         lambdas_uncertainty = None
 
-    if isinstance(statistics, MultipleRunStatistics):
-        # Plot median results over range of lambdas:
-        _plot_results(
-            utility=u_mean,
-            benefit_delta=bd_mean,
-            xaxis=statistics.results[MultipleRunStatistics.LAMBDAS],
-            xlable="Lambdas",
-            xscale="log",
-            utility_uncertainty=(u_mean - u_stddev, u_mean + u_stddev),
-            benefit_delta_uncertainty=(bd_mean - bd_stddev, bd_mean + bd_stddev),
-            lambdas=lambdas,
-            lambdas_uncertainty=lambdas_uncertainty,
-            file_path=file_path)
-    else:
-        # Plot median results for single lambda:
-        _plot_results(
-            utility=u_mean,
-            benefit_delta=bd_mean,
-            xaxis=range(0, statistics.results[Statistics.TIMESTEPS]),
-            xlable="Timestep",
-            xscale="linear",
-            utility_uncertainty=(u_mean - u_stddev, u_mean + u_stddev),
-            benefit_delta_uncertainty=(bd_mean - bd_stddev, bd_mean + bd_stddev),
-            lambdas=lambdas,
-            lambdas_uncertainty=lambdas_uncertainty,
-            file_path=file_path)
+    _plot_results(
+        utility=u_mean,
+        benefit_delta=bd_mean,
+        xaxis=statistics.results[Statistics.X_VALUES],
+        xlable=statistics.results[Statistics.X_NAME],
+        xscale=statistics.results[Statistics.X_SCALE],
+        utility_uncertainty=(u_mean - u_stddev, u_mean + u_stddev),
+        benefit_delta_uncertainty=(bd_mean - bd_stddev, bd_mean + bd_stddev),
+        lambdas=lambdas,
+        lambdas_uncertainty=lambdas_uncertainty,
+        file_path=file_path)

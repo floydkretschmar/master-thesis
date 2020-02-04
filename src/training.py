@@ -13,7 +13,7 @@ import numbers
 
 from src.consequential_learning import ConsequentialLearning, FixedLambdasConsequentialLearning, DualGradientConsequentialLearning
 from src.util import save_dictionary, load_dictionary, serialize_dictionary, stack, check_for_missing_kwargs
-from src.training_evaluation import Statistics, MultiStatistics#, ModelParameters
+from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 
 class _Trainer():
     def _training_iteration(self, training_parameters, training_algorithm):
@@ -32,7 +32,7 @@ class _Trainer():
             pool.join()
             
             for result in apply_results:
-                results_per_iterations.append(result[1].get())
+                results_per_iterations.append(result.get())
         else:
             for iteration in range(0, iterations):
                 results_per_iterations.append(self._training_iteration(training_parameters, training_algorithm))
@@ -61,11 +61,11 @@ class _Trainer():
                     utility_function=training_parameters["model"]["utility_function"])
         # single lambda dimension:
         else:
-            model_parameters = {}
+            model_parameters = {0 : {}}
             decisions_tensor = None   
 
             for iteration in range(0, len(results_per_iterations)):
-                decisions, model_parameters[iteration] = results_per_iterations[iteration]
+                decisions, model_parameters[0][iteration] = results_per_iterations[iteration]
                 decisions_tensor = stack(decisions_tensor, decisions, axis=2)
 
             statistics = Statistics.calculate_statistics(
@@ -244,5 +244,5 @@ def train(training_parameters, iterations=30, asynchronous=True):
         serialized_statistics = serialize_dictionary(overall_statistics.to_dict())
         save_dictionary(serialized_statistics, overall_stat_save_path)
 
-    return overall_statistics, model_parameters, base_save_path
+    return overall_statistics, ModelParameters(model_parameters), base_save_path
     

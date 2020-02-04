@@ -27,27 +27,37 @@ def build_result_dictionary(measure):
         THIRD_QUARTILE: np.percentile(measure, q=75, axis=1)
     }
 
-# class ModelParameters():
-#     # Result Format
-#     MEAN = MEAN
-#     STANDARD_DEVIATION = STANDARD_DEVIATION
-#     MEDIAN = MEDIAN
-#     FIRST_QUARTILE = FIRST_QUARTILE
-#     THIRD_QUARTILE = THIRD_QUARTILE
+class ModelParameters():
+    # Result Format
+    MEAN = MEAN
+    STANDARD_DEVIATION = STANDARD_DEVIATION
+    MEDIAN = MEDIAN
+    FIRST_QUARTILE = FIRST_QUARTILE
+    THIRD_QUARTILE = THIRD_QUARTILE
 
-#     def __init__(self):
-#         self.model_parameters = {}
-#         self.lagrangians_over_iterations = None
+    def __init__(self, model_parameter_dict):
+        self.dict = model_parameter_dict
+        self.lagrangians = None
 
-#     def add(self, lambda_iteration, parameters, lagrangians_over_iterations):
-#         self.model_parameters[lambda_iteration] = parameters
-#         self.lagrangians_over_iterations = stack(self.lagrangians_over_iterations, lagrangian.reshape(-1, 1), axis=1)
+        def get_lambda_over_iterations(iteration_dict):
+            lambdas_over_iterations = []
+            for _, parameters in iteration_dict.items():
+                lambdas_over_iterations.append(parameters["lambda"])
+            return np.array(lambdas_over_iterations, dtype=float)
+        
+        # multiple lambdas
+        if len(self.dict) > 1:
+            for _, iteration_dict in self.dict.items():
+                self.lagrangians = stack(self.lagrangians, get_lambda_over_iterations(iteration_dict).reshape(1, -1), axis=0)
+        # single lambda
+        else:
+            self.lagrangians = get_lambda_over_iterations(iteration_dict).reshape(1, -1)
 
-#     def get_lagrangians(self, result_format):
-#         return build_result_dictionary(self.lagrangians_over_iterations)[result_format]
+    def get_lagrangians(self, result_format):
+        return build_result_dictionary(self.lagrangians)[result_format]
 
-#     def to_dict(self):
-#         return deepcopy(self.model_parameters)
+    def to_dict(self):
+        return deepcopy(self.dict)
 
 class BaseStatistics():
     # Scale Measures:
