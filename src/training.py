@@ -16,18 +16,20 @@ from src.util import save_dictionary, load_dictionary, serialize_dictionary, sta
 from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 
 class _Trainer():
-    def _training_iteration(self, training_parameters, training_algorithm):
+    def _training_iteration(self, training_parameters, training_algorithm_constructor):
         np.random.seed()
-        return training_algorithm.train(training_parameters)
+        parameters = deepcopy(training_parameters)
+        training_algorithm = training_algorithm_constructor(parameters["model"]["learn_on_entire_history"])
+        return training_algorithm.train(parameters)
 
-    def train_over_iterations(self, training_parameters, training_algorithm, iterations, asynchronous):        
+    def train_over_iterations(self, training_parameters, training_algorithm_constructor, iterations, asynchronous):        
         results_per_iterations = []
         # multithreaded runs of training
         if asynchronous:
             apply_results = []
             pool = mp.Pool(mp.cpu_count())
             for iteration in range(0, iterations):
-                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_algorithm)))
+                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_algorithm_constructor)))
             pool.close()
             pool.join()
             
@@ -35,7 +37,7 @@ class _Trainer():
                 results_per_iterations.append(result.get())
         else:
             for iteration in range(0, iterations):
-                results_per_iterations.append(self._training_iteration(training_parameters, training_algorithm))
+                results_per_iterations.append(self._training_iteration(training_parameters, training_algorithm_constructor))
  
         # multiple lambdas:
         if results_per_iterations[0][0].ndim > 2:
@@ -136,8 +138,6 @@ def _generate_data_set(training_parameters):
     return data
            
      
-
-
 def _save_results(model_parameters, statistics, base_save_path, sub_directory=None):
     # save the model parameters to be able to restore the model
     if sub_directory is not None:
@@ -211,8 +211,8 @@ def train(training_parameters, iterations=30, asynchronous=True):
     if not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
         print("---------- Training with fixed lambdas ----------")
         fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
-        training_algorithm = FixedLambdasConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm, iterations, asynchronous)
+        training_algorithm_constructor = FixedLambdasConsequentialLearning
+        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm_constructor, iterations, asynchronous)
         
         overall_statistics = MultiStatistics("log", fairness_rates, "Lambda")
         for num_fairness_rate, fairness_rate in enumerate(fairness_rates):
@@ -224,8 +224,8 @@ def train(training_parameters, iterations=30, asynchronous=True):
     # if a dict is given for lambda we try to learn the perfect lambda
     elif "lagrangian_optimization" in training_parameters:
         print("---------- Training both theta and lambda ----------")
-        training_algorithm = DualGradientConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm, iterations, asynchronous)
+        training_algorithm_constructor = DualGradientConsequentialLearning
+        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm_constructor, iterations, asynchronous)
         
         overall_statistics = MultiStatistics("linear", range(0, current_training_parameters["lagrangian_optimization"]["iterations"]), "Lambda Training Iteration")
         for num_epoch in range(0, current_training_parameters["lagrangian_optimization"]["iterations"]):
@@ -235,8 +235,8 @@ def train(training_parameters, iterations=30, asynchronous=True):
                 _save_results(model_parameters, statistics[num_epoch], base_save_path, sub_directory="epoch{}".format(num_epoch))
     else:
         print("---------- Single training run for fixed lambda ----------")
-        training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm, iterations, asynchronous)
+        training_algorithm_constructor = ConsequentialLearning
+        overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm_constructor, iterations, asynchronous)
 
     # save the overall results
     if base_save_path is not None:
