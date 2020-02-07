@@ -16,69 +16,98 @@ from src.util import save_dictionary, load_dictionary, serialize_dictionary, sta
 from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 
 class _Trainer():
-    def _training_iteration(self, training_parameters, training_algorithm_constructor):
+    def _training_iteration(self, training_parameters, training_method):
         np.random.seed()
-        parameters = deepcopy(training_parameters)
-        training_algorithm = training_algorithm_constructor(parameters["model"]["learn_on_entire_history"])
-        return training_algorithm.train(parameters)
+        results = []
+        for result in training_method(training_parameters):
+            results.append(deepcopy(result))
+        return results
 
-    def train_over_iterations(self, training_parameters, training_algorithm_constructor, iterations, asynchronous):        
-        results_per_iterations = []
-        # multithreaded runs of training
-        if asynchronous:
-            apply_results = []
-            pool = mp.Pool(mp.cpu_count())
-            for iteration in range(0, iterations):
-                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_algorithm_constructor)))
-            pool.close()
-            pool.join()
-            
-            for result in apply_results:
-                results_per_iterations.append(result.get())
-        else:
-            for iteration in range(0, iterations):
-                results_per_iterations.append(self._training_iteration(training_parameters, training_algorithm_constructor))
- 
-        # multiple lambdas:
-        if results_per_iterations[0][0].ndim > 2:
-            # the 3. axis (lambda-axis) of the decision tensor (first element of the result tuple) of the first iteration result (num_iterations > 0 is guaranteed)
-            num_lambdas = results_per_iterations[0][0].shape[2]
-            model_parameters = {num_lambda: {} for num_lambda in range(0, num_lambdas)}
-            statistics = {}    
+    @staticmethod
+    def _process_results(results_per_iterations):
+        decision_tensors = []
+        model_parameters_over_lambdas = {}
+        for num_iteration, iteration_result in enumerate(results_per_iterations):
+            for num_lambda, lambda_result in enumerate(iteration_result):
+                decisions_over_time, model_parameters = lambda_result
 
-            for num_lambda in range(0, num_lambdas):     
-                decisions_tensor = None    
-                for iteration in range(0, len(results_per_iterations)):     
-                    decisions_over_lambdas, model_parameters_over_lambdas = results_per_iterations[iteration]
-                    decisions_over_time = decisions_over_lambdas[:, :, num_lambda]
-                    decisions_tensor = stack(decisions_tensor, decisions_over_time, axis=2)
+                if num_lambda >= len(decision_tensors):
+                    decision_tensors.append(decisions_over_time)
+                else:
+                    decision_tensors[num_lambda] = stack(decision_tensors[num_lambda], decisions_over_time, axis=2)
+                
+                if num_lambda in model_parameters_over_lambdas:
+                    model_parameters_over_lambdas[num_lambda][num_iteration] = model_parameters
+                else:
+                    model_parameters_over_lambdas[num_lambda] = {
+                        num_iteration: model_parameters
+                    }
+                    
+        return decision_tensors, model_parameters_over_lambdas
 
-                    model_parameters[num_lambda][iteration] = model_parameters_over_lambdas[num_lambda]
+    @staticmethod
+    def _partial_results(training_parameters, results_per_iterations, total_statistics, total_parameters):
+        decision_tensors, model_parameters = _Trainer._process_results(results_per_iterations)
 
-                statistics[num_lambda] = Statistics.calculate_statistics(
+        for num_lambda, decisions_tensor in enumerate(decision_tensors):
+            statistics = Statistics.calculate_statistics(
                     predictions=decisions_tensor, 
                     observations=training_parameters["data"]["test"][0],
                     protected_attributes=training_parameters["data"]["test"][1], 
                     ground_truths=training_parameters["data"]["test"][2], 
                     utility_function=training_parameters["model"]["utility_function"])
-        # single lambda dimension:
+
+            if num_lambda < len(total_statistics):
+                total_statistics[num_lambda] = total_statistics[num_lambda].merge(statistics)  
+            else:
+                total_statistics.append(statistics)
+
+            if num_lambda in total_parameters:
+                offset = max(total_parameters[num_lambda], key=int) + 1
+
+                for (iteration, iteration_value) in model_parameters[num_lambda].items():
+                    total_parameters[num_lambda][offset + iteration] = iteration_value
+            else:
+                total_parameters[num_lambda] = model_parameters[num_lambda]   
+        
+        del model_parameters, decision_tensors
+        return total_statistics, total_parameters
+
+    def train_over_iterations(self, training_parameters, training_method, iterations, iteration_split, asynchronous):        
+        results_per_iterations = []
+
+        total_statistics = []
+        total_parameters = {}
+        # multithreaded runs of training
+        if asynchronous:
+            for start in range(0, iterations, iteration_split):
+                apply_results = []
+                results_per_iterations = []
+                pool = mp.Pool(mp.cpu_count())
+                for iteration in range(0, iteration_split):
+                    apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
+                pool.close()
+                pool.join()
+                
+                for result in apply_results:
+                    results_per_iterations.append(result.get())
+                    
+                total_statistics, total_parameters = _Trainer._partial_results(training_parameters, results_per_iterations, total_statistics, total_parameters)
+                del results_per_iterations, apply_results
+
+                print("Finished iteration {} to {}".format(start, start+iteration_split))
         else:
-            model_parameters = {0 : {}}
-            decisions_tensor = None   
+            for iteration in range(0, iterations):
+                results_per_iterations.append(self._training_iteration(training_parameters, training_method))
 
-            for iteration in range(0, len(results_per_iterations)):
-                decisions, model_parameters[0][iteration] = results_per_iterations[iteration]
-                decisions_tensor = stack(decisions_tensor, decisions, axis=2)
+                if (iteration % iteration_split == 0 and iteration != 0) or (iteration+1 == iterations and len(results_per_iterations) > 0):
+                    total_statistics, total_parameters = _Trainer._partial_results(training_parameters, results_per_iterations, total_statistics, total_parameters)
+                    del results_per_iterations
+            
+        if len(total_statistics) == 1:
+            return total_statistics[0], total_parameters
 
-            statistics = Statistics.calculate_statistics(
-                predictions=decisions_tensor, 
-                observations=training_parameters["data"]["test"][0],
-                protected_attributes=training_parameters["data"]["test"][1], 
-                ground_truths=training_parameters["data"]["test"][2], 
-                utility_function=training_parameters["model"]["utility_function"])
-
-
-        return statistics, model_parameters
+        return total_statistics, total_parameters
 
 
 def _check_for_missing_training_parameters(training_parameters):
@@ -125,15 +154,18 @@ def _generate_data_set(training_parameters):
     } 
 
     if "lagrangian_optimization" in training_parameters:
-        lambda_train_x, lambda_train_s, lambda_train_y = distribution.sample_dataset(
-        n=num_decisions * training_parameters["lagrangian_optimization"]["iterations"], 
-        fraction_protected=fraction_protected)
+        data["training"]["lambda"] = distribution.sample_dataset(
+            n=num_decisions, 
+            fraction_protected=fraction_protected)
+        # lambda_train_x, lambda_train_s, lambda_train_y = distribution.sample_dataset(
+        # n=num_decisions * training_parameters["lagrangian_optimization"]["iterations"], 
+        # fraction_protected=fraction_protected)
 
-        lambda_train_datasets = []
-        for i in range(0, lambda_train_x.shape[0], num_decisions):
-            lambda_train_datasets.append((lambda_train_x[i:i+num_decisions], lambda_train_s[i:i+num_decisions], lambda_train_y[i:i+num_decisions]))
+        #lambda_train_datasets = []
+        #for i in range(0, lambda_train_x.shape[0], num_decisions):
+        #    lambda_train_datasets.append((lambda_train_x[i:i+num_decisions], lambda_train_s[i:i+num_decisions], lambda_train_y[i:i+num_decisions]))
 
-        data["training"]["lambda"] = lambda_train_datasets
+        #data["training"]["lambda"] = lambda_train_datasets
 
     return data
            
@@ -156,8 +188,7 @@ def _save_results(model_parameters, statistics, base_save_path, sub_directory=No
     serialized_statistics = serialize_dictionary(statistics.to_dict())
     save_dictionary(serialized_statistics, statistics_save_path)
 
-
-def train(training_parameters, iterations=30, asynchronous=True):
+def train(training_parameters, iterations=30, iteration_split=10, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
@@ -204,40 +235,37 @@ def train(training_parameters, iterations=30, asynchronous=True):
             "y": current_training_parameters["data"]["test"][2].tolist()
         }
         save_dictionary(data_dict, data_save_path)
+        del data_dict
 
     trainer = _Trainer()
 
-    # if list of parameters is given we fix lambda over all time steps and train vor all lambdas
-    if not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
-        print("---------- Training with fixed lambdas ----------")
-        fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
-        training_algorithm_constructor = FixedLambdasConsequentialLearning
-        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm_constructor, iterations, asynchronous)
-        
-        overall_statistics = MultiStatistics("log", fairness_rates, "Lambda")
-        for num_fairness_rate, fairness_rate in enumerate(fairness_rates):
-            overall_statistics.log_run(statistics[num_fairness_rate])
+    if isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number) and "lagrangian_optimization" not in training_parameters:
+        print("---------- Single training run for fixed lambda ----------")
+        training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
+        overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, iteration_split, asynchronous)
+    else:
+        # if list of parameters is given we fix lambda over all time steps and train vor all lambdas
+        if not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
+            print("---------- Training with fixed lambdas ----------")
+            fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
+            training_algorithm = FixedLambdasConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
+            sub_directories = ["lambda_{}".format(fairness_rate) for fairness_rate in fairness_rates]
+            overall_statistics = MultiStatistics("log", fairness_rates, "Lambda")
+        # if a dict is given for lambda we try to learn the perfect lambda
+        elif "lagrangian_optimization" in training_parameters:
+            print("---------- Training both theta and lambda ----------")
+            training_algorithm = DualGradientConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
+            sub_directories = ["epoch_{}".format(epoch) for epoch in range(0, current_training_parameters["lagrangian_optimization"]["iterations"])]
+            overall_statistics = MultiStatistics("linear", range(0, current_training_parameters["lagrangian_optimization"]["iterations"]), "Lambda Training Iteration")
+            
+        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, iteration_split, asynchronous)
+
+        for num_lambda, statistic in enumerate(statistics):
+            overall_statistics.log_run(statistic)
 
             if base_save_path is not None:  
-                _save_results(model_parameters, statistics[num_fairness_rate], base_save_path, sub_directory="lambda{}".format(fairness_rate))
-         
-    # if a dict is given for lambda we try to learn the perfect lambda
-    elif "lagrangian_optimization" in training_parameters:
-        print("---------- Training both theta and lambda ----------")
-        training_algorithm_constructor = DualGradientConsequentialLearning
-        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm_constructor, iterations, asynchronous)
-        
-        overall_statistics = MultiStatistics("linear", range(0, current_training_parameters["lagrangian_optimization"]["iterations"]), "Lambda Training Iteration")
-        for num_epoch in range(0, current_training_parameters["lagrangian_optimization"]["iterations"]):
-            overall_statistics.log_run(statistics[num_epoch])
-
-            if base_save_path is not None:
-                _save_results(model_parameters, statistics[num_epoch], base_save_path, sub_directory="epoch{}".format(num_epoch))
-    else:
-        print("---------- Single training run for fixed lambda ----------")
-        training_algorithm_constructor = ConsequentialLearning
-        overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm_constructor, iterations, asynchronous)
-
+                _save_results(model_parameters[num_lambda], statistic, base_save_path, sub_directory=sub_directories[num_lambda])
+            
     # save the overall results
     if base_save_path is not None:
         overall_stat_save_path = "{}/overall_statistics.json".format(base_save_path)

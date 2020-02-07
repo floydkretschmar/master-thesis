@@ -5,7 +5,6 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
-from copy import deepcopy
 
 from src.policy import LogisticPolicy
 from src.util import stack
@@ -147,8 +146,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             training_parameters["model"]["initial_lambda"], 
             training_parameters["model"]["use_sensitve_attributes"])
 
-        decisions_over_time, trained_model_parameters = self._train_model_parameters(policy, training_parameters)
-        return decisions_over_time, trained_model_parameters
+        yield self._train_model_parameters(policy, training_parameters)
 
 
 class FixedLambdasConsequentialLearning(ConsequentialLearning):    
@@ -161,9 +159,6 @@ class FixedLambdasConsequentialLearning(ConsequentialLearning):
         super(FixedLambdasConsequentialLearning, self).__init__(learn_on_entire_history)
         
     def train(self, training_parameters):
-        decisions_over_lambdas = None
-        model_parameters_over_lambdas = []
-
         fairness_rates = training_parameters["model"]["initial_lambda"]
 
         for fairness_rate in fairness_rates:
@@ -176,11 +171,7 @@ class FixedLambdasConsequentialLearning(ConsequentialLearning):
                 fairness_rate, 
                 training_parameters["model"]["use_sensitve_attributes"])
 
-            decisions_over_time, trained_model_parameters = self._train_model_parameters(policy, training_parameters)
-            decisions_over_lambdas = stack(decisions_over_lambdas, decisions_over_time, axis=2)
-            model_parameters_over_lambdas.append(trained_model_parameters)
-        
-        return decisions_over_lambdas, model_parameters_over_lambdas
+            yield self._train_model_parameters(policy, training_parameters)
 
 
 class DualGradientConsequentialLearning(ConsequentialLearning):    
@@ -193,33 +184,30 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
         super(DualGradientConsequentialLearning, self).__init__(learn_on_entire_history)
         
     def train(self, training_parameters):
-        policy = LogisticPolicy(
-            training_parameters["model"]["initial_theta"], 
-            training_parameters["model"]["fairness_function"], 
-            training_parameters["model"]["benefit_function"], 
-            training_parameters["model"]["utility_function"], 
-            training_parameters["model"]["feature_map"], 
-            training_parameters["model"]["initial_lambda"], 
-            training_parameters["model"]["use_sensitve_attributes"])
-
-        decisions_over_lambdas = None
-        model_parameters_over_lambdas = []
-
+        fairness_rate = training_parameters["model"]["initial_lambda"]
         lambda_learning_rate = training_parameters["parameter_optimization"]["learning_rate"]
         lambda_decay_rate = training_parameters["parameter_optimization"]["decay_rate"]
         lambda_decay_step = training_parameters["parameter_optimization"]["decay_step"]
 
         for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
+            policy = LogisticPolicy(
+                training_parameters["model"]["initial_theta"], 
+                training_parameters["model"]["fairness_function"], 
+                training_parameters["model"]["benefit_function"], 
+                training_parameters["model"]["utility_function"], 
+                training_parameters["model"]["feature_map"], 
+                fairness_rate, 
+                training_parameters["model"]["use_sensitve_attributes"])
+
             # decay lagrangian learning rate
             if i % lambda_decay_step == 0 and i != 0:
                 lambda_learning_rate *= lambda_decay_rate
                 
-            decisions_over_time, trained_model_parameters = self._train_model_parameters(policy, training_parameters)  
-            decisions_over_lambdas = stack(decisions_over_lambdas, decisions_over_time, axis=2)
-            model_parameters_over_lambdas.append(deepcopy(trained_model_parameters))
+            yield self._train_model_parameters(policy, training_parameters)  
 
             # Get lambda training data
-            data = training_parameters["data"]["training"]["lambda"][i]
+            #data = training_parameters["data"]["training"]["lambda"][i]
+            data = training_parameters["data"]["training"]["lambda"]
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
 
             data = {
@@ -239,9 +227,8 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
                 gradient = policy._lambda_gradient(x, s, y, ips_weights) 
                 policy.fairness_rate -= lambda_learning_rate * gradient  
 
-            # TODO: Move parameter reset somewhere in policy
-            policy.theta = training_parameters["model"]["initial_theta"]
+            fairness_rate = policy.fairness_rate
 
-        return decisions_over_lambdas, model_parameters_over_lambdas
+            del data, x_train, s_train, y_train, policy
 
                 

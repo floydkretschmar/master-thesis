@@ -83,21 +83,21 @@ training_parameters = {
         'initial_lambda': 0.0
     },
     'parameter_optimization': {
-        'time_steps':10,
+        'time_steps':5,
         'epochs': 1,
         'batch_size':512,
         'learning_rate': 1,
         'decay_rate': 1,
         'decay_step': 10000
     },
-    'lagrangian_optimization': {
-        'iterations': 50,
-        'epochs': 1,
-        'batch_size':512,
-        'learning_rate': 0.1,
-        'decay_rate': 1,
-        'decay_step': 10000
-    },
+    # 'lagrangian_optimization': {
+    #     'iterations': 15,
+    #     'epochs': 1,
+    #     'batch_size':256,
+    #     'learning_rate': 0.1,
+    #     'decay_rate': 1,
+    #     'decay_step': 10000
+    # },
     'data': {
         'distribution': UncalibratedScore(bias=bias),
         'fraction_protected':0.5,
@@ -113,11 +113,12 @@ training_parameters = {
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, model_parameters, run_path = train(training_parameters, iterations=5, asynchronous=False)
+statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
-plot_median(statistics, model_parameters=model_parameters)
+#plot_median(statistics, model_parameters=model_parameters)
+plot_median(statistics, model_parameters=None)
 #plot_mean(statistics, "{}/results_mean_lambdas.png".format(run_path))
 
 #plot_median_over_lambdas(statistics, "{}/results_median_lambdas.png".format(run_path))

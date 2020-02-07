@@ -126,6 +126,15 @@ class Statistics(BaseStatistics):
     def __init__(self):
         super(Statistics, self).__init__()
 
+    def merge(self, statistics):
+        for (protected_key, protected_value) in statistics.results.items():
+            if protected_key != Statistics.X_VALUES and protected_key != Statistics.X_SCALE and protected_key != Statistics.X_NAME:
+                for (measure_key, measure_value) in protected_value.items():
+                    if measure_key != Statistics.NUM_INDIVIDUALS and measure_key != Statistics.NUM_NEGATIVES and measure_key != Statistics.NUM_POSITIVES: 
+                        self.results[protected_key][measure_key] = stack(self.results[protected_key][measure_key], measure_value, axis=1)
+
+        return self
+
     @staticmethod
     def calculate_statistics(predictions, observations, protected_attributes, ground_truths, utility_function):
         statistics = Statistics()

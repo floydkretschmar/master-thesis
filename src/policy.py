@@ -297,7 +297,7 @@ class LogisticPolicy(BasePolicy):
     def _ips_weights(self, x, s, sampling_distribution):
         phi = sampling_distribution.feature_map(sampling_distribution._extract_features(x, s))
 
-        sampling_theta = np.expand_dims(sampling_distribution.theta.copy(), axis=1)
+        sampling_theta = np.expand_dims(sampling_distribution.theta, axis=1)
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
 
         return weights
