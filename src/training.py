@@ -97,12 +97,14 @@ class _Trainer():
 
                 print("Finished iteration {} to {}".format(start, start+iteration_split))
         else:
+            results_per_iterations = []
             for iteration in range(0, iterations):
                 results_per_iterations.append(self._training_iteration(training_parameters, training_method))
 
                 if (iteration % iteration_split == 0 and iteration != 0) or (iteration+1 == iterations and len(results_per_iterations) > 0):
                     total_statistics, total_parameters = _Trainer._partial_results(training_parameters, results_per_iterations, total_statistics, total_parameters)
                     del results_per_iterations
+                    results_per_iterations = []
             
         if len(total_statistics) == 1:
             return total_statistics[0], total_parameters
@@ -188,7 +190,7 @@ def _save_results(model_parameters, statistics, base_save_path, sub_directory=No
     serialized_statistics = serialize_dictionary(statistics.to_dict())
     save_dictionary(serialized_statistics, statistics_save_path)
 
-def train(training_parameters, iterations=30, iteration_split=10, asynchronous=True):
+def train(training_parameters, iterations=30, iteration_split=5, asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
@@ -258,7 +260,7 @@ def train(training_parameters, iterations=30, iteration_split=10, asynchronous=T
             #sub_directories = ["epoch_{}".format(epoch) for epoch in range(0, current_training_parameters["lagrangian_optimization"]["iterations"])]
 
             num_data_points = (current_training_parameters["lagrangian_optimization"]["iterations"] // current_training_parameters["lagrangian_optimization"]["take_data_step"])
-            lamda_iterations = [lamb * current_training_parameters["lagrangian_optimization"]["take_data_step"] for lamb in range(0, num_data_points + 1)]
+            lamda_iterations = [lamb * current_training_parameters["lagrangian_optimization"]["take_data_step"] for lamb in range(0, num_data_points)]
 
             sub_directories = ["lambda_{}".format(lamb) for lamb in lamda_iterations]
             overall_statistics = MultiStatistics("linear", lamda_iterations, "Lambda Training Iteration")
