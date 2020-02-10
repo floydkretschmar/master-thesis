@@ -163,8 +163,7 @@ class Statistics(BaseStatistics):
                             self.results[protected_key][measure_key] = None 
                         else:
                             self.results[protected_key][measure_key] = stack(self.results[protected_key][measure_key], measure_value, axis=1)
-        return self
-
+            
     @staticmethod
     def calculate_statistics(predictions, observations, protected_attributes, ground_truths, utility_function):
         statistics = Statistics()
@@ -174,31 +173,29 @@ class Statistics(BaseStatistics):
 
         for prot in ["all", "unprotected", "protected"]:
             if prot == "unprotected":
-                filtered_predictions = predictions[(protected_attributes == 0).squeeze(), :, :]
+                filtered_predictions = predictions[(protected_attributes == 0).squeeze(), :]
                 filtered_ground_truths = np.expand_dims(ground_truths[protected_attributes == 0], axis=1)
             elif prot == "protected":
-                filtered_predictions = predictions[(protected_attributes == 1).squeeze(), :, :]
+                filtered_predictions = predictions[(protected_attributes == 1).squeeze(), :]
                 filtered_ground_truths = np.expand_dims(ground_truths[protected_attributes == 1], axis=1)
             else:
                 filtered_predictions = predictions
                 filtered_ground_truths = ground_truths
 
             utility_matching_gt = np.repeat(filtered_ground_truths, filtered_predictions.shape[1], axis=1)
-            utility_matching_gt = np.expand_dims(utility_matching_gt, axis=2)
-            utility_matching_gt = np.repeat(utility_matching_gt, filtered_predictions.shape[2], axis=2)
 
             # calculate base statistics during creation of statistics object
             statistics.results[prot] = {
-                Statistics.UTILITY: np.mean(utility_function(x=observations, decisions=filtered_predictions, y=utility_matching_gt, s=protected_attributes), axis=0),
+                Statistics.UTILITY: np.expand_dims(np.mean(utility_function(x=observations, decisions=filtered_predictions, y=utility_matching_gt, s=protected_attributes), axis=0), axis=1),
                 Statistics.NUM_INDIVIDUALS: len(filtered_ground_truths),
                 Statistics.NUM_NEGATIVES: len(filtered_ground_truths[filtered_ground_truths==0]),
                 Statistics.NUM_POSITIVES: len(filtered_ground_truths[filtered_ground_truths==1]),
-                Statistics.NUM_PRED_NEGATIVES: np.sum((1 - filtered_predictions), axis=0),
-                Statistics.NUM_PRED_POSITIVES: np.sum(filtered_predictions, axis=0),
-                Statistics.TRUE_POSITIVES: np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 1), axis=0),
-                Statistics.TRUE_NEGATIVES: np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 0), axis=0),
-                Statistics.FALSE_POSITIVES: np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 0), axis=0),
-                Statistics.FALSE_NEGATIVES: np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 1), axis=0)
+                Statistics.NUM_PRED_NEGATIVES: np.expand_dims(np.sum((1 - filtered_predictions), axis=0), axis=1),
+                Statistics.NUM_PRED_POSITIVES: np.expand_dims(np.sum(filtered_predictions, axis=0), axis=1),
+                Statistics.TRUE_POSITIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 1), axis=0), axis=1),
+                Statistics.TRUE_NEGATIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 0), axis=0), axis=1),
+                Statistics.FALSE_POSITIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 0), axis=0), axis=1),
+                Statistics.FALSE_NEGATIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 1), axis=0), axis=1)
             }
 
             # calculate futher statistics based on the base statistics only on demand to save memory

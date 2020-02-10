@@ -18,23 +18,32 @@ from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 class _Trainer():
     def _training_iteration(self, training_parameters, training_method):
         np.random.seed()
-        results = []
-        for result in training_method(training_parameters):
-            results.append(deepcopy(result))
-        return results
+        results_over_lambdas = []
+
+        for decisions_over_time, model_parameters in training_method(training_parameters):
+            statistics = Statistics.calculate_statistics(
+                    predictions=decisions_over_time, 
+                    observations=training_parameters["data"]["test"][0],
+                    protected_attributes=training_parameters["data"]["test"][1], 
+                    ground_truths=training_parameters["data"]["test"][2], 
+                    utility_function=training_parameters["model"]["utility_function"])
+            results_over_lambdas.append((statistics, model_parameters))
+
+        return results_over_lambdas
 
     @staticmethod
     def _process_results(results_per_iterations):
-        decision_tensors = []
+        statistics_over_lambdas = []
         model_parameters_over_lambdas = {}
+
         for num_iteration, iteration_result in enumerate(results_per_iterations):
             for num_lambda, lambda_result in enumerate(iteration_result):
-                decisions_over_time, model_parameters = lambda_result
+                statistics, model_parameters = lambda_result
 
-                if num_lambda >= len(decision_tensors):
-                    decision_tensors.append(decisions_over_time)
+                if num_lambda >= len(statistics_over_lambdas):
+                    statistics_over_lambdas.append(statistics)
                 else:
-                    decision_tensors[num_lambda] = stack(decision_tensors[num_lambda], decisions_over_time, axis=2)
+                    statistics_over_lambdas[num_lambda].merge(statistics)
                 
                 if num_lambda in model_parameters_over_lambdas:
                     model_parameters_over_lambdas[num_lambda][num_iteration] = model_parameters
@@ -43,69 +52,29 @@ class _Trainer():
                         num_iteration: model_parameters
                     }
                     
-        return decision_tensors, model_parameters_over_lambdas
-
-    @staticmethod
-    def _partial_results(training_parameters, results_per_iterations, total_statistics, total_parameters):
-        decision_tensors, model_parameters = _Trainer._process_results(results_per_iterations)
-
-        for num_lambda, decisions_tensor in enumerate(decision_tensors):
-            statistics = Statistics.calculate_statistics(
-                    predictions=decisions_tensor, 
-                    observations=training_parameters["data"]["test"][0],
-                    protected_attributes=training_parameters["data"]["test"][1], 
-                    ground_truths=training_parameters["data"]["test"][2], 
-                    utility_function=training_parameters["model"]["utility_function"])
-
-            if num_lambda < len(total_statistics):
-                total_statistics[num_lambda] = total_statistics[num_lambda].merge(statistics)  
-            else:
-                total_statistics.append(statistics)
-
-            if num_lambda in total_parameters:
-                offset = max(total_parameters[num_lambda], key=int) + 1
-
-                for (iteration, iteration_value) in model_parameters[num_lambda].items():
-                    total_parameters[num_lambda][offset + iteration] = iteration_value
-            else:
-                total_parameters[num_lambda] = model_parameters[num_lambda]   
-        
-        del model_parameters, decision_tensors
-        return total_statistics, total_parameters
+        return statistics_over_lambdas, model_parameters_over_lambdas
 
     def train_over_iterations(self, training_parameters, training_method, iterations, iteration_split, asynchronous):        
         results_per_iterations = []
 
-        total_statistics = []
-        total_parameters = {}
         # multithreaded runs of training
         if asynchronous:
-            for start in range(0, iterations, iteration_split):
-                apply_results = []
-                results_per_iterations = []
-                pool = mp.Pool(mp.cpu_count())
-                for iteration in range(0, iteration_split):
-                    apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
-                pool.close()
-                pool.join()
-                
-                for result in apply_results:
-                    results_per_iterations.append(result.get())
-                    
-                total_statistics, total_parameters = _Trainer._partial_results(training_parameters, results_per_iterations, total_statistics, total_parameters)
-                del results_per_iterations, apply_results
-
-                print("Finished iteration {} to {}".format(start, start+iteration_split))
+            apply_results = []
+            results_per_iterations = []
+            pool = mp.Pool(mp.cpu_count())
+            for _ in range(0, iterations):
+                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
+            pool.close()
+            pool.join()
+            
+            for result in apply_results:
+                results_per_iterations.append(result.get())
         else:
             results_per_iterations = []
-            for iteration in range(0, iterations):
+            for _ in range(0, iterations):
                 results_per_iterations.append(self._training_iteration(training_parameters, training_method))
-
-                if (iteration % iteration_split == 0 and iteration != 0) or (iteration+1 == iterations and len(results_per_iterations) > 0):
-                    total_statistics, total_parameters = _Trainer._partial_results(training_parameters, results_per_iterations, total_statistics, total_parameters)
-                    del results_per_iterations
-                    results_per_iterations = []
             
+        total_statistics, total_parameters = self._process_results(results_per_iterations)
         if len(total_statistics) == 1:
             return total_statistics[0], total_parameters
 
