@@ -103,6 +103,33 @@ class BaseStatistics():
 
     def __init__(self):
         self.results = {}
+        self.functions = {
+            BaseStatistics.TRUE_POSITIVE_RATE: lambda statistics, prot: statistics.results[prot][BaseStatistics.TRUE_POSITIVES] / statistics.results[prot][BaseStatistics.NUM_POSITIVES],
+            BaseStatistics.FALSE_POSITIVE_RATE: lambda statistics, prot: statistics.results[prot][Statistics.FALSE_POSITIVES] / statistics.results[prot][Statistics.NUM_POSITIVES],
+            BaseStatistics.TRUE_NEGATIVE_RATE: lambda statistics, prot: statistics.results[prot][Statistics.TRUE_NEGATIVES] / statistics.results[prot][Statistics.NUM_NEGATIVES],
+            BaseStatistics.FALSE_NEGATIVE_RATE: lambda statistics, prot:statistics.results[prot][Statistics.FALSE_NEGATIVES] / statistics.results[prot][Statistics.NUM_NEGATIVES],
+            BaseStatistics.POSITIVE_PREDICTIVE_VALUE: lambda statistics, prot: statistics.results[prot][Statistics.TRUE_POSITIVES] / statistics.results[prot][Statistics.NUM_PRED_POSITIVES],
+            BaseStatistics.NEGATIVE_PREDICTIVE_VALUE: lambda statistics, prot: statistics.results[prot][Statistics.TRUE_NEGATIVES] / statistics.results[prot][Statistics.NUM_PRED_NEGATIVES],
+            BaseStatistics.FALSE_DISCOVERY_RATE: lambda statistics, prot: statistics.results[prot][Statistics.FALSE_POSITIVES] / statistics.results[prot][Statistics.NUM_PRED_POSITIVES],
+            BaseStatistics.FALSE_OMISSION_RATE: lambda statistics, prot: statistics.results[prot][Statistics.FALSE_NEGATIVES] / statistics.results[prot][Statistics.NUM_PRED_NEGATIVES],
+            BaseStatistics.ACCURACY: lambda statistics, prot: (statistics.results[prot][Statistics.TRUE_POSITIVES] + statistics.results[prot][Statistics.TRUE_NEGATIVES]) / statistics.results[prot][Statistics.NUM_INDIVIDUALS],
+            BaseStatistics.ERROR_RATE: lambda statistics, prot: 1 - statistics._get_measure(prot, Statistics.ACCURACY),
+            BaseStatistics.SELECTION_RATE: lambda statistics, prot: statistics.results[prot][Statistics.NUM_PRED_POSITIVES] / statistics.results[prot][Statistics.NUM_INDIVIDUALS],
+            BaseStatistics.F1: lambda statistics, prot: (2 * statistics.results[prot][Statistics.TRUE_POSITIVES]) / (2 * statistics.results[prot][Statistics.TRUE_POSITIVES] + statistics.results[prot][Statistics.FALSE_POSITIVES] + statistics.results[prot][Statistics.FALSE_POSITIVES]),
+            BaseStatistics.DISPARATE_IMPACT: lambda statistics, prot: statistics._get_measure("protected", Statistics.SELECTION_RATE) / statistics._get_measure("unprotected", Statistics.SELECTION_RATE),
+            BaseStatistics.DEMOGRAPHIC_PARITY: lambda statistics, prot: statistics._get_measure("protected", Statistics.SELECTION_RATE) - statistics._get_measure("unprotected", Statistics.SELECTION_RATE),
+            BaseStatistics.EQUALITY_OF_OPPORTUNITY: lambda statistics, prot: statistics._get_measure("protected", Statistics.TRUE_POSITIVE_RATE) - statistics._get_measure("unprotected", Statistics.TRUE_POSITIVE_RATE)
+        }
+
+    def _get_measure(self, prot, measure_key):
+        if self.results[prot][measure_key] is None:
+            measure = self.functions[measure_key](self, prot)
+            self.results[prot][measure_key] = measure
+        else:
+            measure = self.results[prot][measure_key]
+        
+        return measure
+
 
     def performance(self, measure, result_format, protected=None):
         if protected:
@@ -111,12 +138,12 @@ class BaseStatistics():
             prot = "all"
         else:
             prot = "unprotected"
-
-        measure = self.results[prot][measure]
+        
+        measure = self._get_measure(prot, measure)
         return build_result_dictionary(measure)[result_format]
 
     def fairness(self, measure, result_format):
-        measure = self.results["all"][measure]
+        measure = self._get_measure("all", measure)
         return build_result_dictionary(measure)[result_format]
 
     def to_dict(self):
@@ -131,8 +158,11 @@ class Statistics(BaseStatistics):
             if protected_key != Statistics.X_VALUES and protected_key != Statistics.X_SCALE and protected_key != Statistics.X_NAME:
                 for (measure_key, measure_value) in protected_value.items():
                     if measure_key != Statistics.NUM_INDIVIDUALS and measure_key != Statistics.NUM_NEGATIVES and measure_key != Statistics.NUM_POSITIVES: 
-                        self.results[protected_key][measure_key] = stack(self.results[protected_key][measure_key], measure_value, axis=1)
-
+                        # if the measure value has not been calculated for either of the merging statistics: reset and let it be recalculated during next call
+                        if measure_value is None or self.results[protected_key][measure_key] is None:
+                            self.results[protected_key][measure_key] = None 
+                        else:
+                            self.results[protected_key][measure_key] = stack(self.results[protected_key][measure_key], measure_value, axis=1)
         return self
 
     @staticmethod
@@ -157,6 +187,7 @@ class Statistics(BaseStatistics):
             utility_matching_gt = np.expand_dims(utility_matching_gt, axis=2)
             utility_matching_gt = np.repeat(utility_matching_gt, filtered_predictions.shape[2], axis=2)
 
+            # calculate base statistics during creation of statistics object
             statistics.results[prot] = {
                 Statistics.UTILITY: np.mean(utility_function(x=observations, decisions=filtered_predictions, y=utility_matching_gt, s=protected_attributes), axis=0),
                 Statistics.NUM_INDIVIDUALS: len(filtered_ground_truths),
@@ -170,22 +201,23 @@ class Statistics(BaseStatistics):
                 Statistics.FALSE_NEGATIVES: np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 1), axis=0)
             }
 
-            statistics.results[prot][Statistics.TRUE_POSITIVE_RATE] = statistics.results[prot][Statistics.TRUE_POSITIVES] / statistics.results[prot][Statistics.NUM_POSITIVES]
-            statistics.results[prot][Statistics.FALSE_POSITIVE_RATE] = statistics.results[prot][Statistics.FALSE_POSITIVES] / statistics.results[prot][Statistics.NUM_POSITIVES]
-            statistics.results[prot][Statistics.TRUE_NEGATIVE_RATE] = statistics.results[prot][Statistics.TRUE_NEGATIVES] / statistics.results[prot][Statistics.NUM_NEGATIVES]
-            statistics.results[prot][Statistics.FALSE_NEGATIVE_RATE] = statistics.results[prot][Statistics.FALSE_NEGATIVES] / statistics.results[prot][Statistics.NUM_NEGATIVES]
-            statistics.results[prot][Statistics.POSITIVE_PREDICTIVE_VALUE] = statistics.results[prot][Statistics.TRUE_POSITIVES] / statistics.results[prot][Statistics.NUM_PRED_POSITIVES]
-            statistics.results[prot][Statistics.NEGATIVE_PREDICTIVE_VALUE] = statistics.results[prot][Statistics.TRUE_NEGATIVES] / statistics.results[prot][Statistics.NUM_PRED_NEGATIVES]
-            statistics.results[prot][Statistics.FALSE_DISCOVERY_RATE] = statistics.results[prot][Statistics.FALSE_POSITIVES] / statistics.results[prot][Statistics.NUM_PRED_POSITIVES]
-            statistics.results[prot][Statistics.FALSE_OMISSION_RATE] = statistics.results[prot][Statistics.FALSE_NEGATIVES] / statistics.results[prot][Statistics.NUM_PRED_NEGATIVES]
-            statistics.results[prot][Statistics.ACCURACY] = (statistics.results[prot][Statistics.TRUE_POSITIVES] + statistics.results[prot][Statistics.TRUE_NEGATIVES]) / statistics.results[prot][Statistics.NUM_INDIVIDUALS]
-            statistics.results[prot][Statistics.ERROR_RATE] = 1 - statistics.results[prot][Statistics.ACCURACY]
-            statistics.results[prot][Statistics.SELECTION_RATE] = statistics.results[prot][Statistics.NUM_PRED_POSITIVES] / statistics.results[prot][Statistics.NUM_INDIVIDUALS]
-            statistics.results[prot][Statistics.F1] = (2 * statistics.results[prot][Statistics.TRUE_POSITIVES]) / (2 * statistics.results[prot][Statistics.TRUE_POSITIVES] + statistics.results[prot][Statistics.FALSE_POSITIVES] + statistics.results[prot][Statistics.FALSE_POSITIVES])
+            # calculate futher statistics based on the base statistics only on demand to save memory
+            statistics.results[prot][Statistics.TRUE_POSITIVE_RATE] = None
+            statistics.results[prot][Statistics.FALSE_POSITIVE_RATE] = None
+            statistics.results[prot][Statistics.TRUE_NEGATIVE_RATE] = None
+            statistics.results[prot][Statistics.FALSE_NEGATIVE_RATE] = None
+            statistics.results[prot][Statistics.POSITIVE_PREDICTIVE_VALUE] = None
+            statistics.results[prot][Statistics.NEGATIVE_PREDICTIVE_VALUE] = None
+            statistics.results[prot][Statistics.FALSE_DISCOVERY_RATE] = None
+            statistics.results[prot][Statistics.FALSE_OMISSION_RATE] = None
+            statistics.results[prot][Statistics.ACCURACY] = None
+            statistics.results[prot][Statistics.ERROR_RATE] = None
+            statistics.results[prot][Statistics.SELECTION_RATE] = None
+            statistics.results[prot][Statistics.F1] = None
         
-        statistics.results["all"][Statistics.DISPARATE_IMPACT] = statistics.results["protected"][Statistics.SELECTION_RATE] / statistics.results["unprotected"][Statistics.SELECTION_RATE]
-        statistics.results["all"][Statistics.DEMOGRAPHIC_PARITY] = statistics.results["protected"][Statistics.SELECTION_RATE] - statistics.results["unprotected"][Statistics.SELECTION_RATE]
-        statistics.results["all"][Statistics.EQUALITY_OF_OPPORTUNITY] = statistics.results["protected"][Statistics.TRUE_POSITIVE_RATE] - statistics.results["unprotected"][Statistics.TRUE_POSITIVE_RATE]
+        statistics.results["all"][Statistics.DISPARATE_IMPACT] = None
+        statistics.results["all"][Statistics.DEMOGRAPHIC_PARITY] = None
+        statistics.results["all"][Statistics.EQUALITY_OF_OPPORTUNITY] = None
         
         return statistics
 
@@ -229,7 +261,9 @@ class MultiStatistics(BaseStatistics):
     def log_run(self, statistics):            
         for (protected_key, protected_value) in statistics.results.items():
             if protected_key != MultiStatistics.X_VALUES and protected_key != MultiStatistics.X_SCALE and protected_key != MultiStatistics.X_NAME:
-                for (measure_key, measure_value) in protected_value.items():
+                for measure_key in protected_value:
+                    measure_value = statistics._get_measure(protected_key, measure_key)
+                    
                     if isinstance(measure_value, numbers.Number):
                         value = measure_value
                     else:
