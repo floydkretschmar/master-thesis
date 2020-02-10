@@ -248,15 +248,20 @@ def train(training_parameters, iterations=30, iteration_split=10, asynchronous=T
         if not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
             print("---------- Training with fixed lambdas ----------")
             fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
-            training_algorithm = FixedLambdasConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
             sub_directories = ["lambda_{}".format(fairness_rate) for fairness_rate in fairness_rates]
+            training_algorithm = FixedLambdasConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
             overall_statistics = MultiStatistics("log", fairness_rates, "Lambda")
         # if a dict is given for lambda we try to learn the perfect lambda
         elif "lagrangian_optimization" in training_parameters:
             print("---------- Training both theta and lambda ----------")
             training_algorithm = DualGradientConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-            sub_directories = ["epoch_{}".format(epoch) for epoch in range(0, current_training_parameters["lagrangian_optimization"]["iterations"])]
-            overall_statistics = MultiStatistics("linear", range(0, current_training_parameters["lagrangian_optimization"]["iterations"]), "Lambda Training Iteration")
+            #sub_directories = ["epoch_{}".format(epoch) for epoch in range(0, current_training_parameters["lagrangian_optimization"]["iterations"])]
+
+            num_data_points = (current_training_parameters["lagrangian_optimization"]["iterations"] // current_training_parameters["lagrangian_optimization"]["take_data_step"])
+            lamda_iterations = [lamb * current_training_parameters["lagrangian_optimization"]["take_data_step"] for lamb in range(0, num_data_points + 1)]
+
+            sub_directories = ["lambda_{}".format(lamb) for lamb in lamda_iterations]
+            overall_statistics = MultiStatistics("linear", lamda_iterations, "Lambda Training Iteration")
             
         statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, iteration_split, asynchronous)
 
