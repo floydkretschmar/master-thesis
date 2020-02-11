@@ -188,7 +188,6 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
         lambda_learning_rate = training_parameters["lagrangian_optimization"]["learning_rate"]
         lambda_decay_rate = training_parameters["lagrangian_optimization"]["decay_rate"]
         lambda_decay_step = training_parameters["lagrangian_optimization"]["decay_step"]
-        take_data_step = training_parameters["lagrangian_optimization"]["take_data_step"]
 
         for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
             policy = LogisticPolicy(
@@ -204,9 +203,7 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
             if i % lambda_decay_step == 0 and i != 0:
                 lambda_learning_rate *= lambda_decay_rate
                 
-            training_results = self._train_model_parameters(policy, training_parameters)
-            if i % take_data_step == 0 or i + 1 == training_parameters["lagrangian_optimization"]["iterations"]:
-                yield training_results
+            yield self._train_model_parameters(policy, training_parameters)
 
             # Get lambda training data
             #data = training_parameters["data"]["training"]["lambda"][i]
@@ -232,6 +229,6 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
 
             fairness_rate = policy.fairness_rate
 
-            del data, x_train, s_train, y_train, policy, training_results
+            del data, x_train, s_train, y_train, policy
 
                 
