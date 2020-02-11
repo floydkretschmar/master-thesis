@@ -67,34 +67,34 @@ def plot_median(statistics, file_path=None, model_parameters=None):
         lambdas_uncertainty = None
 
     _plot_results(
-        utility=statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.MEDIAN),
-        demographic_parity=statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEDIAN),
-        equality_of_opportunity=statistics.fairness(measure=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.MEDIAN),
+        utility=statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.MEDIAN),
+        demographic_parity=statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEDIAN),
+        equality_of_opportunity=statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.MEDIAN),
         xaxis=statistics.results[Statistics.X_VALUES],
         xlable=statistics.results[Statistics.X_NAME],
         xscale=statistics.results[Statistics.X_SCALE],
         utility_uncertainty=
-            (statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.FIRST_QUARTILE), 
-            statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.THIRD_QUARTILE)),
+            (statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.FIRST_QUARTILE), 
+            statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.THIRD_QUARTILE)),
         demographic_parity_uncertainty=
-            (statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.FIRST_QUARTILE), 
-            statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.THIRD_QUARTILE)),
+            (statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.FIRST_QUARTILE), 
+            statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.THIRD_QUARTILE)),
         equality_of_opportunity_uncertainty=
-            (statistics.fairness(measure=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.FIRST_QUARTILE), 
-            statistics.fairness(measure=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.THIRD_QUARTILE)),
+            (statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.FIRST_QUARTILE), 
+            statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.THIRD_QUARTILE)),
         lambdas=lambdas,
         lambdas_uncertainty=lambdas_uncertainty,
         file_path=file_path)
         
 def plot_mean(statistics, file_path=None, model_parameters=None):
-    u_mean = statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.MEAN)
-    u_stddev = statistics.performance(measure=Statistics.UTILITY, result_format=Statistics.STANDARD_DEVIATION)
+    u_mean = statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.MEAN)
+    u_stddev = statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.STANDARD_DEVIATION)
 
-    dp_mean = statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEAN)
-    dp_stddev = statistics.fairness(measure=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.STANDARD_DEVIATION)
+    dp_mean = statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEAN)
+    dp_stddev = statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.STANDARD_DEVIATION)
 
-    eop_mean = statistics.fairness(measure=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.MEAN)
-    eop_stddev = statistics.fairness(measure=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.STANDARD_DEVIATION)
+    eop_mean = statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.MEAN)
+    eop_stddev = statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.STANDARD_DEVIATION)
 
     if model_parameters is not None:
         lambdas = model_parameters.get_lagrangians(result_format=ModelParameters.MEAN)

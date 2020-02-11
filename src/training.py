@@ -21,13 +21,13 @@ class _Trainer():
         results_over_lambdas = []
 
         for decisions_over_time, model_parameters in training_method(training_parameters):
-            statistics = Statistics.calculate_statistics(
+            statistics = Statistics(
                     predictions=decisions_over_time, 
                     observations=training_parameters["data"]["test"][0],
                     protected_attributes=training_parameters["data"]["test"][1], 
                     ground_truths=training_parameters["data"]["test"][2], 
                     utility_function=training_parameters["model"]["utility_function"])
-            results_over_lambdas.append((statistics, model_parameters))
+            results_over_lambdas.append((statistics, deepcopy(model_parameters)))
 
         return results_over_lambdas
 
@@ -79,7 +79,6 @@ class _Trainer():
             return total_statistics[0], total_parameters
 
         return total_statistics, total_parameters
-
 
 def _check_for_missing_training_parameters(training_parameters):
     check_for_missing_kwargs("training()", ["experiment_name", "model", "parameter_optimization", "data"], training_parameters)
@@ -226,11 +225,8 @@ def train(training_parameters, iterations=30, iteration_split=5, asynchronous=Tr
         elif "lagrangian_optimization" in training_parameters:
             print("---------- Training both theta and lambda ----------")
             training_algorithm = DualGradientConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-            #sub_directories = ["epoch_{}".format(epoch) for epoch in range(0, current_training_parameters["lagrangian_optimization"]["iterations"])]
-
-            num_data_points = (current_training_parameters["lagrangian_optimization"]["iterations"] // current_training_parameters["lagrangian_optimization"]["take_data_step"])
-            lamda_iterations = [lamb * current_training_parameters["lagrangian_optimization"]["take_data_step"] for lamb in range(0, num_data_points)]
-
+            
+            lamda_iterations = range(0, current_training_parameters["lagrangian_optimization"]["iterations"])
             sub_directories = ["lambda_{}".format(lamb) for lamb in lamda_iterations]
             overall_statistics = MultiStatistics("linear", lamda_iterations, "Lambda Training Iteration")
             
