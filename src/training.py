@@ -100,7 +100,7 @@ def _generate_data_set(training_parameters):
     Returns:
         data: A dictionary containing both the test and training dataset.
     """
-    num_decisions = training_parameters["data"]["num_decisions"]
+    num_decisions = training_parameters["parameter_optimization"]["num_decisions"]
     distribution = training_parameters["data"]["distribution"]
     fraction_protected = training_parameters["data"]["fraction_protected"]
 
@@ -124,8 +124,9 @@ def _generate_data_set(training_parameters):
     } 
 
     if "lagrangian_optimization" in training_parameters:
+        num_decisions_lambda = training_parameters["lagrangian_optimization"]["num_decisions"]
         data["training"]["lambda"] = distribution.sample_dataset(
-            n=num_decisions, 
+            n=num_decisions_lambda, 
             fraction_protected=fraction_protected)
         # lambda_train_x, lambda_train_s, lambda_train_y = distribution.sample_dataset(
         # n=num_decisions * training_parameters["lagrangian_optimization"]["iterations"], 
