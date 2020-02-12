@@ -207,28 +207,35 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
 
             # Get lambda training data
             #data = training_parameters["data"]["training"]["lambda"][i]
+            # x_train, s_train, y_train = training_parameters["data"]["training"]["lambda"]
             data = training_parameters["data"]["training"]["lambda"]
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
+            # x, s, y = self._filter_by_policy(data, policy)
+            
+            if x_train.shape[0] > 0:
+                ips_weights = policy._ips_weights(x_train, s_train, policy)
 
-            data = {
-                "x": x_train,
-                "s": s_train,
-                "y": y_train,
-                "ips_weights": policy._ips_weights(x_train, s_train, policy)
-            }
-
-            # train lambda for the generated training data
-            for x, s, y, ips_weights in self._minibatch_over_epochs(
-                data=data, 
-                epochs=training_parameters["lagrangian_optimization"]["epochs"],
-                batch_size=training_parameters["lagrangian_optimization"]["batch_size"],
-                learning_rate=lambda_learning_rate):
-                # TODO: Move gradient update somewhere in policy
-                gradient = policy._lambda_gradient(x, s, y, ips_weights) 
+                gradient = policy._lambda_gradient(x_train, s_train, y_train, ips_weights) 
                 policy.fairness_rate -= lambda_learning_rate * gradient  
 
-            fairness_rate = policy.fairness_rate
+            # data = {
+            #     "x": x_train,
+            #     "s": s_train,
+            #     "y": y_train,
+            #     "ips_weights": policy._ips_weights(x_train, s_train, policy)
+            # }
+            # # train lambda for the generated training data
+            # for x, s, y, ips_weights in self._minibatch_over_epochs(
+            #     data=data, 
+            #     epochs=training_parameters["lagrangian_optimization"]["epochs"],
+            #     batch_size=training_parameters["lagrangian_optimization"]["batch_size"],
+            #     learning_rate=lambda_learning_rate):
+            #     # TODO: Move gradient update somewhere in policy
+            #     gradient = policy._lambda_gradient(x, s, y, ips_weights) 
+            #     policy.fairness_rate -= lambda_learning_rate * gradient  
 
-            del data, x_train, s_train, y_train, policy
+            fairness_rate = policy.fairness_rate
+            del x_train, s_train, y_train, policy
+            #del data, x_train, s_train, y_train, policy
 
                 
