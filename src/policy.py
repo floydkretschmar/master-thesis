@@ -101,7 +101,7 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override _log_gradient(self, x, s).")
 
-    def _lambda_gradient(self, x, s, y, decisions, ips_weights=None):
+    def _lambda_gradient(self, x, s, y, ips_weights=None):
         """ Calculates the gradient of the the lagrangian multiplier lambda of a policy given the data.
         
         Args:
