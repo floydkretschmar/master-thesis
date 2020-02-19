@@ -5,6 +5,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
+from copy import deepcopy
 
 from src.policy import LogisticPolicy
 from src.util import stack
@@ -189,16 +190,16 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
         lambda_decay_rate = training_parameters["lagrangian_optimization"]["decay_rate"]
         lambda_decay_step = training_parameters["lagrangian_optimization"]["decay_step"]
 
-        for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
-            policy = LogisticPolicy(
-                training_parameters["model"]["initial_theta"], 
-                training_parameters["model"]["fairness_function"], 
-                training_parameters["model"]["benefit_function"], 
-                training_parameters["model"]["utility_function"], 
-                training_parameters["model"]["feature_map"], 
-                fairness_rate, 
-                training_parameters["model"]["use_sensitve_attributes"])
+        policy = LogisticPolicy(
+            deepcopy(training_parameters["model"]["initial_theta"]), 
+            training_parameters["model"]["fairness_function"], 
+            training_parameters["model"]["benefit_function"], 
+            training_parameters["model"]["utility_function"], 
+            training_parameters["model"]["feature_map"], 
+            fairness_rate, 
+            training_parameters["model"]["use_sensitve_attributes"])
 
+        for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
             # decay lagrangian learning rate
             if i % lambda_decay_step == 0 and i != 0:
                 lambda_learning_rate *= lambda_decay_rate
@@ -210,10 +211,14 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
             
             # if x_train.shape[0] > 0:
-            #     ips_weights = policy._ips_weights(x_train, s_train, policy)
+            #     for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
+            #         iteration += 1
+            #         ips_weights = policy._ips_weights(x_train, s_train, policy)
 
-            #     gradient = policy._lambda_gradient(x_train, s_train, y_train, ips_weights) 
-            #     policy.fairness_rate -= lambda_learning_rate * gradient  
+            #         gradient = policy._lambda_gradient(x_train, s_train, y_train, ips_weights) 
+            #         policy.fairness_rate -= lambda_learning_rate * gradient  
+
+            #         #print("Iteration: {}".format(iteration))
 
             data = {
                 "x": x_train,
@@ -231,8 +236,8 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
                 gradient = policy._lambda_gradient(x, s, y, ips_weights) 
                 policy.fairness_rate -= lambda_learning_rate * gradient  
 
-            fairness_rate = policy.fairness_rate
-            del x_train, s_train, y_train, policy
-            #del data, x_train, s_train, y_train, policy
+            #fairness_rate = policy.fairness_rate
+            #policy.theta = deepcopy(training_parameters["model"]["initial_theta"])
+            del x_train, s_train, y_train
 
                 
