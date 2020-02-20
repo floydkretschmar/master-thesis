@@ -37,7 +37,7 @@ class BaseLearningAlgorithm():
 
         return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
 
-    def _minibatch_over_epochs(self, data, batch_size, learning_rate, epochs=1):
+    def _minibatch_over_epochs(self, data, batch_size, epochs=1):
         """ Creates minibatches for stochastic gradient ascent according to the epochs and
         batch size.
         
@@ -45,7 +45,6 @@ class BaseLearningAlgorithm():
             policy: The policy from which the data has been drawn.
             data: The training data
             batch_size: The minibatch size of SGD.
-            learning_rate: The learning rate for the updated parameters. 
             epochs: The number of epochs the training algorithm will run.
         """     
         for _ in range(0, epochs):
@@ -122,8 +121,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             for x, s, y, ips_weights in self._minibatch_over_epochs(
                 data=self.data_history, 
                 epochs=training_parameters["parameter_optimization"]["epochs"], 
-                batch_size=training_parameters["parameter_optimization"]["batch_size"],
-                learning_rate=theta_learning_rate):
+                batch_size=training_parameters["parameter_optimization"]["batch_size"]):
                 # TODO: Move gradient update somewhere in policy
                 gradient = policy._theta_gradient(x, s, y, ips_weights) 
                 policy.theta += theta_learning_rate * gradient  
@@ -230,8 +228,7 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
             for x, s, y, ips_weights in self._minibatch_over_epochs(
                 data=data, 
                 epochs=training_parameters["lagrangian_optimization"]["epochs"],
-                batch_size=training_parameters["lagrangian_optimization"]["batch_size"],
-                learning_rate=lambda_learning_rate):
+                batch_size=training_parameters["lagrangian_optimization"]["batch_size"]):
                 # TODO: Move gradient update somewhere in policy
                 gradient = policy._lambda_gradient(x, s, y, ips_weights) 
                 policy.fairness_rate -= lambda_learning_rate * gradient  
