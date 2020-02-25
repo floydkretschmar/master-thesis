@@ -180,8 +180,8 @@ def train(training_parameters, iterations=30, iteration_split=5, asynchronous=Tr
     #_check_for_missing_training_parameters(training_parameters)
     current_training_parameters = deepcopy(training_parameters)
 
-    if "save" in training_parameters and training_parameters["save"]:
-        base_save_path = "{}/res/{}".format(root_path, training_parameters["experiment_name"])
+    if "save_path" in training_parameters and training_parameters:
+        base_save_path = "{}/res/{}".format(training_parameters["save_path"], training_parameters["experiment_name"])
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
 
         timestamp = time.gmtime()
