@@ -247,6 +247,16 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override get_model_parameters(self).")
 
+    def update_lambda(self, x, s, y, learning_rate, ips_weights=None):
+        """ Updates the fairness parameter according to the specified update strategy.
+        """
+        raise NotImplementedError("Subclass must override update_lambda(self, x, s, y, ips_weights).")
+
+    def update_theta(self, x, s, y, learning_rate, ips_weights=None):
+        """ Updates the model parameters according to the specified update strategy.
+        """
+        raise NotImplementedError("Subclass must override update_theta(self, x, s, y, ips_weights).")
+
     def utility(self, x, s, y, decisions):
         """ Calculates the utility value or the utility gradient according to the utility vaue function callback specified
         in the constructor.
@@ -294,6 +304,14 @@ class LogisticPolicy(BasePolicy):
             "lambda": self.fairness_rate
         }
 
+    def update_lambda(self, x, s, y, learning_rate, ips_weights=None):
+        gradient = self._lambda_gradient(x, s, y, ips_weights) 
+        self.fairness_rate -= learning_rate * gradient         
+
+    def update_theta(self, x, s, y, learning_rate, ips_weights=None):
+        gradient = self._theta_gradient(x, s, y, ips_weights) 
+        self.theta += learning_rate * gradient          
+
     def _ips_weights(self, x, s, sampling_distribution):
         phi = sampling_distribution.feature_map(sampling_distribution._extract_features(x, s))
 
@@ -301,7 +319,7 @@ class LogisticPolicy(BasePolicy):
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
 
         return weights
-
+        
     def _log_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
         #return phi * np.expand_dims(sigmoid(-np.matmul(phi, self.theta)), axis=1)

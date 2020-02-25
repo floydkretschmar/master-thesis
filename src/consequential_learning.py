@@ -122,9 +122,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 data=self.data_history, 
                 epochs=training_parameters["parameter_optimization"]["epochs"], 
                 batch_size=training_parameters["parameter_optimization"]["batch_size"]):
-                # TODO: Move gradient update somewhere in policy
-                gradient = policy._theta_gradient(x, s, y, ips_weights) 
-                policy.theta += theta_learning_rate * gradient  
+                policy.update_theta(x, s, y, theta_learning_rate, ips_weights)
 
             # Store decisions made in the time step ...
             decisions = policy(x_test, s_test).reshape(-1, 1)
@@ -207,16 +205,6 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
             # Get lambda training data
             data = training_parameters["data"]["training"]["lambda"]
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
-            
-            # if x_train.shape[0] > 0:
-            #     for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
-            #         iteration += 1
-            #         ips_weights = policy._ips_weights(x_train, s_train, policy)
-
-            #         gradient = policy._lambda_gradient(x_train, s_train, y_train, ips_weights) 
-            #         policy.fairness_rate -= lambda_learning_rate * gradient  
-
-            #         #print("Iteration: {}".format(iteration))
 
             data = {
                 "x": x_train,
@@ -229,12 +217,8 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
                 data=data, 
                 epochs=training_parameters["lagrangian_optimization"]["epochs"],
                 batch_size=training_parameters["lagrangian_optimization"]["batch_size"]):
-                # TODO: Move gradient update somewhere in policy
-                gradient = policy._lambda_gradient(x, s, y, ips_weights) 
-                policy.fairness_rate -= lambda_learning_rate * gradient  
+                policy.update_lambda(x, s, y, lambda_learning_rate, ips_weights)
 
-            #fairness_rate = policy.fairness_rate
-            #policy.theta = deepcopy(training_parameters["model"]["initial_theta"])
             del x_train, s_train, y_train
 
                 
