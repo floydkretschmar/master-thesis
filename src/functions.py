@@ -1,6 +1,8 @@
+from copy import deepcopy
+
 ####################### BENEFIT FUNCTIONS #######################
 def demographic_parity(**benefit_parameters):
-    decisions = benefit_parameters["decisions"]
+    decisions = deepcopy(benefit_parameters["decisions"])
     return decisions
 
 def equal_opportunity(**benefit_parameters):

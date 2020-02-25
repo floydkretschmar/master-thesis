@@ -122,7 +122,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 data=self.data_history, 
                 epochs=training_parameters["parameter_optimization"]["epochs"], 
                 batch_size=training_parameters["parameter_optimization"]["batch_size"]):
-                policy.update_theta(x, s, y, theta_learning_rate, ips_weights)
+                policy.update_model_parameters(x, s, y, theta_learning_rate, ips_weights)
 
             # Store decisions made in the time step ...
             decisions = policy(x_test, s_test).reshape(-1, 1)
@@ -137,6 +137,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         policy = LogisticPolicy(
             training_parameters["model"]["initial_theta"], 
             training_parameters["model"]["fairness_function"], 
+            training_parameters["model"]["fairness_gradient_function"], 
             training_parameters["model"]["benefit_function"], 
             training_parameters["model"]["utility_function"], 
             training_parameters["model"]["feature_map"], 
@@ -162,6 +163,7 @@ class FixedLambdasConsequentialLearning(ConsequentialLearning):
             policy = LogisticPolicy(
                 training_parameters["model"]["initial_theta"], 
                 training_parameters["model"]["fairness_function"], 
+                training_parameters["model"]["fairness_gradient_function"], 
                 training_parameters["model"]["benefit_function"], 
                 training_parameters["model"]["utility_function"], 
                 training_parameters["model"]["feature_map"], 
@@ -189,6 +191,7 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
         policy = LogisticPolicy(
             deepcopy(training_parameters["model"]["initial_theta"]), 
             training_parameters["model"]["fairness_function"], 
+            training_parameters["model"]["fairness_gradient_function"], 
             training_parameters["model"]["benefit_function"], 
             training_parameters["model"]["utility_function"], 
             training_parameters["model"]["feature_map"], 
@@ -217,7 +220,7 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
                 data=data, 
                 epochs=training_parameters["lagrangian_optimization"]["epochs"],
                 batch_size=training_parameters["lagrangian_optimization"]["batch_size"]):
-                policy.update_lambda(x, s, y, lambda_learning_rate, ips_weights)
+                policy.update_fairness_parameter(x, s, y, lambda_learning_rate, ips_weights)
 
             del x_train, s_train, y_train
 

@@ -37,14 +37,14 @@ from src.distribution import SplitDistribution, UncalibratedScore
 
 #     return np.mean(covariance, axis=0), np.mean(covariance_grad, axis=0)
 
-def fairness_function(**fairness_kwargs):
+def fairness_gradient_function(**fairness_kwargs):
     policy = fairness_kwargs["policy"]
     x = fairness_kwargs["x"]
     s = fairness_kwargs["s"]
     y = fairness_kwargs["y"]
     decisions = fairness_kwargs["decisions"]
     ips_weights = fairness_kwargs["ips_weights"]
-    log_gradient = policy._log_gradient(x, s)
+    log_gradient = policy._log_policy_gradient(x, s)
 
     benefit = policy.benefit_function(decisions=decisions, y=y)
 
@@ -53,8 +53,21 @@ def fairness_function(**fairness_kwargs):
 
     benefit_grad = log_gradient * benefit
         
-    # benefit-difference * grad-benefit-difference
-    return policy._mean_difference(benefit, s), policy._mean_difference(benefit_grad, s)
+    return policy._mean_difference(benefit_grad, s)
+
+def fairness_function(**fairness_kwargs):
+    policy = fairness_kwargs["policy"]
+    s = fairness_kwargs["s"]
+    y = fairness_kwargs["y"]
+    decisions = fairness_kwargs["decisions"]
+    ips_weights = fairness_kwargs["ips_weights"]
+
+    benefit = policy.benefit_function(decisions=decisions, y=y)
+
+    if ips_weights is not None:
+        benefit *= ips_weights
+        
+    return policy._mean_difference(benefit, s)
 
 i = 1
 bias = True
@@ -72,6 +85,7 @@ training_parameters = {
         'benefit_function': demographic_parity,
         'utility_function': util_func,
         'fairness_function': fairness_function,
+        'fairness_gradient_function': fairness_gradient_function,
         'feature_map': IdentityFeatureMap(dim_theta),
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
@@ -96,6 +110,7 @@ training_parameters = {
 lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=20)
 lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 training_parameters["model"]["initial_lambda"] = lambdas
+# training_parameters["model"]["initial_lambda"] = 0.0
 
 # lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=19)
 # lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
@@ -105,7 +120,7 @@ training_parameters["model"]["initial_lambda"] = lambdas
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=True)
+statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
