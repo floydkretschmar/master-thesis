@@ -120,7 +120,7 @@ training_parameters["model"]["initial_lambda"] = lambdas
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=False)
+statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=True)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 

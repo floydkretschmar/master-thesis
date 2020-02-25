@@ -11,7 +11,7 @@ from pathlib import Path
 from copy import deepcopy
 import numbers
 
-from src.consequential_learning import ConsequentialLearning, FixedLambdasConsequentialLearning, DualGradientConsequentialLearning
+from src.consequential_learning import ConsequentialLearning, DualGradientConsequentialLearning
 from src.util import save_dictionary, load_dictionary, serialize_dictionary, stack, check_for_missing_kwargs
 from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 
@@ -152,7 +152,7 @@ def _prepare_training(training_parameters):
     _check_for_missing_training_parameters(training_parameters)
     current_training_parameters = deepcopy(training_parameters)
 
-    if "save_path" in training_parameters and training_parameters:
+    if "save_path" in training_parameters:
         base_save_path = "{}/res/{}".format(training_parameters["save_path"], training_parameters["experiment_name"])
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
 
@@ -236,23 +236,32 @@ def train(training_parameters, iterations=30, asynchronous=True):
         print("---------- Single training run for fixed lambda ----------")
         training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
         overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, asynchronous)
-    else:
-        # if list of parameters is given we fix lambda over all time steps and train vor all lambdas
-        if not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
-            print("---------- Training with fixed lambdas ----------")
-            fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
-            sub_directories = ["lambda_{}".format(fairness_rate) for fairness_rate in fairness_rates]
-            training_algorithm = FixedLambdasConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-            overall_statistics = MultiStatistics("log", fairness_rates, "Lambda")
-        # if a dict is given for lambda we try to learn the perfect lambda
-        elif "lagrangian_optimization" in training_parameters:
-            print("---------- Training both theta and lambda ----------")
-            training_algorithm = DualGradientConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-            
-            lamda_iterations = range(0, current_training_parameters["lagrangian_optimization"]["iterations"])
-            sub_directories = ["lambda_{}".format(lamb) for lamb in lamda_iterations]
-            overall_statistics = MultiStatistics("linear", lamda_iterations, "Lambda Training Iteration")
-            
+    elif not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
+        print("---------- Training with fixed lambdas ----------")
+        fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
+        training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
+        overall_statistics = MultiStatistics("log", fairness_rates, "Lambda")
+
+        for fairness_rate in fairness_rates:
+            current_training_parameters["model"]["initial_lambda"] = fairness_rate
+            statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, asynchronous)
+
+            overall_statistics.log_run(statistics)
+            if base_save_path is not None:  
+                _save_results(
+                    base_save_path=base_save_path, 
+                    statistics=statistics, 
+                    model_parameters=model_parameters, 
+                    sub_directory="lambda_{}".format(fairness_rate))
+
+    elif "lagrangian_optimization" in training_parameters:
+        print("---------- Training both theta and lambda ----------")
+        training_algorithm = DualGradientConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
+        
+        lamda_iterations = range(0, current_training_parameters["lagrangian_optimization"]["iterations"])
+        sub_directories = ["lambda_iteration_{}".format(lamb) for lamb in lamda_iterations]
+        overall_statistics = MultiStatistics("linear", lamda_iterations, "Lambda Training Iteration")
+        
         statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, asynchronous)
 
         for num_lambda, statistic in enumerate(statistics):

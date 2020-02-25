@@ -147,32 +147,6 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         yield self._train_model_parameters(policy, training_parameters)
 
 
-class FixedLambdasConsequentialLearning(ConsequentialLearning):    
-    def __init__(self, learn_on_entire_history):
-        """ Creates a new instance of a dual gradient consequential learning algorithm.
-        
-        Args:
-            learn_on_entire_history: The 
-        """
-        super(FixedLambdasConsequentialLearning, self).__init__(learn_on_entire_history)
-        
-    def train(self, training_parameters):
-        fairness_rates = training_parameters["model"]["initial_lambda"]
-
-        for fairness_rate in fairness_rates:
-            policy = LogisticPolicy(
-                training_parameters["model"]["initial_theta"], 
-                training_parameters["model"]["fairness_function"], 
-                training_parameters["model"]["fairness_gradient_function"], 
-                training_parameters["model"]["benefit_function"], 
-                training_parameters["model"]["utility_function"], 
-                training_parameters["model"]["feature_map"], 
-                fairness_rate, 
-                training_parameters["model"]["use_sensitve_attributes"])
-
-            yield self._train_model_parameters(policy, training_parameters)
-
-
 class DualGradientConsequentialLearning(ConsequentialLearning):    
     def __init__(self, learn_on_entire_history):
         """ Creates a new instance of a dual gradient consequential learning algorithm.
