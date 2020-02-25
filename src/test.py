@@ -68,8 +68,8 @@ def util_func(**util_params):
     return util
 
 training_parameters = {    
-    'experiment_name': "test",
-    'save': False,
+    'save_path': './',
+    "experiment_name": "test",
     'model':{
         'benefit_function': demographic_parity,
         'utility_function': util_func,
@@ -78,33 +78,27 @@ training_parameters = {
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
         'bias': bias,
-        'initial_theta': [-3.0, 5.0],
-        #'initial_lambda': np.array([0.0, 1.0, 10.0, 50.0])
-        'initial_lambda': 0.0
+        'initial_theta': [-3.0, 5.0]
     },
     'parameter_optimization': {
-        'time_steps':5,
+        'time_steps':200,
         'epochs': 1,
-        'batch_size':512,
+        'batch_size':256,
         'learning_rate': 1,
         'decay_rate': 1,
-        'decay_step': 10000
+        'decay_step': 10000,
+        'num_decisions': 128 * 256
     },
-    # 'lagrangian_optimization': {
-    #     'iterations': 15,
-    #     'epochs': 1,
-    #     'batch_size':256,
-    #     'learning_rate': 0.1,
-    #     'decay_rate': 1,
-    #     'decay_step': 10000
-    # },
     'data': {
         'distribution': UncalibratedScore(bias=bias),
         'fraction_protected':0.5,
-        'num_test_samples': 8192,
-        'num_decisions': 128 * 256
+        'num_test_samples': 8192
     }
 }
+lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=20)
+lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
+training_parameters["model"]["initial_lambda"] = lambdas
+
 # lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=19)
 # lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 # training_parameters["optimization"]["parameters"]["lambda"] = lambdas
@@ -113,7 +107,7 @@ training_parameters = {
 #lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=False)
+statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=True)
 #statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 #statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
