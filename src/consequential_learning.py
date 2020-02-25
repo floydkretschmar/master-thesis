@@ -86,17 +86,38 @@ class BaseLearningAlgorithm():
             self.data_history["y"] = np.vstack((self.data_history["y"], y))
             self.data_history["s"] = np.vstack((self.data_history["s"], s))
 
+    def train(self, training_parameters):
+        """ Executes the training algorithm.
+
+        Args:
+            training_parameters: The parameters used to configure the consequential learning algorithm.
+
+        Yields:
+            decisions_over_time: The decisions made by a policy at timestep t over all time steps
+            trained_model_parameters: The model parameters at the final timestep T
+        """
+        raise NotImplementedError("Subclass must override train(self, training_parameters).")
+
 
 class ConsequentialLearning(BaseLearningAlgorithm):    
     def __init__(self, learn_on_entire_history):
         """ Creates a new instance of a consequential learning algorithm.
         
         Args:
-            learn_on_entire_history: The 
+            learn_on_entire_history: The flag indicating whether the algorithm should learn on the entire history or just the last time step.
         """
         super(ConsequentialLearning, self).__init__(learn_on_entire_history)
 
     def _train_model_parameters(self, policy, training_parameters):
+        """ Executes the training algorithm.
+
+        Args:
+            training_parameters: The parameters used to configure the consequential learning algorithm.
+
+        Yields:
+            decisions_over_time: The decisions made by a policy at timestep t over all time steps
+            trained_model_parameters: The model parameters at the final timestep T
+        """
         x_test, s_test, _ = training_parameters["data"]["test"]
 
         # Store initial policy decisions
@@ -134,6 +155,15 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         return decisions_over_time, trained_model_parameters
         
     def train(self, training_parameters):
+        """ Executes consequential learning.
+
+        Args:
+            training_parameters: The parameters used to configure the consequential learning algorithm.
+
+        Yields:
+            decisions_over_time: The decisions made by a policy at timestep t over all time steps for a single lambda.
+            trained_model_parameters: The model parameters at the final timestep T
+        """
         policy = LogisticPolicy(
             training_parameters["model"]["initial_theta"], 
             training_parameters["model"]["fairness_function"], 
@@ -157,6 +187,15 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
         super(DualGradientConsequentialLearning, self).__init__(learn_on_entire_history)
         
     def train(self, training_parameters):
+        """ Executes consequential learning with the lagrangian learning extension.
+
+        Args:
+            training_parameters: The parameters used to configure the consequential learning algorithm.
+
+        Yields:
+            decisions_over_time: The decisions made by a policy at timestep t over all time steps for every lambda.
+            trained_model_parameters: The model parameters at the final timestep T
+        """
         fairness_rate = training_parameters["model"]["initial_lambda"]
         lambda_learning_rate = training_parameters["lagrangian_optimization"]["learning_rate"]
         lambda_decay_rate = training_parameters["lagrangian_optimization"]["decay_rate"]
