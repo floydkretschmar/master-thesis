@@ -74,13 +74,12 @@ class BasePolicy():
 
         return features
 
-    def _ips_weights(self, x, s, sampling_distribution):
+    def _ips_weights(self, x, s):
         """ Calculates the inverse propensity scoring weights according to the formula 1/pi_0(e = 1 | x, s).
         
         Args:
             x: The features of the n samples
             s: The sensitive attribute of the n samples
-            sampling_distribution: The distribution pi_0 under which the data has been collected.
 
         Returns:
             ips_weights: The weights for inverse propensity scoring.
@@ -216,20 +215,6 @@ class BasePolicy():
         utility_grad = log_gradient * utility
         return np.mean(utility_grad, axis=0)
 
-    def benefit_delta(self, x, s, y, decisions):
-        """ Calculates the absolute difference of benefits of the given policy for the provided data.
-        
-        Args:
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            decisions: The decisions made by the policy based on the features.
-
-        Returns:
-            benefit_delta: The absolute difference in benefits of the policy.
-        """    
-        return self._mean_difference(self.benefit_function(decisions=decisions, x=x, s=s, y=y), s)
-
     def copy(self):
         """ Creates a deep copy of the policy.
         
@@ -255,21 +240,6 @@ class BasePolicy():
         """ Updates the model parameters according to the specified update strategy.
         """
         raise NotImplementedError("Subclass must override update_theta(self, x, s, y, ips_weights).")
-
-    def utility(self, x, s, y, decisions):
-        """ Calculates the utility value or the utility gradient according to the utility vaue function callback specified
-        in the constructor.
-        
-        Args:
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-            y: The ground truth labels of the n samples
-            decisions: The decisions made by the policy based on the features.
-
-        Returns:
-            utility: The utility value or gradient of the policy.
-        """
-        return self.utility_function(decisions=decisions, x=x, s=s, y=y).mean(axis=0)
 
 class LogisticPolicy(BasePolicy):
     """ The implementation of the logistic policy. """
@@ -311,10 +281,10 @@ class LogisticPolicy(BasePolicy):
         gradient = self._theta_gradient(x, s, y, ips_weights) 
         self.theta += learning_rate * gradient          
 
-    def _ips_weights(self, x, s, sampling_distribution):
-        phi = sampling_distribution.feature_map(sampling_distribution._extract_features(x, s))
+    def _ips_weights(self, x, s):
+        phi = self.feature_map(self._extract_features(x, s))
 
-        sampling_theta = np.expand_dims(sampling_distribution.theta, axis=1)
+        sampling_theta = np.expand_dims(self.theta, axis=1)
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
 
         return weights

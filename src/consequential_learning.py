@@ -115,7 +115,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             # Collect training data
             data = training_parameters["data"]["training"]["theta"][i]   
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
-            ips_weights = policy._ips_weights(x_train, s_train, policy)
+            ips_weights = policy._ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
             for x, s, y, ips_weights in self._minibatch_over_epochs(
@@ -210,7 +210,7 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
                 "x": x_train,
                 "s": s_train,
                 "y": y_train,
-                "ips_weights": policy._ips_weights(x_train, s_train, policy)
+                "ips_weights": policy._ips_weights(x_train, s_train)
             }
             # train lambda for the generated training data
             for x, s, y, ips_weights in self._minibatch_over_epochs(
