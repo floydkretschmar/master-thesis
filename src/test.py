@@ -44,16 +44,14 @@ def fairness_function(**fairness_kwargs):
     y = fairness_kwargs["y"]
     decisions = fairness_kwargs["decisions"]
     ips_weights = fairness_kwargs["ips_weights"]
-    numerator, denominator_log_grad = policy._log_gradient(x, s)
+    log_gradient = policy._log_gradient(x, s)
 
     benefit = policy.benefit_function(decisions=decisions, y=y)
-    benefit_gradient = benefit / denominator_log_grad
 
     if ips_weights is not None:
         benefit *= ips_weights
-        benefit_gradient *= ips_weights
 
-    benefit_grad = numerator * benefit_gradient
+    benefit_grad = log_gradient * benefit
         
     # benefit-difference * grad-benefit-difference
     return policy._mean_difference(benefit, s), policy._mean_difference(benefit_grad, s)

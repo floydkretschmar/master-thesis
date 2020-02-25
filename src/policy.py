@@ -207,14 +207,13 @@ class BasePolicy():
         Returns:
             utility_gradient: The partial gradient of the policy.
         """
-        numerator, denominator = self._log_gradient(x, s)
+        log_gradient = self._log_gradient(x, s)
         utility = self.utility_function(decisions=decisions, y=y)
-        utility_grad = utility / denominator 
 
         if ips_weights is not None:
-            utility_grad *= ips_weights 
+            utility *= ips_weights 
 
-        utility_grad = numerator * utility_grad          
+        utility_grad = log_gradient * utility
         return np.mean(utility_grad, axis=0)
 
     def benefit_delta(self, x, s, y, decisions):
@@ -323,7 +322,7 @@ class LogisticPolicy(BasePolicy):
     def _log_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
         #return phi * np.expand_dims(sigmoid(-np.matmul(phi, self.theta)), axis=1)
-        return phi, np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
+        return phi / np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
 
     def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self.theta))
