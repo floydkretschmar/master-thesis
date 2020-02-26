@@ -152,6 +152,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             # ... and the parameters of the model
             trained_model_parameters = policy.get_model_parameters()
         
+        del self.data_history
         return decisions_over_time, trained_model_parameters
         
     def train(self, training_parameters):
