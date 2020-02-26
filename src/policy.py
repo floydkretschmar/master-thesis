@@ -217,6 +217,14 @@ class BasePolicy():
 
     def update_model_parameters(self, x, s, y, learning_rate, ips_weights=None):
         """ Updates the model parameters according to the specified update strategy.
+
+            Args:
+                x: The features of the n samples
+                s: The sensitive attribute of the n samples
+                y: The ground truth labels of the n samples
+                learning_rate: The rate with which the fairness parameter will be updated.
+                ips_weights: The weights used for inverse propensity scoring. If sampling_data=None 
+                no IPS will be applied.
         """
         raise NotImplementedError("Subclass must override update_theta(self, x, s, y, ips_weights).")
 
