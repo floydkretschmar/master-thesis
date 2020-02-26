@@ -96,7 +96,7 @@ def _check_for_missing_training_parameters(training_parameters):
     check_for_missing_kwargs("training()", ["time_steps", "epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_decisions"], training_parameters["parameter_optimization"])
 
     if "lagrangian_optimization" in training_parameters:
-        check_for_missing_kwargs("training()", ["time_steps", "epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_decisions"], training_parameters["lagrangian_optimization"])
+        check_for_missing_kwargs("training()", ["epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_decisions"], training_parameters["lagrangian_optimization"])
 
 
 def _generate_data_set(training_parameters):
