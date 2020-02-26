@@ -399,3 +399,4 @@ doc/reading/Bishop - Pattern Recognition and Machine Learning.pdf
 
 ### ignore saved models
 *.json
+*.png
