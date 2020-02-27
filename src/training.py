@@ -92,7 +92,7 @@ def _check_for_missing_training_parameters(training_parameters):
         "training()", 
         ["benefit_function", "utility_function", "fairness_function", "fairness_gradient_function", "feature_map", "learn_on_entire_history", "use_sensitve_attributes", "bias", "initial_theta", "initial_lambda"], 
         training_parameters["model"])
-    check_for_missing_kwargs("training()", ["distribution", "fraction_protected", "num_test_samples"], training_parameters["data"])
+    check_for_missing_kwargs("training()", ["distribution", "num_test_samples"], training_parameters["data"])
     check_for_missing_kwargs("training()", ["time_steps", "epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_decisions"], training_parameters["parameter_optimization"])
 
     if "lagrangian_optimization" in training_parameters:
@@ -110,14 +110,11 @@ def _generate_data_set(training_parameters):
     """
     num_decisions = training_parameters["parameter_optimization"]["num_decisions"]
     distribution = training_parameters["data"]["distribution"]
-    fraction_protected = training_parameters["data"]["fraction_protected"]
 
-    test_dataset = distribution.sample_dataset(
-        n=training_parameters["data"]["num_test_samples"], 
-        fraction_protected=fraction_protected)
-    theta_train_x, theta_train_s, theta_train_y = distribution.sample_dataset(
-        n=num_decisions * training_parameters["parameter_optimization"]["time_steps"], 
-        fraction_protected=fraction_protected)
+    test_dataset = distribution.sample_test_dataset(
+        n_test=training_parameters["data"]["num_test_samples"])
+    theta_train_x, theta_train_s, theta_train_y = distribution.sample_train_dataset(
+        n_train=num_decisions * training_parameters["parameter_optimization"]["time_steps"])
     
 
     theta_train_datasets = []
@@ -133,9 +130,8 @@ def _generate_data_set(training_parameters):
 
     if "lagrangian_optimization" in training_parameters:
         num_decisions_lambda = training_parameters["lagrangian_optimization"]["num_decisions"]
-        data["training"]["lambda"] = distribution.sample_dataset(
-            n=num_decisions_lambda, 
-            fraction_protected=fraction_protected)
+        data["training"]["lambda"] = distribution.sample_train_dataset(
+            n_train=num_decisions_lambda)
 
     return data
 
