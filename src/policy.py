@@ -125,8 +125,8 @@ class BasePolicy():
         if len(s_0_idx) == 0 or len(s_1_idx) == 0:
             return 0.0
 
-        target_s0 = target[s_0_idx].sum(axis=0) / len(s_0_idx)
-        target_s1 = target[s_1_idx].sum(axis=0) / len(s_1_idx)
+        target_s0 = target[s_0_idx].mean(axis=0) 
+        target_s1 = target[s_1_idx].mean(axis=0)
 
         return target_s0 - target_s1
 
