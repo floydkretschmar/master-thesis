@@ -73,3 +73,45 @@ def stack(base_array, new_array, axis):
             return np.hstack((base_array, new_array))
         else:
             return np.dstack((base_array, new_array))
+
+
+def load_dataset(data_file_path):
+    """
+    Load a dataset from the specified path.
+
+    Args:
+        data_file_path: The file path of the dataset.
+
+    Returns:
+        x: The NxD matrix of non-sensitive feature vectors.
+        s: The Nx1 vector of sensitive features. If the dataset contained more than one sensitive
+           feature, the first one is chosen.
+        y: The Nx1 ground truth data.
+    """
+    raw_data = np.load(data_file_path)
+    x = raw_data["x"]
+    y = raw_data["y"]
+    s = raw_data["s"]
+
+    if s.shape[1] > 1:
+        s = s[:, 0]
+
+    x = whiten(x)
+    return x, s.astype(int), y
+    
+
+def whiten(data, columns=None, conditioning=1e-8):
+    """
+    Whiten various datasets in data dictionary.
+
+    Args:
+        data: Data array.
+        columns: The columns to whiten. If `None`, whiten all.
+        conditioning: Added to the denominator to avoid divison by zero.
+    """
+    if columns is None:
+        columns = np.arange(data.shape[1])
+    mu = np.mean(data[:, columns], 0)
+    std = np.std(data[:, columns], 0)
+    data[:, columns] = (data[:, columns] - mu) / (std + conditioning)
+    return data
