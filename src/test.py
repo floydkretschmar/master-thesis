@@ -11,7 +11,8 @@ from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
 from src.plotting import plot_median, plot_mean
 from src.training import train
-from src.distribution import SplitDistribution, UncalibratedScore
+from src.distribution import SplitDistribution, UncalibratedScore, ResamplingDistribution
+from src.util import load_dataset, train_test_split
 
 # def fairness_function(**fairness_kwargs):
 #     policy = fairness_kwargs["policy"]
@@ -102,14 +103,20 @@ training_parameters = {
         'num_decisions': 128 * 256
     },
     'data': {
-        'distribution': UncalibratedScore(bias=bias),
-        'fraction_protected':0.5,
+        'distribution': UncalibratedScore(bias=bias, fraction_protected=0.5),
+        #'fraction_protected':0.5,
         'num_test_samples': 8192
     }
 }
 lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=20)
 lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 training_parameters["model"]["initial_lambda"] = lambdas
+
+
+#x, s, y = load_dataset("./src/dat/compas/compas.npz")
+#x, x_test, y, y_test, s, s_test = train_test_split(x, y, s, test_size=0.8)
+dist = ResamplingDistribution(load_dataset("./src/dat/compas/compas.npz"), 0.2, bias=bias)
+
 # training_parameters["model"]["initial_lambda"] = 0.0
 
 # lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=19)
