@@ -1,11 +1,16 @@
+import os
+import sys
+root_path = os.path.abspath(os.path.join('.'))
+if root_path not in sys.path:
+    sys.path.append(root_path)
+
 import numpy as np
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
-from sklearn.model_selection import train_test_split
 
+from src.util import train_test_split
 
-####################### DISTRIBUTIONS #######################
 
 class BaseDistribution():
     def __init__(self, bias=False):
@@ -38,16 +43,14 @@ class BaseDistribution():
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        raise NotImplementedError("Subclass must override sample_train_dataset(self, n_train).")    
-
+        raise NotImplementedError("Subclass must override sample_train_dataset(self, n_train).")  
 
 class GenerativeDistribution(BaseDistribution):
     def __init__(self, fraction_protected, bias=False):
         super(GenerativeDistribution, self).__init__(bias)
-
         self.fraction_protected = fraction_protected
 
-    def sample_features(self, n):
+    def sample_features(self, n, fraction_protected):
         """
         Draws both a nxd matrix of non-sensitive feature vectors, as well as a n-dimensional vector
         of sensitive attributes.
@@ -75,7 +78,7 @@ class GenerativeDistribution(BaseDistribution):
         raise NotImplementedError("Subclass must override sample_labels(self, x, s).")    
 
     def sample_train_dataset(self, n_train):
-        x, s = self.sample_features(n_train)
+        x, s = self.sample_features(n_train, self.fraction_protected)
         y = self.sample_labels(x, s)
 
         return x, s, y
@@ -83,14 +86,13 @@ class GenerativeDistribution(BaseDistribution):
     def sample_test_dataset(self, n_test):
         return self.sample_train_dataset(n_test)
 
-
 class SplitDistribution(GenerativeDistribution):
     def __init__(self, fraction_protected, bias=False):
-        super(SplitDistribution, self).__init__(fraction_protected, bias)
+        super(SplitDistribution, self).__init__(fraction_protected=fraction_protected, bias=bias)
 
-    def sample_features(self, n):
+    def sample_features(self, n, fraction_protected):
         s = (
-            np.random.rand(n, 1) < self.fraction_protected
+            np.random.rand(n, 1) < fraction_protected
         ).astype(int)
         x = 3.5 * np.random.randn(n, 1) + 3 * (0.5 - s)
 
@@ -109,13 +111,12 @@ class SplitDistribution(GenerativeDistribution):
         ) + sigmoid(x - 5)
 
         return np.expand_dims(np.random.binomial(1, yprob), axis=1)
-        
 
 class UncalibratedScore(GenerativeDistribution):
     """An distribution modelling an uncalibrated score."""
 
     def __init__(self, fraction_protected, bias=False):
-        super(UncalibratedScore, self).__init__(fraction_protected, bias)
+        super(UncalibratedScore, self).__init__(fraction_protected=fraction_protected, bias=bias)
         self.bound = 0.8
         self.width = 30.0
         self.height = 3.0
@@ -133,9 +134,9 @@ class UncalibratedScore(GenerativeDistribution):
         den = 2 * np.tan(self.bound) + self.height
         return num / den
 
-    def sample_features(self, n):
+    def sample_features(self, n, fraction_protected):
         s = (
-            np.random.rand(n, 1) < self.fraction_protected
+            np.random.rand(n, 1) < fraction_protected
         ).astype(int)
 
         shifts = s - 0.5
@@ -164,7 +165,6 @@ class ResamplingDistribution(BaseDistribution):
         super(ResamplingDistribution, self).__init__(bias)
         x, s, y = dataset
         self.x, self.x_test, self.y, self.y_test, self.s, self.s_test = train_test_split(x, y, s, test_size=test_percentage)
-
         self.total_test_samples = self.x_test.shape[0]
         self.test_sample_indices = np.arange(self.total_test_samples)
 
