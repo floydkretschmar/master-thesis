@@ -115,3 +115,10 @@ def whiten(data, columns=None, conditioning=1e-8):
     std = np.std(data[:, columns], 0)
     data[:, columns] = (data[:, columns] - mu) / (std + conditioning)
     return data
+
+def train_test_split(x, y, s, test_size):
+    indices = np.array(range(x.shape[0]))
+
+    boundary = int(len(indices) * test_size)
+    test_indices, train_indices = np.split(np.random.permutation(indices), [boundary])
+    return x[train_indices], x[test_indices], y[train_indices], y[test_indices], s[train_indices], s[test_indices]
