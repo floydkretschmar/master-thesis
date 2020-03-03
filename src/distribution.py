@@ -182,10 +182,10 @@ class ResamplingDistribution(BaseDistribution):
         n = min(self.total_training_samples, n_train)
         indices = np.random.choice(self.training_sample_indices, n, replace=True)
 
-        return self.x[indices].reshape((n_train, -1)), self.y[indices].reshape((n_train, -1)), self.s[indices].reshape((n_train, -1))
+        return self.x[indices].reshape((n, -1)), self.y[indices].reshape((n, -1)), self.s[indices].reshape((n, -1))
 
     def sample_test_dataset(self, n_test=None):
         n = min(self.total_test_samples, n_test) if n_test is not None else self.total_test_samples
         indices = np.random.choice(self.test_sample_indices, n, replace=True)
 
-        return self.x_test[indices].reshape((n_test, -1)), self.y_test[indices].reshape((n_test, -1)), self.s_test[indices].reshape((n_test, -1))
+        return self.x_test[indices].reshape((n, -1)), self.y_test[indices].reshape((n, -1)), self.s_test[indices].reshape((n, -1))
