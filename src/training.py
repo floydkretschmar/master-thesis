@@ -113,14 +113,12 @@ def _generate_data_set(training_parameters):
 
     test_dataset = distribution.sample_test_dataset(
         n_test=training_parameters["data"]["num_test_samples"])
-    theta_train_x, theta_train_s, theta_train_y = distribution.sample_train_dataset(
-        n_train=num_decisions * training_parameters["parameter_optimization"]["time_steps"])
-    
 
     theta_train_datasets = []
-    for i in range(0, theta_train_x.shape[0], num_decisions):
-        theta_train_datasets.append((theta_train_x[i:i+num_decisions], theta_train_s[i:i+num_decisions], theta_train_y[i:i+num_decisions]))
-    
+    for _ in range(0, training_parameters["parameter_optimization"]["time_steps"]):
+        theta_train_x, theta_train_s, theta_train_y = distribution.sample_train_dataset(n_train=num_decisions)
+        theta_train_datasets.append((theta_train_x, theta_train_s, theta_train_y))
+   
     data = {
         'training': {
             "theta": theta_train_datasets
