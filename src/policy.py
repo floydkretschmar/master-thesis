@@ -6,7 +6,8 @@ if root_path not in sys.path:
 
 import numpy as np
 #pylint: disable=no-name-in-module
-from src.util import sigmoid, check_for_missing_kwargs          
+from src.util import sigmoid, check_for_missing_kwargs    
+
 
 class BasePolicy():
     """ The base implementation of a policy """
@@ -14,7 +15,6 @@ class BasePolicy():
     def __init__(
         self, 
         fairness_function, 
-        benefit_function, 
         utility_function, 
         fairness_rate, 
         use_sensitive_attributes): 
@@ -22,7 +22,6 @@ class BasePolicy():
         
         Args:
             fairness_function: The callback to the function that defines the fairness penalty of the model.
-            benefit_function: The callback that returns the benefit value for a specified set of data.
             utility_function: The callback that returns the utility value for a specified set of data.
             fairness_rate: The fairness rate lambda that regulates the impact of the fairness penalty on the 
             overall utility.
@@ -30,7 +29,6 @@ class BasePolicy():
             used overall or just in evaluating the fairness penalty.
         """
         self.fairness_function = fairness_function
-        self.benefit_function = benefit_function
         self.utility_function = utility_function
         self.use_sensitive_attributes = False
         self.fairness_rate = fairness_rate
@@ -229,10 +227,9 @@ class BasePolicy():
         raise NotImplementedError("Subclass must override update_theta(self, x, s, y, ips_weights).")
 
 class ManualModelParameterGradientPolicy(BasePolicy):
-    def __init__(self, fairness_function, fairness_gradient_function, benefit_function, utility_function, fairness_rate, use_sensitive_attributes): 
+    def __init__(self, fairness_function, fairness_gradient_function, utility_function, fairness_rate, use_sensitive_attributes): 
         super(ManualModelParameterGradientPolicy, self).__init__(
             fairness_function,
-            benefit_function,
             utility_function,
             fairness_rate,
             use_sensitive_attributes)
@@ -312,11 +309,10 @@ class ManualModelParameterGradientPolicy(BasePolicy):
 class LogisticPolicy(ManualModelParameterGradientPolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, theta, fairness_function, fairness_gradient_function, benefit_function, utility_function, feature_map, fairness_rate, use_sensitive_attributes): 
+    def __init__(self, theta, fairness_function, fairness_gradient_function, utility_function, feature_map, fairness_rate, use_sensitive_attributes): 
         super(LogisticPolicy, self).__init__(
             fairness_function,
             fairness_gradient_function,
-            benefit_function,
             utility_function,
             fairness_rate,
             use_sensitive_attributes)
@@ -329,7 +325,6 @@ class LogisticPolicy(ManualModelParameterGradientPolicy):
             self.theta.copy(),
             self.fairness_function, 
             self.fairness_gradient_function, 
-            self.benefit_function, 
             self.utility_function, 
             self.feature_map, 
             self.fairness_rate, 
