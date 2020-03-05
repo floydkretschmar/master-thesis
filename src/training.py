@@ -12,8 +12,9 @@ from copy import deepcopy
 import numbers
 
 from src.consequential_learning import ConsequentialLearning, DualGradientConsequentialLearning
-from src.util import save_dictionary, load_dictionary, serialize_dictionary, stack, check_for_missing_kwargs
+from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs
 from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
+from src.optimization import FairnessFunction, UtilityFunction
 
 class _Trainer():
     def _training_iteration(self, training_parameters, training_method):
@@ -146,6 +147,7 @@ def _prepare_training(training_parameters):
     _check_for_missing_training_parameters(training_parameters)
     current_training_parameters = deepcopy(training_parameters)
 
+    # save parameter settings
     if "save_path" in training_parameters:
         base_save_path = "{}/res/{}".format(training_parameters["save_path"], training_parameters["experiment_name"])
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
@@ -162,6 +164,7 @@ def _prepare_training(training_parameters):
     else:
         base_save_path = None
 
+    # pre-generate and save data
     current_training_parameters["data"] = _generate_data_set(training_parameters)
 
     if base_save_path is not None:
@@ -173,6 +176,16 @@ def _prepare_training(training_parameters):
         }
         save_dictionary(data_dict, data_save_path)
         del data_dict
+
+    # convert utility and fairness functions into appropriate internal functions
+    current_training_parameters["model"]["utility_function"] = UtilityFunction(
+        training_parameters["model"]["utility_function"])
+
+    if "fairness_gradient_function" in training_parameters["model"]:
+        current_training_parameters["model"]["fairness_function"] = FairnessFunction(
+            training_parameters["model"]["fairness_function"],
+            training_parameters["model"]["fairness_gradient_function"]
+        )
 
     return current_training_parameters, base_save_path
      

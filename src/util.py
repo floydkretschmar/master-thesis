@@ -1,14 +1,18 @@
-import numpy as np
+import copy
+import inspect
 import json
 import numbers
-import inspect
-import copy
+
+import numpy as np
+
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
+
 def sigmoid(x):
-    return np.where(x >= 0, 
-                    1 / (1 + np.exp(-x)), 
+    return np.where(x >= 0,
+                    1 / (1 + np.exp(-x)),
                     np.exp(x) / (1 + np.exp(x)))
+
 
 def save_dictionary(dictionary, path):
     try:
@@ -17,6 +21,7 @@ def save_dictionary(dictionary, path):
     except Exception as e:
         print('Saving file {} failed with exception: \n {}'.format(path, str(e)))
 
+
 def load_dictionary(path):
     try:
         with open(path, 'r') as file_path:
@@ -24,6 +29,7 @@ def load_dictionary(path):
     except Exception as e:
         print('Loading file {} failed with exception: \n {}'.format(path, str(e)))
         return None
+
 
 def serialize_value(value):
     if isinstance(value, dict):
@@ -39,6 +45,7 @@ def serialize_value(value):
     else:
         return value
 
+
 def serialize_dictionary(dictionary):
     serialized_dict = copy.deepcopy(dictionary)
     for key, value in serialized_dict.items():
@@ -46,12 +53,14 @@ def serialize_dictionary(dictionary):
 
     return serialized_dict
 
+
 def serialize_list(unserialized_list):
     serialized_list = []
     for value in unserialized_list:
         serialized_list.append(serialize_value(value))
 
     return serialized_list
+
 
 def check_for_missing_kwargs(function_name, required_kwargs, kwargs):
     missing_kwargs = []
@@ -61,7 +70,36 @@ def check_for_missing_kwargs(function_name, required_kwargs, kwargs):
 
     num_missing_kwargs = len(missing_kwargs)
     if num_missing_kwargs > 0:
-        raise TypeError("{} missing {} required positional {}: {}".format(function_name, num_missing_kwargs, "argument" if num_missing_kwargs == 1 else "arguments", ", ".join(missing_kwargs)))
+        raise TypeError("{} missing {} required positional {}: {}".format(function_name, num_missing_kwargs,
+                                                                          "argument" if num_missing_kwargs == 1 else "arguments",
+                                                                          ", ".join(missing_kwargs)))
+
+
+def mean_difference(target, group_indicator, groups=[0, 1]):
+    """ Calculates the mean difference of the target with regards to the sensitive attribute.
+
+    Args:
+        target: The target for which the mean difference will be calculated.
+        group_indicator: The indicator vector that defines the group assignments of the target.
+        gtoup: The values defining the groups according to the group_indicator vector
+
+    Returns:
+        mean_difference: The mean difference of the target
+    """
+    assert target.shape[0] == group_indicator.shape[0]
+
+    s_idx = np.expand_dims(np.arange(group_indicator.shape[0]), axis=1)
+    s_0_idx = s_idx[group_indicator == groups[0]]
+    s_1_idx = s_idx[group_indicator == groups[1]]
+
+    if len(s_0_idx) == 0 or len(s_1_idx) == 0:
+        return 0.0
+
+    target_s0 = target[s_0_idx].mean(axis=0)
+    target_s1 = target[s_1_idx].mean(axis=0)
+
+    return target_s0 - target_s1
+
 
 def stack(base_array, new_array, axis):
     if base_array is None:
@@ -115,6 +153,7 @@ def whiten(data, columns=None, conditioning=1e-8):
     std = np.std(data[:, columns], 0)
     data[:, columns] = (data[:, columns] - mu) / (std + conditioning)
     return data
+
 
 def train_test_split(x, y, s, test_size):
     indices = np.array(range(x.shape[0]))

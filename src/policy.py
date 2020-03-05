@@ -1,12 +1,12 @@
 import os
 import sys
-root_path = os.path.abspath(os.path.join('.'))
+root_path = os.path.abspath(os.path.join('..'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
 #pylint: disable=no-name-in-module
-from src.util import sigmoid, check_for_missing_kwargs      
+from src.util import sigmoid
 
 
 class BasePolicy():
@@ -69,28 +69,6 @@ class BasePolicy():
             ips_weights: The weights for inverse propensity scoring.
         """
         raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
-    
-    def _mean_difference(self, target, s):
-        """ Calculates the mean difference of the target with regards to the sensitive attribute.
-        
-        Args:
-            target: The target for which the mean difference will be calculated.
-            s: The sensitive attribute of the n samples
-
-        Returns:
-            mean_difference: The mean difference of the target
-        """
-        s_idx = np.expand_dims(np.arange(s.shape[0]), axis=1)
-        s_0_idx = s_idx[s == 0]
-        s_1_idx = s_idx[s == 1]
-
-        if len(s_0_idx) == 0 or len(s_1_idx) == 0:
-            return 0.0
-
-        target_s0 = target[s_0_idx].mean(axis=0) 
-        target_s1 = target[s_1_idx].mean(axis=0)
-
-        return target_s0 - target_s1
 
     def _probability(self, features):
         """ Calculates the probability of a positiv decision given the specified features.
@@ -117,7 +95,7 @@ class BasePolicy():
         Returns:
             parameters: A dictionary of model parameters.
         """
-        raise NotImplementedError("Subclass must override get_model_parameters(self).")  
+        raise NotImplementedError("Subclass must override get_model_parameters(self).")
 
 
 class ManualGradientPolicy(BasePolicy):
