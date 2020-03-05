@@ -9,7 +9,7 @@ from copy import deepcopy
 
 from src.policy import LogisticPolicy
 from src.util import stack
-
+from src.optimization import ManualGradientOptimizer, PenaltyOptimizationTarget, LagrangianOptimizationTarget
 
 class BaseLearningAlgorithm():
     def __init__(self, learn_on_entire_history):
@@ -108,7 +108,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         """
         super(ConsequentialLearning, self).__init__(learn_on_entire_history)
 
-    def _train_model_parameters(self, policy, training_parameters):
+    def _train_model_parameters(self, policy, optimizer, training_parameters):
         """ Executes the training algorithm.
 
         Args:
@@ -143,14 +143,14 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 data=self.data_history, 
                 epochs=training_parameters["parameter_optimization"]["epochs"], 
                 batch_size=training_parameters["parameter_optimization"]["batch_size"]):
-                policy.update_model_parameters(x, s, y, theta_learning_rate, ips_weights)
+                optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights)
 
             # Store decisions made in the time step ...
             decisions = policy(x_test, s_test).reshape(-1, 1)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
             
             # ... and the parameters of the model
-            trained_model_parameters = policy.get_model_parameters()
+            trained_model_parameters = optimizer.get_parameters()
         
         del self.data_history
         return decisions_over_time, trained_model_parameters
@@ -167,14 +167,18 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         """
         policy = LogisticPolicy(
             training_parameters["model"]["initial_theta"], 
-            training_parameters["model"]["fairness_function"], 
-            training_parameters["model"]["fairness_gradient_function"], 
-            training_parameters["model"]["utility_function"], 
             training_parameters["model"]["feature_map"], 
-            training_parameters["model"]["initial_lambda"], 
             training_parameters["model"]["use_sensitve_attributes"])
 
-        yield self._train_model_parameters(policy, training_parameters)
+        optimization_target = PenaltyOptimizationTarget(training_parameters["model"]["initial_lambda"])
+
+        optimizer = ManualGradientOptimizer(policy,
+            optimization_target,
+            training_parameters["model"]["utility_function"], 
+            training_parameters["model"]["fairness_function"], 
+            training_parameters["model"]["fairness_gradient_function"])
+
+        yield self._train_model_parameters(policy, optimizer, training_parameters)
 
 
 class DualGradientConsequentialLearning(ConsequentialLearning):    
@@ -196,26 +200,29 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
             decisions_over_time: The decisions made by a policy at timestep t over all time steps for every lambda.
             trained_model_parameters: The model parameters at the final timestep T
         """
-        fairness_rate = training_parameters["model"]["initial_lambda"]
         lambda_learning_rate = training_parameters["lagrangian_optimization"]["learning_rate"]
         lambda_decay_rate = training_parameters["lagrangian_optimization"]["decay_rate"]
         lambda_decay_step = training_parameters["lagrangian_optimization"]["decay_step"]
 
         policy = LogisticPolicy(
-            deepcopy(training_parameters["model"]["initial_theta"]), 
-            training_parameters["model"]["fairness_function"], 
-            training_parameters["model"]["fairness_gradient_function"], 
-            training_parameters["model"]["utility_function"], 
+            training_parameters["model"]["initial_theta"], 
             training_parameters["model"]["feature_map"], 
-            fairness_rate, 
             training_parameters["model"]["use_sensitve_attributes"])
+
+        optimization_target = LagrangianOptimizationTarget(training_parameters["model"]["initial_lambda"])
+
+        optimizer = ManualGradientOptimizer(policy,
+            optimization_target,
+            training_parameters["model"]["utility_function"], 
+            training_parameters["model"]["fairness_function"], 
+            training_parameters["model"]["fairness_gradient_function"])
 
         for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
             # decay lagrangian learning rate
             if i % lambda_decay_step == 0 and i != 0:
                 lambda_learning_rate *= lambda_decay_rate
                 
-            yield self._train_model_parameters(policy, training_parameters)
+            yield self._train_model_parameters(policy, optimizer, training_parameters)
 
             # Get lambda training data
             data = training_parameters["data"]["training"]["lambda"]
@@ -232,7 +239,7 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
                 data=data, 
                 epochs=training_parameters["lagrangian_optimization"]["epochs"],
                 batch_size=training_parameters["lagrangian_optimization"]["batch_size"]):
-                policy.update_fairness_parameter(x, s, y, lambda_learning_rate, ips_weights)
+                optimizer.update_fairness_parameter(x, s, y, lambda_learning_rate, ips_weights)
 
             del x_train, s_train, y_train
 
