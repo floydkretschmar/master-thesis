@@ -26,11 +26,14 @@ class UtilityFunction(ThetaDifferentiableFunction):
     def __init__(self, utility_function):
         super().__init__(utility_function)
 
-    def __call__(self, x, s, y, decisions, ips_weights=None):
+    def _utility(self, x, s, y, decisions, ips_weights=None):
         utility = self.function(x=x, s=s, y=y, decisions=decisions)
         if ips_weights is not None:
             utility *= ips_weights
         return utility
+
+    def __call__(self, x, s, y, decisions, ips_weights=None):
+        return self._utility(x, s, y, decisions, ips_weights).mean(axis=0)
 
     def gradient(self, policy, x, s, y, decisions, ips_weights=None):
         utility = self(x=x, s=s, y=y, decisions=decisions, ips_weights=ips_weights)
@@ -50,7 +53,8 @@ class FairnessFunction(ThetaDifferentiableFunction):
         return fairness
 
     def gradient(self, policy, x, s, y, decisions, ips_weights=None):
-        fairness_grad = self.function(x=x, s=s, y=y, decisions=decisions, ips_weights=ips_weights, policy=policy)
+        fairness_grad = self.fairness_gradient_function(x=x, s=s, y=y, decisions=decisions, ips_weights=ips_weights,
+                                                        policy=policy)
         return fairness_grad
 
 
