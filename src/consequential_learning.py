@@ -9,7 +9,8 @@ if root_path not in sys.path:
 
 from src.policy import LogisticPolicy
 from src.util import stack
-from src.optimization import Optimizer, PenaltyOptimizationTarget, LagrangianOptimizationTarget
+from src.optimization import DifferentiablePenaltyOptimizationTarget, \
+    DifferentiableLagrangianOptimizationTarget
 
 
 class BaseLearningAlgorithm():
@@ -172,13 +173,13 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             training_parameters["model"]["feature_map"],
             training_parameters["model"]["use_sensitve_attributes"])
 
-        optimization_target = PenaltyOptimizationTarget(
+        optimization_target = DifferentiablePenaltyOptimizationTarget(
             training_parameters["model"]["initial_lambda"],
             training_parameters["model"]["utility_function"],
             training_parameters["model"]["fairness_function"]
         )
 
-        optimizer = Optimizer(policy, optimization_target)
+        optimizer = policy.optimizer(optimization_target)
 
         yield self._train_model_parameters(policy, optimizer, training_parameters)
 
@@ -211,13 +212,13 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
             training_parameters["model"]["feature_map"],
             training_parameters["model"]["use_sensitve_attributes"])
 
-        optimization_target = LagrangianOptimizationTarget(
+        optimization_target = DifferentiableLagrangianOptimizationTarget(
             training_parameters["model"]["initial_lambda"],
             training_parameters["model"]["utility_function"],
             training_parameters["model"]["fairness_function"]
         )
 
-        optimizer = Optimizer(policy, optimization_target)
+        optimizer = policy.optimizer(optimization_target)
 
         for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
             # decay lagrangian learning rate

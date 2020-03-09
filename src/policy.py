@@ -7,13 +7,13 @@ if root_path not in sys.path:
 import numpy as np
 #pylint: disable=no-name-in-module
 from src.util import sigmoid
+from src.optimization import ManualGradientOptimizer
 
 
 class BasePolicy():
     """ The base implementation of a policy """
-    def __init__(
-        self, 
-        use_sensitive_attributes): 
+
+    def __init__(self, use_sensitive_attributes):
         """ Initializes a new BasePolicy object.
         
         Args:
@@ -97,6 +97,9 @@ class BasePolicy():
         """
         raise NotImplementedError("Subclass must override get_model_parameters(self).")
 
+    def optimizer(self, optimization_target, use_sensitive_attributes):
+        raise NotImplementedError("Subclass must override get_model_parameters(self).")
+
 
 class ManualGradientPolicy(BasePolicy):
     def __init__(self, use_sensitive_attributes):
@@ -127,14 +130,17 @@ class ManualGradientPolicy(BasePolicy):
         """
         raise NotImplementedError("Subclass must override update_model_parameters(self, gradient, learning_rate).")
 
+    def optimizer(self, optimization_target):
+        return ManualGradientOptimizer(self, optimization_target)
+
 
 class LogisticPolicy(ManualGradientPolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, theta, feature_map, use_sensitive_attributes): 
+    def __init__(self, theta, feature_map, use_sensitive_attributes):
         super(LogisticPolicy, self).__init__(use_sensitive_attributes)
 
-        self.feature_map = feature_map    
+        self.feature_map = feature_map
         self.theta = np.array(theta)
 
     def copy(self):
@@ -160,9 +166,7 @@ class LogisticPolicy(ManualGradientPolicy):
         
     def log_policy_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
-        return phi / np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)  
+        return phi / np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)
 
     def update_model_parameters(self, gradient, learning_rate):
-        self.theta += learning_rate * gradient  
-
-
+        self.theta += learning_rate * gradient
