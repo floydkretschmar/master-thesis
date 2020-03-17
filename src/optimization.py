@@ -19,7 +19,7 @@ class OptimizationTarget:
         self._utility_function = utility_function
         self._fairness_function = fairness_function
 
-    def __call__(self, x, s, y, decisions, ips_weights=None):
+    def __call__(self, policy, x, s, y, decisions, ips_weights=None):
         raise NotImplementedError("Subclass must override __call__(self, utility, fairness).")
 
     @property
@@ -39,13 +39,14 @@ class OptimizationTarget:
         return self._fairness_function
 
     @staticmethod
-    def _parameter_dictionary(x, s, y, decisions, ips_weights):
+    def _parameter_dictionary(x, s, y, decisions, ips_weights, policy):
         return {
             "x": x,
             "s": s,
             "y": y,
             "decisions": decisions,
-            "ips_weights": ips_weights
+            "ips_weights": ips_weights,
+            "policy": policy
         }
 
 
@@ -53,8 +54,8 @@ class LagrangianOptimizationTarget(OptimizationTarget):
     def __init__(self, initial_lambda, utility_function, fairness_function):
         super().__init__(initial_lambda, utility_function, fairness_function)
 
-    def __call__(self, x, s, y, decisions, ips_weights=None):
-        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights)
+    def __call__(self, policy, x, s, y, decisions, ips_weights=None):
+        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights, policy)
         return self.utility_function(**parameters) - (self.fairness_rate * self.fairness_function(**parameters))
 
 
@@ -62,8 +63,8 @@ class PenaltyOptimizationTarget(OptimizationTarget):
     def __init__(self, initial_fairness_rate, utility_function, fairness_function):
         super().__init__(initial_fairness_rate, utility_function, fairness_function)
 
-    def __call__(self, x, s, y, decisions, ips_weights=None):
-        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights)
+    def __call__(self, policy, x, s, y, decisions, ips_weights=None):
+        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights, policy)
         return self.utility_function(**parameters) - (self.fairness_rate / 2) * self.fairness_function(
             **parameters) ** 2
 
@@ -135,7 +136,7 @@ class UtilityFunction(DifferentiableFunction):
         return utility
 
     def __call__(self, **function_args):
-        check_for_missing_kwargs("UtilityFunction()", ["x", "s", "y", "decisions"], function_args)
+        check_for_missing_kwargs("UtilityFunction()", ["x", "s", "y", "decisions", "policy"], function_args)
         return self._utility(**function_args).mean(axis=0)
 
     def gradient(self, **gradient_args):
@@ -158,10 +159,12 @@ class FairnessFunction(DifferentiableFunction):
         self.fairness_gradient_function = fairness_gradient_function
 
     def __call__(self, **function_args):
+        check_for_missing_kwargs("UtilityFunction()", ["x", "s", "y", "decisions", "policy"], function_args)
         fairness = self.function(**function_args)
         return fairness
 
     def gradient(self, **gradient_args):
+        check_for_missing_kwargs("UtilityFunction()", ["x", "s", "y", "decisions", "policy"], gradient_args)
         fairness_grad = self.fairness_gradient_function(**gradient_args)
         return fairness_grad
 
@@ -170,8 +173,8 @@ class DifferentiableOptimizationTarget(OptimizationTarget):
     def __init__(self, optimization_target):
         self.optimization_target = optimization_target
 
-    def __call__(self, x, s, y, decisions, ips_weights=None):
-        return self.optimization_target(x, s, y, decisions, ips_weights)
+    def __call__(self, policy, x, s, y, decisions, ips_weights=None):
+        return self.optimization_target(policy, x, s, y, decisions, ips_weights)
 
     @property
     def fairness_rate(self):
@@ -203,12 +206,12 @@ class DifferentiablePenaltyOptimizationTarget(DifferentiableOptimizationTarget):
         super().__init__(PenaltyOptimizationTarget(fairness_constant, utility_function, fairness_function))
 
     def model_parameter_gradient(self, policy, x, s, y, decisions, ips_weights=None):
-        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights)
-        gradient = self.utility_function.gradient(policy=policy, **parameters)
+        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights, policy)
+        gradient = self.utility_function.gradient(**parameters)
 
         if self.fairness_rate > 0:
             fairness = self.fairness_function(**parameters)
-            fairness_gradient = self.fairness_function.gradient(policy=policy, **parameters)
+            fairness_gradient = self.fairness_function.gradient(**parameters)
 
             grad_fairness = self.fairness_rate * fairness * fairness_gradient
             gradient -= grad_fairness
@@ -216,7 +219,7 @@ class DifferentiablePenaltyOptimizationTarget(DifferentiableOptimizationTarget):
         return gradient
 
     def fairness_parameter_gradient(self, policy, x, s, y, decisions, ips_weights=None):
-        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights)
+        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights, policy)
         return -(self.fairness_function(**parameters) ** 2) / 2
 
 
@@ -227,11 +230,11 @@ class DifferentiableLagrangianOptimizationTarget(DifferentiableOptimizationTarge
         super().__init__(LagrangianOptimizationTarget(initial_lambda, utility_function, fairness_function))
 
     def model_parameter_gradient(self, policy, x, s, y, decisions, ips_weights=None):
-        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights)
-        gradient = self.utility_function.gradient(policy=policy, **parameters)
+        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights, policy)
+        gradient = self.utility_function.gradient(**parameters)
 
         if self.fairness_rate > 0:
-            fairness_gradient = self.fairness_function.gradient(policy=policy, **parameters)
+            fairness_gradient = self.fairness_function.gradient(**parameters)
 
             grad_fairness = self.fairness_rate * fairness_gradient
             gradient -= grad_fairness
@@ -239,7 +242,7 @@ class DifferentiableLagrangianOptimizationTarget(DifferentiableOptimizationTarge
         return gradient
 
     def fairness_parameter_gradient(self, policy, x, s, y, decisions, ips_weights=None):
-        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights)
+        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights, policy)
         return -self.fairness_function(**parameters)
 
 
@@ -262,4 +265,4 @@ class ManualGradientOptimizer(Optimizer):
 
         # call the optimization target for gradient calculation
         gradient = self.optimization_target.fairness_parameter_gradient(self.policy, x, s, y, decisions, ips_weights)
-        self.optimization_target.fairness_rate -= learning_rate * gradient
+        self.optimization_target.fairness_rate += learning_rate * gradient

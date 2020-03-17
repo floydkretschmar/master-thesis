@@ -4,14 +4,11 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-import numpy as np
-
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
 from src.plotting import plot_median
 from src.training import train
-from src.distribution import ResamplingDistribution
-from src.util import load_dataset
+from src.distribution import UncalibratedScore
 
 
 # def fairness_function(**fairness_kwargs):
@@ -72,19 +69,18 @@ def fairness_function(**fairness_kwargs):
 
 
 bias = True
-distribution = ResamplingDistribution(bias=bias, dataset=load_dataset("./dat/compas/compas.npz"), test_percentage=0.2)
-dim_theta = distribution.feature_dim
-
-print(dim_theta)
+dim_x = 1
+dim_theta = dim_x + 1 if bias else dim_x
 
 
 def util_func(**util_params):
-    util = cost_utility(cost_factor=0.6, **util_params)
+    util = cost_utility(cost_factor=0.142, **util_params)
     return util
 
 
 training_parameters = {
     'save_path': './',
+    'experiment_name': 'test',
     'model': {
         'benefit_function': demographic_parity,
         'utility_function': util_func,
@@ -94,20 +90,20 @@ training_parameters = {
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
         'bias': bias,
-        'initial_theta': np.zeros((dim_theta))
+        'initial_theta': [-3.0, 5.0]
     },
     'parameter_optimization': {
         'time_steps': 200,
-        'epochs': 40,
-        'batch_size': 64,
-        'learning_rate': 0.1,
+        'epochs': 1,
+        'batch_size': 256,
+        'learning_rate': 1,
         'decay_rate': 1,
         'decay_step': 10000,
-        'num_decisions': 4096
+        'num_decisions': 128 * 256
     },
     'data': {
-        'distribution': distribution,
-        'num_test_samples': None
+        'distribution': UncalibratedScore(bias=bias, fraction_protected=0.5),
+        'num_test_samples': 8192
     }
 }
 
@@ -115,23 +111,23 @@ training_parameters = {
 # #lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 # training_parameters["model"]["initial_lambda"] = lambdas
 
-training_parameters["experiment_name"] = "Test"
-training_parameters["model"]["initial_lambda"] = 0.0
-training_parameters["lagrangian_optimization"] = {
-    'iterations': 30,
-    'epochs': 10,
-    'batch_size': 64,
-    'learning_rate': 1,
-    'decay_rate': 1,
-    'decay_step': 10000,
-    'num_decisions': 4096
-}
+# training_parameters["experiment_name"] = "Test"
+# training_parameters["model"]["initial_lambda"] = 0.0
+# training_parameters["lagrangian_optimization"] = {
+#     'iterations': 30,
+#     'epochs': 10,
+#     'batch_size': 64,
+#     'learning_rate': 1,
+#     'decay_rate': 1,
+#     'decay_step': 10000,
+#     'num_decisions': 4096
+# }
 
 # x, s, y = load_dataset("./src/dat/compas/compas.npz")
 # x, x_test, y, y_test, s, s_test = train_test_split(x, y, s, test_size=0.8)
 # dist = ResamplingDistribution(load_dataset("./dat/compas/compas.npz"), 0.2, bias=bias)
 
-# training_parameters["model"]["initial_lambda"] = 0.0
+training_parameters["model"]["initial_lambda"] = 0.0
 
 # lambdas = np.logspace(-2, 1, base=10, endpoint=True, num=19)
 # lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
