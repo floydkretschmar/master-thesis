@@ -23,7 +23,7 @@ def calc_covariance(x, s, policy, ips_weights):
         mu_s = np.mean(s, axis=0)
 
     covariance = (s - mu_s) * distance
-    return covariance
+    return covariance, distance
 
 
 def fairness_gradient_function(**fairness_kwargs):
@@ -32,12 +32,12 @@ def fairness_gradient_function(**fairness_kwargs):
     s = fairness_kwargs["s"]
     ips_weights = fairness_kwargs["ips_weights"]
 
-    covariance = calc_covariance(x, s, policy, ips_weights)
+    covariance, distance = calc_covariance(x, s, policy, ips_weights)
 
     log_policy_gradient = policy.log_policy_gradient(x, s)
     covariance_grad = log_policy_gradient * covariance
 
-    return np.mean(covariance_grad, axis=0)
+    return np.mean(covariance_grad, axis=0) / distance.std()
 
 
 def fairness_function(**fairness_kwargs):
@@ -46,8 +46,8 @@ def fairness_function(**fairness_kwargs):
     s = fairness_kwargs["s"]
     ips_weights = fairness_kwargs["ips_weights"]
 
-    covariance = calc_covariance(x, s, policy, ips_weights)
-    return np.mean(covariance, axis=0)
+    covariance, distance = calc_covariance(x, s, policy, ips_weights)
+    return np.mean(covariance, axis=0) / distance.std()
 
 
 bias = True
@@ -180,7 +180,7 @@ training_parameters = {
 # dist = ResamplingDistribution(load_dataset("./dat/compas/compas.npz"), 0.2, bias=bias)
 
 # training_parameters["model"]["initial_lambda"] = 0.000007799
-training_parameters["model"]["initial_lambda"] = 0.001
+training_parameters["model"]["initial_lambda"] = 1
 
 # training_parameters["save_path"] = "/home/fkretschmar/Documents/master-thesis/res/test/uncalibrated/time"
 # lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
