@@ -102,8 +102,21 @@ class BasePolicy():
 
 
 class ManualGradientPolicy(BasePolicy):
-    def __init__(self, use_sensitive_attributes):
+    def __init__(self, use_sensitive_attributes, theta):
         super().__init__(use_sensitive_attributes)
+        self._theta = self.initialize_theta(theta)
+
+    def initialize_theta(self, theta):
+        return np.array(theta)
+
+    @property
+    def theta(self):
+        return self._theta
+
+    @theta.setter
+    def theta(self, value):
+        assert self.theta.shape == value.shape
+        self._theta = value
 
     def log_policy_gradient(self, x, s):
         """ Calculates the gradient of the logarithm of the current policy used to calculate the utility
@@ -119,17 +132,6 @@ class ManualGradientPolicy(BasePolicy):
         """
         raise NotImplementedError("Subclass must override log_policy_gradient(self, x, s).")
 
-    def update_model_parameters(self, gradient, learning_rate):
-        """ Updates the policy parameters using the specified gradient and learning rate.
-
-            Args:
-                gradient: The gradient calculated by the optimizer 
-                learning_rate: The rate with which the fairness parameter will be updated.
-                ips_weights: The weights used for inverse propensity scoring. If sampling_data=None 
-                no IPS will be applied.
-        """
-        raise NotImplementedError("Subclass must override update_model_parameters(self, gradient, learning_rate).")
-
     def optimizer(self, optimization_target):
         return ManualGradientOptimizer(self, optimization_target)
 
@@ -138,10 +140,8 @@ class LogisticPolicy(ManualGradientPolicy):
     """ The implementation of the logistic policy. """
 
     def __init__(self, theta, feature_map, use_sensitive_attributes):
-        super(LogisticPolicy, self).__init__(use_sensitive_attributes)
-
+        super(LogisticPolicy, self).__init__(use_sensitive_attributes, theta)
         self.feature_map = feature_map
-        self.theta = np.array(theta)
 
     def copy(self):
         approx_policy = LogisticPolicy(
@@ -156,6 +156,8 @@ class LogisticPolicy(ManualGradientPolicy):
         sampling_theta = np.expand_dims(self.theta, axis=1)
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
 
+        # weights[weights > 500] = 0.0
+
         return weights
 
     def _probability(self, features):
@@ -167,6 +169,3 @@ class LogisticPolicy(ManualGradientPolicy):
     def log_policy_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
         return phi / np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)
-
-    def update_model_parameters(self, gradient, learning_rate):
-        self.theta += learning_rate * gradient

@@ -257,7 +257,7 @@ class ManualGradientOptimizer(Optimizer):
 
         # call the optimization target for gradient calculation
         gradient = self.optimization_target.model_parameter_gradient(self.policy, x, s, y, decisions, ips_weights)
-        self.policy.update_model_parameters(gradient, learning_rate)
+        self.policy.theta += learning_rate * gradient
 
     def update_fairness_parameter(self, x, s, y, learning_rate, ips_weights=None):
         # make decision according to current policy
