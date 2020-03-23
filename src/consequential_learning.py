@@ -50,14 +50,13 @@ class BaseLearningAlgorithm():
             epochs: The number of epochs the training algorithm will run.
         """     
         for _ in range(0, epochs):
-            # only train if there is a large enough sample size to build at least one full batch
-            if data["x"].shape[0] < batch_size:
-                break
-
             # minibatching     
             indices = np.random.permutation(data["x"].shape[0]) 
             for batch_start in range(0, len(indices), batch_size):
                 batch_end = min(batch_start + batch_size, len(indices))
+                # only train if there is a large enough sample size to build at least one full batch
+                if batch_end - batch_start < batch_size:
+                    break
 
                 x_batch = data["x"][batch_start:batch_end]
                 s_batch = data["s"][batch_start:batch_end]
