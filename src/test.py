@@ -12,6 +12,40 @@ from src.distribution import UncalibratedScore
 import numpy as np
 
 
+# def calc_benefit(decisions, y, ips_weights):
+#     benefit = demographic_parity(decisions=decisions, y=y)
+#
+#     if ips_weights is not None:
+#         benefit *= ips_weights
+#
+#     return benefit
+#
+#
+# def fairness_gradient_function(**fairness_kwargs):
+#     policy = fairness_kwargs["policy"]
+#     x = fairness_kwargs["x"]
+#     s = fairness_kwargs["s"]
+#     y = fairness_kwargs["y"]
+#     decisions = fairness_kwargs["decisions"]
+#     ips_weights = fairness_kwargs["ips_weights"]
+#     benefit = calc_benefit(decisions, y, ips_weights)
+#
+#     log_gradient = policy.log_policy_gradient(x, s)
+#     benefit_grad = log_gradient * benefit
+#
+#     return mean_difference(benefit_grad, s)
+#
+#
+# def fairness_function(**fairness_kwargs):
+#     s = fairness_kwargs["s"]
+#     y = fairness_kwargs["y"]
+#     decisions = fairness_kwargs["decisions"]
+#     ips_weights = fairness_kwargs["ips_weights"]
+#     benefit = calc_benefit(decisions, y, ips_weights)
+#
+#     return mean_difference(benefit, s)
+
+
 def calc_covariance(x, s, policy, ips_weights):
     phi = policy.feature_map(policy._extract_features(x, s))
     distance = np.matmul(phi, policy.theta).reshape(-1, 1)
@@ -37,7 +71,8 @@ def fairness_gradient_function(**fairness_kwargs):
     log_policy_gradient = policy.log_policy_gradient(x, s)
     covariance_grad = log_policy_gradient * covariance
 
-    return np.mean(covariance_grad, axis=0) / distance.std()
+    # return np.mean(covariance_grad, axis=0) / distance.std()
+    return np.mean(covariance_grad, axis=0)
 
 
 def fairness_function(**fairness_kwargs):
@@ -47,7 +82,8 @@ def fairness_function(**fairness_kwargs):
     ips_weights = fairness_kwargs["ips_weights"]
 
     covariance, distance = calc_covariance(x, s, policy, ips_weights)
-    return np.mean(covariance, axis=0) / distance.std()
+    # return np.mean(covariance, axis=0) / distance.std()
+    return np.mean(covariance, axis=0)
 
 
 bias = True
@@ -71,7 +107,7 @@ training_parameters = {
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
         'bias': bias,
-        'initial_theta': [-3.0, 5.0]
+        'initial_theta': [0.0, 0.0]
     },
     'parameter_optimization': {
         'time_steps': 50,
@@ -186,7 +222,7 @@ training_parameters["model"]["initial_lambda"] = 1
 # lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 # lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 
-statistics, model_parameters, run_path = train(training_parameters, iterations=10, asynchronous=False)
+statistics, model_parameters, run_path = train(training_parameters, iterations=3, asynchronous=False)
 # statistics, run_path = train(training_parameters, fairness_rates=lambdas, iterations=5, verbose=True, asynchronous=False)
 # statistics, run_path = train(training_parameters, fairness_rates=[0.0], iterations=5, verbose=True, asynchronous=False)
 
