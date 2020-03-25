@@ -50,8 +50,10 @@ class BaseLearningAlgorithm():
             epochs: The number of epochs the training algorithm will run.
         """     
         for _ in range(0, epochs):
+            if data["x"].shape[0] < batch_size:
+                break
             # minibatching     
-            indices = np.random.permutation(data["x"].shape[0]) 
+            indices = np.random.permutation(data["x"].shape[0])
             for batch_start in range(0, len(indices), batch_size):
                 batch_end = min(batch_start + batch_size, len(indices))
                 # only train if there is a large enough sample size to build at least one full batch
@@ -120,10 +122,11 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             decisions_over_time: The decisions made by a policy at timestep t over all time steps
             trained_model_parameters: The model parameters at the final timestep T
         """
-        x_test, s_test, _ = training_parameters["data"]["test"]
+        x_test, s_test, y_test = training_parameters["data"]["test"]
 
         # Store initial policy decisions
         decisions_over_time = policy(x_test, s_test).reshape(-1, 1)
+        fairness_over_time = [np.array([0.0])]
         trained_model_parameters = None
 
         theta_learning_rate = training_parameters["parameter_optimization"]["learning_rate"]
@@ -136,26 +139,31 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 theta_learning_rate *= theta_decay_rate
 
             # Collect training data
-            data = training_parameters["data"]["training"]["theta"][i]   
+            data = training_parameters["data"]["training"]["theta"][i]
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
             ips_weights = policy._ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
-            for x, s, y, ips_weights in self._minibatch_over_epochs(
+            for x, s, y, ips_weights_batch in self._minibatch_over_epochs(
                     data=self.data_history,
                     epochs=training_parameters["parameter_optimization"]["epochs"],
                     batch_size=training_parameters["parameter_optimization"]["batch_size"]):
-                optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights)
+                optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
+
+            decisions = policy(x_train, s_train).reshape(-1, 1)
+            fairness_over_time.append(
+                training_parameters["model"]["fairness_function"](policy=policy, x=x_train, s=s_train, y=y_train,
+                                                                  decisions=decisions, ips_weights=ips_weights))
 
             # Store decisions made in the time step ...
             decisions = policy(x_test, s_test).reshape(-1, 1)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
-            
+
             # ... and the parameters of the model
             trained_model_parameters = optimizer.get_parameters()
-        
+
         del self.data_history
-        return decisions_over_time, trained_model_parameters
+        return decisions_over_time, trained_model_parameters, np.array(fairness_over_time).reshape(-1, 1)
         
     def train(self, training_parameters):
         """ Executes consequential learning.

@@ -5,7 +5,6 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
-import multiprocessing as mp
 import numbers
 from copy import deepcopy
 
@@ -124,6 +123,7 @@ class Statistics():
     DISPARATE_IMPACT = "DI"
     DEMOGRAPHIC_PARITY = "DP"
     EQUALITY_OF_OPPORTUNITY = "EOP"
+    FAIRNESS = "FAIR"
     
     # Result Format
     MEAN = MEAN
@@ -132,7 +132,7 @@ class Statistics():
     FIRST_QUARTILE = FIRST_QUARTILE
     THIRD_QUARTILE = THIRD_QUARTILE
 
-    def __init__(self, predictions, observations, protected_attributes, ground_truths, utility_function):
+    def __init__(self, predictions, observations, fairness, protected_attributes, ground_truths, utility_function):
         self.results = {
             Statistics.X_VALUES: range(0, predictions.shape[1]),
             Statistics.X_SCALE: "linear",
@@ -200,6 +200,7 @@ class Statistics():
         self.results["all"][Statistics.DISPARATE_IMPACT] = None
         self.results["all"][Statistics.DEMOGRAPHIC_PARITY] = None
         self.results["all"][Statistics.EQUALITY_OF_OPPORTUNITY] = None
+        self.results["all"][Statistics.FAIRNESS] = fairness
 
     def _get_measure(self, prot, measure_key):
         if self.results[prot][measure_key] is None:
@@ -276,6 +277,7 @@ class MultiStatistics(Statistics):
         self.results["all"][MultiStatistics.DISPARATE_IMPACT] = None
         self.results["all"][MultiStatistics.DEMOGRAPHIC_PARITY] = None
         self.results["all"][MultiStatistics.EQUALITY_OF_OPPORTUNITY] = None
+        self.results["all"][MultiStatistics.FAIRNESS] = None
 
     def log_run(self, statistics):            
         for (protected_key, protected_value) in statistics.results.items():
