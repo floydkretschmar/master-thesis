@@ -50,8 +50,6 @@ class BaseLearningAlgorithm():
             epochs: The number of epochs the training algorithm will run.
         """     
         for _ in range(0, epochs):
-            if data["x"].shape[0] < batch_size:
-                break
             # minibatching     
             indices = np.random.permutation(data["x"].shape[0])
             for batch_start in range(0, len(indices), batch_size):
@@ -144,18 +142,23 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             ips_weights = policy._ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
-            for x, s, y, ips_weights_batch in self._minibatch_over_epochs(
-                    data=self.data_history,
-                    epochs=training_parameters["parameter_optimization"]["epochs"],
-                    batch_size=training_parameters["parameter_optimization"]["batch_size"]):
-                optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
+            # only train if at least one full batch can be formed
+            if x_train.shape[0] > training_parameters["parameter_optimization"]["batch_size"]:
+                for x, s, y, ips_weights_batch in self._minibatch_over_epochs(
+                        data=self.data_history,
+                        epochs=training_parameters["parameter_optimization"]["epochs"],
+                        batch_size=training_parameters["parameter_optimization"]["batch_size"]):
+                    optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
 
             decisions = policy(x_train, s_train).reshape(-1, 1)
-            fairness_over_time.append(
-                training_parameters["model"]["fairness_function"](policy=policy, x=x_train, s=s_train, y=y_train,
-                                                                  decisions=decisions, ips_weights=ips_weights))
+            if x_train.shape[0] > training_parameters["parameter_optimization"]["batch_size"]:
+                fairness_over_time.append(
+                    training_parameters["model"]["fairness_function"](policy=policy, x=x_train, s=s_train, y=y_train,
+                                                                      decisions=decisions, ips_weights=ips_weights))
+            else:
+                fairness_over_time.append(np.array([0.0]))
 
-            # Store decisions made in the time step ...
+            # Store decisions made in the time step
             decisions = policy(x_test, s_test).reshape(-1, 1)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
 
