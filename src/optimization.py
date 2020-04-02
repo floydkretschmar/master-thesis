@@ -265,4 +265,4 @@ class ManualGradientOptimizer(Optimizer):
 
         # call the optimization target for gradient calculation
         gradient = self.optimization_target.fairness_parameter_gradient(self.policy, x, s, y, decisions, ips_weights)
-        self.optimization_target.fairness_rate += learning_rate * gradient
+        self.optimization_target.fairness_rate -= learning_rate * gradient
