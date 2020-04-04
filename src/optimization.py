@@ -219,8 +219,7 @@ class DifferentiablePenaltyOptimizationTarget(DifferentiableOptimizationTarget):
         return gradient
 
     def fairness_parameter_gradient(self, policy, x, s, y, decisions, ips_weights=None):
-        parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, ips_weights, policy)
-        return -(self.fairness_function(**parameters) ** 2) / 2
+        raise TypeError("Fairness gradient not supported for PenaltyOptimizationTarget")
 
 
 class DifferentiableLagrangianOptimizationTarget(DifferentiableOptimizationTarget):
