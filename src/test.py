@@ -9,8 +9,7 @@ from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, demographic_parity
 from src.plotting import plot_median
 from src.training import train
-from src.distribution import ResamplingDistribution
-from src.util import load_dataset
+from src.distribution import UncalibratedScore
 import numpy as np
 
 
@@ -127,57 +126,19 @@ def fairness_function(**fairness_kwargs):
     return np.mean(covariance, axis=0)
 
 
-bias = True
-dim_x = 1
-dim_theta = dim_x + 1 if bias else dim_x
+# bias = True
+# distribution = ResamplingDistribution(bias=bias, dataset=load_dataset("../dat/compas/compas.npz"), test_percentage=0.2)
+# dim_theta = distribution.feature_dim
 
-bias = True
-distribution = ResamplingDistribution(bias=bias, dataset=load_dataset("../dat/compas/compas.npz"), test_percentage=0.2)
-dim_theta = distribution.feature_dim
-
-
-def util_func(**util_params):
-    util = cost_utility(cost_factor=0.6, **util_params)
-    return util
-
-
-training_parameters = {
-    'save_path': './',
-    'experiment_name': 'test',
-    'model': {
-        'benefit_function': demographic_parity,
-        'utility_function': util_func,
-        'fairness_function': fairness_function,
-        'fairness_gradient_function': fairness_gradient_function,
-        'feature_map': IdentityFeatureMap(dim_theta),
-        'learn_on_entire_history': False,
-        'use_sensitve_attributes': False,
-        'bias': bias,
-        'initial_theta': np.zeros((dim_theta))
-    },
-    'parameter_optimization': {
-        'time_steps': 200,
-        'epochs': 40,
-        'batch_size': 256,
-        'learning_rate': 0.01,
-        'decay_rate': 1,
-        'decay_step': 10000,
-        'num_decisions': 4096
-    },
-    'data': {
-        'distribution': distribution,
-        'num_test_samples': None
-    }
-}
-
-# def util_func(**util_params):
-#     util = cost_utility(cost_factor=0.142, **util_params)
-#     return util
 #
+# def util_func(**util_params):
+#     util = cost_utility(cost_factor=0.6, **util_params)
+#     return util
+
+
 # training_parameters = {
-#     'save': True,
-#     'experiment_name': 'test',
 #     'save_path': './',
+#     'experiment_name': 'test',
 #     'model': {
 #         'benefit_function': demographic_parity,
 #         'utility_function': util_func,
@@ -187,22 +148,62 @@ training_parameters = {
 #         'learn_on_entire_history': False,
 #         'use_sensitve_attributes': False,
 #         'bias': bias,
-#         'initial_theta': [0.0, 0.0]
+#         'initial_theta': np.zeros((dim_theta))
 #     },
 #     'parameter_optimization': {
-#         'time_steps': 50,
-#         'epochs': 1,
+#         'time_steps': 200,
+#         'epochs': 40,
 #         'batch_size': 256,
-#         'learning_rate': 1,
+#         'learning_rate': 0.01,
 #         'decay_rate': 1,
 #         'decay_step': 10000,
-#         'num_decisions': 128 * 256
+#         'num_decisions': 4096
 #     },
 #     'data': {
-#         'distribution': UncalibratedScore(bias=bias, fraction_protected=0.5),
-#         'num_test_samples': 8192
+#         'distribution': distribution,
+#         'num_test_samples': None
 #     }
 # }
+
+bias = True
+dim_x = 1
+dim_theta = dim_x + 1 if bias else dim_x
+
+
+def util_func(**util_params):
+    util = cost_utility(cost_factor=0.142, **util_params)
+    return util
+
+
+training_parameters = {
+    'save': True,
+    'experiment_name': 'test',
+    'save_path': './',
+    'model': {
+        'benefit_function': demographic_parity,
+        'utility_function': util_func,
+        'fairness_function': fairness_function,
+        'fairness_gradient_function': fairness_gradient_function,
+        'feature_map': IdentityFeatureMap(dim_theta),
+        'learn_on_entire_history': False,
+        'use_sensitve_attributes': False,
+        'bias': bias,
+        'initial_theta': [0.0, 0.0]
+    },
+    'parameter_optimization': {
+        'time_steps': 200,
+        'epochs': 1,
+        'batch_size': 256,
+        'learning_rate': 1,
+        'decay_rate': 1,
+        'decay_step': 10000,
+        'num_decisions': 128 * 256
+    },
+    'data': {
+        'distribution': UncalibratedScore(bias=bias, fraction_protected=0.5),
+        'num_test_samples': 8192
+    }
+}
 
 
 # x, s, y = load_dataset("./src/dat/compas/compas.npz")
@@ -216,10 +217,11 @@ training_parameters["model"]["initial_lambda"] = 0
 # lambdas = np.logspace(-1, 1, base=10, endpoint=True, num=3)
 # lambdas = np.insert(arr=lambdas, obj=0, values=[0.0])
 training_parameters["lagrangian_optimization"] = {
+    # 'duality_gap': 0.00001,
     'iterations': 20,
     'epochs': 1,
     'batch_size': 256,
-    'learning_rate': 0.1,
+    'learning_rate': 0.01,
     'decay_rate': 1,
     'decay_step': 10000,
     'num_decisions': 128 * 256
