@@ -39,7 +39,8 @@ class BasePolicy():
         features = self._extract_features(x, s)
         probability = self._probability(features)
 
-        return np.expand_dims(np.random.binomial(1, probability).astype(float), axis=1)
+        return np.expand_dims(np.random.binomial(1, probability).astype(float), axis=1), np.expand_dims(probability,
+                                                                                                        axis=1)
 
     def _extract_features(self, x, s):
         """ Extracts the relevant features from the sample.
@@ -155,8 +156,6 @@ class LogisticPolicy(ManualGradientPolicy):
 
         sampling_theta = np.expand_dims(self.theta, axis=1)
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
-
-        # weights[weights > 500] = 0.0
 
         return weights
 
