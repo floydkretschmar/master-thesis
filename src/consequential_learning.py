@@ -33,7 +33,7 @@ class BaseLearningAlgorithm():
         """
         x, s, y = data
 
-        decisions = policy(x, s)
+        decisions, _ = policy(x, s)
         pos_decision_idx = np.expand_dims(np.arange(decisions.shape[0]), axis=1)
         pos_decision_idx = pos_decision_idx[decisions == 1]
 
@@ -123,15 +123,22 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         x_test, s_test, y_test = training_parameters["data"]["test"]
 
         # Store initial policy decisions
-        decisions_over_time = policy(x_test, s_test).reshape(-1, 1)
+        decisions_over_time, decision_probabilities = policy(x_test, s_test)
         fairness_over_time = [np.array([0.0])]
+        utilities_over_time = [training_parameters["model"]["utility_function"](
+            policy=policy,
+            x=x_test,
+            s=s_test,
+            y=y_test,
+            decisions=decisions_over_time,
+            decision_probabilities=decision_probabilities)]
         trained_model_parameters = None
 
         theta_learning_rate = training_parameters["parameter_optimization"]["learning_rate"]
         theta_decay_rate = training_parameters["parameter_optimization"]["decay_rate"]
         theta_decay_step = training_parameters["parameter_optimization"]["decay_step"]
-        
-        for i in range(0, training_parameters["parameter_optimization"]["time_steps"]): 
+
+        for i in range(0, training_parameters["parameter_optimization"]["time_steps"]):
             # decay theta learning rate
             if i % theta_decay_step == 0 and i != 0:
                 theta_learning_rate *= theta_decay_rate
@@ -150,23 +157,33 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                         batch_size=training_parameters["parameter_optimization"]["batch_size"]):
                     optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
 
-            decisions = policy(x_train, s_train).reshape(-1, 1)
+            decisions, decision_probabilities = policy(x_train, s_train)
             if x_train.shape[0] > training_parameters["parameter_optimization"]["batch_size"]:
                 fairness_over_time.append(
                     training_parameters["model"]["fairness_function"](policy=policy, x=x_train, s=s_train, y=y_train,
-                                                                      decisions=decisions, ips_weights=ips_weights))
+                                                                      decisions=decisions,
+                                                                      decision_probabilities=decision_probabilities,
+                                                                      ips_weights=ips_weights))
             else:
                 fairness_over_time.append(np.array([0.0]))
 
             # Store decisions made in the time step
-            decisions = policy(x_test, s_test).reshape(-1, 1)
+            decisions, decision_probabilities = policy(x_test, s_test)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
+            utilities_over_time.append(training_parameters["model"]["utility_function"](
+                policy=policy,
+                x=x_test,
+                s=s_test,
+                y=y_test,
+                decisions=decisions,
+                decision_probabilities=decision_probabilities))
 
             # ... and the parameters of the model
             trained_model_parameters = optimizer.get_parameters()
 
         del self.data_history
-        return decisions_over_time, trained_model_parameters, np.array(fairness_over_time).reshape(-1, 1)
+        return (decisions_over_time, np.array(fairness_over_time).reshape(-1, 1),
+                np.array(utilities_over_time).reshape(-1, 1)), trained_model_parameters
         
     def train(self, training_parameters):
         """ Executes consequential learning.

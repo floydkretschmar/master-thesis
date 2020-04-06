@@ -21,14 +21,15 @@ class _Trainer():
         np.random.seed()
         results_over_lambdas = []
 
-        for decisions_over_time, model_parameters, fairness_over_time in training_method(training_parameters):
+        for results, model_parameters in training_method(training_parameters):
+            decisions_over_time, fairness_over_time, utility_over_time = results
             statistics = Statistics(
                 predictions=decisions_over_time,
                 observations=training_parameters["data"]["test"][0],
                 fairness=fairness_over_time,
+                utility=utility_over_time,
                 protected_attributes=training_parameters["data"]["test"][1],
-                ground_truths=training_parameters["data"]["test"][2],
-                utility_function=training_parameters["model"]["utility_function"].function)
+                ground_truths=training_parameters["data"]["test"][2])
             results_over_lambdas.append((statistics, deepcopy(model_parameters)))
 
         return results_over_lambdas

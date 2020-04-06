@@ -132,7 +132,7 @@ class Statistics():
     FIRST_QUARTILE = FIRST_QUARTILE
     THIRD_QUARTILE = THIRD_QUARTILE
 
-    def __init__(self, predictions, observations, fairness, protected_attributes, ground_truths, utility_function):
+    def __init__(self, predictions, observations, fairness, utility, protected_attributes, ground_truths):
         self.results = {
             Statistics.X_VALUES: range(0, predictions.shape[1]),
             Statistics.X_SCALE: "linear",
@@ -171,16 +171,20 @@ class Statistics():
 
             # calculate base statistics during creation of statistics object
             self.results[prot] = {
-                Statistics.UTILITY: np.expand_dims(np.mean(utility_function(x=observations, decisions=filtered_predictions, y=utility_matching_gt, s=protected_attributes), axis=0), axis=1),
+                Statistics.UTILITY: utility,
                 Statistics.NUM_INDIVIDUALS: len(filtered_ground_truths),
-                Statistics.NUM_NEGATIVES: len(filtered_ground_truths[filtered_ground_truths==0]),
-                Statistics.NUM_POSITIVES: len(filtered_ground_truths[filtered_ground_truths==1]),
+                Statistics.NUM_NEGATIVES: len(filtered_ground_truths[filtered_ground_truths == 0]),
+                Statistics.NUM_POSITIVES: len(filtered_ground_truths[filtered_ground_truths == 1]),
                 Statistics.NUM_PRED_NEGATIVES: np.expand_dims(np.sum((1 - filtered_predictions), axis=0), axis=1),
                 Statistics.NUM_PRED_POSITIVES: np.expand_dims(np.sum(filtered_predictions, axis=0), axis=1),
-                Statistics.TRUE_POSITIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 1), axis=0), axis=1),
-                Statistics.TRUE_NEGATIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 0), axis=0), axis=1),
-                Statistics.FALSE_POSITIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 0), axis=0), axis=1),
-                Statistics.FALSE_NEGATIVES: np.expand_dims(np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 1), axis=0), axis=1)
+                Statistics.TRUE_POSITIVES: np.expand_dims(
+                    np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 1), axis=0), axis=1),
+                Statistics.TRUE_NEGATIVES: np.expand_dims(
+                    np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 0), axis=0), axis=1),
+                Statistics.FALSE_POSITIVES: np.expand_dims(
+                    np.sum(np.logical_and(filtered_predictions == 1, utility_matching_gt == 0), axis=0), axis=1),
+                Statistics.FALSE_NEGATIVES: np.expand_dims(
+                    np.sum(np.logical_and(filtered_predictions == 0, utility_matching_gt == 1), axis=0), axis=1)
             }
 
             # calculate futher statistics based on the base statistics only on demand to save memory
