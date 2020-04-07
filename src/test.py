@@ -87,16 +87,17 @@ import numpy as np
 #     return np.mean(covariance, axis=0) / distance.std() if distance.std() != 0 else np.mean(covariance, axis=0)
 
 def calc_covariance(x, s, policy, ips_weights, decisions):
-    # phi = policy.feature_map(policy._extract_features(x, s))
-    # distance = np.matmul(phi, policy.theta).reshape(-1, 1)
+    phi = policy.feature_map(policy._extract_features(x, s))
+    distance = np.matmul(phi, policy.theta).reshape(-1, 1)
 
     if ips_weights is not None:
         mu_s = np.mean(s * ips_weights, axis=0)
-        decisions *= ips_weights
+        distance *= ips_weights
     else:
         mu_s = np.mean(s, axis=0)
 
-    covariance = (s - mu_s) * decisions
+    # covariance = (s - mu_s) * decisions
+    covariance = (s - mu_s) * distance
     return covariance
 
 
@@ -191,7 +192,7 @@ training_parameters = {
         'initial_theta': [0.0, 0.0]
     },
     'parameter_optimization': {
-        'time_steps': 200,
+        'time_steps': 50,
         'epochs': 1,
         'batch_size': 256,
         'learning_rate': 1,

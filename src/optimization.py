@@ -58,7 +58,7 @@ class LagrangianOptimizationTarget(OptimizationTarget):
     def __call__(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
         parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities, ips_weights,
                                                               policy)
-        return self.utility_function(**parameters) - self.fairness_rate * self.fairness_function(**parameters)
+        return -self.utility_function(**parameters) + self.fairness_rate * self.fairness_function(**parameters)
 
 
 class PenaltyOptimizationTarget(OptimizationTarget):
@@ -68,7 +68,7 @@ class PenaltyOptimizationTarget(OptimizationTarget):
     def __call__(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
         parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities, ips_weights,
                                                               policy)
-        return self.utility_function(**parameters) - (self.fairness_rate / 2) * self.fairness_function(
+        return -self.utility_function(**parameters) + (self.fairness_rate / 2) * self.fairness_function(
             **parameters) ** 2
 
 
@@ -211,14 +211,14 @@ class DifferentiablePenaltyOptimizationTarget(DifferentiableOptimizationTarget):
     def model_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
         parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities, ips_weights,
                                                               policy)
-        gradient = self.utility_function.gradient(**parameters)
+        gradient = -self.utility_function.gradient(**parameters)
 
         if self.fairness_rate > 0:
             fairness = self.fairness_function(**parameters)
             fairness_gradient = self.fairness_function.gradient(**parameters)
 
             grad_fairness = self.fairness_rate * fairness * fairness_gradient
-            gradient -= grad_fairness
+            gradient += grad_fairness
 
         return gradient
 
@@ -235,13 +235,12 @@ class DifferentiableLagrangianOptimizationTarget(DifferentiableOptimizationTarge
     def model_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
         parameters = OptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities, ips_weights,
                                                               policy)
-        gradient = self.utility_function.gradient(**parameters)
+        gradient = -self.utility_function.gradient(**parameters)
 
-        if self.fairness_rate > 0:
-            fairness_gradient = self.fairness_function.gradient(**parameters)
+        fairness_gradient = self.fairness_function.gradient(**parameters)
+        grad_fairness = self.fairness_rate * fairness_gradient
 
-            grad_fairness = self.fairness_rate * fairness_gradient
-            gradient -= grad_fairness
+        gradient += grad_fairness
 
         return gradient
 
@@ -263,7 +262,7 @@ class ManualGradientOptimizer(Optimizer):
         # call the optimization target for gradient calculation
         gradient = self.optimization_target.model_parameter_gradient(self.policy, x, s, y, decisions,
                                                                      decision_probability, ips_weights)
-        self.policy.theta += learning_rate * gradient
+        self.policy.theta -= learning_rate * gradient
 
     def update_fairness_parameter(self, x, s, y, learning_rate, ips_weights=None):
         # make decision according to current policy
@@ -272,4 +271,4 @@ class ManualGradientOptimizer(Optimizer):
         # call the optimization target for gradient calculation
         gradient = self.optimization_target.fairness_parameter_gradient(self.policy, x, s, y, decisions,
                                                                         decision_probability, ips_weights)
-        self.optimization_target.fairness_rate -= learning_rate * gradient
+        self.optimization_target.fairness_rate += learning_rate * gradient
