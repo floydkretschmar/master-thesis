@@ -5,6 +5,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
+from copy import deepcopy
 #pylint: disable=no-name-in-module
 from src.util import sigmoid
 from src.optimization import ManualGradientOptimizer
@@ -99,13 +100,18 @@ class BasePolicy():
         raise NotImplementedError("Subclass must override get_model_parameters(self).")
 
     def optimizer(self, optimization_target, use_sensitive_attributes):
-        raise NotImplementedError("Subclass must override get_model_parameters(self).")
+        raise NotImplementedError(
+            "Subclass must override optimizer(self, optimization_target, use_sensitive_attributes).")
+
+    def reset(self):
+        raise NotImplementedError("Subclass must override reset(self).")
 
 
 class ManualGradientPolicy(BasePolicy):
     def __init__(self, use_sensitive_attributes, theta):
         super().__init__(use_sensitive_attributes)
         self._theta = self.initialize_theta(theta)
+        self._initial_theta = deepcopy(self._theta)
 
     def initialize_theta(self, theta):
         return np.array(theta)
@@ -135,6 +141,9 @@ class ManualGradientPolicy(BasePolicy):
 
     def optimizer(self, optimization_target):
         return ManualGradientOptimizer(self, optimization_target)
+
+    def reset(self):
+        self._theta = deepcopy(self._initial_theta)
 
 
 class LogisticPolicy(ManualGradientPolicy):
