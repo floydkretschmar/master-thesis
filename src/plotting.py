@@ -21,9 +21,14 @@ def _plot_results(
         equality_of_opportunity_uncertainty=None,
         lambdas=None,
         lambdas_uncertainty=None,
-        file_path=None):
+        file_path=None,
+        plot_fairness=False):
     if lambdas is not None:
-        f, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 5, sharex=True, figsize=(25, 10))
+        if plot_fairness:
+            f, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 5, sharex=True, figsize=(25, 10))
+        else:
+            f, (ax1, ax2, ax3, ax5) = plt.subplots(1, 4, sharex=True, figsize=(25, 10))
+
         ax5.plot(xaxis, lambdas)
         ax5.set_xlabel(xlable)
         ax5.set_ylabel("Lambda")
@@ -33,7 +38,10 @@ def _plot_results(
             ax5.fill_between(xaxis, lambdas_uncertainty[0], lambdas_uncertainty[1], alpha=0.3, edgecolor='#060080',
                              facecolor='#928CFF')
     else:
-        f, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, sharex=True, figsize=(25, 10))
+        if plot_fairness:
+            f, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, sharex=True, figsize=(25, 10))
+        else:
+            f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, figsize=(25, 10))
 
     ax1.plot(xaxis, utility)
     ax1.set_xlabel(xlable)
@@ -44,42 +52,45 @@ def _plot_results(
         ax1.fill_between(xaxis, utility_uncertainty[0], utility_uncertainty[1], alpha=0.3, edgecolor='#060080',
                          facecolor='#928CFF')
 
-    ax2.plot(xaxis, fairness)
+    ax2.plot(xaxis, demographic_parity)
     ax2.set_xlabel(xlable)
-    ax2.set_ylabel("Fairness Function")
+    ax2.set_ylabel("Benefit Delta (Disparate Impact)")
     ax2.set_xscale(xscale)
-    # ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
-    if fairness_uncertainty is not None:
-        ax2.fill_between(xaxis, fairness_uncertainty[0], fairness_uncertainty[1], alpha=0.3, edgecolor='#060080',
-                         facecolor='#928CFF')
-
-    ax3.plot(xaxis, demographic_parity)
-    ax3.set_xlabel(xlable)
-    ax3.set_ylabel("Benefit Delta (Disparate Impact)")
-    ax3.set_xscale(xscale)
     # ax2.xaxis.set_major_locator(MaxNLocator(integer=True))
     if demographic_parity_uncertainty is not None:
-        ax3.fill_between(xaxis, demographic_parity_uncertainty[0], demographic_parity_uncertainty[1], alpha=0.3,
+        ax2.fill_between(xaxis, demographic_parity_uncertainty[0], demographic_parity_uncertainty[1], alpha=0.3,
                          edgecolor='#060080', facecolor='#928CFF')
 
-    ax4.plot(xaxis, equality_of_opportunity)
-    ax4.set_xlabel(xlable)
-    ax4.set_ylabel("Benefit Delta (Equality of Opportunity)")
-    ax4.set_xscale(xscale)
+    ax3.plot(xaxis, equality_of_opportunity)
+    ax3.set_xlabel(xlable)
+    ax3.set_ylabel("Benefit Delta (Equality of Opportunity)")
+    ax3.set_xscale(xscale)
     # ax3.xaxis.set_major_locator(MaxNLocator(integer=True))
     if equality_of_opportunity_uncertainty is not None:
-        ax4.fill_between(xaxis, equality_of_opportunity_uncertainty[0], equality_of_opportunity_uncertainty[1],
+        ax3.fill_between(xaxis, equality_of_opportunity_uncertainty[0], equality_of_opportunity_uncertainty[1],
                          alpha=0.3, edgecolor='#060080', facecolor='#928CFF')
+
+    if plot_fairness:
+        ax4.plot(xaxis, fairness)
+        ax4.set_xlabel(xlable)
+        ax4.set_ylabel("Fairness Function")
+        ax4.set_xscale(xscale)
+        # ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
+        if fairness_uncertainty is not None:
+            ax4.fill_between(xaxis, fairness_uncertainty[0], fairness_uncertainty[1], alpha=0.3, edgecolor='#060080',
+                             facecolor='#928CFF')
 
     if file_path is None:
         plt.show()
     else:
         plt.savefig(file_path)
 
-def plot_median(statistics, file_path=None, model_parameters=None):
+
+def plot_median(statistics, file_path=None, model_parameters=None, plot_fairness=False):
     if model_parameters is not None:
         lambdas = model_parameters.get_lagrangians(result_format=ModelParameters.MEDIAN)
-        lambdas_uncertainty = (model_parameters.get_lagrangians(result_format=ModelParameters.FIRST_QUARTILE), model_parameters.get_lagrangians(result_format=ModelParameters.THIRD_QUARTILE))
+        lambdas_uncertainty = (model_parameters.get_lagrangians(result_format=ModelParameters.FIRST_QUARTILE),
+                               model_parameters.get_lagrangians(result_format=ModelParameters.THIRD_QUARTILE))
     else:
         lambdas = None
         lambdas_uncertainty = None
@@ -108,9 +119,11 @@ def plot_median(statistics, file_path=None, model_parameters=None):
          statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.THIRD_QUARTILE)),
         lambdas=lambdas,
         lambdas_uncertainty=lambdas_uncertainty,
-        file_path=file_path)
-        
-def plot_mean(statistics, file_path=None, model_parameters=None):
+        file_path=file_path,
+        plot_fairness=plot_fairness)
+
+
+def plot_mean(statistics, file_path=None, model_parameters=None, plot_fairness=False):
     u_mean = statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.MEAN)
     u_stddev = statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.STANDARD_DEVIATION)
 
@@ -149,4 +162,5 @@ def plot_mean(statistics, file_path=None, model_parameters=None):
         equality_of_opportunity_uncertainty=(eop_mean - eop_stddev, eop_mean + eop_stddev),
         lambdas=lambdas,
         lambdas_uncertainty=lambdas_uncertainty,
-        file_path=file_path)
+        file_path=file_path,
+        plot_fairness=plot_fairness)
