@@ -10,6 +10,7 @@ from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
 
 from src.util import train_test_split
+from responsibly.dataset import build_FICO_dataset
 
 
 class BaseDistribution():
@@ -152,10 +153,88 @@ class UncalibratedScore(GenerativeDistribution):
 
     def sample_labels(self, x, s):
         if self.bias:
-            x = x[:,1]
+            x = x[:, 1]
 
-        yprob = self._pdf(x)        
+        yprob = self._pdf(x)
         return np.expand_dims(np.random.binomial(1, yprob), axis=1)
+
+
+class FICODistribution(GenerativeDistribution):
+    def __init__(self, fraction_protected, bias=False):
+        super(FICODistribution, self).__init__(fraction_protected=fraction_protected, bias=bias)
+        self.fico_data = build_FICO_dataset()
+        self.precision = 4
+
+    def sample_features(self, n, fraction_protected):
+        fico_cdf = self.fico_data["cdf"]
+
+        unprotected_cdf = fico_cdf["White"].values
+        protected_cdf = fico_cdf["Black"].values
+        shifted_scores = (fico_cdf.index.values * 10) + 10
+
+        s = (
+                np.random.rand(n, 1) < fraction_protected
+        ).astype(int).squeeze()
+
+        s0_idx = np.where(s == 0)[0]
+        s1_idx = np.where(s == 1)[0]
+
+        rands_s0 = np.random.randint(0, 10 ** self.precision, len(s0_idx)) / float(10 ** self.precision)
+        rands_s1 = np.random.randint(0, 10 ** self.precision, len(s1_idx)) / float(10 ** self.precision)
+
+        previous_unprotected_threshold = -1
+        previous_protected_threshold = -1
+
+        for score_idx, shifted_score in enumerate(shifted_scores):
+            unprotected_threshold = unprotected_cdf[score_idx]
+            protected_threshold = protected_cdf[score_idx]
+
+            rands_s0[(rands_s0 > previous_unprotected_threshold) & (rands_s0 <= unprotected_threshold)] = shifted_score
+            rands_s1[(rands_s1 > previous_protected_threshold) & (rands_s1 <= protected_threshold)] = shifted_score
+
+            previous_unprotected_threshold = unprotected_threshold
+            previous_protected_threshold = protected_threshold
+
+        x = np.zeros(n)
+        x[s0_idx] = rands_s0
+        x[s1_idx] = rands_s1
+        x = ((x - 10) / 1000).reshape(-1, 1)
+
+        if self.bias:
+            ones = np.ones((n, 1))
+            x = np.hstack((ones, x))
+
+        return x, s.reshape(-1, 1)
+
+    def sample_labels(self, x, s):
+        if self.bias:
+            x = x[:, 1]
+
+        y = np.full(x.shape[0], -1)
+        local_s = s.squeeze()
+
+        scores = self.fico_data["performance"]["Black"].index.values / 100.0
+        non_defaulters_protected = self.fico_data["performance"]["Black"].values
+        non_defaulters_unprotected = self.fico_data["performance"]["White"].values
+
+        for idx, score in enumerate(scores):
+            x_current_score_idx = np.where(x == score)[0]
+            s_current_score = local_s[x_current_score_idx]
+
+            x_s0_current_score_idx = x_current_score_idx[s_current_score == 0]
+            x_s1_current_score_idx = x_current_score_idx[s_current_score == 1]
+
+            y_unprotected = (
+                    np.random.rand(len(x_s0_current_score_idx), 1) < non_defaulters_unprotected[idx]
+            ).astype(int).squeeze()
+            y_protected = (
+                    np.random.rand(len(x_s1_current_score_idx), 1) < non_defaulters_protected[idx]
+            ).astype(int).squeeze()
+
+            y[x_s0_current_score_idx] = y_unprotected
+            y[x_s1_current_score_idx] = y_protected
+
+        return y.reshape(-1, 1)
 
 
 class ResamplingDistribution(BaseDistribution):
@@ -164,7 +243,8 @@ class ResamplingDistribution(BaseDistribution):
     def __init__(self, dataset, test_percentage, bias=False):
         super(ResamplingDistribution, self).__init__(bias)
         x, s, y = dataset
-        self.x, self.x_test, self.y, self.y_test, self.s, self.s_test = train_test_split(x, y, s, test_size=test_percentage)
+        self.x, self.x_test, self.y, self.y_test, self.s, self.s_test = train_test_split(x, y, s,
+                                                                                         test_size=test_percentage)
         self.total_test_samples = self.x_test.shape[0]
         self.test_sample_indices = np.arange(self.total_test_samples)
 
