@@ -10,7 +10,7 @@ from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
 
 from src.util import train_test_split
-from responsibly.dataset import build_FICO_dataset
+from responsibly.dataset import build_FICO_dataset, COMPASDataset, AdultDataset
 
 
 class BaseDistribution():
@@ -268,4 +268,67 @@ class ResamplingDistribution(BaseDistribution):
         n = min(self.total_test_samples, n_test) if n_test is not None else self.total_test_samples
         indices = np.random.choice(self.test_sample_indices, n, replace=True)
 
-        return self.x_test[indices].reshape((n, -1)), self.y_test[indices].reshape((n, -1)), self.s_test[indices].reshape((n, -1))
+        return self.x_test[indices].reshape((n, -1)), self.y_test[indices].reshape((n, -1)), self.s_test[
+            indices].reshape((n, -1))
+
+
+class COMPASDistribution(ResamplingDistribution):
+    def __init__(self, test_percentage, bias=False):
+        dataset = self.load_data()
+        super(COMPASDistribution, self).__init__(dataset, test_percentage, bias)
+
+    def load_data(self):
+        compas_data = COMPASDataset()
+
+        # use race as the sensitive attribute
+        race = compas_data.df['race']
+        s = race.where(race == 'Caucasian', 1)
+        s.where(s == 1, 0, inplace=True)
+        s = s.values.reshape(-1, 1)
+
+        # Use juvenile felonies, juvenile misdemeanors, juvenile others, prior conviction
+        x = compas_data.df[['juv_fel_count', 'juv_misd_count', 'juv_other_count', 'priors_count']].values
+
+        # Charge Degree categories in one hot encoding
+        for category in compas_data.df['c_charge_degree'].unique():
+            degree_category = compas_data.df['c_charge_degree'].where(compas_data.df['c_charge_degree'] == category, 0)
+            degree_category.where(degree_category == 0, 1, inplace=True)
+            x = np.hstack((x, degree_category.values.reshape(-1, 1)))
+
+        # use actual recidivisim as target variable
+        y = compas_data.df[compas_data.target].values.reshape(-1, 1)
+
+        return x.astype(float), s.astype(float), y.astype(float)
+
+
+class AdultCreditDistribution(ResamplingDistribution):
+    def __init__(self, test_percentage, bias=False):
+        dataset = self.load_data()
+        super(AdultCreditDistribution, self).__init__(dataset, test_percentage, bias)
+
+    def load_data(self):
+        data = AdultDataset()
+
+        # use race as the sensitive attribute
+        race = data.df['race']
+        s = race.where(race == 'White', 1)
+        s.where(s == 1, 0, inplace=True)
+        s = s.values.reshape(-1, 1)
+
+        # Use capital gain/capital loss and hours per week
+        x = data.df[['capital_gain', 'capital_loss', 'hours_per_week']].values
+
+        # work class, education, marital status and native country in one hot encoding
+        for column in ["workclass", "education", "marital_status", "native_country"]:
+            for category in data.df[column].unique():
+                category = data.df[column].where(data.df[column] == category, 0)
+                category.where(category == 0, 1, inplace=True)
+                x = np.hstack((x, category.values.reshape(-1, 1)))
+
+        # use actual recidivisim as target variable
+        y = data.df[data.target].values.reshape(-1, 1)
+
+        return x.astype(float), s.astype(float), y.astype(float)
+
+
+dist = AdultCreditDistribution(0.2)
