@@ -92,8 +92,9 @@ def _check_for_missing_training_parameters(training_parameters):
     """
     check_for_missing_kwargs("training()", ["experiment_name", "model", "parameter_optimization", "data"], training_parameters)
     check_for_missing_kwargs(
-        "training()", 
-        ["benefit_function", "utility_function", "fairness_function", "fairness_gradient_function", "feature_map", "learn_on_entire_history", "use_sensitve_attributes", "bias", "initial_theta", "initial_lambda"], 
+        "training()",
+        ["utility_function", "fairness_function", "fairness_gradient_function", "feature_map",
+         "learn_on_entire_history", "use_sensitve_attributes", "bias", "initial_theta", "initial_lambda"],
         training_parameters["model"])
     check_for_missing_kwargs("training()", ["distribution", "num_test_samples"], training_parameters["data"])
     check_for_missing_kwargs("training()", ["time_steps", "epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_decisions"], training_parameters["parameter_optimization"])
@@ -203,7 +204,7 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
     """
     # save the model parameters to be able to restore the model
     if sub_directory is not None:
-        lambda_path = "{}/{}/".format(base_save_path, sub_directory)
+        lambda_path = "{}/runs/{}/".format(base_save_path, sub_directory)
         Path(lambda_path).mkdir(parents=True, exist_ok=True)
     else:
         lambda_path = "{}/".format(base_save_path)
@@ -286,8 +287,9 @@ def train(training_parameters, iterations=30, asynchronous=True):
     # save the overall results    
     if base_save_path is not None:
         _save_results(
-            base_save_path=base_save_path, 
-            statistics=overall_statistics)
+            base_save_path=base_save_path,
+            statistics=overall_statistics,
+            model_parameters=model_parameters)
 
     return overall_statistics, ModelParameters(model_parameters), base_save_path
     
