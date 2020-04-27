@@ -48,7 +48,6 @@ training_parameters = {
     },
     'parameter_optimization': {
         'learning_rate': args.lr,
-        'learning_rate': 1,
         'decay_rate': 1,
         'decay_step': 10000,
         'fix_seeds': True
