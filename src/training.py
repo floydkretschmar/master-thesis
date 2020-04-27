@@ -92,7 +92,7 @@ def _check_for_missing_training_parameters(training_parameters):
         training_parameters: The parameters used to configure the consequential learning algorithm.
     """
     check_for_missing_kwargs("training()",
-                             ["experiment_name", "model", "parameter_optimization", "test", "distribution"],
+                             ["model", "parameter_optimization", "test", "distribution"],
                              training_parameters)
     check_for_missing_kwargs(
         "training()",
@@ -124,7 +124,8 @@ def _prepare_training(training_parameters):
 
     # save parameter settings
     if "save_path" in training_parameters:
-        base_save_path = "{}/res/{}".format(training_parameters["save_path"], training_parameters["experiment_name"])
+        # base_save_path = "{}/{}".format(training_parameters["save_path"], training_parameters["experiment_name"])
+        base_save_path = training_parameters["save_path"]
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
 
         timestamp = time.gmtime()
