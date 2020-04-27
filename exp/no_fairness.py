@@ -34,11 +34,11 @@ parser.add_argument('-a', '--asynchonous', action='store_true')
 
 args = parser.parse_args()
 
-if args.data == "FICO":
+if args.data == 'FICO':
     distibution = FICODistribution(bias=True, fraction_protected=0.5)
-elif args.data == "COMPAS":
+elif args.data == 'COMPAS':
     distibution = COMPASDistribution(bias=True, test_percentage=0.2)
-elif args.data == "ADULT":
+elif args.data == 'ADULT':
     distibution = AdultCreditDistribution(bias=True, test_percentage=0.2)
 
 training_parameters = {
