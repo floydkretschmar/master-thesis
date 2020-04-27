@@ -1,12 +1,17 @@
 import os
 import sys
+
 root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
+import matplotlib
+
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import tikzplotlib as tpl
 from src.training_evaluation import Statistics, ModelParameters
+
 
 def _plot_results(
         utility,
