@@ -80,13 +80,12 @@ for time_steps in args.time_steps:
 
                 if args.path:
                     training_parameters['save_path'] = args.path
-                    training_parameters["save_path"] = "{}/{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
-                                                                                               args.data,
-                                                                                               args.learning_rate,
-                                                                                               time_steps,
-                                                                                               epochs,
-                                                                                               batch_size,
-                                                                                               num_batches)
+                    training_parameters["save_path"] = "{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
+                                                                                            args.learning_rate,
+                                                                                            time_steps,
+                                                                                            epochs,
+                                                                                            batch_size,
+                                                                                            num_batches)
 
                 pool.apply_async(train,
                                  args=(deepcopy(training_parameters), args.iterations, args.asynchonous),
