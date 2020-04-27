@@ -5,12 +5,11 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
-from numpy.random import RandomState
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
 
-from src.util import train_test_split
+from src.util import train_test_split, get_random
 from responsibly.dataset import build_FICO_dataset, COMPASDataset, AdultDataset
 
 
@@ -22,10 +21,10 @@ class BaseDistribution():
     def feature_dimension(self):
         raise NotImplementedError("Subclass must override feature_dimension property.")
 
-    def _sample_test_dataset_core(self, n_test, random=np.random):
+    def _sample_test_dataset_core(self, n_test, random):
         raise NotImplementedError("Subclass must override _sample_test_dataset_core(self, n_test).")
 
-    def _sample_train_dataset_core(self, n_train, random=np.random):
+    def _sample_train_dataset_core(self, n_train, random):
         raise NotImplementedError("Subclass must override _sample_train_dataset_core(self, n_train).")
 
     def sample_test_dataset(self, n_test, seed=None):
@@ -40,13 +39,7 @@ class BaseDistribution():
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        if seed:
-            random = RandomState(seed)
-            data = self._sample_test_dataset_core(n_test, random)
-        else:
-            data = self._sample_test_dataset_core(n_test)
-
-        return data
+        return self._sample_test_dataset_core(n_test, get_random(seed) if seed else get_random())
 
     def sample_train_dataset(self, n_train, seed=None):
         """
@@ -60,13 +53,7 @@ class BaseDistribution():
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        if seed:
-            random = RandomState(seed)
-            data = self._sample_train_dataset_core(n_train, random)
-        else:
-            data = self._sample_train_dataset_core(n_train)
-
-        return data
+        return self._sample_train_dataset_core(n_train, get_random(seed) if seed else get_random())
 
 class GenerativeDistribution(BaseDistribution):
     def __init__(self, fraction_protected, bias=False):
@@ -100,13 +87,13 @@ class GenerativeDistribution(BaseDistribution):
         """
         raise NotImplementedError("Subclass must override sample_labels(self, x, s).")
 
-    def _sample_train_dataset_core(self, n_train, random=np.random):
+    def _sample_train_dataset_core(self, n_train, random):
         x, s = self._sample_features(n_train, self.fraction_protected, random)
         y = self._sample_labels(x, s, random)
 
         return x, s, y
 
-    def _sample_test_dataset_core(self, n_test, random=np.random):
+    def _sample_test_dataset_core(self, n_test, random):
         return self.sample_train_dataset(n_test)
 
 class SplitDistribution(GenerativeDistribution):
@@ -297,13 +284,13 @@ class ResamplingDistribution(BaseDistribution):
         dim = self.x_test.shape[1]
         return dim + 1 if self.bias else dim
 
-    def _sample_train_dataset_core(self, n_train, random=np.random):
+    def _sample_train_dataset_core(self, n_train, random):
         n = min(self.total_training_samples, n_train)
         indices = random.choice(self.training_sample_indices, n, replace=True)
 
         return self.x[indices].reshape((n, -1)), self.y[indices].reshape((n, -1)), self.s[indices].reshape((n, -1))
 
-    def _sample_test_dataset_core(self, n_test=None, random=np.random):
+    def _sample_test_dataset_core(self, n_test, random):
         n = min(self.total_test_samples, n_test) if n_test is not None else self.total_test_samples
         indices = random.choice(self.test_sample_indices, n, replace=True)
 

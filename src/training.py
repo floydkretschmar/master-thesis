@@ -4,7 +4,6 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-import numpy as np
 import multiprocessing as mp
 from pathos.multiprocessing import ProcessingPool as Pool
 import time
@@ -20,7 +19,7 @@ from src.optimization import FairnessFunction, UtilityFunction
 
 class _Trainer():
     def _training_iteration(self, training_parameters, training_method):
-        np.random.seed()
+        # np.random.seed()
         results_over_lambdas = []
         x_test, s_test, y_test = training_parameters["test"]
 
@@ -154,8 +153,8 @@ def _prepare_training(training_parameters):
             training_parameters['lagrangian_optimization']['iterations'])
 
     # generate one set of test data across all threads in advance
-    current_training_parameters["test"] = training_parameters["distribution"].sample_test_dataset(
-        n_test=training_parameters["test"]["num_samples"])
+    current_training_parameters["test"] = deepcopy(training_parameters["distribution"].sample_test_dataset(
+        n_test=training_parameters["test"]["num_samples"]))
 
     # convert utility and fairness functions into appropriate internal functions
     current_training_parameters["model"]["utility_function"] = UtilityFunction(

@@ -7,7 +7,7 @@ if root_path not in sys.path:
 import numpy as np
 from copy import deepcopy
 #pylint: disable=no-name-in-module
-from src.util import sigmoid
+from src.util import sigmoid, get_random
 from src.optimization import ManualGradientOptimizer
 
 
@@ -40,8 +40,8 @@ class BasePolicy():
         features = self._extract_features(x, s)
         probability = self._probability(features)
 
-        return np.expand_dims(np.random.binomial(1, probability).astype(float), axis=1), np.expand_dims(probability,
-                                                                                                        axis=1)
+        return np.expand_dims(get_random().binomial(1, probability).astype(float), axis=1), np.expand_dims(probability,
+                                                                                                           axis=1)
 
     def _extract_features(self, x, s):
         """ Extracts the relevant features from the sample.

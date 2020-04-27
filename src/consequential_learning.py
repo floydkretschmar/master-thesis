@@ -9,7 +9,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 from src.policy import LogisticPolicy
-from src.util import stack
+from src.util import stack, get_random
 from src.optimization import DifferentiablePenaltyOptimizationTarget, \
     DifferentiableLagrangianOptimizationTarget
 
@@ -52,7 +52,7 @@ class BaseLearningAlgorithm():
         """     
         for _ in range(0, epochs):
             # minibatching     
-            indices = np.random.permutation(data["x"].shape[0])
+            indices = get_random().permutation(data["x"].shape[0])
             for batch_start in range(0, len(indices), batch_size):
                 batch_end = min(batch_start + batch_size, len(indices))
                 # only train if there is a large enough sample size to build at least one full batch

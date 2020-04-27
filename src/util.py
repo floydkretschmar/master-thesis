@@ -4,12 +4,21 @@ import json
 import numbers
 
 import numpy as np
+from numpy.random import RandomState
 
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
+
+def get_random(seed=None):
+    if seed is None:
+        return RandomState()
+    else:
+        return RandomState(seed)
+
+
 def get_list_of_seeds(number_of_seeds):
     max_value = 2 ** 32 - 1
-    seeds = np.random.randint(
+    seeds = get_random().randint(
         0,
         max_value,
         size=number_of_seeds,
@@ -167,5 +176,5 @@ def train_test_split(x, y, s, test_size):
     indices = np.array(range(x.shape[0]))
 
     boundary = int(len(indices) * test_size)
-    test_indices, train_indices = np.split(np.random.permutation(indices), [boundary])
+    test_indices, train_indices = np.split(get_random().permutation(indices), [boundary])
     return x[train_indices], x[test_indices], y[train_indices], y[test_indices], s[train_indices], s[test_indices]
