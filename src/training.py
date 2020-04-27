@@ -6,6 +6,7 @@ if root_path not in sys.path:
 
 import numpy as np
 import multiprocessing as mp
+from pathos.multiprocessing import ProcessingPool as Pool
 import time
 from pathlib import Path
 from copy import deepcopy
@@ -15,6 +16,7 @@ from src.consequential_learning import ConsequentialLearning, DualGradientConseq
 from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs
 from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 from src.optimization import FairnessFunction, UtilityFunction
+
 
 class _Trainer():
     def _training_iteration(self, training_parameters, training_method):
@@ -64,12 +66,13 @@ class _Trainer():
         if asynchronous:
             apply_results = []
             results_per_iterations = []
-            pool = mp.Pool(mp.cpu_count())
+            pool = Pool(mp.cpu_count())
             for _ in range(0, iterations):
-                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
-            pool.close()
-            pool.join()
-            
+                # apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
+                apply_results.append(pool.apipe(self._training_iteration, training_parameters, training_method))
+            # pool.close()
+            # pool.join()
+
             for result in apply_results:
                 results_per_iterations.append(result.get())
         else:
@@ -122,7 +125,7 @@ def _generate_data_set(training_parameters):
     for _ in range(0, training_parameters["parameter_optimization"]["time_steps"]):
         theta_train_x, theta_train_s, theta_train_y = distribution.sample_train_dataset(n_train=num_decisions)
         theta_train_datasets.append((theta_train_x, theta_train_s, theta_train_y))
-   
+
     data = {
         'training': {
             "theta": theta_train_datasets
