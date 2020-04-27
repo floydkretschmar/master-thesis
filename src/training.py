@@ -13,7 +13,7 @@ from copy import deepcopy
 import numbers
 
 from src.consequential_learning import ConsequentialLearning, DualGradientConsequentialLearning
-from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs
+from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, get_list_of_seeds
 from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 from src.optimization import FairnessFunction, UtilityFunction
 
@@ -22,16 +22,17 @@ class _Trainer():
     def _training_iteration(self, training_parameters, training_method):
         np.random.seed()
         results_over_lambdas = []
+        x_test, s_test, y_test = training_parameters["test"]
 
         for results, model_parameters in training_method(training_parameters):
             decisions_over_time, fairness_over_time, utility_over_time = results
             statistics = Statistics(
                 predictions=decisions_over_time,
-                observations=training_parameters["data"]["test"][0],
+                observations=x_test,
                 fairness=fairness_over_time,
                 utility=utility_over_time,
-                protected_attributes=training_parameters["data"]["test"][1],
-                ground_truths=training_parameters["data"]["test"][2])
+                protected_attributes=s_test,
+                ground_truths=y_test)
             results_over_lambdas.append((statistics, deepcopy(model_parameters)))
 
         return results_over_lambdas
@@ -59,9 +60,7 @@ class _Trainer():
                     
         return statistics_over_lambdas, model_parameters_over_lambdas
 
-    def train_over_iterations(self, training_parameters, training_method, iterations, asynchronous):        
-        results_per_iterations = []
-
+    def train_over_iterations(self, training_parameters, training_method, iterations, asynchronous):
         # multithreaded runs of training
         if asynchronous:
             apply_results = []
@@ -93,52 +92,23 @@ def _check_for_missing_training_parameters(training_parameters):
     Args:
         training_parameters: The parameters used to configure the consequential learning algorithm.
     """
-    check_for_missing_kwargs("training()", ["experiment_name", "model", "parameter_optimization", "data"], training_parameters)
+    check_for_missing_kwargs("training()",
+                             ["experiment_name", "model", "parameter_optimization", "test", "distribution"],
+                             training_parameters)
     check_for_missing_kwargs(
         "training()",
         ["utility_function", "fairness_function", "fairness_gradient_function", "feature_map",
          "learn_on_entire_history", "use_sensitve_attributes", "bias", "initial_theta", "initial_lambda"],
         training_parameters["model"])
-    check_for_missing_kwargs("training()", ["distribution", "num_test_samples"], training_parameters["data"])
-    check_for_missing_kwargs("training()", ["time_steps", "epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_decisions"], training_parameters["parameter_optimization"])
+    check_for_missing_kwargs("training()", ["num_samples"], training_parameters["test"])
+    check_for_missing_kwargs("training()",
+                             ["time_steps", "epochs", "batch_size", "learning_rate", "decay_rate", "decay_step",
+                              "num_batches"], training_parameters["parameter_optimization"])
 
     if "lagrangian_optimization" in training_parameters:
-        check_for_missing_kwargs("training()", ["epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_decisions"], training_parameters["lagrangian_optimization"])
-
-
-def _generate_data_set(training_parameters):
-    """ Generates one training and test dataset to be used across all lambdas.
-        
-    Args:
-        training_parameters: The parameters used to configure the consequential learning algorithm.
-
-    Returns:
-        data: A dictionary containing both the test and training dataset.
-    """
-    num_decisions = training_parameters["parameter_optimization"]["num_decisions"]
-    distribution = training_parameters["data"]["distribution"]
-
-    test_dataset = distribution.sample_test_dataset(
-        n_test=training_parameters["data"]["num_test_samples"])
-
-    theta_train_datasets = []
-    for _ in range(0, training_parameters["parameter_optimization"]["time_steps"]):
-        theta_train_x, theta_train_s, theta_train_y = distribution.sample_train_dataset(n_train=num_decisions)
-        theta_train_datasets.append((theta_train_x, theta_train_s, theta_train_y))
-
-    data = {
-        'training': {
-            "theta": theta_train_datasets
-        },
-        'test': test_dataset
-    } 
-
-    if "lagrangian_optimization" in training_parameters:
-        num_decisions_lambda = training_parameters["lagrangian_optimization"]["num_decisions"]
-        data["training"]["lambda"] = distribution.sample_train_dataset(
-            n_train=num_decisions_lambda)
-
-    return data
+        check_for_missing_kwargs("training()",
+                                 ["epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_batches"],
+                                 training_parameters["lagrangian_optimization"])
 
 
 def _prepare_training(training_parameters):
@@ -170,18 +140,22 @@ def _prepare_training(training_parameters):
     else:
         base_save_path = None
 
-    # pre-generate and save data
-    current_training_parameters["data"] = _generate_data_set(training_parameters)
+    # if fixed seeding for parameter optimization: get one seed per time step for data generation
+    if "fix_seeds" in current_training_parameters["parameter_optimization"] \
+            and current_training_parameters["parameter_optimization"]["fix_seeds"]:
+        current_training_parameters["parameter_optimization"]["seeds"] = get_list_of_seeds(
+            training_parameters['parameter_optimization']['time_steps'])
 
-    if base_save_path is not None:
-        data_save_path = "{}/data.json".format(base_save_path)
-        data_dict = {
-            "x": current_training_parameters["data"]["test"][0].tolist(),
-            "s": current_training_parameters["data"]["test"][1].tolist(),
-            "y": current_training_parameters["data"]["test"][2].tolist()
-        }
-        save_dictionary(data_dict, data_save_path)
-        del data_dict
+    # if fixed seeding for parameter lagrangian_optimization: get one seed per iteration for data generation
+    if "lagrangian_optimization" in current_training_parameters \
+            and "fix_seeds" in current_training_parameters["lagrangian_optimization"] \
+            and current_training_parameters["lagrangian_optimization"]["fix_seeds"]:
+        current_training_parameters["lagrangian_optimization"]["seeds"] = get_list_of_seeds(
+            training_parameters['lagrangian_optimization']['iterations'])
+
+    # generate one set of test data across all threads in advance
+    current_training_parameters["test"] = training_parameters["distribution"].sample_test_dataset(
+        n_test=training_parameters["test"]["num_samples"])
 
     # convert utility and fairness functions into appropriate internal functions
     current_training_parameters["model"]["utility_function"] = UtilityFunction(

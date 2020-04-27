@@ -5,6 +5,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
+from numpy.random import RandomState
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
@@ -21,7 +22,13 @@ class BaseDistribution():
     def feature_dimension(self):
         raise NotImplementedError("Subclass must override feature_dimension property.")
 
-    def sample_test_dataset(self, n_test):
+    def _sample_test_dataset_core(self, n_test, random=np.random):
+        raise NotImplementedError("Subclass must override _sample_test_dataset_core(self, n_test).")
+
+    def _sample_train_dataset_core(self, n_train, random=np.random):
+        raise NotImplementedError("Subclass must override _sample_train_dataset_core(self, n_train).")
+
+    def sample_test_dataset(self, n_test, seed=None):
         """
         Draws a nxd matrix of non-sensitive feature vectors, a n-dimensional vector of sensitive attributes 
         and a n-dimensional ground truth vector used for testing.
@@ -33,10 +40,15 @@ class BaseDistribution():
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        raise NotImplementedError("Subclass must override sample_test_dataset(self, n_test).")    
+        if seed:
+            random = RandomState(seed)
+            data = self._sample_test_dataset_core(n_test, random)
+        else:
+            data = self._sample_test_dataset_core(n_test)
 
+        return data
 
-    def sample_train_dataset(self, n_train):
+    def sample_train_dataset(self, n_train, seed=None):
         """
         Draws a nxd matrix of non-sensitive feature vectors, a n-dimensional vector of sensitive attributes 
         and a n-dimensional ground truth vector used for training.
@@ -48,14 +60,20 @@ class BaseDistribution():
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        raise NotImplementedError("Subclass must override sample_train_dataset(self, n_train).")  
+        if seed:
+            random = RandomState(seed)
+            data = self._sample_train_dataset_core(n_train, random)
+        else:
+            data = self._sample_train_dataset_core(n_train)
+
+        return data
 
 class GenerativeDistribution(BaseDistribution):
     def __init__(self, fraction_protected, bias=False):
         super(GenerativeDistribution, self).__init__(bias)
         self.fraction_protected = fraction_protected
 
-    def sample_features(self, n, fraction_protected):
+    def _sample_features(self, n, fraction_protected, random):
         """
         Draws both a nxd matrix of non-sensitive feature vectors, as well as a n-dimensional vector
         of sensitive attributes.
@@ -67,9 +85,9 @@ class GenerativeDistribution(BaseDistribution):
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        raise NotImplementedError("Subclass must override sample_features(self, n).")    
+        raise NotImplementedError("Subclass must override sample_features(self, n).")
 
-    def sample_labels(self, x, s):
+    def _sample_labels(self, x, s, random):
         """
         Draws a n-dimensional ground truth vector.
 
@@ -80,15 +98,15 @@ class GenerativeDistribution(BaseDistribution):
         Returns:
             y: n-dimensional ground truth vector
         """
-        raise NotImplementedError("Subclass must override sample_labels(self, x, s).")    
+        raise NotImplementedError("Subclass must override sample_labels(self, x, s).")
 
-    def sample_train_dataset(self, n_train):
-        x, s = self.sample_features(n_train, self.fraction_protected)
-        y = self.sample_labels(x, s)
+    def _sample_train_dataset_core(self, n_train, random=np.random):
+        x, s = self._sample_features(n_train, self.fraction_protected, random)
+        y = self._sample_labels(x, s, random)
 
         return x, s, y
 
-    def sample_test_dataset(self, n_test):
+    def _sample_test_dataset_core(self, n_test, random=np.random):
         return self.sample_train_dataset(n_test)
 
 class SplitDistribution(GenerativeDistribution):
@@ -99,27 +117,27 @@ class SplitDistribution(GenerativeDistribution):
     def feature_dimension(self):
         return 2 if self.bias else 1
 
-    def sample_features(self, n, fraction_protected):
+    def _sample_features(self, n, fraction_protected, random):
         s = (
-                np.random.rand(n, 1) < fraction_protected
+                random.rand(n, 1) < fraction_protected
         ).astype(int)
-        x = 3.5 * np.random.randn(n, 1) + 3 * (0.5 - s)
+        x = 3.5 * random.randn(n, 1) + 3 * (0.5 - s)
 
         if self.bias:
             ones = np.ones((n, 1))
             x = np.hstack((ones, x))
 
-        return x, s 
+        return x, s
 
-    def sample_labels(self, x, s):
+    def _sample_labels(self, x, s, random):
         if self.bias:
-            x = x[:,1]
+            x = x[:, 1]
 
         yprob = 0.8 * sigmoid(0.6 * (x + 3)) * sigmoid(
             -5 * (x - 3)
         ) + sigmoid(x - 5)
 
-        return np.expand_dims(np.random.binomial(1, yprob), axis=1)
+        return np.expand_dims(random.binomial(1, yprob), axis=1)
 
 class UncalibratedScore(GenerativeDistribution):
     """An distribution modelling an uncalibrated score."""
@@ -147,9 +165,9 @@ class UncalibratedScore(GenerativeDistribution):
         den = 2 * np.tan(self.bound) + self.height
         return num / den
 
-    def sample_features(self, n, fraction_protected):
+    def _sample_features(self, n, fraction_protected, random):
         s = (
-            np.random.rand(n, 1) < fraction_protected
+                random.rand(n, 1) < fraction_protected
         ).astype(int)
 
         shifts = s - 0.5
@@ -163,12 +181,12 @@ class UncalibratedScore(GenerativeDistribution):
 
         return x, s
 
-    def sample_labels(self, x, s):
+    def _sample_labels(self, x, s, random):
         if self.bias:
             x = x[:, 1]
 
         yprob = self._pdf(x)
-        return np.expand_dims(np.random.binomial(1, yprob), axis=1)
+        return np.expand_dims(random.binomial(1, yprob), axis=1)
 
 
 class FICODistribution(GenerativeDistribution):
@@ -181,7 +199,7 @@ class FICODistribution(GenerativeDistribution):
     def feature_dimension(self):
         return 2 if self.bias else 1
 
-    def sample_features(self, n, fraction_protected):
+    def _sample_features(self, n, fraction_protected, random):
         fico_cdf = self.fico_data["cdf"]
 
         unprotected_cdf = fico_cdf["White"].values
@@ -189,14 +207,14 @@ class FICODistribution(GenerativeDistribution):
         shifted_scores = (fico_cdf.index.values * 10) + 10
 
         s = (
-                np.random.rand(n, 1) < fraction_protected
+                random.rand(n, 1) < fraction_protected
         ).astype(int).squeeze()
 
         s0_idx = np.where(s == 0)[0]
         s1_idx = np.where(s == 1)[0]
 
-        rands_s0 = np.random.randint(0, 10 ** self.precision, len(s0_idx)) / float(10 ** self.precision)
-        rands_s1 = np.random.randint(0, 10 ** self.precision, len(s1_idx)) / float(10 ** self.precision)
+        rands_s0 = random.randint(0, 10 ** self.precision, len(s0_idx)) / float(10 ** self.precision)
+        rands_s1 = random.randint(0, 10 ** self.precision, len(s1_idx)) / float(10 ** self.precision)
 
         previous_unprotected_threshold = -1
         previous_protected_threshold = -1
@@ -222,7 +240,7 @@ class FICODistribution(GenerativeDistribution):
 
         return x, s.reshape(-1, 1)
 
-    def sample_labels(self, x, s):
+    def _sample_labels(self, x, s, random):
         if self.bias:
             x = x[:, 1]
 
@@ -241,10 +259,10 @@ class FICODistribution(GenerativeDistribution):
             x_s1_current_score_idx = x_current_score_idx[s_current_score == 1]
 
             y_unprotected = (
-                    np.random.rand(len(x_s0_current_score_idx), 1) < non_defaulters_unprotected[idx]
+                    random.rand(len(x_s0_current_score_idx), 1) < non_defaulters_unprotected[idx]
             ).astype(int).squeeze()
             y_protected = (
-                    np.random.rand(len(x_s1_current_score_idx), 1) < non_defaulters_protected[idx]
+                    random.rand(len(x_s1_current_score_idx), 1) < non_defaulters_protected[idx]
             ).astype(int).squeeze()
 
             y[x_s0_current_score_idx] = y_unprotected
@@ -279,15 +297,15 @@ class ResamplingDistribution(BaseDistribution):
         dim = self.x_test.shape[1]
         return dim + 1 if self.bias else dim
 
-    def sample_train_dataset(self, n_train):
+    def _sample_train_dataset_core(self, n_train, random=np.random):
         n = min(self.total_training_samples, n_train)
-        indices = np.random.choice(self.training_sample_indices, n, replace=True)
+        indices = random.choice(self.training_sample_indices, n, replace=True)
 
         return self.x[indices].reshape((n, -1)), self.y[indices].reshape((n, -1)), self.s[indices].reshape((n, -1))
 
-    def sample_test_dataset(self, n_test=None):
+    def _sample_test_dataset_core(self, n_test=None, random=np.random):
         n = min(self.total_test_samples, n_test) if n_test is not None else self.total_test_samples
-        indices = np.random.choice(self.test_sample_indices, n, replace=True)
+        indices = random.choice(self.test_sample_indices, n, replace=True)
 
         return self.x_test[indices].reshape((n, -1)), self.y_test[indices].reshape((n, -1)), self.s_test[
             indices].reshape((n, -1))

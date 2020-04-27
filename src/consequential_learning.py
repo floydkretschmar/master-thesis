@@ -121,7 +121,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             decisions_over_time: The decisions made by a policy at timestep t over all time steps
             trained_model_parameters: The model parameters at the final timestep T
         """
-        x_test, s_test, y_test = training_parameters["data"]["test"]
+        distribution = training_parameters["distribution"]
+        x_test, s_test, y_test = training_parameters["test"]
 
         # Store initial policy decisions
         decisions_over_time, decision_probabilities = policy(x_test, s_test)
@@ -145,8 +146,13 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 theta_learning_rate *= theta_decay_rate
 
             # Collect training data
-            data = training_parameters["data"]["training"]["theta"][i]
+            data = distribution.sample_train_dataset(
+                n_train=training_parameters["parameter_optimization"]["batch_size"]
+                        * training_parameters["parameter_optimization"]["num_batches"],
+                seed=training_parameters["parameter_optimization"]["seeds"][i]
+                if "seeds" in training_parameters["parameter_optimization"] else None)
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
+
             ips_weights = policy._ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
@@ -248,6 +254,8 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
 
         optimizer = policy.optimizer(optimization_target)
 
+        distribution = training_parameters["distribution"]
+
         for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
             # decay lagrangian learning rate
             if i % lambda_decay_step == 0 and i != 0:
@@ -256,7 +264,11 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
             yield self._train_model_parameters(policy, optimizer, training_parameters)
 
             # Get lambda training data
-            data = training_parameters["data"]["training"]["lambda"]
+            data = distribution.sample_train_dataset(
+                n_train=training_parameters["lagrangian_optimization"]["batch_size"]
+                        * training_parameters["lagrangian_optimization"]["num_batches"],
+                seed=training_parameters["lagrangian_optimization"]["seeds"][i]
+                if "seeds" in training_parameters["lagrangian_optimization"] else None)
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
 
             data = {

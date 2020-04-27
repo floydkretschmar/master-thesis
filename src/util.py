@@ -7,6 +7,14 @@ import numpy as np
 
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
+def get_list_of_seeds(number_of_seeds):
+    max_value = 2 ** 32 - 1
+    seeds = np.random.randint(
+        0,
+        max_value,
+        size=number_of_seeds,
+        dtype=np.dtype("int64"))
+    return seeds
 
 def sigmoid(x):
     return np.where(x >= 0,
