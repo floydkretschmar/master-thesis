@@ -120,7 +120,7 @@ def _prepare_training(training_parameters):
         current_training_parameters: The pre processed training parameters.
     """
     _check_for_missing_training_parameters(training_parameters)
-    current_training_parameters = deepcopy(training_parameters)
+    current_training_parameters = training_parameters
 
     # save parameter settings
     if "save_path" in training_parameters:
@@ -153,8 +153,8 @@ def _prepare_training(training_parameters):
             training_parameters['lagrangian_optimization']['iterations'])
 
     # generate one set of test data across all threads in advance
-    current_training_parameters["test"] = deepcopy(training_parameters["distribution"].sample_test_dataset(
-        n_test=training_parameters["test"]["num_samples"]))
+    current_training_parameters["test"] = training_parameters["distribution"].sample_test_dataset(
+        n_test=training_parameters["test"]["num_samples"])
 
     # convert utility and fairness functions into appropriate internal functions
     current_training_parameters["model"]["utility_function"] = UtilityFunction(
@@ -218,10 +218,20 @@ def train(training_parameters, iterations=30, asynchronous=True):
     current_training_parameters, base_save_path = _prepare_training(training_parameters)
     trainer = _Trainer()
 
-    if isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number) and "lagrangian_optimization" not in training_parameters:
-        print("---------- Single training run for fixed lambda ----------")
+    if isinstance(current_training_parameters["model"]["initial_lambda"],
+                  numbers.Number) and "lagrangian_optimization" not in training_parameters:
+        info_string = "// LR = {} // TS = {} // E = {} // BS = {} // NB = {}".format(
+            current_training_parameters["parameter_optimization"]["learning_rate"],
+            current_training_parameters["parameter_optimization"]["time_steps"],
+            current_training_parameters["parameter_optimization"]["epochs"],
+            current_training_parameters["parameter_optimization"]["batch_size"],
+            current_training_parameters["parameter_optimization"]["num_batches"])
+        print("## STARTED Single training run {} ##".format(info_string))
         training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, asynchronous)
+        overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters,
+                                                                             training_algorithm.train, iterations,
+                                                                             asynchronous)
+        print("## ENDED Single training run {} ##".format(info_string))
     elif not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
         print("---------- Training with fixed lambdas ----------")
         fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
