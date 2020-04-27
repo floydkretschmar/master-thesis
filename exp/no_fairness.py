@@ -8,6 +8,7 @@ if module_path not in sys.path:
     sys.path.append(module_path)
 
 from pathos.pools import _ThreadPool as Pool
+from queue import Queue
 import multiprocessing as mp
 from copy import deepcopy
 
@@ -37,6 +38,7 @@ training_parameters = {
     'model': {
         'fairness_function': lambda **fairness_params: [0.0],
         'fairness_gradient_function': lambda **fairness_params: [0.0],
+        'utility_function': lambda **util_params: cost_utility(cost_factor=args.c, **util_params),
         'feature_map': IdentityFeatureMap(distibution.feature_dimension),
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
@@ -45,6 +47,7 @@ training_parameters = {
         'initial_lambda': 0.0
     },
     'parameter_optimization': {
+        'learning_rate': args.lr,
         'learning_rate': 1,
         'decay_rate': 1,
         'decay_step': 10000,
@@ -55,29 +58,15 @@ training_parameters = {
     }
 }
 
-apply_results = []
-results_per_iterations = []
-
-
-def process_result(result):
-    statistics, model_parameters, run_path = result
-    plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
-    plot_median(statistics, "{}/results_median_time.png".format(run_path))
-
-
+callback_queue = Queue()
 pool = Pool(mp.cpu_count())
-threads = []
-
-training_parameters['model']['utility_function'] = lambda **util_params: cost_utility(cost_factor=args.c, **util_params)
-training_parameters['parameter_optimization']['learning_rate'] = args.lr
-# for learning_rate in [0.001, 0.01, 0.1, 1]:
-# thread_count = 0
+thread_count = 0
 
 for time_steps in [50, 100, 200]:
     training_parameters['parameter_optimization']['time_steps'] = time_steps
-    for epochs in [1, 5, 10]:
+    for epochs in [1, 5, 10, 50]:
         training_parameters['parameter_optimization']['epochs'] = epochs
-        for batch_size in [50, 250, 500]:
+        for batch_size in [25, 50, 250, 500]:
             training_parameters['parameter_optimization']['batch_size'] = batch_size
             for num_batches in [10, 100, 1000]:
                 training_parameters['parameter_optimization']['num_batches'] = num_batches
@@ -88,11 +77,19 @@ for time_steps in [50, 100, 200]:
                                                                                                 batch_size,
                                                                                                 num_batches)
 
-                # threads.append(pool.apipe(train, training_parameters, 15, True))
-                pool.apply_async(train, args=(deepcopy(training_parameters), 30, True), callback=process_result,
+                pool.apply_async(train,
+                                 args=(deepcopy(training_parameters), 30, True),
+                                 callback=lambda result: callback_queue.put(result),
                                  error_callback=lambda e: print(e))
-                # thread_count += 1
-                # print(thread_count)
+                thread_count += 1
+
+while thread_count > 0:
+    result = callback_queue.get()
+    statistics, model_parameters, run_path = result
+
+    plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
+    plot_median(statistics, "{}/results_median_time.png".format(run_path))
+    thread_count -= 1
 
 pool.close()
 pool.join()
