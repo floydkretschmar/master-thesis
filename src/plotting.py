@@ -5,6 +5,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import matplotlib.pyplot as plt
+import tikzplotlib as tpl
 from src.training_evaluation import Statistics, ModelParameters
 
 def _plot_results(
@@ -84,6 +85,10 @@ def _plot_results(
         plt.show()
     else:
         plt.savefig(file_path)
+        tpl.save(file_path.replace(".png", ".tex"), figure=f, axis_width='\\figwidth', axis_height='\\figheight',
+                 tex_relative_path_to_data='.')
+
+    plt.close('all')
 
 
 def plot_median(statistics, file_path=None, model_parameters=None, plot_fairness=False):
