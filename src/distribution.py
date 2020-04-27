@@ -17,6 +17,10 @@ class BaseDistribution():
     def __init__(self, bias=False):
         self.bias = bias
 
+    @property
+    def feature_dimension(self):
+        raise NotImplementedError("Subclass must override feature_dimension property.")
+
     def sample_test_dataset(self, n_test):
         """
         Draws a nxd matrix of non-sensitive feature vectors, a n-dimensional vector of sensitive attributes 
@@ -91,9 +95,13 @@ class SplitDistribution(GenerativeDistribution):
     def __init__(self, fraction_protected, bias=False):
         super(SplitDistribution, self).__init__(fraction_protected=fraction_protected, bias=bias)
 
+    @property
+    def feature_dimension(self):
+        return 2 if self.bias else 1
+
     def sample_features(self, n, fraction_protected):
         s = (
-            np.random.rand(n, 1) < fraction_protected
+                np.random.rand(n, 1) < fraction_protected
         ).astype(int)
         x = 3.5 * np.random.randn(n, 1) + 3 * (0.5 - s)
 
@@ -115,6 +123,10 @@ class SplitDistribution(GenerativeDistribution):
 
 class UncalibratedScore(GenerativeDistribution):
     """An distribution modelling an uncalibrated score."""
+
+    @property
+    def feature_dimension(self):
+        return 2 if self.bias else 1
 
     def __init__(self, fraction_protected, bias=False):
         super(UncalibratedScore, self).__init__(fraction_protected=fraction_protected, bias=bias)
@@ -164,6 +176,10 @@ class FICODistribution(GenerativeDistribution):
         super(FICODistribution, self).__init__(fraction_protected=fraction_protected, bias=bias)
         self.fico_data = build_FICO_dataset()
         self.precision = 4
+
+    @property
+    def feature_dimension(self):
+        return 2 if self.bias else 1
 
     def sample_features(self, n, fraction_protected):
         fico_cdf = self.fico_data["cdf"]
@@ -258,6 +274,11 @@ class ResamplingDistribution(BaseDistribution):
             )
         self.feature_dim = self.x.shape[1]
 
+    @property
+    def feature_dimension(self):
+        dim = self.x_test.shape[1]
+        return dim + 1 if self.bias else dim
+
     def sample_train_dataset(self, n_train):
         n = min(self.total_training_samples, n_train)
         indices = np.random.choice(self.training_sample_indices, n, replace=True)
@@ -330,5 +351,3 @@ class AdultCreditDistribution(ResamplingDistribution):
 
         return x.astype(float), s.astype(float), y.astype(float)
 
-
-dist = AdultCreditDistribution(0.2)
