@@ -32,6 +32,7 @@ parser.add_argument('-nb', '--num_batches', type=int, nargs='+', required=True,
 parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
 parser.add_argument('-a', '--asynchonous', action='store_true')
 parser.add_argument('--plot', required=False, action='store_true')
+parser.add_argument('-pid', '--process_id', type=str, required=False, help="process id for identification")
 
 args = parser.parse_args()
 
@@ -87,6 +88,7 @@ for time_steps in args.time_steps:
                                                                                             epochs,
                                                                                             batch_size,
                                                                                             num_batches)
+                    training_parameters["save_path_subfolder"] = args.process_id
 
                 pool.apply_async(train,
                                  args=(deepcopy(training_parameters), args.iterations, args.asynchonous),

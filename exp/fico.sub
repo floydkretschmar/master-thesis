@@ -2,7 +2,6 @@
 # RUNTIME LIMITATION                                                      #
 # ----------------------------------------------------------------------- #
 
-
 # Maximum expected execution time for the job, in seconds
 # 43200 = 12h
 # 86400 = 24h
@@ -15,7 +14,7 @@ periodic_remove = (JobStatus =?= 2) && ((CurrentTime - JobCurrentStartDate) >= $
 # RESSOURCE SELECTION                                                     #
 # ----------------------------------------------------------------------- #
 
-request_memory = 2048
+request_memory = 1024
 request_cpus = 1
 
 # ----------------------------------------------------------------------- #
@@ -33,178 +32,181 @@ log = /home/fkretschmar/master-thesis/res/FICO/log/experiment.$(Process).log
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 500 -nb 1000
-queue 20
+SelectedCost = 0.5
+SelectedLearningRate = 0.01
+
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 1 -bs 500 -nb 1000 -pid $(Process)
+queue 30
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 500 -nb 1000
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 1 -bs 500 -nb 1000 -pid $(Process)
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 500 -nb 1000
-queue 20
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 1 -bs 500 -nb 1000 -pid $(Process)
+queue 30
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 500 -nb 1000
-queue 20
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 5 -bs 500 -nb 1000 -pid $(Process)
+queue 30
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 500 -nb 1000
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 5 -bs 500 -nb 1000 -pid $(Process)
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 500 -nb 1000
-queue 20
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 5 -bs 500 -nb 1000 -pid $(Process)
+queue 30
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 500 -nb 1000
-queue 20
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/FICO/raw -ts 50 -e 10 -bs 500 -nb 1000 -pid $(Process)
+queue 30
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 500 -nb 1000
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 100 -e 10 -bs 500 -nb 1000 -pid $(Process)
 
 
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 50 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 50 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 50 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 250 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 250 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 250 -nb 1000
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 500 -nb 10
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 500 -nb 100
-queue 20
-arguments = no_fairness.py -d FICO -c 0.5 -lr 0.01 -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 500 -nb 1000
-queue 20
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d FICO -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/FICO/raw -ts 200 -e 10 -bs 500 -nb 1000 -pid $(Process)
+queue 30

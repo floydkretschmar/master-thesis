@@ -129,10 +129,14 @@ def _prepare_training(training_parameters):
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
 
         timestamp = time.gmtime()
-        ts_folder = time.strftime("%Y-%m-%d-%H-%M-%S", timestamp)
+
+        if "save_path_subfolder" in training_parameters:
+            ts_folder = training_parameters["save_path_subfolder"]
+        else:
+            ts_folder = time.strftime("%Y-%m-%d-%H-%M-%S", timestamp)
+
         base_save_path = "{}/{}".format(base_save_path, ts_folder)
         Path(base_save_path).mkdir(parents=True, exist_ok=True)
-
         parameter_save_path = "{}/parameters.json".format(base_save_path)
 
         serialized_dictionary = serialize_dictionary(current_training_parameters)
