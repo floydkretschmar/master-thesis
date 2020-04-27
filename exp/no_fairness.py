@@ -31,6 +31,7 @@ parser.add_argument('-nb', '--num_batches', type=int, nargs='+', required=True,
                     help='list of number of batches to be used')
 parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
 parser.add_argument('-a', '--asynchonous', action='store_true')
+parser.add_argument('--plot', required=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -105,8 +106,10 @@ while thread_count > 0:
         best_final_median_utility = final_median_utility
         best_utility_path = run_path
 
-    plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
-    plot_median(statistics, "{}/results_median_time.png".format(run_path))
+    if args.plot:
+        plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
+        plot_median(statistics, "{}/results_median_time.png".format(run_path))
+
     thread_count -= 1
 
 print(best_utility_path)
