@@ -20,7 +20,7 @@ THIRD_QUARTILE = "THIRD_QUARTILE"
 
 def _unserialize_value(value):
     if isinstance(value, dict):
-        return _unserialize_statistics_dictionary(value)
+        return _unserialize_dictionary(value)
     elif isinstance(value, list):
         return np.array(value)
     elif value == "NoneType":
@@ -29,7 +29,7 @@ def _unserialize_value(value):
         return value
 
 
-def _unserialize_statistics_dictionary(dictionary):
+def _unserialize_dictionary(dictionary):
     unserialized_dict = deepcopy(dictionary)
     for key, value in unserialized_dict.items():
         unserialized_dict[key] = _unserialize_value(value)
@@ -63,14 +63,21 @@ class ModelParameters():
             for _, parameters in iteration_dict.items():
                 lambdas_over_iterations.append(parameters["lambda"])
             return np.array(lambdas_over_iterations, dtype=float)
-        
+
         # multiple lambdas
         if len(self.dict) > 1:
             for _, iteration_dict in self.dict.items():
-                self.lagrangians = stack(self.lagrangians, get_lambda_over_iterations(iteration_dict).reshape(1, -1), axis=0)
+                self.lagrangians = stack(self.lagrangians, get_lambda_over_iterations(iteration_dict).reshape(1, -1),
+                                         axis=0)
         # single lambda
         else:
-            self.lagrangians = get_lambda_over_iterations(self.dict[0]).reshape(1, -1)
+            # self.lagrangians = get_lambda_over_iterations(self.dict[0]).reshape(1, -1)
+            self.lagrangians = get_lambda_over_iterations(next(iter(self.dict.values()))).reshape(1, -1)
+
+    @staticmethod
+    def build_from_serialized_dictionary(serialized_dict):
+        results = _unserialize_dictionary(serialized_dict)
+        return ModelParameters(results)
 
     def get_lagrangians(self, result_format):
         return build_result_dictionary(self.lagrangians)[result_format]
@@ -175,7 +182,7 @@ class Statistics():
     @staticmethod
     def build(predictions, observations, fairness, utility, protected_attributes, ground_truths):
         results = {
-            Statistics.X_VALUES: range(0, predictions.shape[1]),
+            Statistics.X_VALUES: list(range(0, predictions.shape[1])),
             Statistics.X_SCALE: "linear",
             Statistics.X_NAME: "Timestep"
         }
@@ -232,8 +239,8 @@ class Statistics():
         return Statistics(results)
 
     @staticmethod
-    def build_from_dictionary(serialized_dict):
-        results = _unserialize_statistics_dictionary(serialized_dict)
+    def build_from_serialized_dictionary(serialized_dict):
+        results = _unserialize_dictionary(serialized_dict)
         return Statistics(results)
 
     def _get_measure(self, prot, measure_key):

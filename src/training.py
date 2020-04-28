@@ -17,74 +17,6 @@ from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 from src.optimization import FairnessFunction, UtilityFunction
 
 
-class _Trainer():
-    def _training_iteration(self, training_parameters, training_method):
-        # np.random.seed()
-        results_over_lambdas = []
-        x_test, s_test, y_test = training_parameters["test"]
-
-        for results, model_parameters in training_method(training_parameters):
-            decisions_over_time, fairness_over_time, utility_over_time = results
-            statistics = Statistics.build(
-                predictions=decisions_over_time,
-                observations=x_test,
-                fairness=fairness_over_time,
-                utility=utility_over_time,
-                protected_attributes=s_test,
-                ground_truths=y_test)
-            results_over_lambdas.append((statistics, deepcopy(model_parameters)))
-
-        return results_over_lambdas
-
-    @staticmethod
-    def _process_results(results_per_iterations):
-        statistics_over_lambdas = []
-        model_parameters_over_lambdas = {}
-
-        for num_iteration, iteration_result in enumerate(results_per_iterations):
-            for num_lambda, lambda_result in enumerate(iteration_result):
-                statistics, model_parameters = lambda_result
-
-                if num_lambda >= len(statistics_over_lambdas):
-                    statistics_over_lambdas.append(statistics)
-                else:
-                    statistics_over_lambdas[num_lambda].merge(statistics)
-                
-                if num_lambda in model_parameters_over_lambdas:
-                    model_parameters_over_lambdas[num_lambda][num_iteration] = model_parameters
-                else:
-                    model_parameters_over_lambdas[num_lambda] = {
-                        num_iteration: model_parameters
-                    }
-                    
-        return statistics_over_lambdas, model_parameters_over_lambdas
-
-    def train_over_iterations(self, training_parameters, training_method, iterations, asynchronous):
-        # multithreaded runs of training
-        if asynchronous:
-            apply_results = []
-            results_per_iterations = []
-            pool = Pool(mp.cpu_count())
-            for _ in range(0, iterations):
-                # apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
-                apply_results.append(pool.apipe(self._training_iteration, training_parameters, training_method))
-            # pool.close()
-            # pool.join()
-
-            for result in apply_results:
-                results_per_iterations.append(result.get())
-        else:
-            results_per_iterations = []
-            for _ in range(0, iterations):
-                results_per_iterations.append(self._training_iteration(training_parameters, training_method))
-            
-        total_statistics, total_parameters = self._process_results(results_per_iterations)
-        if len(total_statistics) == 1:
-            return total_statistics[0], total_parameters
-
-        return total_statistics, total_parameters
-
-
 def _check_for_missing_training_parameters(training_parameters):
     """ Checks the dictionary of training parameters specified by the user for missing entries.
         
@@ -172,7 +104,30 @@ def _prepare_training(training_parameters):
         )
 
     return current_training_parameters, base_save_path
-     
+
+
+def _process_results(results_per_iterations):
+    statistics_over_lambdas = []
+    model_parameters_over_lambdas = {}
+
+    for num_iteration, iteration_result in enumerate(results_per_iterations):
+        for num_lambda, lambda_result in enumerate(iteration_result):
+            statistics, model_parameters = lambda_result
+
+            if num_lambda >= len(statistics_over_lambdas):
+                statistics_over_lambdas.append(statistics)
+            else:
+                statistics_over_lambdas[num_lambda].merge(statistics)
+
+            if num_lambda in model_parameters_over_lambdas:
+                model_parameters_over_lambdas[num_lambda][num_iteration] = model_parameters
+            else:
+                model_parameters_over_lambdas[num_lambda] = {
+                    num_iteration: model_parameters
+                }
+
+    return statistics_over_lambdas, model_parameters_over_lambdas
+
 
 def _save_results(base_save_path, statistics, model_parameters=None, sub_directory=None):
     """ Stores the training results (statistics and/or model parameters) in the specified path.
@@ -200,6 +155,51 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
     statistics_save_path = "{}statistics.json".format(lambda_path)
     serialized_statistics = statistics.to_dict()
     save_dictionary(serialized_statistics, statistics_save_path)
+
+
+class _Trainer():
+    def _training_iteration(self, training_parameters, training_method):
+        # np.random.seed()
+        results_over_lambdas = []
+        x_test, s_test, y_test = training_parameters["test"]
+
+        for results, model_parameters in training_method(training_parameters):
+            decisions_over_time, fairness_over_time, utility_over_time = results
+            statistics = Statistics.build(
+                predictions=decisions_over_time,
+                observations=x_test,
+                fairness=fairness_over_time,
+                utility=utility_over_time,
+                protected_attributes=s_test,
+                ground_truths=y_test)
+            results_over_lambdas.append((statistics, deepcopy(model_parameters)))
+
+        return results_over_lambdas
+
+    def train_over_iterations(self, training_parameters, training_method, iterations, asynchronous):
+        # multithreaded runs of training
+        if asynchronous:
+            apply_results = []
+            results_per_iterations = []
+            pool = Pool(mp.cpu_count())
+            for _ in range(0, iterations):
+                # apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
+                apply_results.append(pool.apipe(self._training_iteration, training_parameters, training_method))
+            # pool.close()
+            # pool.join()
+
+            for result in apply_results:
+                results_per_iterations.append(result.get())
+        else:
+            results_per_iterations = []
+            for _ in range(0, iterations):
+                results_per_iterations.append(self._training_iteration(training_parameters, training_method))
+
+        total_statistics, total_parameters = _process_results(results_per_iterations)
+        if len(total_statistics) == 1:
+            return total_statistics[0], total_parameters
+
+        return total_statistics, total_parameters
 
 
 def train(training_parameters, iterations=30, asynchronous=True):
