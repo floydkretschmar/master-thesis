@@ -215,3 +215,61 @@ arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedL
 queue 30
 arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 10 -bs 500 -nb 1000 -pid $(Process)
 queue 30
+
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -i 1 -a -p ../res/$(SelectedData)/raw -ts 50 -e 50 -bs 500 -nb 1000 -pid $(Process)
+queue 30
+
+
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 100 -e 50 -bs 500 -nb 1000 -pid $(Process)
+
+
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 50 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 50 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 50 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 250 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 250 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 250 -nb 1000 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 500 -nb 10 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 500 -nb 100 -pid $(Process)
+queue 30
+arguments = no_fairness.py -d $(SelectedData) -c $(SelectedCost) -lr $(SelectedLearningRate) -a -i 1 -p ../res/$(SelectedData)/raw -ts 200 -e 50 -bs 500 -nb 1000 -pid $(Process)
+queue 30
