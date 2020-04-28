@@ -1,17 +1,16 @@
 import argparse
+import multiprocessing as mp
 import os
 import sys
+from copy import deepcopy
+from queue import Queue
+
+import numpy as np
+from pathos.pools import _ThreadPool as Pool
 
 module_path = os.path.abspath(os.path.join('..'))
-
 if module_path not in sys.path:
     sys.path.append(module_path)
-
-from pathos.pools import _ThreadPool as Pool
-from queue import Queue
-import multiprocessing as mp
-import numpy as np
-from copy import deepcopy
 
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility
