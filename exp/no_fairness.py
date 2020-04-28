@@ -10,6 +10,7 @@ if module_path not in sys.path:
 from pathos.pools import _ThreadPool as Pool
 from queue import Queue
 import multiprocessing as mp
+import numpy as np
 from copy import deepcopy
 
 from src.feature_map import IdentityFeatureMap
@@ -30,7 +31,7 @@ parser.add_argument('-bs', '--batch_sizes', type=int, nargs='+', required=True, 
 parser.add_argument('-nb', '--num_batches', type=int, nargs='+', required=True,
                     help='list of number of batches to be used')
 parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
-parser.add_argument('-a', '--asynchonous', action='store_true')
+parser.add_argument('-a', '--asynchronous', action='store_true')
 parser.add_argument('--plot', required=False, action='store_true')
 parser.add_argument('-pid', '--process_id', type=str, required=False, help="process id for identification")
 
@@ -53,7 +54,7 @@ training_parameters = {
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
         'bias': True,
-        'initial_theta': [0.0, 0.0],
+        'initial_theta': np.zeros(distibution.feature_dimension),
         'initial_lambda': 0.0
     },
     'parameter_optimization': {
@@ -82,7 +83,7 @@ for time_steps in args.time_steps:
 
                 if args.path:
                     training_parameters['save_path'] = args.path
-                    training_parameters["save_path"] = "{}/c()/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
+                    training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
                                                                                                 args.cost,
                                                                                                 args.learning_rate,
                                                                                                 time_steps,
@@ -92,7 +93,7 @@ for time_steps in args.time_steps:
                     training_parameters["save_path_subfolder"] = args.process_id
 
                 pool.apply_async(train,
-                                 args=(deepcopy(training_parameters), args.iterations, args.asynchonous),
+                                 args=(deepcopy(training_parameters), args.iterations, args.asynchronous),
                                  callback=lambda result: callback_queue.put(result),
                                  error_callback=lambda e: print(e))
                 thread_count += 1

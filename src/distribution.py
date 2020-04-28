@@ -281,8 +281,7 @@ class ResamplingDistribution(BaseDistribution):
 
     @property
     def feature_dimension(self):
-        dim = self.x_test.shape[1]
-        return dim + 1 if self.bias else dim
+        return self.x_test.shape[1]
 
     def _sample_train_dataset_core(self, n_train, random):
         n = min(self.total_training_samples, n_train)
