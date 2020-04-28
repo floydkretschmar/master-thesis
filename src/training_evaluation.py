@@ -8,7 +8,7 @@ import numpy as np
 import numbers
 from copy import deepcopy
 
-from src.util import stack
+from src.util import stack, serialize_dictionary
 
 # Result Format
 MEAN = "MEAN"
@@ -16,6 +16,26 @@ STANDARD_DEVIATION = "STDDEV"
 MEDIAN = "MEDIAN"
 FIRST_QUARTILE = "FIRST_QUARTILE"
 THIRD_QUARTILE = "THIRD_QUARTILE"
+
+
+def _unserialize_value(value):
+    if isinstance(value, dict):
+        return _unserialize_statistics_dictionary(value)
+    elif isinstance(value, list):
+        return np.array(value)
+    elif value == "NoneType":
+        return None
+    else:
+        return value
+
+
+def _unserialize_statistics_dictionary(dictionary):
+    unserialized_dict = deepcopy(dictionary)
+    for key, value in unserialized_dict.items():
+        unserialized_dict[key] = _unserialize_value(value)
+
+    return unserialized_dict
+
 
 def build_result_dictionary(measure):
     return {
@@ -132,12 +152,7 @@ class Statistics():
     FIRST_QUARTILE = FIRST_QUARTILE
     THIRD_QUARTILE = THIRD_QUARTILE
 
-    def __init__(self, predictions, observations, fairness, utility, protected_attributes, ground_truths):
-        self.results = {
-            Statistics.X_VALUES: range(0, predictions.shape[1]),
-            Statistics.X_SCALE: "linear",
-            Statistics.X_NAME: "Timestep"
-        }
+    def __init__(self, results):
         self.functions = {
             Statistics.TRUE_POSITIVE_RATE: TPR,
             Statistics.FALSE_POSITIVE_RATE: FPR,
@@ -155,6 +170,15 @@ class Statistics():
             Statistics.DEMOGRAPHIC_PARITY: DP,
             Statistics.EQUALITY_OF_OPPORTUNITY: EOP
         }
+        self.results = deepcopy(results)
+
+    @staticmethod
+    def build(predictions, observations, fairness, utility, protected_attributes, ground_truths):
+        results = {
+            Statistics.X_VALUES: range(0, predictions.shape[1]),
+            Statistics.X_SCALE: "linear",
+            Statistics.X_NAME: "Timestep"
+        }
 
         for prot in ["all", "unprotected", "protected"]:
             if prot == "unprotected":
@@ -170,7 +194,7 @@ class Statistics():
             utility_matching_gt = np.repeat(filtered_ground_truths, filtered_predictions.shape[1], axis=1)
 
             # calculate base statistics during creation of statistics object
-            self.results[prot] = {
+            results[prot] = {
                 Statistics.UTILITY: utility,
                 Statistics.NUM_INDIVIDUALS: len(filtered_ground_truths),
                 Statistics.NUM_NEGATIVES: len(filtered_ground_truths[filtered_ground_truths == 0]),
@@ -188,23 +212,29 @@ class Statistics():
             }
 
             # calculate futher statistics based on the base statistics only on demand to save memory
-            self.results[prot][Statistics.TRUE_POSITIVE_RATE] = None
-            self.results[prot][Statistics.FALSE_POSITIVE_RATE] = None
-            self.results[prot][Statistics.TRUE_NEGATIVE_RATE] = None
-            self.results[prot][Statistics.FALSE_NEGATIVE_RATE] = None
-            self.results[prot][Statistics.POSITIVE_PREDICTIVE_VALUE] = None
-            self.results[prot][Statistics.NEGATIVE_PREDICTIVE_VALUE] = None
-            self.results[prot][Statistics.FALSE_DISCOVERY_RATE] = None
-            self.results[prot][Statistics.FALSE_OMISSION_RATE] = None
-            self.results[prot][Statistics.ACCURACY] = None
-            self.results[prot][Statistics.ERROR_RATE] = None
-            self.results[prot][Statistics.SELECTION_RATE] = None
-            self.results[prot][Statistics.F1] = None
-        
-        self.results["all"][Statistics.DISPARATE_IMPACT] = None
-        self.results["all"][Statistics.DEMOGRAPHIC_PARITY] = None
-        self.results["all"][Statistics.EQUALITY_OF_OPPORTUNITY] = None
-        self.results["all"][Statistics.FAIRNESS] = fairness
+            results[prot][Statistics.TRUE_POSITIVE_RATE] = None
+            results[prot][Statistics.FALSE_POSITIVE_RATE] = None
+            results[prot][Statistics.TRUE_NEGATIVE_RATE] = None
+            results[prot][Statistics.FALSE_NEGATIVE_RATE] = None
+            results[prot][Statistics.POSITIVE_PREDICTIVE_VALUE] = None
+            results[prot][Statistics.NEGATIVE_PREDICTIVE_VALUE] = None
+            results[prot][Statistics.FALSE_DISCOVERY_RATE] = None
+            results[prot][Statistics.FALSE_OMISSION_RATE] = None
+            results[prot][Statistics.ACCURACY] = None
+            results[prot][Statistics.ERROR_RATE] = None
+            results[prot][Statistics.SELECTION_RATE] = None
+            results[prot][Statistics.F1] = None
+
+        results["all"][Statistics.DISPARATE_IMPACT] = None
+        results["all"][Statistics.DEMOGRAPHIC_PARITY] = None
+        results["all"][Statistics.EQUALITY_OF_OPPORTUNITY] = None
+        results["all"][Statistics.FAIRNESS] = fairness
+        return Statistics(results)
+
+    @staticmethod
+    def build_from_dictionary(serialized_dict):
+        results = _unserialize_statistics_dictionary(serialized_dict)
+        return Statistics(results)
 
     def _get_measure(self, prot, measure_key):
         if self.results[prot][measure_key] is None:
@@ -212,7 +242,7 @@ class Statistics():
             self.results[prot][measure_key] = measure
         else:
             measure = self.results[prot][measure_key]
-        
+
         return measure
 
     def performance(self, measure_key, result_format, protected=None):
@@ -231,7 +261,7 @@ class Statistics():
         return build_result_dictionary(measure)[result_format]
 
     def to_dict(self):
-        return deepcopy(self.results)
+        return serialize_dictionary(deepcopy(self.results))
 
     def merge(self, statistics):
         for (protected_key, protected_value) in statistics.results.items():
@@ -246,14 +276,18 @@ class Statistics():
 
 
 class MultiStatistics(Statistics):
-    def __init__(self, x_scale, x_values, x_name):
-        self.results = {}
-        self.results[MultiStatistics.X_VALUES] = x_values
-        self.results[Statistics.X_SCALE] = x_scale
-        self.results[Statistics.X_NAME] = x_name
+    def __init__(self, results):
+        super(MultiStatistics, self).__init__(results)
+
+    @staticmethod
+    def build(x_scale, x_values, x_name):
+        results = {}
+        results[MultiStatistics.X_VALUES] = x_values
+        results[Statistics.X_SCALE] = x_scale
+        results[Statistics.X_NAME] = x_name
 
         for prot in ["all", "unprotected", "protected"]:
-            self.results[prot] = {
+            results[prot] = {
                 MultiStatistics.UTILITY: None,
                 MultiStatistics.NUM_INDIVIDUALS: None,
                 MultiStatistics.NUM_NEGATIVES: None,
@@ -277,11 +311,12 @@ class MultiStatistics(Statistics):
                 MultiStatistics.SELECTION_RATE: None,
                 MultiStatistics.F1: None
             }
-        
-        self.results["all"][MultiStatistics.DISPARATE_IMPACT] = None
-        self.results["all"][MultiStatistics.DEMOGRAPHIC_PARITY] = None
-        self.results["all"][MultiStatistics.EQUALITY_OF_OPPORTUNITY] = None
-        self.results["all"][MultiStatistics.FAIRNESS] = None
+
+        results["all"][MultiStatistics.DISPARATE_IMPACT] = None
+        results["all"][MultiStatistics.DEMOGRAPHIC_PARITY] = None
+        results["all"][MultiStatistics.EQUALITY_OF_OPPORTUNITY] = None
+        results["all"][MultiStatistics.FAIRNESS] = None
+        return MultiStatistics(results)
 
     def log_run(self, statistics):            
         for (protected_key, protected_value) in statistics.results.items():

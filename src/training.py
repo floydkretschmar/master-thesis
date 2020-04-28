@@ -25,7 +25,7 @@ class _Trainer():
 
         for results, model_parameters in training_method(training_parameters):
             decisions_over_time, fairness_over_time, utility_over_time = results
-            statistics = Statistics(
+            statistics = Statistics.build(
                 predictions=decisions_over_time,
                 observations=x_test,
                 fairness=fairness_over_time,
@@ -198,7 +198,7 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
 
     # save the results for each lambda
     statistics_save_path = "{}statistics.json".format(lambda_path)
-    serialized_statistics = serialize_dictionary(statistics.to_dict())
+    serialized_statistics = statistics.to_dict()
     save_dictionary(serialized_statistics, statistics_save_path)
 
 
@@ -241,7 +241,7 @@ def train(training_parameters, iterations=30, asynchronous=True):
         print("---------- Training with fixed lambdas ----------")
         fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
         training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        overall_statistics = MultiStatistics("log", fairness_rates, "Lambda")
+        overall_statistics = MultiStatistics.build("log", fairness_rates, "Lambda")
 
         for fairness_rate in fairness_rates:
             current_training_parameters["model"]["initial_lambda"] = fairness_rate
@@ -261,7 +261,7 @@ def train(training_parameters, iterations=30, asynchronous=True):
         
         lamda_iterations = range(0, current_training_parameters["lagrangian_optimization"]["iterations"])
         sub_directories = ["lambda_iteration_{}".format(lamb) for lamb in lamda_iterations]
-        overall_statistics = MultiStatistics("linear", lamda_iterations, "Lambda Training Iteration")
+        overall_statistics = MultiStatistics.build("linear", lamda_iterations, "Lambda Training Iteration")
         
         statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, asynchronous)
 
