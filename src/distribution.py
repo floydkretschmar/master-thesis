@@ -350,8 +350,10 @@ class AdultCreditDistribution(ResamplingDistribution):
                 category.where(category == 0, 1, inplace=True)
                 x = np.hstack((x, category.values.reshape(-1, 1)))
 
-        # use actual recidivisim as target variable
-        y = data.df[data.target].values.reshape(-1, 1)
+        # use actual income as target variable: >50K = 1, <=50K = 0
+        income = data.df[data.target]
+        y = income.where(income == '>50K', 0)
+        y.where(y == 0, 1, inplace=True)
+        y = y.values.reshape(-1, 1)
 
         return x.astype(float), s.astype(float), y.astype(float)
-
