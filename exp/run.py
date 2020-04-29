@@ -17,6 +17,76 @@ from src.functions import cost_utility
 from src.plotting import plot_mean, plot_median
 from src.training import train
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution
+from src.util import mean_difference
+
+
+# region Fairness Definitions
+
+def calc_benefit(decisions, ips_weights):
+    if ips_weights is not None:
+        decisions *= ips_weights
+
+    return decisions
+
+
+def calc_covariance(s, decisions, ips_weights):
+    new_s = 1 - (2 * s)
+
+    if ips_weights is not None:
+        mu_s = np.mean(new_s * ips_weights, axis=0)
+        d = decisions * ips_weights
+    else:
+        mu_s = np.mean(new_s, axis=0)
+        d = decisions
+
+    covariance = (new_s - mu_s) * d
+    return covariance
+
+
+def fairness_function_gradient(type, **fairness_kwargs):
+    policy = fairness_kwargs["policy"]
+    x = fairness_kwargs["x"]
+    s = fairness_kwargs["s"]
+    y = fairness_kwargs["y"]
+    decisions = fairness_kwargs["decisions"]
+    ips_weights = fairness_kwargs["ips_weights"]
+
+    if type == "BD_DP" or type == "BD_EOP":
+        result = calc_benefit(decisions, ips_weights)
+    elif type == "COV_DP":
+        result = calc_covariance(s, decisions, ips_weights)
+
+    log_gradient = policy.log_policy_gradient(x, s)
+    grad = log_gradient * result
+
+    if type == "BD_DP":
+        return mean_difference(grad, s)
+    elif type == "COV_DP":
+        return np.mean(grad, axis=0)
+    elif type == "BP_EOP":
+        y1_indices = np.where(y == 1)
+        return mean_difference(grad[y1_indices], s[y1_indices])
+
+
+def fairness_function(type, **fairness_kwargs):
+    s = fairness_kwargs["s"]
+    decisions = fairness_kwargs["decisions"]
+    ips_weights = fairness_kwargs["ips_weights"]
+    y = fairness_kwargs["y"]
+
+    if type == "BD_DP":
+        benefit = calc_benefit(decisions, ips_weights)
+        return mean_difference(benefit, s)
+    elif type == "COV_DP":
+        covariance = calc_covariance(s, decisions, ips_weights)
+        return np.mean(covariance, axis=0)
+    elif type == "BP_EOP":
+        benefit = calc_benefit(decisions, ips_weights)
+        y1_indices = np.where(y == 1)
+        return mean_difference(benefit[y1_indices], s[y1_indices])
+
+
+# endregion
 
 parser = argparse.ArgumentParser()
 
@@ -34,7 +104,28 @@ parser.add_argument('-a', '--asynchronous', action='store_true')
 parser.add_argument('--plot', required=False, action='store_true')
 parser.add_argument('-pid', '--process_id', type=str, required=False, help="process id for identification")
 
+parser.add_argument('-f', '--fairness_type', type=str, required=False,
+                    help="select the type of fairness (BD_DP, COV_DP, BP_EOP). "
+                         "if none is selected no fairness criterion is applied")
+parser.add_argument('-fr', '--fairness_range', type=float, nargs='+', required=False,
+                    help='the range within which the fairness values will be selected on a logarithmic scale '
+                         '(values cannot include 0)')
+
 args = parser.parse_args()
+
+if args.fairness_type:
+    if args.fairness_range is None:
+        parser.error('when using --fairness_type, --fairness_range has to be specified')
+    elif len(args.fairness_range) != 2:
+        parser.error('--fairness_range has to be a tuple of (lower_bound, upper_bound)')
+    else:
+        fair_fct = lambda **fairness_params: fairness_function(type=args.fairness_type, **fairness_params)
+        fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
+        initial_lambda = np.geomspace(args.fairness_range[0], args.fairness_range[1], endpoint=True, num=20)
+else:
+    fair_fct = lambda **fairness_params: [0.0]
+    fair_fct_grad = lambda **fairness_params: [0.0]
+    initial_lambda = 0.0
 
 if args.data == 'FICO':
     distibution = FICODistribution(bias=True, fraction_protected=0.5)
@@ -46,15 +137,15 @@ elif args.data == 'ADULT':
 training_parameters = {
     'distribution': distibution,
     'model': {
-        'fairness_function': lambda **fairness_params: [0.0],
-        'fairness_gradient_function': lambda **fairness_params: [0.0],
+        'fairness_function': fair_fct,
+        'fairness_gradient_function': fair_fct_grad,
         'utility_function': lambda **util_params: cost_utility(cost_factor=args.cost, **util_params),
         'feature_map': IdentityFeatureMap(distibution.feature_dimension),
         'learn_on_entire_history': False,
         'use_sensitve_attributes': False,
         'bias': True,
         'initial_theta': np.zeros(distibution.feature_dimension),
-        'initial_lambda': 0.0
+        'initial_lambda': initial_lambda
     },
     'parameter_optimization': {
         'learning_rate': args.learning_rate,

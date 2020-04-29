@@ -14,7 +14,7 @@ periodic_remove = (JobStatus =?= 2) && ((CurrentTime - JobCurrentStartDate) >= $
 # RESSOURCE SELECTION                                                     #
 # ----------------------------------------------------------------------- #
 
-request_memory = 512
+request_memory = 4096
 request_cpus = 1
 
 # ----------------------------------------------------------------------- #
@@ -24,17 +24,13 @@ request_cpus = 1
 environment = "PYTHONUNBUFFERED=TRUE"
 executable = /home/fkretschmar/miniconda3/envs/masters-thesis/bin/python
 
-error = /home/fkretschmar/master-thesis/res/post_proc/error/experiment.$(Process).err
-output = /home/fkretschmar/master-thesis/res/post_proc/output/experiment.$(Process).out
-log = /home/fkretschmar/master-thesis/res/post_proc/log/experiment.$(Process).log
+error = /home/fkretschmar/master-thesis/res/parameter_sweep/error/experiment.$(Process).err
+output = /home/fkretschmar/master-thesis/res/parameter_sweep/output/experiment.$(Process).out
+log = /home/fkretschmar/master-thesis/res/parameter_sweep/log/experiment.$(Process).log
 
 # ----------------------------------------------------------------------- #
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = post_processing.py -i ../res/FICO/raw -o ../res/FICO/processed
-queue
-arguments = post_processing.py -i ../res/COMPAS/raw -o ../res/COMPAS/processed
-queue
-arguments = post_processing.py -i ../res/ADULT/raw -o ../res/ADULT/processed
-queue
+arguments = run.py -a -d FICO -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.01 -ts 50 -e 10 -bs 500 -nb 1000 -pid $(Process) -f BD_DP -fr 0.001 10
+queue 1
