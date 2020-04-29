@@ -107,21 +107,22 @@ parser.add_argument('-pid', '--process_id', type=str, required=False, help="proc
 parser.add_argument('-f', '--fairness_type', type=str, required=False,
                     help="select the type of fairness (BD_DP, COV_DP, BP_EOP). "
                          "if none is selected no fairness criterion is applied")
-parser.add_argument('-fr', '--fairness_range', type=float, nargs='+', required=False,
-                    help='the range within which the fairness values will be selected on a logarithmic scale '
-                         '(values cannot include 0)')
+parser.add_argument('-fl', '--fairness_lower_bound', type=float, required=False, help='the lowest value for lambda')
+parser.add_argument('-fu', '--fairness_upper_bound', type=float, required=False, help='the highest value for lambda')
 
 args = parser.parse_args()
 
 if args.fairness_type:
-    if args.fairness_range is None:
-        parser.error('when using --fairness_type, --fairness_range has to be specified')
-    elif len(args.fairness_range) != 2:
-        parser.error('--fairness_range has to be a tuple of (lower_bound, upper_bound)')
+    if args.fairness_lower_bound is None:
+        parser.error('when using --fairness_type, --fairness_lower_bount has to be specified')
     else:
         fair_fct = lambda **fairness_params: fairness_function(type=args.fairness_type, **fairness_params)
         fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
-        initial_lambda = np.geomspace(args.fairness_range[0], args.fairness_range[1], endpoint=True, num=20)
+
+    if args.fairness_upper_bound is not None:
+        initial_lambda = np.geomspace(args.fairness_lower_bound, args.fairness_upper_bound, endpoint=True, num=20)
+    else:
+        initial_lambda = args.fairness_lower_bound
 else:
     fair_fct = lambda **fairness_params: [0.0]
     fair_fct_grad = lambda **fairness_params: [0.0]

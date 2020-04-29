@@ -14,8 +14,14 @@ periodic_remove = (JobStatus =?= 2) && ((CurrentTime - JobCurrentStartDate) >= $
 # RESSOURCE SELECTION                                                     #
 # ----------------------------------------------------------------------- #
 
-request_memory = 4096
+request_memory = 1024
 request_cpus = 1
+
+# ----------------------------------------------------------------------- #
+# SCRIPT SELECTION                                                        #
+# ----------------------------------------------------------------------- #
+
+SelectedData = FICO
 
 # ----------------------------------------------------------------------- #
 # FOLDER SELECTION                                                        #
@@ -32,5 +38,7 @@ log = /home/fkretschmar/master-thesis/res/parameter_sweep/log/experiment.$(Proce
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -a -d FICO -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.01 -ts 50 -e 10 -bs 500 -nb 1000 -pid $(Process) -f BD_DP -fr 0.001 10
-queue 1
+arguments = run.py -a -d FICO -pid $(Process)    -p ../res/parameter_sweep/FICO/raw      -c 0.5  -i 1    -lr 1   -ts 50  -e 10   -bs 500     -nb 1000 -f BD_DP -fl 0.001 -fu 10
+queue 30
+arguments = run.py -a -d COMPAS -pid $(Process)  -p ../res/parameter_sweep/COMPAS/raw    -c 0.5  -i 1    -lr 1   -ts 100  -e 10   -bs 250     -nb 100 -f BD_DP -fl 0.001 -fu 10
+queue 30
