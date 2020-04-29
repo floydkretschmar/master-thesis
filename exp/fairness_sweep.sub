@@ -32,9 +32,9 @@ log = /home/fkretschmar/master-thesis/res/parameter_sweep/log/experiment.$(Proce
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f BD_DP -fl 0.0001 -fu 10 -fn 30
+arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f BD_DP -fl 0.0001 -fu 10 -fn 30 --plot
 queue
-arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f BD_EOP -fl 0.0001 -fu 10 -fn 30
+arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f BD_EOP -fl 0.0001 -fu 10 -fn 30 --plot
 queue
-arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f COV_DP -fl 0.0001 -fu 10 -fn 30
+arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f COV_DP -fl 0.0001 -fu 10 -fn 30 --plot
 queue
