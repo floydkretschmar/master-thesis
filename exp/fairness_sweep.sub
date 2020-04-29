@@ -18,12 +18,6 @@ request_memory = 1024
 request_cpus = 1
 
 # ----------------------------------------------------------------------- #
-# SCRIPT SELECTION                                                        #
-# ----------------------------------------------------------------------- #
-
-SelectedData = FICO
-
-# ----------------------------------------------------------------------- #
 # FOLDER SELECTION                                                        #
 # ----------------------------------------------------------------------- #
 
@@ -38,7 +32,9 @@ log = /home/fkretschmar/master-thesis/res/parameter_sweep/log/experiment.$(Proce
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -a -d FICO -pid $(Process)    -p ../res/parameter_sweep/FICO/raw      -c 0.5  -i 1    -lr 1   -ts 50  -e 10   -bs 500     -nb 1000 -f BD_DP -fl 0.001 -fu 10
-queue 30
-arguments = run.py -a -d COMPAS -pid $(Process)  -p ../res/parameter_sweep/COMPAS/raw    -c 0.5  -i 1    -lr 1   -ts 100  -e 10   -bs 250     -nb 100 -f BD_DP -fl 0.001 -fu 10
-queue 30
+arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f BD_DP -fl 0.0001 -fu 10 -fn 30
+queue
+arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f BD_EOP -fl 0.0001 -fu 10 -fn 30
+queue
+arguments = run.py -d FICO -pid $(Process) -p ../res/parameter_sweep/FICO/raw -c 0.5 -i 30 -lr 0.5 -ts 200 -e 1 -bs 256 -nb 128 -f COV_DP -fl 0.0001 -fu 10 -fn 30
+queue

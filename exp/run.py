@@ -109,6 +109,8 @@ parser.add_argument('-f', '--fairness_type', type=str, required=False,
                          "if none is selected no fairness criterion is applied")
 parser.add_argument('-fl', '--fairness_lower_bound', type=float, required=False, help='the lowest value for lambda')
 parser.add_argument('-fu', '--fairness_upper_bound', type=float, required=False, help='the highest value for lambda')
+parser.add_argument('-fn', '--fairness_number', type=int, required=False,
+                    help='the number of lambda values tested in the range')
 
 args = parser.parse_args()
 
@@ -120,7 +122,9 @@ if args.fairness_type:
         fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
 
     if args.fairness_upper_bound is not None:
-        initial_lambda = np.geomspace(args.fairness_lower_bound, args.fairness_upper_bound, endpoint=True, num=20)
+        fairness_num = args.fairness_number if args.fairness_number is not None else 20
+        initial_lambda = np.geomspace(args.fairness_lower_bound, args.fairness_upper_bound, endpoint=True,
+                                      num=fairness_num)
     else:
         initial_lambda = args.fairness_lower_bound
 else:
