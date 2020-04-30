@@ -20,7 +20,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input_path', type=str, required=True, help="the path containing the raw data")
 parser.add_argument('-o', '--output_path', type=str, required=True,
                     help="the path into which the processed data will be saved")
-parser.add_argument('-a', '--analyze_only', action='store_true')
+parser.add_argument('-s', '--save', action='store_true')
+parser.add_argument('-f', '--fairness', action='store_true')
 args = parser.parse_args()
 
 cost_directories = [os.path.join(args.input_path, cost) for cost in os.listdir(args.input_path)
@@ -70,7 +71,7 @@ for cost in cost_directories:
 
             statistics = statistcs_over_runs[0]
 
-            if not args.analyze_only:
+            if not args.save:
                 # save the merged statistics, parameters and plot them
                 _save_results(output_path, statistics, model_parameters)
                 plot_mean(statistics, file_path=os.path.join(output_path, "results_mean.png"))
