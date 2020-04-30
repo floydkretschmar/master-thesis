@@ -51,9 +51,9 @@ for cost in cost_directories:
                 statistics = Statistics.build_from_serialized_dictionary(serialized_statistics)
 
                 # if the x values = range then we are merging old buggy results > hardcode x range
-                if statistics.results[Statistics.X_VALUES] == "range":
-                    statistics.results[Statistics.X_VALUES] = list(
-                        range(0, statistics.results["all"][Statistics.UTILITY].shape[0]))
+                # if statistics.results[Statistics.X_VALUES] == "range":
+                #     statistics.results[Statistics.X_VALUES] = list(
+                #         range(0, statistics.results["all"][Statistics.UTILITY].shape[0]))
 
                 model_parameter_path = os.path.join(run, "models.json")
                 serialized_model_parameters = load_dictionary(model_parameter_path)
@@ -71,7 +71,7 @@ for cost in cost_directories:
 
             statistics = statistcs_over_runs[0]
 
-            if not args.save:
+            if args.save:
                 # save the merged statistics, parameters and plot them
                 _save_results(output_path, statistics, model_parameters)
                 plot_mean(statistics, file_path=os.path.join(output_path, "results_mean.png"))
