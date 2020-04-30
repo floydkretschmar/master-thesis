@@ -1,12 +1,9 @@
 import argparse
-import multiprocessing as mp
 import os
 import sys
 from copy import deepcopy
-from queue import Queue
 
 import numpy as np
-from pathos.pools import _ThreadPool as Pool
 
 module_path = os.path.abspath(os.path.join('..'))
 if module_path not in sys.path:
@@ -94,11 +91,10 @@ parser.add_argument('-d', '--data', type=str, required=True, help="select the di
 parser.add_argument('-c', '--cost', type=float, required=True, help="define the utility cost c")
 parser.add_argument('-lr', '--learning_rate', type=float, required=True, help="define the learning rate of theta")
 parser.add_argument('-p', '--path', type=str, required=False, help="save path for the result")
-parser.add_argument('-ts', '--time_steps', type=int, nargs='+', required=True, help='list of time steps to be used')
-parser.add_argument('-e', '--epochs', type=int, nargs='+', required=True, help='list of epochs to be used')
-parser.add_argument('-bs', '--batch_sizes', type=int, nargs='+', required=True, help='list of batch sizes to be used')
-parser.add_argument('-nb', '--num_batches', type=int, nargs='+', required=True,
-                    help='list of number of batches to be used')
+parser.add_argument('-ts', '--time_steps', type=int, required=True, help='number of time steps to be used')
+parser.add_argument('-e', '--epochs', type=int, required=True, help='number of epochs to be used')
+parser.add_argument('-bs', '--batch_sizes', type=int, required=True, help='batch size to be used')
+parser.add_argument('-nb', '--num_batches', type=int, required=True, help='number of batches to be used')
 parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
 parser.add_argument('-a', '--asynchronous', action='store_true')
 parser.add_argument('--plot', required=False, action='store_true')
@@ -107,26 +103,17 @@ parser.add_argument('-pid', '--process_id', type=str, required=False, help="proc
 parser.add_argument('-f', '--fairness_type', type=str, required=False,
                     help="select the type of fairness (BD_DP, COV_DP, BP_EOP). "
                          "if none is selected no fairness criterion is applied")
-parser.add_argument('-fl', '--fairness_lower_bound', type=float, required=False, help='the lowest value for lambda')
-parser.add_argument('-fu', '--fairness_upper_bound', type=float, required=False, help='the highest value for lambda')
-parser.add_argument('-fn', '--fairness_number', type=int, required=False,
-                    help='the number of lambda values tested in the range')
+parser.add_argument('-fv', '--fairness_value', type=float, required=False, help='the value of lambda')
 
 args = parser.parse_args()
 
 if args.fairness_type:
-    if args.fairness_lower_bound is None:
-        parser.error('when using --fairness_type, --fairness_lower_bount has to be specified')
+    if args.fairness_value is None:
+        parser.error('when using --fairness_type, --fairness_value has to be specified')
     else:
         fair_fct = lambda **fairness_params: fairness_function(type=args.fairness_type, **fairness_params)
         fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
-
-    if args.fairness_upper_bound is not None:
-        fairness_num = args.fairness_number if args.fairness_number is not None else 20
-        initial_lambda = np.geomspace(args.fairness_lower_bound, args.fairness_upper_bound, endpoint=True,
-                                      num=fairness_num)
-    else:
-        initial_lambda = args.fairness_lower_bound
+        initial_lambda = args.fairness_value
 else:
     fair_fct = lambda **fairness_params: [0.0]
     fair_fct_grad = lambda **fairness_params: [0.0]
@@ -163,55 +150,34 @@ training_parameters = {
     }
 }
 
-callback_queue = Queue()
-pool = Pool(mp.cpu_count())
-thread_count = 0
+training_parameters['parameter_optimization']['time_steps'] = args.time_steps
+training_parameters['parameter_optimization']['epochs'] = args.epochs
+training_parameters['parameter_optimization']['batch_size'] = args.batch_size
+training_parameters['parameter_optimization']['num_batches'] = args.num_batches
 
-for time_steps in args.time_steps:
-    training_parameters['parameter_optimization']['time_steps'] = time_steps
-    for epochs in args.epochs:
-        training_parameters['parameter_optimization']['epochs'] = epochs
-        for batch_size in args.batch_sizes:
-            training_parameters['parameter_optimization']['batch_size'] = batch_size
-            for num_batches in args.num_batches:
-                training_parameters['parameter_optimization']['num_batches'] = num_batches
-
-                if args.path:
-                    training_parameters['save_path'] = args.path
-                    training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
+if args.path:
+    if args.fairness_type is not None:
+        training_parameters["save_path"] = "{}/{}/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
+                                                                                       args.fairness_type,
+                                                                                       args.cost,
+                                                                                       args.learning_rate,
+                                                                                       args.time_steps,
+                                                                                       args.epochs,
+                                                                                       args.batch_size,
+                                                                                       args.num_batches)
+        training_parameters["save_path_subfolder"] = "{}/{}".format(args.fairness_value, args.process_id)
+    else:
+        training_parameters["save_path"] = "{}/no_fairness/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
                                                                                                 args.cost,
                                                                                                 args.learning_rate,
-                                                                                                time_steps,
-                                                                                                epochs,
-                                                                                                batch_size,
-                                                                                                num_batches)
-                    training_parameters["save_path_subfolder"] = args.process_id
+                                                                                                args.time_steps,
+                                                                                                args.epochs,
+                                                                                                args.batch_size,
+                                                                                                args.num_batches)
+        training_parameters["save_path_subfolder"] = args.process_id
 
-                pool.apply_async(train,
-                                 args=(deepcopy(training_parameters), args.iterations, args.asynchronous),
-                                 callback=lambda result: callback_queue.put(result),
-                                 error_callback=lambda e: print(e))
-                thread_count += 1
+statistics, model_parameters, run_path = train(deepcopy(training_parameters), args.iterations, args.asynchronous)
 
-best_final_median_utility = float("-inf")
-best_utility_path = ""
-while thread_count > 0:
-    result = callback_queue.get()
-    statistics, model_parameters, run_path = result
-
-    final_median_utility = statistics.performance(statistics.UTILITY, statistics.MEDIAN)[-1]
-
-    if final_median_utility > best_final_median_utility:
-        best_final_median_utility = final_median_utility
-        best_utility_path = run_path
-
-    if args.plot:
-        plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
-        plot_median(statistics, "{}/results_median_time.png".format(run_path))
-
-    thread_count -= 1
-
-print(best_utility_path)
-
-pool.close()
-pool.join()
+if args.plot:
+    plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
+    plot_median(statistics, "{}/results_median_time.png".format(run_path))
