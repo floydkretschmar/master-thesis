@@ -4,6 +4,9 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('--ram', type=int, required=False, help='the RAM requested')
+parser.add_argument('--cpu', type=int, required=False, help='the number of CPUs requested')
+
 parser.add_argument('-d', '--data', type=str, required=True, help="select the distribution (FICO, COMPAS, ADULT)")
 parser.add_argument('-op', '--output_path', type=str, required=False, help="output path for the submission")
 parser.add_argument('-lp', '--log_path', type=str, required=False, help="log path for the submission")
@@ -70,8 +73,8 @@ with open(sub_file_name, "w") as file:
     file.write("# ----------------------------------------------------------------------- #\n")
     file.write("# RESSOURCE SELECTION                                                     #\n")
     file.write("# ----------------------------------------------------------------------- #\n\n")
-    file.write("request_memory = 1024\n")
-    file.write("request_cpus = 1\n\n")
+    file.write("request_memory = {}\n".format(args.ram if args.ram is not None else 1024))
+    file.write("request_cpus = {}\n\n".format(args.ram if args.cpu is not None else 1))
     file.write("# ----------------------------------------------------------------------- #\n")
     file.write("# FOLDER SELECTION                                                        #\n")
     file.write("# ----------------------------------------------------------------------- #\n\n")
