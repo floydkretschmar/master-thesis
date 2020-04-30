@@ -93,7 +93,7 @@ parser.add_argument('-lr', '--learning_rate', type=float, required=True, help="d
 parser.add_argument('-p', '--path', type=str, required=False, help="save path for the result")
 parser.add_argument('-ts', '--time_steps', type=int, required=True, help='number of time steps to be used')
 parser.add_argument('-e', '--epochs', type=int, required=True, help='number of epochs to be used')
-parser.add_argument('-bs', '--batch_sizes', type=int, required=True, help='batch size to be used')
+parser.add_argument('-bs', '--batch_size', type=int, required=True, help='batch size to be used')
 parser.add_argument('-nb', '--num_batches', type=int, required=True, help='number of batches to be used')
 parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
 parser.add_argument('-a', '--asynchronous', action='store_true')
