@@ -27,16 +27,25 @@ parser.add_argument('--plot', required=False, action='store_true')
 parser.add_argument('-f', '--fairness_type', type=str, required=False,
                     help="select the type of fairness (BD_DP, COV_DP, BP_EOP). "
                          "if none is selected no fairness criterion is applied")
+
+parser.add_argument('-fv', '--fairness_values', type=float, nargs='+', required=False,
+                    help='list of fairness values to be used')
+
 parser.add_argument('-fl', '--fairness_lower_bound', type=float, required=False, help='the lowest value for lambda')
 parser.add_argument('-fu', '--fairness_upper_bound', type=float, required=False, help='the highest value for lambda')
 parser.add_argument('-fn', '--fairness_number', type=int, required=False,
                     help='the number of lambda values tested in the range')
 
+parser.add_argument('-q', '--queue_num', type=int, required=False, help="the number of process that should be queued")
+
 args = parser.parse_args()
 
 if args.fairness_type is not None:
-    if args.fairness_lower_bound is None:
-        parser.error('when using --fairness_type, at least --fairness_lower_bound has to be specified')
+    if args.fairness_lower_bound is None and args.fairness_values is None:
+        parser.error(
+            'when using --fairness_type, either --fairness_lower_bound or --fairness_values has to be specified')
+    elif args.fairness_values is not None:
+        lambdas = args.fairness_values
     elif args.fairness_upper_bound is not None:
         fairness_num = args.fairness_number if args.fairness_number is not None else 20
         lambdas = np.geomspace(args.fairness_lower_bound, args.fairness_upper_bound, endpoint=True,
@@ -85,22 +94,26 @@ with open(sub_file_name, "w") as file:
                                       "-d {} " \
                                       "-c {} " \
                                       "-lr {} " \
-                                      "{} " \
-                                      "-i 1 " \
+                                      "-i {} " \
                                       "-p {}/{}/raw " \
                                       "-ts {} " \
                                       "-e {} " \
                                       "-bs {} " \
                                       "-nb {} " \
-                                      "-pid $(Process)".format(args.data,
-                                                               cost,
-                                                               learning_rate,
-                                                               "-a " if args.asynchronous else "",
-                                                               args.path, args.data,
-                                                               time_steps,
-                                                               epochs,
-                                                               batch_size,
-                                                               num_batches)
+                                      "{} " \
+                                      "{} " \
+                                      "{}".format(args.data,
+                                                  cost,
+                                                  learning_rate,
+                                                  args.iterations,
+                                                  args.path, args.data,
+                                                  time_steps,
+                                                  epochs,
+                                                  batch_size,
+                                                  num_batches,
+                                                  "-a " if args.asynchronous else "",
+                                                  "--plot " if args.plot else "",
+                                                  "-pid $(Process)" if args.queue_num else "")
 
                             commands = []
                             if args.fairness_type is not None:
@@ -112,6 +125,6 @@ with open(sub_file_name, "w") as file:
 
                             for command in commands:
                                 file.write("arguments = {}\n".format(command))
-                                file.write("queue {}\n".format(args.iterations))
+                                file.write("queue {}\n".format(args.queue_num if args.queue_num is not None else ""))
 
 print("## Finished building {} ##".format(sub_file_name))
