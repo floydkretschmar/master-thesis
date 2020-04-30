@@ -165,7 +165,11 @@ if args.path:
                                                                                        args.epochs,
                                                                                        args.batch_size,
                                                                                        args.num_batches)
-        training_parameters["save_path_subfolder"] = "{}/{}".format(args.fairness_value, args.process_id)
+
+        if args.process_id is not None:
+            training_parameters["save_path_subfolder"] = "{}/{}".format(args.fairness_value, args.process_id)
+        else:
+            training_parameters["save_path_subfolder"] = args.fairness_value
     else:
         training_parameters["save_path"] = "{}/no_fairness/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
                                                                                                 args.cost,
@@ -174,7 +178,8 @@ if args.path:
                                                                                                 args.epochs,
                                                                                                 args.batch_size,
                                                                                                 args.num_batches)
-        training_parameters["save_path_subfolder"] = args.process_id
+        if args.process_id is not None:
+            training_parameters["save_path_subfolder"] = args.process_id
 
 statistics, model_parameters, run_path = train(deepcopy(training_parameters), args.iterations, args.asynchronous)
 
