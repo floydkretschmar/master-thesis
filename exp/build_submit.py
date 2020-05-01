@@ -8,9 +8,9 @@ parser.add_argument('--ram', type=int, required=False, help='the RAM requested')
 parser.add_argument('--cpu', type=int, required=False, help='the number of CPUs requested')
 
 parser.add_argument('-d', '--data', type=str, required=True, help="select the distribution (FICO, COMPAS, ADULT)")
-parser.add_argument('-op', '--output_path', type=str, required=False, help="output path for the submission")
-parser.add_argument('-lp', '--log_path', type=str, required=False, help="log path for the submission")
-parser.add_argument('-ep', '--error_path', type=str, required=False, help="error path for the submission")
+parser.add_argument('-op', '--output_path', type=str, required=True, help="output path for the submission")
+parser.add_argument('-lp', '--log_path', type=str, required=True, help="log path for the submission")
+parser.add_argument('-ep', '--error_path', type=str, required=True, help="error path for the submission")
 parser.add_argument('-pp', '--python_path', type=str, required=False, help="path of the python executable")
 parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
 
@@ -83,12 +83,9 @@ with open(sub_file_name, "w") as file:
     file.write("# ----------------------------------------------------------------------- #\n\n")
     file.write("environment = \"PYTHONUNBUFFERED=TRUE\"\n")
     file.write("executable = {}\n\n".format(args.python_path))
-    file.write("error = {}/error/experiment.$(Process).err\n".format(base_path) if args.error_path is None
-               else "error = {}/experiment.$(Process).err\n".format(args.error_path))
-    file.write("output = {}/output/experiment.$(Process).out\n".format(base_path) if args.output_path is None
-               else "error = {}/experiment.$(Process).out\n".format(args.output_path))
-    file.write("log = {}/log/experiment.$(Process).log\n\n".format(base_path) if args.log_path is None
-               else "error = {}/experiment.$(Process).log\n".format(args.log_path))
+    file.write("error = {}/experiment.$(Process).err\n".format(args.error_path))
+    file.write("output = {}/experiment.$(Process).out\n".format(args.output_path))
+    file.write("log = {}/experiment.$(Process).log\n".format(args.log_path))
     file.write("# ----------------------------------------------------------------------- #\n")
     file.write("# QUEUE                                                                   #\n")
     file.write("# ----------------------------------------------------------------------- #\n\n")

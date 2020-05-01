@@ -24,10 +24,9 @@ request_cpus = 1
 environment = "PYTHONUNBUFFERED=TRUE"
 executable = /home/fkretschmar/miniconda3/envs/masters-thesis/bin/python
 
-error = ../res/FICO/BD_DP/error/experiment.$(Process).err
-output = ../res/FICO/BD_DP/output/experiment.$(Process).out
-log = ../res/FICO/BD_DP/log/experiment.$(Process).log
-
+error = /home/fkretschmar/master-thesis/res/FICO/error/experiment.$(Process).err
+output = /home/fkretschmar/master-thesis/res/FICO/output/experiment.$(Process).out
+log = /home/fkretschmar/master-thesis/res/FICO/log/experiment.$(Process).log
 # ----------------------------------------------------------------------- #
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
