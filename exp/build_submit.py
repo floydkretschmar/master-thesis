@@ -8,9 +8,9 @@ parser.add_argument('--ram', type=int, required=False, help='the RAM requested')
 parser.add_argument('--cpu', type=int, required=False, help='the number of CPUs requested')
 
 parser.add_argument('-d', '--data', type=str, required=True, help="select the distribution (FICO, COMPAS, ADULT)")
-# parser.add_argument('-op', '--output_path', type=str, required=False, help="output path for the submission")
-# parser.add_argument('-lp', '--log_path', type=str, required=False, help="log path for the submission")
-# parser.add_argument('-ep', '--error_path', type=str, required=False, help="error path for the submission")
+parser.add_argument('-op', '--output_path', type=str, required=False, help="output path for the submission")
+parser.add_argument('-lp', '--log_path', type=str, required=False, help="log path for the submission")
+parser.add_argument('-ep', '--error_path', type=str, required=False, help="error path for the submission")
 parser.add_argument('-pp', '--python_path', type=str, required=False, help="path of the python executable")
 parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
 
