@@ -8,9 +8,9 @@ parser.add_argument('--ram', type=int, required=False, help='the RAM requested')
 parser.add_argument('--cpu', type=int, required=False, help='the number of CPUs requested')
 
 parser.add_argument('-d', '--data', type=str, required=True, help="select the distribution (FICO, COMPAS, ADULT)")
-parser.add_argument('-op', '--output_path', type=str, required=False, help="output path for the submission")
-parser.add_argument('-lp', '--log_path', type=str, required=False, help="log path for the submission")
-parser.add_argument('-ep', '--error_path', type=str, required=False, help="error path for the submission")
+# parser.add_argument('-op', '--output_path', type=str, required=False, help="output path for the submission")
+# parser.add_argument('-lp', '--log_path', type=str, required=False, help="log path for the submission")
+# parser.add_argument('-ep', '--error_path', type=str, required=False, help="error path for the submission")
 parser.add_argument('-pp', '--python_path', type=str, required=False, help="path of the python executable")
 parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
 
@@ -44,6 +44,7 @@ parser.add_argument('-q', '--queue_num', type=int, required=False, help="the num
 args = parser.parse_args()
 
 if args.fairness_type is not None:
+    base_path = "{}/{}/{}".format(args.path, args.data, args.fairness_type)
     if args.fairness_lower_bound is None and args.fairness_values is None:
         parser.error(
             'when using --fairness_type, either --fairness_lower_bound or --fairness_values has to be specified')
@@ -55,6 +56,8 @@ if args.fairness_type is not None:
                                num=fairness_num)
     else:
         lambdas = args.fairness_lower_bound
+else:
+    base_path = "{}/{}".format(args.path, args.data)
 
 sub_file_name = "./{}.sub".format(args.data) if args.fairness_type is None else "./{}_{}.sub".format(args.data,
                                                                                                      args.fairness_type)
@@ -80,9 +83,12 @@ with open(sub_file_name, "w") as file:
     file.write("# ----------------------------------------------------------------------- #\n\n")
     file.write("environment = \"PYTHONUNBUFFERED=TRUE\"\n")
     file.write("executable = {}\n\n".format(args.python_path))
-    file.write("error = {}/experiment.$(Process).err\n".format(args.error_path))
-    file.write("output = {}/experiment.$(Process).out\n".format(args.output_path))
-    file.write("log = {}/experiment.$(Process).log\n\n".format(args.log_path))
+    file.write("error = {}/error/experiment.$(Process).err\n".format(base_path) if args.error_path is None
+               else "error = {}/experiment.$(Process).err\n".format(args.error_path))
+    file.write("output = {}/output/experiment.$(Process).out\n".format(base_path) if args.output_path is None
+               else "error = {}/experiment.$(Process).out\n".format(args.output_path))
+    file.write("log = {}/log/experiment.$(Process).log\n\n".format(base_path) if args.log_path is None
+               else "error = {}/experiment.$(Process).log\n".format(args.log_path))
     file.write("# ----------------------------------------------------------------------- #\n")
     file.write("# QUEUE                                                                   #\n")
     file.write("# ----------------------------------------------------------------------- #\n\n")
@@ -98,7 +104,7 @@ with open(sub_file_name, "w") as file:
                                       "-c {} " \
                                       "-lr {} " \
                                       "-i {} " \
-                                      "-p {}/{}/raw " \
+                                      "-p {}" \
                                       "-ts {} " \
                                       "-e {} " \
                                       "-bs {} " \
@@ -109,7 +115,7 @@ with open(sub_file_name, "w") as file:
                                                   cost,
                                                   learning_rate,
                                                   args.iterations,
-                                                  args.path, args.data,
+                                                  "{}/raw ".format(base_path),
                                                   time_steps,
                                                   epochs,
                                                   batch_size,

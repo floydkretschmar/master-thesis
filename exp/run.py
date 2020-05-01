@@ -157,14 +157,13 @@ training_parameters['parameter_optimization']['num_batches'] = args.num_batches
 
 if args.path:
     if args.fairness_type is not None:
-        training_parameters["save_path"] = "{}/{}/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
-                                                                                       args.fairness_type,
-                                                                                       args.cost,
-                                                                                       args.learning_rate,
-                                                                                       args.time_steps,
-                                                                                       args.epochs,
-                                                                                       args.batch_size,
-                                                                                       args.num_batches)
+        training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
+                                                                                    args.cost,
+                                                                                    args.learning_rate,
+                                                                                    args.time_steps,
+                                                                                    args.epochs,
+                                                                                    args.batch_size,
+                                                                                    args.num_batches)
 
         if args.process_id is not None:
             training_parameters["save_path_subfolder"] = "{}/{}".format(args.fairness_value, args.process_id)
