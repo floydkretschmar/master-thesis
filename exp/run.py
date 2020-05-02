@@ -60,7 +60,7 @@ def fairness_function_gradient(type, **fairness_kwargs):
         return mean_difference(grad, s)
     elif type == "COV_DP":
         return np.mean(grad, axis=0)
-    elif type == "BP_EOP":
+    elif type == "BD_EOP":
         y1_indices = np.where(y == 1)
         return mean_difference(grad[y1_indices], s[y1_indices])
 
@@ -77,7 +77,7 @@ def fairness_function(type, **fairness_kwargs):
     elif type == "COV_DP":
         covariance = calc_covariance(s, decisions, ips_weights)
         return np.mean(covariance, axis=0)
-    elif type == "BP_EOP":
+    elif type == "BD_EOP":
         benefit = calc_benefit(decisions, ips_weights)
         y1_indices = np.where(y == 1)
         return mean_difference(benefit[y1_indices], s[y1_indices])
@@ -101,7 +101,7 @@ parser.add_argument('--plot', required=False, action='store_true')
 parser.add_argument('-pid', '--process_id', type=str, required=False, help="process id for identification")
 
 parser.add_argument('-f', '--fairness_type', type=str, required=False,
-                    help="select the type of fairness (BD_DP, COV_DP, BP_EOP). "
+                    help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "
                          "if none is selected no fairness criterion is applied")
 parser.add_argument('-fv', '--fairness_value', type=float, required=False, help='the value of lambda')
 
