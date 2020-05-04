@@ -32,245 +32,128 @@ log = /home/fkretschmar/master-thesis/res/best/log/experiment.$(Process).log
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 1.0
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 2.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 1.1707799137227795
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 3.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 1.3707256063767186
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 4.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 1.6048180071713392
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 5.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 1.8788886879768232
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 6.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 2.1997651360042108
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 7.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 2.575440836141388
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 8.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 3.015274399935737
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 9.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 3.5302227018072676
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.4
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 4.13311383024411
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.5
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 4.838966653579624
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.6
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 5.66536496118536
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.7
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 6.632895500464652
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.8
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 7.765660821766217
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.9
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 9.091879706907822
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 1.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 10.644590138831427
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 2.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 12.462472324355405
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.1
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 14.590812272681346
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.2
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 17.082629933755133
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.3
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 20.000000000000004
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.4
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.20000000000000004
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.5
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.2151381172440365
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.6
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.23142204745654402
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.7
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.24893851789280472
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.8
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.26778082024489447
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.9
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.2880493075077518
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 1.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.3098519284533312
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 2.0
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.33330480255941786
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.3585328384551424
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.3856703991769981
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.4148620177784768
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.44626316710461755
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.48004108783124133
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.516375679178962
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.5554604570458626
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.5975035846617943
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.642728981253506
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.6913775146252845
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.7437082840067252
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.8
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.029999999999999995
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.03136811734486574
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.03279862619204223
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.03429437183807892
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.0358583293361773
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.0374936094136017
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.03920346465894737
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.04099129599157195
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.042860659426058434
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.044815273145164244
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.046859024895324085
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.04899597971941702
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.05123038804217785
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.05356669412433473
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.05600954490228872
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.05856379923091732
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.06123453754788576
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.06402707197868895
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.06694695690252268
-queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.07000000000000002
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 3.0
 queue
 
-
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 3.0
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 1
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 3.1962532945242885
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 1.25
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 3.4053450409191233
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 1.5
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 3.6281151020098994
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 1.75
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 3.8654582825708226
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 2
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 4.118327923504397
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 2.25
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 4.3877397311441015
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 2.5
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 4.674775857061484
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.3
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 4.980589244765126
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.4
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 5.306408260750924
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.5
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 5.653541628505348
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.6
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 6.023383685280145
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.7
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 6.417419982753505
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.8
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 6.837233254073966
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 0.9
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 7.284509771254977
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 1.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 7.761046118456032
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_EOP -fv 2.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 8.26875640835668
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 0.3
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 8.809679970609622
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 0.4
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 9.385989543255215
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 0.5
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f COV_DP -fv 10.0
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 0.6
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.0
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 0.7
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.0595260647382752
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 0.8
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.1225954818597756
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 0.9
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.189419173187856
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 1.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.260220615891982
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 2.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.3352365898580771
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 3.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.414717969546883
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 4.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.498930562988532
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 5.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.5881560007191666
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 6.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.682692677632456
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 7.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.782856750895827
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 8.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 1.888983197268723
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 9.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 2.0014269333588555
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 10.0
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 2.1205640025629022
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 2.246792832661117
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 2.380535568271596
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 2.5222394826202974
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 2.672378473348187
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 2.8314546473578845
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_EOP -fv 3.0
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 1.0
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 1.1078445976218012
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 1.2273196524798105
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 1.3596794465548243
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 1.5063135293631627
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 1.6687613058296082
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 1.8487281973836336
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 2.048103545942549
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 2.2689804487425076
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 2.513677732248877
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 2.784764295834139
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 3.08508608078993
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 3.417795947801339
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 3.786386776545397
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 4.194728134902444
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 4.647106902743847
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 5.148272276775751
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 5.703485628912106
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 6.3185757416038575
-queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.1 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 128  --plot   -f BD_DP -fv 7.0
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f COV_DP -fv 11.0
 queue
