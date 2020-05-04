@@ -94,12 +94,12 @@ for cost in cost_directories:
                 model_parameters = None
 
                 if result_row is not None:
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN)[0])
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN)[-1])
+                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN).max())
+                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN).min())
                     result_row.append((statistics.performance(Statistics.UTILITY, Statistics.THIRD_QUARTILE) -
                                        statistics.performance(Statistics.UTILITY, Statistics.FIRST_QUARTILE)).mean(
                         axis=0))
-                    result_columns = ['lr', 'parameters', 'first_median', 'final_median', 'avg_iqr']
+                    result_columns = ['lr', 'parameters', 'max_median_util', 'min_median_util', 'avg_iqr_util']
                     results.append(result_row)
             else:
                 statistics, model_parameters = no_fairness(runs)
