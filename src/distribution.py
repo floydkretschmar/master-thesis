@@ -8,8 +8,9 @@ import numpy as np
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
+from copy import deepcopy
 
-from src.util import train_test_split, get_random
+from src.util import train_test_split, get_random, whiten
 from responsibly.dataset import build_FICO_dataset, COMPASDataset, AdultDataset, GermanDataset
 
 
@@ -261,9 +262,12 @@ class FICODistribution(GenerativeDistribution):
 class ResamplingDistribution(BaseDistribution):
     """Resample from a finite dataset."""
 
-    def __init__(self, dataset, test_percentage, bias=False):
+    def _load_data(self):
+        raise NotImplementedError("Subclass must override _load_data(self).")
+
+    def __init__(self, test_percentage, bias=False):
         super(ResamplingDistribution, self).__init__(bias)
-        x, s, y = dataset
+        x, s, y = self._load_data()
         self.x, self.x_test, self.y, self.y_test, self.s, self.s_test = train_test_split(x, y, s,
                                                                                          test_size=test_percentage)
         self.total_test_samples = self.x_test.shape[0]
@@ -287,18 +291,18 @@ class ResamplingDistribution(BaseDistribution):
         n = min(self.total_training_samples, n_train)
         indices = random.choice(self.training_sample_indices, n, replace=True)
 
-        x = self.x[indices].reshape((n, -1))
-        y = self.y[indices].reshape((n, -1))
-        s = self.s[indices].reshape((n, -1))
+        x = deepcopy(self.x[indices]).reshape((n, -1))
+        y = deepcopy(self.y[indices]).reshape((n, -1))
+        s = deepcopy(self.s[indices]).reshape((n, -1))
 
         n_train_remain = max(n_train - self.total_training_samples, 0)
         while n_train_remain > 0:
             n = min(self.total_training_samples, n_train_remain)
             indices = random.choice(self.training_sample_indices, n, replace=True)
 
-            x = np.vstack((x, self.x[indices].reshape((n, -1))))
-            y = np.vstack((y, self.y[indices].reshape((n, -1))))
-            s = np.vstack((s, self.s[indices].reshape((n, -1))))
+            x = np.vstack((x, deepcopy(self.x[indices]).reshape((n, -1))))
+            y = np.vstack((y, deepcopy(self.y[indices]).reshape((n, -1))))
+            s = np.vstack((s, deepcopy(self.s[indices]).reshape((n, -1))))
 
             n_train_remain = max(n_train_remain - self.total_training_samples, 0)
 
@@ -317,10 +321,9 @@ class ResamplingDistribution(BaseDistribution):
 
 class COMPASDistribution(ResamplingDistribution):
     def __init__(self, test_percentage, bias=False):
-        dataset = self.load_data()
-        super(COMPASDistribution, self).__init__(dataset, test_percentage, bias)
+        super(COMPASDistribution, self).__init__(test_percentage, bias)
 
-    def load_data(self):
+    def _load_data(self):
         compas_data = COMPASDataset()
 
         # use race as the sensitive attribute
@@ -346,10 +349,9 @@ class COMPASDistribution(ResamplingDistribution):
 
 class AdultCreditDistribution(ResamplingDistribution):
     def __init__(self, test_percentage, bias=False):
-        dataset = self.load_data()
-        super(AdultCreditDistribution, self).__init__(dataset, test_percentage, bias)
+        super(AdultCreditDistribution, self).__init__(test_percentage, bias)
 
-    def load_data(self):
+    def _load_data(self):
         data = AdultDataset()
 
         # use race as the sensitive attribute
@@ -359,7 +361,7 @@ class AdultCreditDistribution(ResamplingDistribution):
         s = s.values.reshape(-1, 1)
 
         # Use capital gain/capital loss and hours per week
-        x = data.df[['capital_gain', 'capital_loss', 'hours_per_week']].values
+        x = whiten(data=data.df[['capital_gain', 'capital_loss', 'hours_per_week']].values.astype(float))
 
         # work class, education, marital status and native country in one hot encoding
         for column in ["workclass", "education", "marital_status", "native_country"]:
@@ -379,10 +381,9 @@ class AdultCreditDistribution(ResamplingDistribution):
 
 class GermanCreditDistribution(ResamplingDistribution):
     def __init__(self, test_percentage, bias=False):
-        dataset = self.load_data()
-        super(GermanCreditDistribution, self).__init__(dataset, test_percentage, bias)
+        super(GermanCreditDistribution, self).__init__(test_percentage, bias)
 
-    def load_data(self):
+    def _load_data(self):
         data = GermanDataset()
 
         # use sex as the sensitive attribute (columns status and sex are switched)
@@ -393,11 +394,11 @@ class GermanCreditDistribution(ResamplingDistribution):
 
         # Use credit amount, installment rate, time in present residence, number of existing credits, number of people
         # liable for and whether or not person is a foreign worker
-        x = data.df[['credit_amount',
-                     'installment_rate',
-                     'present_residence_since',
-                     'number_of_existing_credits',
-                     'number_of_people_liable_for']].values
+        x = whiten(data.df[['credit_amount',
+                            'installment_rate',
+                            'present_residence_since',
+                            'number_of_existing_credits',
+                            'number_of_people_liable_for']].values.astype(float))
 
         # credit history, purpose of credit, savings, length of current employment, property, housing situation
         # and current job type in one hot encoding
@@ -414,3 +415,6 @@ class GermanCreditDistribution(ResamplingDistribution):
         y = y.values.reshape(-1, 1)
 
         return x.astype(float), s.astype(float), y.astype(float)
+
+
+data = AdultCreditDistribution(test_percentage=0.2, bias=True)
