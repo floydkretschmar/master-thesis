@@ -10,7 +10,7 @@ from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
 
 from src.util import train_test_split, get_random
-from responsibly.dataset import build_FICO_dataset, COMPASDataset, AdultDataset
+from responsibly.dataset import build_FICO_dataset, COMPASDataset, AdultDataset, GermanDataset
 
 
 class BaseDistribution():
@@ -287,14 +287,32 @@ class ResamplingDistribution(BaseDistribution):
         n = min(self.total_training_samples, n_train)
         indices = random.choice(self.training_sample_indices, n, replace=True)
 
-        return self.x[indices].reshape((n, -1)), self.y[indices].reshape((n, -1)), self.s[indices].reshape((n, -1))
+        x = self.x[indices].reshape((n, -1))
+        y = self.y[indices].reshape((n, -1))
+        s = self.s[indices].reshape((n, -1))
+
+        n_train_remain = max(n_train - self.total_training_samples, 0)
+        while n_train_remain > 0:
+            n = min(self.total_training_samples, n_train_remain)
+            indices = random.choice(self.training_sample_indices, n, replace=True)
+
+            x = np.vstack((x, self.x[indices].reshape((n, -1))))
+            y = np.vstack((y, self.y[indices].reshape((n, -1))))
+            s = np.vstack((s, self.s[indices].reshape((n, -1))))
+
+            n_train_remain = max(n_train_remain - self.total_training_samples, 0)
+
+        return x, s, y
 
     def _sample_test_dataset_core(self, n_test, random):
         n = min(self.total_test_samples, n_test) if n_test is not None else self.total_test_samples
         indices = random.choice(self.test_sample_indices, n, replace=True)
 
-        return self.x_test[indices].reshape((n, -1)), self.y_test[indices].reshape((n, -1)), self.s_test[
-            indices].reshape((n, -1))
+        x = self.x_test[indices].reshape((n, -1))
+        y = self.y_test[indices].reshape((n, -1))
+        s = self.s_test[indices].reshape((n, -1))
+
+        return x, s, y
 
 
 class COMPASDistribution(ResamplingDistribution):
@@ -353,6 +371,45 @@ class AdultCreditDistribution(ResamplingDistribution):
         # use actual income as target variable: >50K = 1, <=50K = 0
         income = data.df[data.target]
         y = income.where(income == '>50K', 0)
+        y.where(y == 0, 1, inplace=True)
+        y = y.values.reshape(-1, 1)
+
+        return x.astype(float), s.astype(float), y.astype(float)
+
+
+class GermanCreditDistribution(ResamplingDistribution):
+    def __init__(self, test_percentage, bias=False):
+        dataset = self.load_data()
+        super(GermanCreditDistribution, self).__init__(dataset, test_percentage, bias)
+
+    def load_data(self):
+        data = GermanDataset()
+
+        # use sex as the sensitive attribute (columns status and sex are switched)
+        sex = data.df['status'].iloc[:, 0]
+        s = sex.where(sex == 'male', 1)
+        s.where(s == 1, 0, inplace=True)
+        s = s.values.reshape(-1, 1)
+
+        # Use credit amount, installment rate, time in present residence, number of existing credits, number of people
+        # liable for and whether or not person is a foreign worker
+        x = data.df[['credit_amount',
+                     'installment_rate',
+                     'present_residence_since',
+                     'number_of_existing_credits',
+                     'number_of_people_liable_for']].values
+
+        # credit history, purpose of credit, savings, length of current employment, property, housing situation
+        # and current job type in one hot encoding
+        for column in ["credit_history", "purpose", "savings", "present_employment", "property", "housing", "job"]:
+            for category in data.df[column].unique():
+                category = data.df[column].where(data.df[column] == category, 0)
+                category.where(category == 0, 1, inplace=True)
+                x = np.hstack((x, category.values.reshape(-1, 1)))
+
+        # was given credit good or bad
+        credit = data.df[data.target]
+        y = credit.where(credit == 'good', 0)
         y.where(y == 0, 1, inplace=True)
         y = y.values.reshape(-1, 1)
 
