@@ -32,57 +32,59 @@ log = /home/fkretschmar/master-thesis/res/best/log/experiment.$(Process).log
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f COV_DP -fv 2.0
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.003
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f COV_DP -fv 3.0
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.004
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f COV_DP -fv 4.0
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.005
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f COV_DP -fv 5.0
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.006
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f COV_DP -fv 6.0
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.007
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f COV_DP -fv 7.0
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.008
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.07
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.009
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.08
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.01
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.09
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_DP -fv 0.02
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.1
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.003
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.125
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.004
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.15
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.005
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.175
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.006
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_EOP -fv 0.2
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.007
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.01
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.008
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.02
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.009
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.03
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.01
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.04
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f BD_EOP -fv 0.02
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.05
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.03
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.06
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.04
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.07
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.05
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.08
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.06
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.09
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.07
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.1
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.08
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.2
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.09
 queue
-arguments = run.py -d COMPAS -c 0.6 -lr 0.01 -i 30 -p ../res/best/COMPAS/BD_DP/raw -ts 200 -e 10 -bs 128 -nb 64  --plot   -f BD_DP -fv 0.3
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.1
+queue
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p ../res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 128  --plot   -f COV_DP -fv 0.2
 queue
 
 # arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 30 -p ../res/best/FICO/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 64  --plot   -f BD_DP -fv 0.1
