@@ -1,6 +1,5 @@
 import os
 import sys
-from copy import deepcopy
 
 import numpy as np
 
@@ -242,7 +241,7 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
         lambda_decay_step = training_parameters["lagrangian_optimization"]["decay_step"]
 
         policy = LogisticPolicy(
-            deepcopy(training_parameters["model"]["initial_theta"]),
+            training_parameters["model"]["initial_theta"],
             training_parameters["model"]["feature_map"],
             training_parameters["model"]["use_sensitve_attributes"])
 

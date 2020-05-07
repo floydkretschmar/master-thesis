@@ -1,7 +1,6 @@
 import argparse
 import os
 import sys
-from copy import deepcopy
 
 import numpy as np
 
@@ -158,7 +157,7 @@ def single_run(args):
             if args.process_id is not None:
                 training_parameters["save_path_subfolder"] = args.process_id
 
-    statistics, model_parameters, run_path = train(deepcopy(training_parameters), args.iterations, args.asynchronous)
+    statistics, model_parameters, run_path = train(training_parameters, args.iterations, args.asynchronous)
 
     if args.plot:
         plot_mean(statistics, "{}/results_mean_time.png".format(run_path))

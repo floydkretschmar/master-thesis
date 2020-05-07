@@ -6,6 +6,7 @@ if root_path not in sys.path:
 
 import multiprocessing as mp
 from pathos.multiprocessing import ProcessingPool as Pool
+# from multiprocessing import Pool
 import time
 from pathlib import Path
 from copy import deepcopy
@@ -52,7 +53,7 @@ def _prepare_training(training_parameters):
         current_training_parameters: The pre processed training parameters.
     """
     _check_for_missing_training_parameters(training_parameters)
-    current_training_parameters = training_parameters
+    current_training_parameters = deepcopy(training_parameters)
 
     # save parameter settings
     if "save_path" in training_parameters:
@@ -225,12 +226,13 @@ def train(training_parameters, iterations=30, asynchronous=True):
 
     if isinstance(current_training_parameters["model"]["initial_lambda"],
                   numbers.Number) and "lagrangian_optimization" not in training_parameters:
-        info_string = "// LR = {} // TS = {} // E = {} // BS = {} // NB = {}".format(
+        info_string = "// LR = {} // TS = {} // E = {} // BS = {} // NB = {} // FR = {}".format(
             current_training_parameters["parameter_optimization"]["learning_rate"],
             current_training_parameters["parameter_optimization"]["time_steps"],
             current_training_parameters["parameter_optimization"]["epochs"],
             current_training_parameters["parameter_optimization"]["batch_size"],
-            current_training_parameters["parameter_optimization"]["num_batches"])
+            current_training_parameters["parameter_optimization"]["num_batches"],
+            current_training_parameters["model"]["initial_lambda"])
         print("## STARTED Single training run {} ##".format(info_string))
         training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
         overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters,

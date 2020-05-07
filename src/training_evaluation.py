@@ -268,7 +268,7 @@ class Statistics():
         return build_result_dictionary(measure)[result_format]
 
     def to_dict(self):
-        return serialize_dictionary(deepcopy(self.results))
+        return serialize_dictionary(self.results)
 
     def merge(self, statistics):
         for (protected_key, protected_value) in statistics.results.items():

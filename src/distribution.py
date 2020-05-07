@@ -8,7 +8,6 @@ import numpy as np
 #pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
-from copy import deepcopy
 
 from src.util import train_test_split, get_random, whiten
 from responsibly.dataset import build_FICO_dataset, COMPASDataset, AdultDataset, GermanDataset
@@ -291,18 +290,18 @@ class ResamplingDistribution(BaseDistribution):
         n = min(self.total_training_samples, n_train)
         indices = random.choice(self.training_sample_indices, n, replace=True)
 
-        x = deepcopy(self.x[indices]).reshape((n, -1))
-        y = deepcopy(self.y[indices]).reshape((n, -1))
-        s = deepcopy(self.s[indices]).reshape((n, -1))
+        x = self.x[indices].reshape((n, -1))
+        y = self.y[indices].reshape((n, -1))
+        s = self.s[indices].reshape((n, -1))
 
         n_train_remain = max(n_train - self.total_training_samples, 0)
         while n_train_remain > 0:
             n = min(self.total_training_samples, n_train_remain)
             indices = random.choice(self.training_sample_indices, n, replace=True)
 
-            x = np.vstack((x, deepcopy(self.x[indices]).reshape((n, -1))))
-            y = np.vstack((y, deepcopy(self.y[indices]).reshape((n, -1))))
-            s = np.vstack((s, deepcopy(self.s[indices]).reshape((n, -1))))
+            x = np.vstack((x, self.x[indices].reshape((n, -1))))
+            y = np.vstack((y, self.y[indices].reshape((n, -1))))
+            s = np.vstack((s, self.s[indices].reshape((n, -1))))
 
             n_train_remain = max(n_train_remain - self.total_training_samples, 0)
 
