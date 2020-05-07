@@ -1,25 +1,11 @@
 import os
 import sys
-from copy import deepcopy
 
 import numpy as np
 
 root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
-
-
-####################### BENEFIT FUNCTIONS #######################
-def demographic_parity(**benefit_parameters):
-    decisions = deepcopy(benefit_parameters["decisions"])
-    return decisions
-
-
-def equal_opportunity(**benefit_parameters):
-    y_s = benefit_parameters["y"]
-    decisions = benefit_parameters["decisions"]
-    return y_s * decisions
-
 
 ####################### UTILITY FUNCTIONS #######################
 
