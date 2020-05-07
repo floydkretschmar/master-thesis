@@ -37,9 +37,11 @@ def multi_run(args):
                                        "-ts", str(time_steps),
                                        "-e", str(epochs),
                                        "-bs", str(batch_size),
-                                       "-nb", str(num_batches),
-                                       "-a" if args.asynchronous else "",
-                                       "--plot" if args.plot else ""]
+                                       "-nb", str(num_batches)]
+                            if args.asynchronous:
+                                command.append("-a")
+                            if args.plot:
+                                command.append("--plot")
 
                             if args.fairness_type is not None:
                                 for fairness_rate in lambdas:
