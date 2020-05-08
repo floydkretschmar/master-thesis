@@ -414,6 +414,3 @@ class GermanCreditDistribution(ResamplingDistribution):
         y = y.values.reshape(-1, 1)
 
         return x.astype(float), s.astype(float), y.astype(float)
-
-
-data = AdultCreditDistribution(test_percentage=0.2, bias=True)
