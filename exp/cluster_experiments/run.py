@@ -142,10 +142,19 @@ def single_run(args):
                                                                                         args.batch_size,
                                                                                         args.num_batches)
 
-            if args.process_id is not None:
-                training_parameters["save_path_subfolder"] = "{}/{}".format(args.fairness_value, args.process_id)
+            if args.fairness_iterations is not None:
+                subfolder = "flr{}/fi{}-fe{}-fbs{}-fnb{}".format(args.fairness_learning_rate,
+                                                                 args.fairness_iterations,
+                                                                 args.fairness_epochs,
+                                                                 args.fairness_batch_size,
+                                                                 args.fairness_num_batches)
             else:
-                training_parameters["save_path_subfolder"] = args.fairness_value
+                subfolder = args.fairness_value
+
+            if args.process_id is not None:
+                training_parameters["save_path_subfolder"] = "{}/{}".format(subfolder, args.process_id)
+            else:
+                training_parameters["save_path_subfolder"] = subfolder
         else:
             training_parameters["save_path"] = "{}/no_fairness/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
                                                                                                     args.cost,
@@ -156,6 +165,18 @@ def single_run(args):
                                                                                                     args.num_batches)
             if args.process_id is not None:
                 training_parameters["save_path_subfolder"] = args.process_id
+
+    if args.fairness_type is not None and args.fairness_iterations is not None:
+        training_parameters["lagrangian_optimization"] = {
+            'iterations': args.fairness_iterations,
+            'epochs': args.fairness_epochs,
+            'batch_size': args.fairness_batch_size,
+            'num_batches': args.fairness_num_batches,
+            'learning_rate': args.fairness_learning_rate,
+            'decay_rate': 1,
+            'decay_step': 10000,
+            'fix_seeds': True
+        }
 
     statistics, model_parameters, run_path = train(training_parameters, args.iterations, args.asynchronous)
 
@@ -185,10 +206,33 @@ if __name__ == "__main__":
                         help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "
                              "if none is selected no fairness criterion is applied")
     parser.add_argument('-fv', '--fairness_value', type=float, required=False, help='the value of lambda')
+    parser.add_argument('-fi', '--fairness_iterations', type=int, required=False,
+                        help="the number of learning iterations for lambda")
+    parser.add_argument('-flr', '--fairness_learning_rate', type=float, required=False,
+                        help="define the learning rate of lambda")
+    parser.add_argument('-fbs', '--fairness_batch_size', type=int, required=False,
+                        help='batch size to be used to learn lambda')
+    parser.add_argument('-fnb', '--fairness_num_batches', type=int, required=False,
+                        help='number of batches to be used to learn lambda')
+    parser.add_argument('-fe', '--fairness_epochs', type=int, required=False,
+                        help='number of epochs to be used to learn lambda')
 
     args = parser.parse_args()
 
     if args.fairness_type is not None and args.fairness_value is None:
         parser.error('when using --fairness_type, --fairness_value has to be specified')
 
+    if args.fairness_type is not None and \
+            ((args.fairness_iterations is None or
+              args.fairness_epochs is None or
+              args.fairness_learning_rate is None or
+              args.fairness_batch_size is None or
+              args.fairness_num_batches is None) and not
+             (args.fairness_iterations is None and
+              args.fairness_epochs is None and
+              args.fairness_learning_rate is None and
+              args.fairness_batch_size is None and
+              args.fairness_num_batches is None)):
+        parser.error('--fairness_iterations, --fairness_epochs, --fairness_learning_rate, fairness_batch_size and '
+                     '--fairness_num_batches have to be fully specified or not specified at all')
     single_run(args)

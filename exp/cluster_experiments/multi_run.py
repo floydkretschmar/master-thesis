@@ -5,23 +5,118 @@ from copy import deepcopy
 import numpy as np
 
 
-def multi_run(args):
-    if args.fairness_type is not None:
-        base_path = "{}/{}/{}".format(args.path, args.data, args.fairness_type)
-        if args.fairness_lower_bound is None and args.fairness_values is None:
-            parser.error(
-                'when using --fairness_type, either --fairness_lower_bound or --fairness_values has to be specified')
-        elif args.fairness_values is not None:
-            lambdas = args.fairness_values
-        elif args.fairness_upper_bound is not None:
-            fairness_num = args.fairness_number if args.fairness_number is not None else 20
-            lambdas = np.geomspace(args.fairness_lower_bound, args.fairness_upper_bound, endpoint=True,
-                                   num=fairness_num)
+def _fairness_extensions(args, fairness_rates, build=False):
+    extensions = []
+    for fairness_rate in fairness_rates:
+        if build:
+            extension = "-f {} -fv {}".format(args.fairness_type, fairness_rate)
         else:
-            lambdas = args.fairness_lower_bound
-    else:
-        base_path = "{}/{}".format(args.path, args.data)
+            extension = ["-f", str(args.fairness_type), "-fv", str(fairness_rate)]
 
+        if args.fairness_iterations is not None:
+            for iterations in args.fairness_iterations:
+                for learning_rate in args.fairness_learning_rates:
+                    for batch_size in args.fairness_batch_sizes:
+                        for num_batches in args.fairness_num_batches:
+                            for epochs in args.fairness_epochs:
+                                if build:
+                                    extensions.append("{} -fi {} -flr {} -fbs {} -fnb {} -fe {}".format(extension,
+                                                                                                        iterations,
+                                                                                                        learning_rate,
+                                                                                                        batch_size,
+                                                                                                        num_batches,
+                                                                                                        epochs))
+                                else:
+                                    temp_extension = deepcopy(extension)
+                                    temp_extension.extend(["-fi", str(iterations),
+                                                           "-flr", str(learning_rate),
+                                                           "-fbs", str(batch_size),
+                                                           "-fnb", str(num_batches),
+                                                           "-fe", str(epochs)])
+                                    extensions.append(temp_extension)
+        else:
+            extensions.append(extension)
+
+    return extensions
+
+
+def _build_submit_file(args, base_path, lambdas):
+    sub_file_name = "./{}.sub".format(args.data) if args.fairness_type is None else "./{}_{}.sub".format(args.data,
+                                                                                                         args.fairness_type)
+    print("## Started building {} ##".format(sub_file_name))
+
+    with open(sub_file_name, "w") as file:
+        file.write("# ----------------------------------------------------------------------- #\n")
+        file.write("# RUNTIME LIMITATION                                                      #\n")
+        file.write("# ----------------------------------------------------------------------- #\n\n")
+        file.write("# Maximum expected execution time for the job, in seconds\n")
+        file.write("# 43200 = 12h\n")
+        file.write("# 86400 = 24h\n")
+        file.write("MaxTime = 43200\n\n")
+        file.write("# Kill the jobs without warning\n")
+        file.write("periodic_remove = (JobStatus =?= 2) && ((CurrentTime - JobCurrentStartDate) >= $(MaxTime))\n\n")
+        file.write("# ----------------------------------------------------------------------- #\n")
+        file.write("# RESSOURCE SELECTION                                                     #\n")
+        file.write("# ----------------------------------------------------------------------- #\n\n")
+        file.write("request_memory = {}\n".format(args.ram if args.ram is not None else 1024))
+        file.write("request_cpus = {}\n\n".format(args.ram if args.cpu is not None else 1))
+        file.write("# ----------------------------------------------------------------------- #\n")
+        file.write("# FOLDER SELECTION                                                        #\n")
+        file.write("# ----------------------------------------------------------------------- #\n\n")
+        file.write("environment = \"PYTHONUNBUFFERED=TRUE\"\n")
+        file.write("executable = {}\n\n".format(args.python_path))
+        file.write("error = {}/error/experiment.$(Process).err\n".format(base_path))
+        file.write("output = {}/output/experiment.$(Process).out\n".format(base_path))
+        file.write("log = {}/log/experiment.$(Process).log\n".format(base_path))
+        file.write("# ----------------------------------------------------------------------- #\n")
+        file.write("# QUEUE                                                                   #\n")
+        file.write("# ----------------------------------------------------------------------- #\n\n")
+
+        for cost in args.costs:
+            for learning_rate in args.learning_rates:
+                for time_steps in args.time_steps:
+                    for epochs in args.epochs:
+                        for batch_size in args.batch_sizes:
+                            for num_batches in args.num_batches:
+                                command = "run.py " \
+                                          "-d {} " \
+                                          "-c {} " \
+                                          "-lr {} " \
+                                          "-i {} " \
+                                          "-p {}" \
+                                          "-ts {} " \
+                                          "-e {} " \
+                                          "-bs {} " \
+                                          "-nb {} " \
+                                          "{} " \
+                                          "{} " \
+                                          "{}".format(args.data,
+                                                      cost,
+                                                      learning_rate,
+                                                      args.iterations,
+                                                      "{}/raw ".format(base_path),
+                                                      time_steps,
+                                                      epochs,
+                                                      batch_size,
+                                                      num_batches,
+                                                      "-a " if args.asynchronous else "",
+                                                      "--plot " if args.plot else "",
+                                                      "-pid $(Process)" if args.queue_num else "")
+
+                                if args.fairness_type is not None:
+                                    for extension in _fairness_extensions(args, lambdas, build=True):
+                                        file.write("arguments = {} {}\n".format(command, extension))
+                                        file.write("queue {}\n".format(args.queue_num
+                                                                       if args.queue_num is not None else ""))
+                                else:
+                                    file.write("arguments = {}\n".format(command))
+                                    file.write("queue {}\n".format(args.queue_num
+                                                                   if args.queue_num is not None else ""))
+
+    print("## FInished building {} ##".format(sub_file_name))
+
+
+def _multi_run(args, base_path, lambdas):
     for cost in args.costs:
         for learning_rate in args.learning_rates:
             for time_steps in args.time_steps:
@@ -44,9 +139,9 @@ def multi_run(args):
                                 command.append("--plot")
 
                             if args.fairness_type is not None:
-                                for fairness_rate in lambdas:
+                                for extension in _fairness_extensions(args, lambdas, build=False):
                                     temp_command = deepcopy(command)
-                                    temp_command.extend(["-f", str(args.fairness_type), "-fv", str(fairness_rate)])
+                                    temp_command.extend(extension)
                                     subprocess.run(temp_command)
                             else:
                                 subprocess.run(command)
@@ -55,10 +150,12 @@ def multi_run(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
+    # Configuration parameters
     parser.add_argument('-d', '--data', type=str, required=True,
                         help="select the distribution (FICO, COMPAS, ADULT, GERMAN)")
-
     parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
+
+    # Policy training parameters
     parser.add_argument('-c', '--costs', type=float, nargs='+', required=True, help="define the utility cost c")
     parser.add_argument('-lr', '--learning_rates', type=float, nargs='+', required=True,
                         help="define the learning rate of theta")
@@ -68,11 +165,12 @@ if __name__ == "__main__":
                         help='list of batch sizes to be used')
     parser.add_argument('-nb', '--num_batches', type=int, nargs='+', required=True,
                         help='list of number of batches to be used')
-
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
+
     parser.add_argument('-a', '--asynchronous', action='store_true')
     parser.add_argument('--plot', required=False, action='store_true')
 
+    # Fairness parameters
     parser.add_argument('-f', '--fairness_type', type=str, required=False,
                         help="select the type of fairness (BD_DP, COV_DP, BP_EOP). "
                              "if none is selected no fairness criterion is applied")
@@ -83,8 +181,67 @@ if __name__ == "__main__":
     parser.add_argument('-fl', '--fairness_lower_bound', type=float, required=False, help='the lowest value for lambda')
     parser.add_argument('-fu', '--fairness_upper_bound', type=float, required=False,
                         help='the highest value for lambda')
-    parser.add_argument('-fn', '--fairness_number', type=int, required=False,
-                        help='the number of lambda values tested in the range')
+    parser.add_argument('-fn', '--fairness_number', type=int, required=False, default=20,
+                        help='the number of lambda values tested in the range (default = 20)')
+
+    parser.add_argument('-fi', '--fairness_iterations', type=int, required=False, nargs='+',
+                        help="the number of learning iterations for lambda")
+    parser.add_argument('-flr', '--fairness_learning_rates', type=float, required=False, nargs='+',
+                        help="define the learning rates of lambda")
+    parser.add_argument('-fbs', '--fairness_batch_sizes', type=int, required=False, nargs='+',
+                        help='batch sizes to be used to learn lambda')
+    parser.add_argument('-fnb', '--fairness_num_batches', type=int, required=False, nargs='+',
+                        help='number of batches to be used to learn lambda')
+    parser.add_argument('-fe', '--fairness_epochs', type=int, required=False, nargs='+',
+                        help='number of epochs to be used to learn lambda')
+
+    # Build script parameters
+    parser.add_argument('--build_submit', required=False, action='store_true')
+    parser.add_argument('-pp', '--python_path', type=str, required=False, help="path of the python executable")
+    parser.add_argument('-q', '--queue_num', type=int, required=False, default=1,
+                        help="the number of process that should be queued (default = 1)")
+    parser.add_argument('--ram', type=int, required=False, help='the RAM requested (default = 6144)', default=6144)
+    parser.add_argument('--cpu', type=int, required=False, help='the number of CPUs requested (default = 1)', default=1)
 
     args = parser.parse_args()
-    multi_run(args)
+
+    if args.build_submit and args.python_path is None:
+        parser.error('when using --build_submit, --python_path has to be specified')
+
+    if args.fairness_type is not None:
+        base_path = "{}/{}/{}".format(args.path, args.data, args.fairness_type)
+        if (args.fairness_lower_bound is None and args.fairness_upper_bound is not None) or \
+                (args.fairness_lower_bound is not None and args.fairness_upper_bound is None):
+            parser.error('--fairness_lower_bound and --fairness_upper_bound have to be specified together')
+        elif args.fairness_type is not None and \
+                ((args.fairness_iterations is None or
+                  args.fairness_epochs is None or
+                  args.fairness_learning_rates is None or
+                  args.fairness_batch_sizes is None or
+                  args.fairness_num_batches is None) and not
+                 (args.fairness_iterations is None and
+                  args.fairness_epochs is None and
+                  args.fairness_learning_rates is None and
+                  args.fairness_batch_sizes is None and
+                  args.fairness_num_batches is None)):
+            parser.error(
+                '--fairness_iterations, --fairness_epochs, --fairness_learning_rates, fairness_batch_sizes and '
+                '--fairness_num_batches have to be fully specified or not specified at all')
+        elif args.fairness_values is not None:
+            lambdas = args.fairness_values
+        elif args.fairness_lower_bound is not None and args.fairness_upper_bound is not None:
+            fairness_num = args.fairness_number
+            lambdas = np.geomspace(args.fairness_lower_bound,
+                                   args.fairness_upper_bound,
+                                   endpoint=True,
+                                   num=fairness_num)
+        else:
+            parser.error(
+                'neither --fairness_lower_bound and --fairness_upper_bound nor --fairness_values have been specified')
+    else:
+        base_path = "{}/{}".format(args.path, args.data)
+
+    if args.build_submit:
+        _build_submit_file(args, base_path, lambdas)
+    else:
+        _multi_run(args, base_path, lambdas)
