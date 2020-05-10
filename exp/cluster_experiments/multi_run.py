@@ -198,8 +198,8 @@ if __name__ == "__main__":
     # Build script parameters
     parser.add_argument('--build_submit', required=False, action='store_true')
     parser.add_argument('-pp', '--python_path', type=str, required=False, help="path of the python executable")
-    parser.add_argument('-q', '--queue_num', type=int, required=False, default=1,
-                        help="the number of process that should be queued (default = 1)")
+    parser.add_argument('-q', '--queue_num', type=int, required=False,
+                        help="the number of process that should be queued")
     parser.add_argument('--ram', type=int, required=False, help='the RAM requested (default = 6144)', default=6144)
     parser.add_argument('--cpu', type=int, required=False, help='the number of CPUs requested (default = 1)', default=1)
 
