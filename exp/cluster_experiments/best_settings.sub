@@ -190,17 +190,17 @@ queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0002
 queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0003
-queue0
+queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0004
-queue0
+queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0005
-queue0
+queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0006
-queue0
+queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0007
-queue0
+queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0008
-queue0
+queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.0009
 queue
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 128 -nb 512  --plot   -f BD_DP -fv 0.001
