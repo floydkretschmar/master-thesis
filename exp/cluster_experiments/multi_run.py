@@ -17,23 +17,23 @@ def _fairness_extensions(args, fairness_rates, build=False):
             for iterations in args.fairness_iterations:
                 for learning_rate in args.fairness_learning_rates:
                     for batch_size in args.fairness_batch_sizes:
-                        for num_batches in args.fairness_num_batches:
-                            for epochs in args.fairness_epochs:
-                                if build:
-                                    extensions.append("{} -fi {} -flr {} -fbs {} -fnb {} -fe {}".format(extension,
-                                                                                                        iterations,
-                                                                                                        learning_rate,
-                                                                                                        batch_size,
-                                                                                                        num_batches,
-                                                                                                        epochs))
-                                else:
-                                    temp_extension = deepcopy(extension)
-                                    temp_extension.extend(["-fi", str(iterations),
-                                                           "-flr", str(learning_rate),
-                                                           "-fbs", str(batch_size),
-                                                           "-fnb", str(num_batches),
-                                                           "-fe", str(epochs)])
-                                    extensions.append(temp_extension)
+                        num_batches = args.fairness_num_samples // batch_size
+                        for epochs in args.fairness_epochs:
+                            if build:
+                                extensions.append("{} -fi {} -flr {} -fbs {} -fnb {} -fe {}".format(extension,
+                                                                                                    iterations,
+                                                                                                    learning_rate,
+                                                                                                    batch_size,
+                                                                                                    num_batches,
+                                                                                                    epochs))
+                            else:
+                                temp_extension = deepcopy(extension)
+                                temp_extension.extend(["-fi", str(iterations),
+                                                       "-flr", str(learning_rate),
+                                                       "-fbs", str(batch_size),
+                                                       "-fnb", str(num_batches),
+                                                       "-fe", str(epochs)])
+                                extensions.append(temp_extension)
         else:
             extensions.append(extension)
 
@@ -77,41 +77,42 @@ def _build_submit_file(args, base_path, lambdas):
                 for time_steps in args.time_steps:
                     for epochs in args.epochs:
                         for batch_size in args.batch_sizes:
-                            for num_batches in args.num_batches:
-                                command = "run.py " \
-                                          "-d {} " \
-                                          "-c {} " \
-                                          "-lr {} " \
-                                          "-i {} " \
-                                          "-p {}" \
-                                          "-ts {} " \
-                                          "-e {} " \
-                                          "-bs {} " \
-                                          "-nb {} " \
-                                          "{} " \
-                                          "{} " \
-                                          "{}".format(args.data,
-                                                      cost,
-                                                      learning_rate,
-                                                      args.iterations,
-                                                      "{}/raw ".format(base_path),
-                                                      time_steps,
-                                                      epochs,
-                                                      batch_size,
-                                                      num_batches,
-                                                      "-a " if args.asynchronous else "",
-                                                      "--plot " if args.plot else "",
-                                                      "-pid $(Process)" if args.queue_num else "")
+                            num_batches = args.num_samples // batch_size
+                            # for num_batches in num_batches:
+                            command = "run.py " \
+                                      "-d {} " \
+                                      "-c {} " \
+                                      "-lr {} " \
+                                      "-i {} " \
+                                      "-p {}" \
+                                      "-ts {} " \
+                                      "-e {} " \
+                                      "-bs {} " \
+                                      "-nb {} " \
+                                      "{} " \
+                                      "{} " \
+                                      "{}".format(args.data,
+                                                  cost,
+                                                  learning_rate,
+                                                  args.iterations,
+                                                  "{}/raw ".format(base_path),
+                                                  time_steps,
+                                                  epochs,
+                                                  batch_size,
+                                                  num_batches,
+                                                  "-a " if args.asynchronous else "",
+                                                  "--plot " if args.plot else "",
+                                                  "-pid $(Process)" if args.queue_num else "")
 
-                                if args.fairness_type is not None:
-                                    for extension in _fairness_extensions(args, lambdas, build=True):
-                                        file.write("arguments = {} {}\n".format(command, extension))
-                                        file.write("queue {}\n".format(args.queue_num
-                                                                       if args.queue_num is not None else ""))
-                                else:
-                                    file.write("arguments = {}\n".format(command))
+                            if args.fairness_type is not None:
+                                for extension in _fairness_extensions(args, lambdas, build=True):
+                                    file.write("arguments = {} {}\n".format(command, extension))
                                     file.write("queue {}\n".format(args.queue_num
                                                                    if args.queue_num is not None else ""))
+                            else:
+                                file.write("arguments = {}\n".format(command))
+                                file.write("queue {}\n".format(args.queue_num
+                                                               if args.queue_num is not None else ""))
 
     print("## FInished building {} ##".format(sub_file_name))
 
@@ -122,29 +123,29 @@ def _multi_run(args, base_path, lambdas):
             for time_steps in args.time_steps:
                 for epochs in args.epochs:
                     for batch_size in args.batch_sizes:
-                        for num_batches in args.num_batches:
-                            command = ["python", "run.py",
-                                       "-d", str(args.data),
-                                       "-c", str(cost),
-                                       "-lr", str(learning_rate),
-                                       "-i", str(args.iterations),
-                                       "-p", "{}/raw".format(base_path),
-                                       "-ts", str(time_steps),
-                                       "-e", str(epochs),
-                                       "-bs", str(batch_size),
-                                       "-nb", str(num_batches)]
-                            if args.asynchronous:
-                                command.append("-a")
-                            if args.plot:
-                                command.append("--plot")
+                        num_batches = args.num_samples // batch_size
+                        command = ["python", "run.py",
+                                   "-d", str(args.data),
+                                   "-c", str(cost),
+                                   "-lr", str(learning_rate),
+                                   "-i", str(args.iterations),
+                                   "-p", "{}/raw".format(base_path),
+                                   "-ts", str(time_steps),
+                                   "-e", str(epochs),
+                                   "-bs", str(batch_size),
+                                   "-nb", str(num_batches)]
+                        if args.asynchronous:
+                            command.append("-a")
+                        if args.plot:
+                            command.append("--plot")
 
-                            if args.fairness_type is not None:
-                                for extension in _fairness_extensions(args, lambdas, build=False):
-                                    temp_command = deepcopy(command)
-                                    temp_command.extend(extension)
-                                    subprocess.run(temp_command)
-                            else:
-                                subprocess.run(command)
+                        if args.fairness_type is not None:
+                            for extension in _fairness_extensions(args, lambdas, build=False):
+                                temp_command = deepcopy(command)
+                                temp_command.extend(extension)
+                                subprocess.run(temp_command)
+                        else:
+                            subprocess.run(command)
 
 
 if __name__ == "__main__":
@@ -163,7 +164,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--epochs', type=int, nargs='+', required=True, help='list of epochs to be used')
     parser.add_argument('-bs', '--batch_sizes', type=int, nargs='+', required=True,
                         help='list of batch sizes to be used')
-    parser.add_argument('-nb', '--num_batches', type=int, nargs='+', required=True,
+    parser.add_argument('-ns', '--num_samples', type=int, required=True,
                         help='list of number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
 
@@ -190,7 +191,7 @@ if __name__ == "__main__":
                         help="define the learning rates of lambda")
     parser.add_argument('-fbs', '--fairness_batch_sizes', type=int, required=False, nargs='+',
                         help='batch sizes to be used to learn lambda')
-    parser.add_argument('-fnb', '--fairness_num_batches', type=int, required=False, nargs='+',
+    parser.add_argument('-fns', '--fairness_num_samples', type=int, required=False,
                         help='number of batches to be used to learn lambda')
     parser.add_argument('-fe', '--fairness_epochs', type=int, required=False, nargs='+',
                         help='number of epochs to be used to learn lambda')
@@ -208,6 +209,7 @@ if __name__ == "__main__":
     if args.build_submit and args.python_path is None:
         parser.error('when using --build_submit, --python_path has to be specified')
 
+    num_fairness_batches = None
     if args.fairness_type is not None:
         base_path = "{}/{}/{}".format(args.path, args.data, args.fairness_type)
         if (args.fairness_lower_bound is None and args.fairness_upper_bound is not None) or \
@@ -218,15 +220,15 @@ if __name__ == "__main__":
                   args.fairness_epochs is None or
                   args.fairness_learning_rates is None or
                   args.fairness_batch_sizes is None or
-                  args.fairness_num_batches is None) and not
+                  args.fairness_num_samples is None) and not
                  (args.fairness_iterations is None and
                   args.fairness_epochs is None and
                   args.fairness_learning_rates is None and
                   args.fairness_batch_sizes is None and
-                  args.fairness_num_batches is None)):
+                  args.fairness_num_samples is None)):
             parser.error(
                 '--fairness_iterations, --fairness_epochs, --fairness_learning_rates, fairness_batch_sizes and '
-                '--fairness_num_batches have to be fully specified or not specified at all')
+                '--fairness_num_samples have to be fully specified or not specified at all')
         elif args.fairness_values is not None:
             lambdas = args.fairness_values
         elif args.fairness_lower_bound is not None and args.fairness_upper_bound is not None:
