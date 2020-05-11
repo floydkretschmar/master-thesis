@@ -32,234 +32,220 @@ log = /home/fkretschmar/master-thesis/res/best/log/experiment.$(Process).log
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.00003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.00004
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.00005
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.00006
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.00007
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.00008
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.00009
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0001
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0002
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0004
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0005
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0006
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0007
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0008
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.0009
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.001
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.002
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.004
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.005
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.006
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.007
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.008
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.009
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.01
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.02
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.03
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.04
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.05
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.06
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.07
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.08
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.09
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_DP -fv 0.1
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00001
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00002
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00004
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00005
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00006
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00007
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00008
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.00009
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0001
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0002
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0004
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0005
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0006
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0007
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0008
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.0009
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.001
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.002
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.004
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.005
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.006
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.007
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.008
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.009
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f BD_EOP -fv 0.01
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00001
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00002
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00004
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00005
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00006
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00007
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00008
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.00009
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.0001
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.0002
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.0003
-queue
-arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot  -pid $(Process) -f COV_DP -fv 0.0004
-queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.00003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.00004
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.00005
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.00006
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.00007
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.00008
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.00009
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0001
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0002
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0004
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0005
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0006
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0007
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0008
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.0009
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.001
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.002
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.004
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.005
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.006
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.007
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.008
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.009
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.01
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.02
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.03
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.04
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.05
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.06
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.07
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.08
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.09
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_DP -fv 0.1
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00001
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00002
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00004
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00005
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00006
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00007
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00008
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.00009
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0001
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0002
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0004
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0005
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0006
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0007
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0008
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.0009
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.001
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.002
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.004
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.005
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.006
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.007
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.008
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.009
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/BD_EOP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f BD_EOP -fv 0.01
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00001
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00002
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00004
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00005
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00006
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00007
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00008
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.00009
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.0001
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.0002
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.0003
+# queue
+# arguments = run.py -d ADULT -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/ADULT/COV_DP/raw -ts 200 -e 1 -bs 512 -nb 512 --plot   -f COV_DP -fv 0.0004
+# queue
 
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.001
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.001
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.002
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.002
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.003
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.003
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.004
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.004
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.005
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.005
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.006
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.006
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.007
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.007
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.008
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.008
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.009
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.009
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_DP -fv 0.01
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_DP -fv 0.01
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0001
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.0008
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0002
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.0009
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0003
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.001
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0004
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.002
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0005
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.003
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0006
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.004
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0007
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.005
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0008
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.006
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.0009
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.007
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.001
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.008
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.002
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.009
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f BD_EOP -fv 0.003
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/BD_EOP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f BD_EOP -fv 0.01
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.0004
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.01
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.0005
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.015
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.0006
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.02
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.0007
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.025
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.0008
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.03
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.0009
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.035
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.001
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.04
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.002
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.045
 queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.003
-queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.004
-queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.005
-queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.006
-queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.007
-queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.008
-queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.009
-queue
-arguments = run.py -d COMPAS -c 0.5 -lr 0.1 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 1024 -nb 512  --plot   -f COV_DP -fv 0.01
+arguments = run.py -d COMPAS -c 0.5 -lr 0.05 -i 30 -p /home/fkretschmar/master-thesis/res/best/COMPAS/COV_DP/raw -ts 200 -e 1 -bs 256 -nb 256  --plot   -f COV_DP -fv 0.05
 queue
 
 
