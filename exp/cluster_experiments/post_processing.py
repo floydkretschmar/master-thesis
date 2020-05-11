@@ -29,28 +29,7 @@ parser.add_argument('-a', '--analyze', action='store_true')
 args = parser.parse_args()
 
 
-def fairness(runs, fairness_skip=None):
-    fairness_rates = np.array([float(run) for run_path, run in runs], dtype=float)
-    run_paths = [run_path for run_path, run in runs]
-    sorted_fairness_idx = np.argsort(fairness_rates)
-
-    if fairness_skip:
-        sorted_fairness_idx = np.argsort(fairness_rates)
-        sorted_fairness_idx = sorted_fairness_idx[::fairness_skip]
-
-    overall_statistics = MultiStatistics.build("log", fairness_rates[sorted_fairness_idx], "Lambda")
-
-    # load statistics and model parameters for all runs of a parameter setting
-    for lambda_idx in sorted_fairness_idx:
-        statistics_path = os.path.join(run_paths[lambda_idx], "statistics.json")
-        serialized_statistics = load_dictionary(statistics_path)
-        statistics = Statistics.build_from_serialized_dictionary(serialized_statistics)
-        overall_statistics.log_run(statistics)
-
-    return overall_statistics
-
-
-def no_fairness(runs):
+def combine_runs(runs):
     run_results = []
 
     # load statistics and model parameters for all runs of a parameter setting
@@ -70,6 +49,37 @@ def no_fairness(runs):
     statistcs_over_runs, model_parameters = _process_results(run_results)
 
     return statistcs_over_runs[0], model_parameters
+
+
+def fairness(lambdas, fairness_skip=None):
+    fairness_rates = np.array([float(run) for run_path, run in lambdas], dtype=float)
+    lambda_paths = [run_path for run_path, run in lambdas]
+    sorted_fairness_idx = np.argsort(fairness_rates)
+
+    if fairness_skip:
+        sorted_fairness_idx = np.argsort(fairness_rates)
+        sorted_fairness_idx = sorted_fairness_idx[::fairness_skip]
+
+    overall_statistics = MultiStatistics.build("log", fairness_rates[sorted_fairness_idx], "Lambda")
+
+    # load statistics and model parameters for all runs of a parameter setting
+    for lambda_idx in sorted_fairness_idx:
+        current_lambda_path = lambda_paths[lambda_idx]
+        current_lambda_statistics_path = os.path.join(current_lambda_path, "statistics.json")
+
+        runs = [(os.path.join(current_lambda_path, run), run) for run in os.listdir(current_lambda_path)
+                if os.path.isdir(os.path.join(current_lambda_path, run))]
+
+        if len(runs) > 0:
+            statistics, model_parameters = combine_runs(runs)
+            _save_results(current_lambda_statistics_path, statistics, model_parameters)
+        else:
+            serialized_statistics = load_dictionary(current_lambda_statistics_path)
+            statistics = Statistics.build_from_serialized_dictionary(serialized_statistics)
+
+        overall_statistics.log_run(statistics)
+
+    return overall_statistics
 
 
 cost_directories = [os.path.join(args.input_path, cost) for cost in os.listdir(args.input_path)
@@ -106,10 +116,18 @@ for cost in cost_directories:
                     result_row.append((statistics.performance(Statistics.UTILITY, Statistics.THIRD_QUARTILE) -
                                        statistics.performance(Statistics.UTILITY, Statistics.FIRST_QUARTILE)).mean(
                         axis=0))
-                    result_columns = ['lr', 'parameters', 'max_median_util', 'min_median_util', 'avg_iqr_util']
+                    result_row.append((statistics.fairness(Statistics.DEMOGRAPHIC_PARITY, Statistics.THIRD_QUARTILE) -
+                                       statistics.performance(Statistics.DEMOGRAPHIC_PARITY,
+                                                              Statistics.FIRST_QUARTILE)).mean(axis=0))
+                    result_row.append(
+                        (statistics.fairness(Statistics.EQUALITY_OF_OPPORTUNITY, Statistics.THIRD_QUARTILE) -
+                         statistics.performance(Statistics.EQUALITY_OF_OPPORTUNITY,
+                                                Statistics.FIRST_QUARTILE)).mean(axis=0))
+                    result_columns = ['lr', 'parameters', 'max_median_util', 'min_median_util', 'avg_iqr_util',
+                                      'avg_iqr_dp', 'avg_iqr_eop']
                     results.append(result_row)
             else:
-                statistics, model_parameters = no_fairness(runs)
+                statistics, model_parameters = combine_runs(runs)
 
                 if result_row is not None:
                     result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN)[-1])

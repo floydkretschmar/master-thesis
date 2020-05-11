@@ -191,8 +191,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             trained_model_parameters = optimizer.get_parameters()
 
         del self.data_history
-        return (decisions_over_time, np.array(fairness_over_time).reshape(-1, 1),
-                np.array(utilities_over_time).reshape(-1, 1)), trained_model_parameters
+        return (decisions_over_time, np.array(fairness_over_time, dtype=float).reshape(-1, 1),
+                np.array(utilities_over_time, dtype=float).reshape(-1, 1)), trained_model_parameters
         
     def train(self, training_parameters):
         """ Executes consequential learning.
