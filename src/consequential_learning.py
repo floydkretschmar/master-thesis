@@ -87,6 +87,9 @@ class BaseLearningAlgorithm():
             self.data_history["y"] = np.vstack((self.data_history["y"], y))
             self.data_history["s"] = np.vstack((self.data_history["s"], s))
 
+    def _reset_buffer(self):
+        self.data_history = None
+
     def train(self, training_parameters):
         """ Executes the training algorithm.
 
@@ -285,3 +288,4 @@ class DualGradientConsequentialLearning(ConsequentialLearning):
 
             del x_train, s_train, y_train
             policy.reset()
+            self._reset_buffer()
