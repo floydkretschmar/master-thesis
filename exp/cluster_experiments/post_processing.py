@@ -23,14 +23,21 @@ parser.add_argument('-o', '--output_path', type=str, required=True,
                     help="the path into which the processed data will be saved")
 parser.add_argument('-s', '--save', action='store_true')
 parser.add_argument('-f', '--fairness', action='store_true')
+parser.add_argument('-fs', '--fairness_skip', type=int, required=False,
+                    help="only take every #fairness_skip fairness value into account")
 parser.add_argument('-a', '--analyze', action='store_true')
 args = parser.parse_args()
 
 
-def fairness(runs):
+def fairness(runs, fairness_skip=None):
     fairness_rates = np.array([float(run) for run_path, run in runs], dtype=float)
     run_paths = [run_path for run_path, run in runs]
     sorted_fairness_idx = np.argsort(fairness_rates)
+
+    if fairness_skip:
+        sorted_fairness_idx = np.argsort(fairness_rates)
+        sorted_fairness_idx = sorted_fairness_idx[::fairness_skip]
+
     overall_statistics = MultiStatistics.build("log", fairness_rates[sorted_fairness_idx], "Lambda")
 
     # load statistics and model parameters for all runs of a parameter setting
@@ -90,7 +97,7 @@ for cost in cost_directories:
                 result_row = None
 
             if args.fairness:
-                statistics = fairness(runs)
+                statistics = fairness(runs, args.fairness_skip)
                 model_parameters = None
 
                 if result_row is not None:
