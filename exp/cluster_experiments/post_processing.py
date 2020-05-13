@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -101,8 +102,12 @@ for cost in cost_directories:
                     if os.path.isdir(os.path.join(parameter_setting_path, run))]
 
             if args.analyze:
-                result_row = [learning_rate]
-                result_row.append(parameter_setting)
+                result_columns = ['Learning Rate', 'Time Steps', 'Epochs', 'Batch Size', 'Number of Batches']
+                result_row = [re.search("(?<=lr)\d+(\.\d+)*", learning_rate)[0]]
+                result_row.append(re.search("(?<=ts)\d+", parameter_setting)[0])
+                result_row.append(re.search("(?<=ep)\d+", parameter_setting)[0])
+                result_row.append(re.search("(?<=bs)\d+", parameter_setting)[0])
+                result_row.append(re.search("(?<=nb)\d+", parameter_setting)[0])
             else:
                 result_row = None
 
@@ -123,8 +128,12 @@ for cost in cost_directories:
                         (statistics.fairness(Statistics.EQUALITY_OF_OPPORTUNITY, Statistics.THIRD_QUARTILE) -
                          statistics.performance(Statistics.EQUALITY_OF_OPPORTUNITY,
                                                 Statistics.FIRST_QUARTILE)).mean(axis=0))
-                    result_columns = ['lr', 'parameters', 'max_median_util', 'min_median_util', 'avg_iqr_util',
-                                      'avg_iqr_dp', 'avg_iqr_eop']
+
+                    result_columns.extend(['Maximum median utility',
+                                           'Minimum median utility',
+                                           'Average utility IQR',
+                                           'Average DP IQR',
+                                           'Average EOP IQR'])
                     results.append(result_row)
             else:
                 statistics, model_parameters = combine_runs(runs)
@@ -135,7 +144,10 @@ for cost in cost_directories:
                                       statistics.performance(Statistics.UTILITY, Statistics.FIRST_QUARTILE)[-1])
                     result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEAN)[-1])
                     result_row.append(statistics.performance(Statistics.UTILITY, Statistics.STANDARD_DEVIATION)[-1])
-                    result_columns = ['lr', 'parameters', 'final_median', 'final_iqr', 'final_mean', 'final_std_dev']
+                    result_columns.extend(['final_median',
+                                           'final_iqr',
+                                           'final_mean',
+                                           'final_std_dev'])
                     results.append(result_row)
 
             if args.save:
