@@ -13,27 +13,24 @@ def _fairness_extensions(args, fairness_rates, build=False):
         else:
             extension = ["-f", str(args.fairness_type), "-fv", str(fairness_rate)]
 
-        if args.fairness_iterations is not None:
-            for iterations in args.fairness_iterations:
-                for learning_rate in args.fairness_learning_rates:
-                    for batch_size in args.fairness_batch_sizes:
-                        num_batches = args.fairness_num_samples // batch_size
-                        for epochs in args.fairness_epochs:
-                            if build:
-                                extensions.append("{} -fi {} -flr {} -fbs {} -fnb {} -fe {}".format(extension,
-                                                                                                    iterations,
-                                                                                                    learning_rate,
-                                                                                                    batch_size,
-                                                                                                    num_batches,
-                                                                                                    epochs))
-                            else:
-                                temp_extension = deepcopy(extension)
-                                temp_extension.extend(["-fi", str(iterations),
-                                                       "-flr", str(learning_rate),
-                                                       "-fbs", str(batch_size),
-                                                       "-fnb", str(num_batches),
-                                                       "-fe", str(epochs)])
-                                extensions.append(temp_extension)
+        if args.fairness_learning_rates is not None:
+            for learning_rate in args.fairness_learning_rates:
+                for batch_size in args.fairness_batch_sizes:
+                    num_batches = args.fairness_num_samples // batch_size
+                    for epochs in args.fairness_epochs:
+                        if build:
+                            extensions.append("{} -flr {} -fbs {} -fnb {} -fe {}".format(extension,
+                                                                                         learning_rate,
+                                                                                         batch_size,
+                                                                                         num_batches,
+                                                                                         epochs))
+                        else:
+                            temp_extension = deepcopy(extension)
+                            temp_extension.extend(["-flr", str(learning_rate),
+                                                   "-fbs", str(batch_size),
+                                                   "-fnb", str(num_batches),
+                                                   "-fe", str(epochs)])
+                            extensions.append(temp_extension)
         else:
             extensions.append(extension)
 
@@ -91,6 +88,7 @@ def _build_submit_file(args, base_path, lambdas):
                                       "-nb {} " \
                                       "{} " \
                                       "{} " \
+                                      "{}" \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -102,7 +100,9 @@ def _build_submit_file(args, base_path, lambdas):
                                                   num_batches,
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
-                                                  "-pid $(Process)" if args.queue_num else "")
+                                                  "-pid $(Process)" if args.queue_num else "",
+                                                  "-di {}".format(
+                                                      args.deterioration_iterations) if args.deterioration_iterations else "")
 
                             if args.fairness_type is not None:
                                 for extension in _fairness_extensions(args, lambdas, build=True):
@@ -138,6 +138,8 @@ def _multi_run(args, base_path, lambdas):
                             command.append("-a")
                         if args.plot:
                             command.append("--plot")
+                        if args.deterioration_iterations:
+                            command.extend(["--di", str(args.deterioration_iterations)])
 
                         if args.fairness_type is not None:
                             for extension in _fairness_extensions(args, lambdas, build=False):
@@ -157,6 +159,8 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
 
     # Policy training parameters
+    parser.add_argument('-di', '--deterioration_iterations', type=int, required=False,
+                        help='number of iterations that the optimization target is allowed to deteriorate (stopping criterion)')
     parser.add_argument('-c', '--costs', type=float, nargs='+', required=True, help="define the utility cost c")
     parser.add_argument('-lr', '--learning_rates', type=float, nargs='+', required=True,
                         help="define the learning rate of theta")
@@ -185,8 +189,6 @@ if __name__ == "__main__":
     parser.add_argument('-fn', '--fairness_number', type=int, required=False, default=20,
                         help='the number of lambda values tested in the range (default = 20)')
 
-    parser.add_argument('-fi', '--fairness_iterations', type=int, required=False, nargs='+',
-                        help="the number of learning iterations for lambda")
     parser.add_argument('-flr', '--fairness_learning_rates', type=float, required=False, nargs='+',
                         help="define the learning rates of lambda")
     parser.add_argument('-fbs', '--fairness_batch_sizes', type=int, required=False, nargs='+',
@@ -216,18 +218,16 @@ if __name__ == "__main__":
                 (args.fairness_lower_bound is not None and args.fairness_upper_bound is None):
             parser.error('--fairness_lower_bound and --fairness_upper_bound have to be specified together')
         elif args.fairness_type is not None and \
-                ((args.fairness_iterations is None or
-                  args.fairness_epochs is None or
+                ((args.fairness_epochs is None or
                   args.fairness_learning_rates is None or
                   args.fairness_batch_sizes is None or
                   args.fairness_num_samples is None) and not
-                 (args.fairness_iterations is None and
-                  args.fairness_epochs is None and
+                 (args.fairness_epochs is None and
                   args.fairness_learning_rates is None and
                   args.fairness_batch_sizes is None and
                   args.fairness_num_samples is None)):
             parser.error(
-                '--fairness_iterations, --fairness_epochs, --fairness_learning_rates, fairness_batch_sizes and '
+                '--fairness_epochs, --fairness_learning_rates, fairness_batch_sizes and '
                 '--fairness_num_samples have to be fully specified or not specified at all')
         elif args.fairness_values is not None:
             lambdas = args.fairness_values
