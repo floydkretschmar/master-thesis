@@ -1,17 +1,20 @@
 import os
 import sys
+
 root_path = os.path.abspath(os.path.join('..'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
 from copy import deepcopy
-#pylint: disable=no-name-in-module
+# pylint: disable=no-name-in-module
 from src.util import sigmoid, get_random
 from src.optimization import ManualGradientOptimizer
 
 
-class BasePolicy():
+# TODO: Add Pytorch supporting policy (e.g. simple MLP)
+
+class BasePolicy:
     """ The base implementation of a policy """
 
     def __init__(self, use_sensitive_attributes):
@@ -60,18 +63,6 @@ class BasePolicy():
 
         return features
 
-    def _ips_weights(self, x, s):
-        """ Calculates the inverse propensity scoring weights according to the formula 1/pi_0(e = 1 | x, s).
-        
-        Args:
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-
-        Returns:
-            ips_weights: The weights for inverse propensity scoring.
-        """
-        raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
-
     def _probability(self, features):
         """ Calculates the probability of a positiv decision given the specified features.
         
@@ -81,7 +72,7 @@ class BasePolicy():
         Returns:
             probability: The Probability of a positive decision.
         """
-        raise NotImplementedError("Subclass must override calculate probability(features).")    
+        raise NotImplementedError("Subclass must override calculate probability(features).")
 
     def copy(self):
         """ Creates a deep copy of the policy.
@@ -98,6 +89,18 @@ class BasePolicy():
             parameters: A dictionary of model parameters.
         """
         raise NotImplementedError("Subclass must override get_model_parameters(self).")
+
+    def ips_weights(self, x, s):
+        """ Calculates the inverse propensity scoring weights according to the formula 1/pi_0(e = 1 | x, s).
+
+        Args:
+            x: The features of the n samples
+            s: The sensitive attribute of the n samples
+
+        Returns:
+            ips_weights: The weights for inverse propensity scoring.
+        """
+        raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
 
     def optimizer(self, optimization_target, use_sensitive_attributes):
         raise NotImplementedError(
@@ -156,11 +159,17 @@ class LogisticPolicy(ManualGradientPolicy):
     def copy(self):
         approx_policy = LogisticPolicy(
             self.theta.copy(),
-            self.feature_map, 
-            self.use_sensitive_attributes) 
+            self.feature_map,
+            self.use_sensitive_attributes)
         return approx_policy
 
-    def _ips_weights(self, x, s):
+    def _probability(self, features):
+        return sigmoid(np.matmul(self.feature_map(features), self.theta))
+
+    def get_model_parameters(self):
+        return self.theta.tolist()
+
+    def ips_weights(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
 
         sampling_theta = np.expand_dims(self.theta, axis=1)
@@ -168,12 +177,6 @@ class LogisticPolicy(ManualGradientPolicy):
 
         return weights
 
-    def _probability(self, features):
-        return sigmoid(np.matmul(self.feature_map(features), self.theta))
-
-    def get_model_parameters(self):
-        return self.theta.tolist()
-        
     def log_policy_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
         return phi / np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)

@@ -1,6 +1,7 @@
 import os
 import sys
-root_path = os.path.abspath(os.path.join('.'))
+
+root_path = os.path.abspath(os.path.join("."))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
@@ -10,9 +11,8 @@ from pathos.multiprocessing import ProcessingPool as Pool
 import time
 from pathlib import Path
 from copy import deepcopy
-import numbers
 
-from src.consequential_learning import ConsequentialLearning, DualGradientConsequentialLearning
+from src.consequential_learning import ConsequentialLearning
 from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, get_list_of_seeds
 from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
 from src.optimization import FairnessFunction, UtilityFunction
@@ -25,21 +25,29 @@ def _check_for_missing_training_parameters(training_parameters):
         training_parameters: The parameters used to configure the consequential learning algorithm.
     """
     check_for_missing_kwargs("training()",
-                             ["model", "parameter_optimization", "test", "distribution"],
+                             ["model", "distribution", "optimization_target", "parameter_optimization", "test"],
                              training_parameters)
-    check_for_missing_kwargs(
-        "training()",
-        ["utility_function", "fairness_function", "fairness_gradient_function", "feature_map",
-         "learn_on_entire_history", "use_sensitve_attributes", "bias", "initial_theta", "initial_lambda"],
-        training_parameters["model"])
-    check_for_missing_kwargs("training()", ["num_samples"], training_parameters["test"])
+
+    if isinstance(training_parameters["model"], dict):
+        check_for_missing_kwargs("training()", ["constructor", "parameters"], training_parameters["model"])
+
+    if isinstance(training_parameters["distribution"], dict):
+        check_for_missing_kwargs("training()", ["constructor", "parameters"], training_parameters["distribution"])
+
+    if isinstance(training_parameters["optimization_target"], dict):
+        check_for_missing_kwargs("training()", ["constructor", "parameters"],
+                                 training_parameters["optimization_target"])
+
     check_for_missing_kwargs("training()",
-                             ["time_steps", "epochs", "batch_size", "learning_rate", "decay_rate", "decay_step",
-                              "num_batches"], training_parameters["parameter_optimization"])
+                             ["batch_size", "epochs", "fix_seeds", "learning_rate", "learn_on_entire_history",
+                              "num_batches", "time_steps"],
+                             training_parameters["parameter_optimization"])
+
+    check_for_missing_kwargs("training()", ["num_samples"], training_parameters["test"])
 
     if "lagrangian_optimization" in training_parameters:
         check_for_missing_kwargs("training()",
-                                 ["epochs", "batch_size", "learning_rate", "decay_rate", "decay_step", "num_batches"],
+                                 ["batch_size", "epochs", "learning_rate", "num_batches"],
                                  training_parameters["lagrangian_optimization"])
 
 
@@ -55,7 +63,7 @@ def _prepare_training(training_parameters):
     _check_for_missing_training_parameters(training_parameters)
     current_training_parameters = deepcopy(training_parameters)
 
-    # save parameter settings
+    ##################### SAVE PARAMETER SETTINGS #####################
     if "save_path" in training_parameters:
         # base_save_path = "{}/{}".format(training_parameters["save_path"], training_parameters["experiment_name"])
         base_save_path = training_parameters["save_path"]
@@ -77,57 +85,78 @@ def _prepare_training(training_parameters):
     else:
         base_save_path = None
 
-    # if fixed seeding for parameter optimization: get one seed per time step for data generation
-    if "fix_seeds" in current_training_parameters["parameter_optimization"] \
-            and current_training_parameters["parameter_optimization"]["fix_seeds"]:
-        current_training_parameters["parameter_optimization"]["seeds"] = get_list_of_seeds(
-            training_parameters['parameter_optimization']['time_steps'])
+    ##################### PREPARE THETA OPTIMIZATION #####################
 
-    # if fixed seeding for parameter lagrangian_optimization: get one seed per iteration for data generation
-    if "lagrangian_optimization" in current_training_parameters \
-            and "fix_seeds" in current_training_parameters["lagrangian_optimization"] \
-            and current_training_parameters["lagrangian_optimization"]["fix_seeds"]:
-        current_training_parameters["lagrangian_optimization"]["seeds"] = get_list_of_seeds(
-            training_parameters['lagrangian_optimization']['iterations'])
+    if isinstance(training_parameters["optimization_target"], dict):
+        # wrap utility and fairness functions with appropriate wrapper functions
+        utility_fct = UtilityFunction(
+            training_parameters["optimization_target"]["parameters"]["utility_function"])
+
+        if "fairness_gradient_function" in training_parameters["optimization_target"]["parameters"]:
+            fairness_fct = FairnessFunction(
+                training_parameters["optimization_target"]["parameters"]["fairness_function"],
+                training_parameters["optimization_target"]["parameters"]["fairness_gradient_function"]
+            )
+            del current_training_parameters["optimization_target"]["parameters"]["fairness_gradient_function"]
+
+        # construct optimization target
+        current_training_parameters["optimization_target"] = training_parameters["optimization_target"][
+            "constructor"].build(initial_fairness_rate=0.0,
+                                 utility_function=utility_fct,
+                                 fairness_function=fairness_fct)
+
+    # construct policy
+    if isinstance(training_parameters["model"], dict):
+        current_training_parameters["model"] = training_parameters["model"]["constructor"](
+            **training_parameters["model"]["parameters"])
+
+    # construct distribution
+    if isinstance(training_parameters["distribution"], dict):
+        current_training_parameters["distribution"] = training_parameters["distribution"]["constructor"](
+            **training_parameters["distribution"]["parameters"])
+
+    # if decay_rate and decay_step not specified: set them in a way such that there is no decay of the lr
+    if "decay_rate" not in training_parameters["parameter_optimization"]:
+        current_training_parameters["parameter_optimization"]["decay_rate"] = 1
+
+    if "decay_step" not in training_parameters["parameter_optimization"]:
+        current_training_parameters["parameter_optimization"]["decay_step"] \
+            = training_parameters["parameter_optimization"]["time_steps"] + 1
+
+    ##################### GENERATE DATA AND SEEDS #####################
+
+    # if fixed seeding for parameter optimization: get one seed per time step for data generation
+    if current_training_parameters["parameter_optimization"]["fix_seeds"]:
+        current_training_parameters["parameter_optimization"]["seeds"] = get_list_of_seeds(
+            training_parameters["parameter_optimization"]["time_steps"])
 
     # generate one set of test data across all threads in advance
-    current_training_parameters["test"] = training_parameters["distribution"].sample_test_dataset(
+    current_training_parameters["test"] = current_training_parameters["distribution"].sample_test_dataset(
         n_test=training_parameters["test"]["num_samples"])
 
-    # convert utility and fairness functions into appropriate internal functions
-    current_training_parameters["model"]["utility_function"] = UtilityFunction(
-        training_parameters["model"]["utility_function"])
+    ##################### PERPARE LAGRANGIAN OPTIMIZATION #####################
 
-    if "fairness_gradient_function" in training_parameters["model"]:
-        current_training_parameters["model"]["fairness_function"] = FairnessFunction(
-            training_parameters["model"]["fairness_function"],
-            training_parameters["model"]["fairness_gradient_function"]
-        )
+    if "lagrangian_optimization" in current_training_parameters:
+        # if decay_rate and decay_step not specified: set them in a way such that there is no decay of the lr
+        if "decay_rate" not in training_parameters["lagrangian_optimization"]:
+            current_training_parameters["lagrangian_optimization"]["decay_rate"] = 1
+
+        if "decay_step" not in training_parameters["lagrangian_optimization"]:
+            current_training_parameters["lagrangian_optimization"]["decay_step"] \
+                = training_parameters["parameter_optimization"]["time_steps"] + 1
 
     return current_training_parameters, base_save_path
 
 
-def _process_results(results_per_iterations):
-    statistics_over_lambdas = []
-    model_parameters_over_lambdas = {}
+def _process_results(results_per_run):
+    overall_statistics, overall_model_parameters = results_per_run[0]
 
-    for num_iteration, iteration_result in enumerate(results_per_iterations):
-        for num_lambda, lambda_result in enumerate(iteration_result):
-            statistics, model_parameters = lambda_result
+    for run, run_result in enumerate(results_per_run[1:]):
+        statistics, model_parameters = run_result
+        overall_statistics.merge(statistics)
+        overall_model_parameters.merge(model_parameters)
 
-            if num_lambda >= len(statistics_over_lambdas):
-                statistics_over_lambdas.append(statistics)
-            else:
-                statistics_over_lambdas[num_lambda].merge(statistics)
-
-            if num_lambda in model_parameters_over_lambdas:
-                model_parameters_over_lambdas[num_lambda][num_iteration] = model_parameters
-            else:
-                model_parameters_over_lambdas[num_lambda] = {
-                    num_iteration: model_parameters
-                }
-
-    return statistics_over_lambdas, model_parameters_over_lambdas
+    return overall_statistics, overall_model_parameters
 
 
 def _save_results(base_save_path, statistics, model_parameters=None, sub_directory=None):
@@ -149,7 +178,7 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
     if model_parameters is not None:
         model_save_path = "{}models.json".format(lambda_path)
 
-        serialized_model_parameters = serialize_dictionary(model_parameters)
+        serialized_model_parameters = serialize_dictionary(model_parameters.to_dict())
         save_dictionary(serialized_model_parameters, model_save_path)
 
     # save the results for each lambda
@@ -160,22 +189,19 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
 
 class _Trainer():
     def _training_iteration(self, training_parameters, training_method):
-        # np.random.seed()
-        results_over_lambdas = []
         x_test, s_test, y_test = training_parameters["test"]
 
-        for results, model_parameters in training_method(training_parameters):
-            decisions_over_time, fairness_over_time, utility_over_time = results
-            statistics = Statistics.build(
-                predictions=decisions_over_time,
-                observations=x_test,
-                fairness=fairness_over_time,
-                utility=utility_over_time,
-                protected_attributes=s_test,
-                ground_truths=y_test)
-            results_over_lambdas.append((statistics, deepcopy(model_parameters)))
+        results, model_parameters = training_method(training_parameters)
+        decisions_over_time, fairness_over_time, utility_over_time = results
+        statistics = Statistics.build(
+            predictions=decisions_over_time,
+            observations=x_test,
+            fairness=fairness_over_time,
+            utility=utility_over_time,
+            protected_attributes=s_test,
+            ground_truths=y_test)
 
-        return results_over_lambdas
+        return (statistics, ModelParameters(model_parameters))
 
     def train_over_iterations(self, training_parameters, training_method, iterations, asynchronous):
         # multithreaded runs of training
@@ -184,10 +210,7 @@ class _Trainer():
             results_per_iterations = []
             pool = Pool(mp.cpu_count())
             for _ in range(0, iterations):
-                # apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters, training_method)))
                 apply_results.append(pool.apipe(self._training_iteration, training_parameters, training_method))
-            # pool.close()
-            # pool.join()
 
             for result in apply_results:
                 results_per_iterations.append(result.get())
@@ -197,13 +220,10 @@ class _Trainer():
                 results_per_iterations.append(self._training_iteration(training_parameters, training_method))
 
         total_statistics, total_parameters = _process_results(results_per_iterations)
-        if len(total_statistics) == 1:
-            return total_statistics[0], total_parameters
-
         return total_statistics, total_parameters
 
 
-def train(training_parameters, iterations=30, asynchronous=True):
+def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous=True):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
@@ -222,67 +242,44 @@ def train(training_parameters, iterations=30, asynchronous=True):
     assert iterations > 0
 
     current_training_parameters, base_save_path = _prepare_training(training_parameters)
-    trainer = _Trainer()
 
-    if isinstance(current_training_parameters["model"]["initial_lambda"],
-                  numbers.Number) and "lagrangian_optimization" not in training_parameters:
+    trainer = _Trainer()
+    multiple_lambdas = len(fairness_rates) > 1
+    training_algorithm = ConsequentialLearning(
+        current_training_parameters["parameter_optimization"]["learn_on_entire_history"])
+
+    if multiple_lambdas:
+        overall_statistics = MultiStatistics.build("log", fairness_rates, "Lambda")
+
+    for fairness_rate in fairness_rates:
         info_string = "// LR = {} // TS = {} // E = {} // BS = {} // NB = {} // FR = {}".format(
             current_training_parameters["parameter_optimization"]["learning_rate"],
             current_training_parameters["parameter_optimization"]["time_steps"],
             current_training_parameters["parameter_optimization"]["epochs"],
             current_training_parameters["parameter_optimization"]["batch_size"],
             current_training_parameters["parameter_optimization"]["num_batches"],
-            current_training_parameters["model"]["initial_lambda"])
-        print("## STARTED Single training run {} ##".format(info_string))
-        training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        overall_statistics, model_parameters = trainer.train_over_iterations(current_training_parameters,
-                                                                             training_algorithm.train, iterations,
-                                                                             asynchronous)
-        print("## ENDED Single training run {} ##".format(info_string))
-    elif not isinstance(current_training_parameters["model"]["initial_lambda"], numbers.Number):
-        print("---------- Training with fixed lambdas ----------")
-        fairness_rates = deepcopy(current_training_parameters["model"]["initial_lambda"])
-        training_algorithm = ConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        overall_statistics = MultiStatistics.build("log", fairness_rates, "Lambda")
-
-        for fairness_rate in fairness_rates:
-            current_training_parameters["model"]["initial_lambda"] = fairness_rate
-            statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, asynchronous)
-
+            fairness_rate)
+        print("## STARTED {} ##".format(info_string))
+        current_training_parameters["optimization_target"].fairness_rate = fairness_rate
+        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters,
+                                                                     training_algorithm.train,
+                                                                     iterations,
+                                                                     asynchronous)
+        if multiple_lambdas:
             overall_statistics.log_run(statistics)
-            if base_save_path is not None:  
-                _save_results(
-                    base_save_path=base_save_path, 
-                    statistics=statistics, 
-                    model_parameters=model_parameters, 
-                    sub_directory="lambda_{}".format(fairness_rate))
 
-    elif "lagrangian_optimization" in training_parameters:
-        print("---------- Training both theta and lambda ----------")
-        training_algorithm = DualGradientConsequentialLearning(current_training_parameters["model"]["learn_on_entire_history"])
-        
-        lamda_iterations = range(0, current_training_parameters["lagrangian_optimization"]["iterations"])
-        sub_directories = ["lambda_iteration_{}".format(lamb) for lamb in lamda_iterations]
-        overall_statistics = MultiStatistics.build("linear", lamda_iterations, "Lambda Training Iteration")
-        
-        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters, training_algorithm.train, iterations, asynchronous)
+        if base_save_path is not None:
+            _save_results(
+                base_save_path=base_save_path,
+                statistics=statistics,
+                model_parameters=model_parameters,
+                sub_directory="lambda_{}".format(fairness_rate) if multiple_lambdas else None)
 
-        for num_lambda, statistic in enumerate(statistics):
-            overall_statistics.log_run(statistic)
+        print("## ENDED {} ##".format(info_string))
 
-            if base_save_path is not None:  
-                _save_results(
-                    base_save_path=base_save_path, 
-                    statistics=statistic, 
-                    model_parameters=model_parameters[num_lambda], 
-                    sub_directory=sub_directories[num_lambda])
-            
     # save the overall results    
-    if base_save_path is not None:
-        _save_results(
-            base_save_path=base_save_path,
-            statistics=overall_statistics,
-            model_parameters=model_parameters)
+    if base_save_path is not None and multiple_lambdas:
+        _save_results(base_save_path=base_save_path,
+                      statistics=overall_statistics)
 
-    return overall_statistics, ModelParameters(model_parameters), base_save_path
-    
+    return overall_statistics if multiple_lambdas else statistics, model_parameters, base_save_path

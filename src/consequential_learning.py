@@ -1,5 +1,6 @@
 import os
 import sys
+from copy import deepcopy
 
 import numpy as np
 
@@ -7,16 +8,20 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.policy import LogisticPolicy
 from src.util import stack, get_random
-from src.optimization import DifferentiablePenaltyOptimizationTarget, \
-    DifferentiableLagrangianOptimizationTarget
 
 
-class BaseLearningAlgorithm():
+class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
         self.learn_on_entire_history = learn_on_entire_history
         self.data_history = None
+
+    @property
+    def buffer_size(self):
+        if self.data_history is not None:
+            return self.data_history["x"].shape[0]
+        else:
+            return 0
 
     def _filter_by_policy(self, data, policy):
         """ Makes decisions for the data based on the specified policy and only returns the x, s and y of the 
@@ -39,7 +44,7 @@ class BaseLearningAlgorithm():
 
         return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
 
-    def _minibatch_over_epochs(self, data, batch_size, epochs=1):
+    def _minibatch(self, data, batch_size):
         """ Creates minibatches for stochastic gradient ascent according to the epochs and
         batch size.
         
@@ -48,22 +53,18 @@ class BaseLearningAlgorithm():
             data: The training data
             batch_size: The minibatch size of SGD.
             epochs: The number of epochs the training algorithm will run.
-        """     
-        for _ in range(0, epochs):
-            # minibatching     
-            indices = get_random().permutation(data["x"].shape[0])
-            for batch_start in range(0, len(indices), batch_size):
-                batch_end = min(batch_start + batch_size, len(indices))
-                # only train if there is a large enough sample size to build at least one full batch
-                if batch_end - batch_start < batch_size:
-                    break
+        """
+        # minibatching
+        indices = get_random().permutation(data["x"].shape[0])
+        for batch_start in range(0, len(indices), batch_size):
+            batch_end = min(batch_start + batch_size, len(indices))
 
-                x_batch = data["x"][batch_start:batch_end]
-                s_batch = data["s"][batch_start:batch_end]
-                y_batch = data["y"][batch_start:batch_end]
-                ips_weight_batch = data["ips_weights"][batch_start:batch_end]
+            x_batch = data["x"][batch_start:batch_end]
+            s_batch = data["s"][batch_start:batch_end]
+            y_batch = data["y"][batch_start:batch_end]
+            ips_weight_batch = data["ips_weights"][batch_start:batch_end]
 
-                yield x_batch, s_batch, y_batch, ips_weight_batch
+            yield x_batch, s_batch, y_batch, ips_weight_batch
 
     def _update_buffer(self, x, s, y, ips_weights):
         """ Update the internal buffer of the training algorithm.
@@ -103,7 +104,7 @@ class BaseLearningAlgorithm():
         raise NotImplementedError("Subclass must override train(self, training_parameters).")
 
 
-class ConsequentialLearning(BaseLearningAlgorithm):    
+class ConsequentialLearning(BaseLearningAlgorithm):
     def __init__(self, learn_on_entire_history):
         """ Creates a new instance of a consequential learning algorithm.
         
@@ -123,21 +124,45 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             decisions_over_time: The decisions made by a policy at timestep t over all time steps
             trained_model_parameters: The model parameters at the final timestep T
         """
+
+    def train(self, training_parameters):
+        """ Executes consequential learning.
+
+        Args:
+            training_parameters: The parameters used to configure the consequential learning algorithm.
+
+        Yields:
+            decisions_over_time: The decisions made by a policy at timestep t over all time steps for a single lambda.
+            trained_model_parameters: The model parameters at the final timestep T
+        """
         distribution = training_parameters["distribution"]
+        policy = training_parameters["model"]
+        optimization_target = training_parameters["optimization_target"]
         x_test, s_test, y_test = training_parameters["test"]
+
+        optimizer = policy.optimizer(optimization_target)
 
         # Store initial policy decisions
         decisions_over_time, decision_probabilities = policy(x_test, s_test)
-        fairness_over_time = [np.array([0.0])]
-        utilities_over_time = [training_parameters["model"]["utility_function"](
+        fairness_over_time = [optimization_target.fairness_function(
             policy=policy,
             x=x_test,
             s=s_test,
             y=y_test,
             decisions=decisions_over_time,
             decision_probabilities=decision_probabilities)]
-        trained_model_parameters = None
+        utilities_over_time = [optimization_target.utility_function(
+            policy=policy,
+            x=x_test,
+            s=s_test,
+            y=y_test,
+            decisions=decisions_over_time,
+            decision_probabilities=decision_probabilities)]
 
+        model_parameters = {
+            "lambdas": [optimizer.get_parameters()["lambda"]],
+            "model_parameters": None
+        }
         theta_learning_rate = training_parameters["parameter_optimization"]["learning_rate"]
         theta_decay_rate = training_parameters["parameter_optimization"]["decay_rate"]
         theta_decay_step = training_parameters["parameter_optimization"]["decay_step"]
@@ -155,31 +180,43 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 if "seeds" in training_parameters["parameter_optimization"] else None)
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
 
-            ips_weights = policy._ips_weights(x_train, s_train)
+            ips_weights = policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
-            # only train if at least one full batch can be formed
-            if x_train.shape[0] > training_parameters["parameter_optimization"]["batch_size"]:
-                for x, s, y, ips_weights_batch in self._minibatch_over_epochs(
+            # train if at least one full batch can be formed from filtered data
+            for _ in range(0, training_parameters["parameter_optimization"]["epochs"]):
+                ##### TRAIN THETA #####
+                for x, s, y, ips_weights_batch in self._minibatch(
                         data=self.data_history,
-                        epochs=training_parameters["parameter_optimization"]["epochs"],
                         batch_size=training_parameters["parameter_optimization"]["batch_size"]):
                     optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
 
-            decisions, decision_probabilities = policy(x_train, s_train)
-            if x_train.shape[0] > training_parameters["parameter_optimization"]["batch_size"]:
-                fairness_over_time.append(
-                    training_parameters["model"]["fairness_function"](policy=policy, x=x_train, s=s_train, y=y_train,
-                                                                      decisions=decisions,
-                                                                      decision_probabilities=decision_probabilities,
-                                                                      ips_weights=ips_weights))
-            else:
-                fairness_over_time.append(np.array([0.0]))
+            ##### TRAIN LAMBDA #####
+            if "lagrangian_optimization" in training_parameters:
+                for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
+                    # train lambda for the generated training data
+                    for x, s, y, ips_weights_batch in self._minibatch(
+                            data=self.data_history,
+                            batch_size=training_parameters["lagrangian_optimization"]["batch_size"]):
+                        optimizer.update_fairness_parameter(x,
+                                                            s,
+                                                            y,
+                                                            training_parameters["lagrangian_optimization"][
+                                                                "learning_rate"],
+                                                            ips_weights_batch)
 
-            # Store decisions made in the time step
+            # Evaluate performance on test set after training ...
             decisions, decision_probabilities = policy(x_test, s_test)
+
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
-            utilities_over_time.append(training_parameters["model"]["utility_function"](
+            fairness_over_time.append(optimization_target.fairness_function(
+                policy=policy,
+                x=x_test,
+                s=s_test,
+                y=y_test,
+                decisions=decisions,
+                decision_probabilities=decision_probabilities))
+            utilities_over_time.append(optimization_target.utility_function(
                 policy=policy,
                 x=x_test,
                 s=s_test,
@@ -187,105 +224,13 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 decisions=decisions,
                 decision_probabilities=decision_probabilities))
 
-            # ... and the parameters of the model
-            trained_model_parameters = optimizer.get_parameters()
+            # ... and save the parameters of the model
+            parameters = optimizer.get_parameters()
+            model_parameters["lambdas"].append(deepcopy(parameters["lambda"]))
+            model_parameters["model_parameters"] = [deepcopy(parameters)]
 
-        del self.data_history
-        return (decisions_over_time, np.array(fairness_over_time, dtype=float).reshape(-1, 1),
-                np.array(utilities_over_time, dtype=float).reshape(-1, 1)), trained_model_parameters
-        
-    def train(self, training_parameters):
-        """ Executes consequential learning.
-
-        Args:
-            training_parameters: The parameters used to configure the consequential learning algorithm.
-
-        Yields:
-            decisions_over_time: The decisions made by a policy at timestep t over all time steps for a single lambda.
-            trained_model_parameters: The model parameters at the final timestep T
-        """
-        policy = LogisticPolicy(
-            training_parameters["model"]["initial_theta"],
-            training_parameters["model"]["feature_map"],
-            training_parameters["model"]["use_sensitve_attributes"])
-
-        optimization_target = DifferentiablePenaltyOptimizationTarget(
-            training_parameters["model"]["initial_lambda"],
-            training_parameters["model"]["utility_function"],
-            training_parameters["model"]["fairness_function"]
-        )
-
-        optimizer = policy.optimizer(optimization_target)
-
-        yield self._train_model_parameters(policy, optimizer, training_parameters)
-
-
-class DualGradientConsequentialLearning(ConsequentialLearning):    
-    def __init__(self, learn_on_entire_history):
-        """ Creates a new instance of a dual gradient consequential learning algorithm.
-        
-        Args:
-            learn_on_entire_history: The 
-        """
-        super(DualGradientConsequentialLearning, self).__init__(learn_on_entire_history)
-        
-    def train(self, training_parameters):
-        """ Executes consequential learning with the lagrangian learning extension.
-
-        Args:
-            training_parameters: The parameters used to configure the consequential learning algorithm.
-
-        Yields:
-            decisions_over_time: The decisions made by a policy at timestep t over all time steps for every lambda.
-            trained_model_parameters: The model parameters at the final timestep T
-        """
-        lambda_learning_rate = training_parameters["lagrangian_optimization"]["learning_rate"]
-        lambda_decay_rate = training_parameters["lagrangian_optimization"]["decay_rate"]
-        lambda_decay_step = training_parameters["lagrangian_optimization"]["decay_step"]
-
-        policy = LogisticPolicy(
-            training_parameters["model"]["initial_theta"],
-            training_parameters["model"]["feature_map"],
-            training_parameters["model"]["use_sensitve_attributes"])
-
-        optimization_target = DifferentiableLagrangianOptimizationTarget(
-            training_parameters["model"]["initial_lambda"],
-            training_parameters["model"]["utility_function"],
-            training_parameters["model"]["fairness_function"]
-        )
-
-        optimizer = policy.optimizer(optimization_target)
-
-        distribution = training_parameters["distribution"]
-
-        for i in range(0, training_parameters["lagrangian_optimization"]["iterations"]):
-            # decay lagrangian learning rate
-            if i % lambda_decay_step == 0 and i != 0:
-                lambda_learning_rate *= lambda_decay_rate
-
-            yield self._train_model_parameters(policy, optimizer, training_parameters)
-
-            # Get lambda training data
-            data = distribution.sample_train_dataset(
-                n_train=training_parameters["lagrangian_optimization"]["batch_size"]
-                        * training_parameters["lagrangian_optimization"]["num_batches"],
-                seed=training_parameters["lagrangian_optimization"]["seeds"][i]
-                if "seeds" in training_parameters["lagrangian_optimization"] else None)
-            x_train, s_train, y_train = self._filter_by_policy(data, policy)
-
-            data = {
-                "x": x_train,
-                "s": s_train,
-                "y": y_train,
-                "ips_weights": policy._ips_weights(x_train, s_train)
-            }
-            # train lambda for the generated training data
-            for x, s, y, ips_weights in self._minibatch_over_epochs(
-                data=data, 
-                epochs=training_parameters["lagrangian_optimization"]["epochs"],
-                batch_size=training_parameters["lagrangian_optimization"]["batch_size"]):
-                optimizer.update_fairness_parameter(x, s, y, lambda_learning_rate, ips_weights)
-
-            del x_train, s_train, y_train
-            policy.reset()
-            self._reset_buffer()
+        self._reset_buffer()
+        return (decisions_over_time,
+                np.array(fairness_over_time, dtype=float).reshape(-1, 1),
+                np.array(utilities_over_time, dtype=float).reshape(-1, 1)), \
+               model_parameters
