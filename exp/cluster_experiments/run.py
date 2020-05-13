@@ -14,6 +14,8 @@ from src.plotting import plot_mean, plot_median
 from src.training import train
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution, GermanCreditDistribution
 from src.util import mean_difference
+from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget
+from src.policy import LogisticPolicy
 
 
 # region Fairness Definitions
@@ -104,33 +106,36 @@ def single_run(args):
         distibution = GermanCreditDistribution(bias=True, test_percentage=0.2)
 
     training_parameters = {
-        'distribution': distibution,
         'model': {
-            'fairness_function': fair_fct,
-            'fairness_gradient_function': fair_fct_grad,
-            'utility_function': lambda **util_params: cost_utility(cost_factor=args.cost, **util_params),
-            'feature_map': IdentityFeatureMap(distibution.feature_dimension),
-            'learn_on_entire_history': False,
-            'use_sensitve_attributes': False,
-            'bias': True,
-            'initial_theta': np.zeros(distibution.feature_dimension),
-            'initial_lambda': initial_lambda
+            'constructor': LogisticPolicy,
+            'parameters': {
+                "theta": np.zeros((distibution.feature_dimension)),
+                "feature_map": IdentityFeatureMap(distibution.feature_dimension),
+                "use_sensitive_attributes": False
+            }
+        },
+        'distribution': distibution,
+        'optimization_target': {
+            'constructor': PenaltyOptimizationTarget,
+            'parameters': {
+                'fairness_function': fair_fct,
+                'fairness_gradient_function': fair_fct_grad,
+                'utility_function': lambda **util_params: cost_utility(cost_factor=args.cost, **util_params)
+            }
         },
         'parameter_optimization': {
+            'batch_size': args.batch_size,
+            'epochs': args.epochs,
+            'fix_seeds': True,
             'learning_rate': args.learning_rate,
-            'decay_rate': 1,
-            'decay_step': 10000,
-            'fix_seeds': True
+            'learn_on_entire_history': False,
+            'num_batches': args.num_batches,
+            'time_steps': args.time_steps
         },
         'test': {
             'num_samples': 10000
         }
     }
-
-    training_parameters['parameter_optimization']['time_steps'] = args.time_steps
-    training_parameters['parameter_optimization']['epochs'] = args.epochs
-    training_parameters['parameter_optimization']['batch_size'] = args.batch_size
-    training_parameters['parameter_optimization']['num_batches'] = args.num_batches
 
     if args.path:
         if args.fairness_type is not None:
@@ -173,12 +178,15 @@ def single_run(args):
             'batch_size': args.fairness_batch_size,
             'num_batches': args.fairness_num_batches,
             'learning_rate': args.fairness_learning_rate,
-            'decay_rate': 1,
-            'decay_step': 10000,
             'fix_seeds': True
         }
+        training_parameters["optimization_target"]["constructor"] = LagrangianOptimizationTarget
 
-    statistics, model_parameters, run_path = train(training_parameters, args.iterations, args.asynchronous)
+    statistics, model_parameters, run_path = train(
+        training_parameters,
+        iterations=args.iterations,
+        asynchronous=args.asynchronous,
+        fairness_rates=[initial_lambda])
 
     if args.plot:
         plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
