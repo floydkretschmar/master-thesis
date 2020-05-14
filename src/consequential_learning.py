@@ -8,7 +8,8 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import stack, get_random, train_test_split
+from src.util import stack, get_random
+
 
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
@@ -135,9 +136,9 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             trained_model_parameters: The model parameters at the final timestep T
         """
         distribution = training_parameters["distribution"]
-        policy = training_parameters["model"]
-        optimization_target = training_parameters["optimization_target"]
-        x_test, s_test, y_test = training_parameters["test"]
+        policy = deepcopy(training_parameters["model"])
+        optimization_target = deepcopy(training_parameters["optimization_target"])
+        x_test, s_test, y_test = deepcopy(training_parameters["test"])
 
         optimizer = policy.optimizer(optimization_target)
 
@@ -172,19 +173,18 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 theta_learning_rate *= theta_decay_rate
 
             # Collect training data
-            x, y, s = distribution.sample_train_dataset(
-                n_train=int(((training_parameters["parameter_optimization"]["batch_size"]
-                              * training_parameters["parameter_optimization"]["num_batches"]) / 90) * 100),
+            data = distribution.sample_train_dataset(
+                n_train=training_parameters["parameter_optimization"]["batch_size"]
+                        * training_parameters["parameter_optimization"]["num_batches"],
                 seed=training_parameters["parameter_optimization"]["seeds"][i]
                 if "seeds" in training_parameters["parameter_optimization"] else None)
-            x, x_validate, y, y_validate, s, s_validate = train_test_split(x, y, s, test_size=0.1)
-            x_train, s_train, y_train = self._filter_by_policy((x, s, y), policy)
+            x_train, s_train, y_train = self._filter_by_policy(data, policy)
 
             ips_weights = policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
             # train if at least one full batch can be formed from filtered data
-            for epoch in range(0, training_parameters["parameter_optimization"]["epochs"]):
+            for _ in range(0, training_parameters["parameter_optimization"]["epochs"]):
                 ##### TRAIN THETA #####
                 for x, s, y, ips_weights_batch in self._minibatch(
                         data=self.data_history,
