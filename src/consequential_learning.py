@@ -8,8 +8,7 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import stack, get_random
-
+from src.util import stack, get_random, train_test_split
 
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
@@ -173,12 +172,13 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 theta_learning_rate *= theta_decay_rate
 
             # Collect training data
-            data = distribution.sample_train_dataset(
-                n_train=training_parameters["parameter_optimization"]["batch_size"]
-                        * training_parameters["parameter_optimization"]["num_batches"],
+            x, y, s = distribution.sample_train_dataset(
+                n_train=int(((training_parameters["parameter_optimization"]["batch_size"]
+                              * training_parameters["parameter_optimization"]["num_batches"]) / 90) * 100),
                 seed=training_parameters["parameter_optimization"]["seeds"][i]
                 if "seeds" in training_parameters["parameter_optimization"] else None)
-            x_train, s_train, y_train = self._filter_by_policy(data, policy)
+            x, x_validate, y, y_validate, s, s_validate = train_test_split(x, y, s, test_size=0.1)
+            x_train, s_train, y_train = self._filter_by_policy((x, s, y), policy)
 
             ips_weights = policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
@@ -198,11 +198,12 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                     optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
 
                 if deterioration_iterations:
-                    d, dp = policy(x_test, s_test)
-                    current_optimization_target = -optimization_target(policy, x_test, s_test, y_test, d, dp)
-                    change = last_optimization_target - current_optimization_target
+                    d, dp = policy(x_validate, s_validate)
+                    current_optimization_target = -optimization_target(policy, x_validate, s_validate, y_validate, d,
+                                                                       dp)
+                    change = current_optimization_target - last_optimization_target
 
-                    if change < 0:
+                    if change > 0:
                         iterations_with_deterioration = 0
                     else:
                         iterations_with_deterioration += 1
@@ -214,6 +215,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
             ##### TRAIN LAMBDA #####
             if "lagrangian_optimization" in training_parameters:
+                lambda_learning_rate = training_parameters["lagrangian_optimization"]["learning_rate"]
                 for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
                     # train lambda for the generated training data
                     for x, s, y, ips_weights_batch in self._minibatch(
@@ -222,13 +224,11 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                         optimizer.update_fairness_parameter(x,
                                                             s,
                                                             y,
-                                                            training_parameters["lagrangian_optimization"][
-                                                                "learning_rate"],
+                                                            lambda_learning_rate,
                                                             ips_weights_batch)
 
             # Evaluate performance on test set after training ...
             decisions, decision_probabilities = policy(x_test, s_test)
-
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
             fairness_over_time.append(optimization_target.fairness_function(
                 policy=policy,
