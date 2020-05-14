@@ -183,12 +183,6 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             ips_weights = policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
-            last_optimization_target = 0
-            iterations_with_deterioration = 0
-            deterioration_iterations = training_parameters["parameter_optimization"][
-                "deterioration_iterations"] if "deterioration_iterations" in training_parameters[
-                "parameter_optimization"] else None
-
             # train if at least one full batch can be formed from filtered data
             for epoch in range(0, training_parameters["parameter_optimization"]["epochs"]):
                 ##### TRAIN THETA #####
@@ -196,22 +190,6 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                         data=self.data_history,
                         batch_size=training_parameters["parameter_optimization"]["batch_size"]):
                     optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
-
-                if deterioration_iterations:
-                    d, dp = policy(x_validate, s_validate)
-                    current_optimization_target = -optimization_target(policy, x_validate, s_validate, y_validate, d,
-                                                                       dp)
-                    change = current_optimization_target - last_optimization_target
-
-                    if change > 0:
-                        iterations_with_deterioration = 0
-                    else:
-                        iterations_with_deterioration += 1
-
-                    if iterations_with_deterioration > deterioration_iterations:
-                        break
-                    else:
-                        last_optimization_target = current_optimization_target
 
             ##### TRAIN LAMBDA #####
             if "lagrangian_optimization" in training_parameters:

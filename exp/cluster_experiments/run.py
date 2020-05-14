@@ -137,9 +137,6 @@ def single_run(args):
         }
     }
 
-    if args.deterioration_iterations:
-        training_parameters["parameter_optimization"]['deterioration_iterations'] = args.deterioration_iterations
-
     if args.path:
         if args.fairness_type is not None:
             training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
@@ -205,8 +202,6 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--epochs', type=int, required=True, help='number of epochs to be used')
     parser.add_argument('-bs', '--batch_size', type=int, required=True, help='batch size to be used')
     parser.add_argument('-nb', '--num_batches', type=int, required=True, help='number of batches to be used')
-    parser.add_argument('-di', '--deterioration_iterations', type=int, required=False,
-                        help='number of iterations that the optimization target is allowed to deteriorate (stopping criterion)')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
     parser.add_argument('-a', '--asynchronous', action='store_true')
     parser.add_argument('--plot', required=False, action='store_true')
@@ -215,6 +210,8 @@ if __name__ == "__main__":
     parser.add_argument('-f', '--fairness_type', type=str, required=False,
                         help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "
                              "if none is selected no fairness criterion is applied")
+    parser.add_argument('-fi', '--fairness_iterations', type=int, required=False,
+                        help='number of iterations that the dual gradient loop will be repeated')
     parser.add_argument('-fv', '--fairness_value', type=float, required=False, help='the value of lambda')
     parser.add_argument('-flr', '--fairness_learning_rate', type=float, required=False,
                         help="define the learning rate of lambda")

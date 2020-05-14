@@ -88,7 +88,6 @@ def _build_submit_file(args, base_path, lambdas):
                                       "-nb {} " \
                                       "{} " \
                                       "{} " \
-                                      "{}" \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -100,9 +99,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                   num_batches,
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
-                                                  "-pid $(Process)" if args.queue_num else "",
-                                                  "-di {}".format(
-                                                      args.deterioration_iterations) if args.deterioration_iterations else "")
+                                                  "-pid $(Process)" if args.queue_num else "")
 
                             if args.fairness_type is not None:
                                 for extension in _fairness_extensions(args, lambdas, build=True):
@@ -138,8 +135,6 @@ def _multi_run(args, base_path, lambdas):
                             command.append("-a")
                         if args.plot:
                             command.append("--plot")
-                        if args.deterioration_iterations:
-                            command.extend(["--di", str(args.deterioration_iterations)])
 
                         if args.fairness_type is not None:
                             for extension in _fairness_extensions(args, lambdas, build=False):
@@ -159,8 +154,6 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
 
     # Policy training parameters
-    parser.add_argument('-di', '--deterioration_iterations', type=int, required=False,
-                        help='number of iterations that the optimization target is allowed to deteriorate (stopping criterion)')
     parser.add_argument('-c', '--costs', type=float, nargs='+', required=True, help="define the utility cost c")
     parser.add_argument('-lr', '--learning_rates', type=float, nargs='+', required=True,
                         help="define the learning rate of theta")
@@ -189,6 +182,8 @@ if __name__ == "__main__":
     parser.add_argument('-fn', '--fairness_number', type=int, required=False, default=20,
                         help='the number of lambda values tested in the range (default = 20)')
 
+    parser.add_argument('-fi', '--fairness_iterations', type=int, nargs='+', required=False,
+                        help='number of iterations that the dual gradient loop will be repeated')
     parser.add_argument('-flr', '--fairness_learning_rates', type=float, required=False, nargs='+',
                         help="define the learning rates of lambda")
     parser.add_argument('-fbs', '--fairness_batch_sizes', type=int, required=False, nargs='+',
