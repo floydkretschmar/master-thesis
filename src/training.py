@@ -188,10 +188,12 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
 
 
 class _Trainer():
-    def _training_iteration(self, training_parameters, training_method):
+    def _training_iteration(self, training_parameters):
         x_test, s_test, y_test = training_parameters["test"]
+        training_algorithm = ConsequentialLearning(
+            training_parameters["parameter_optimization"]["learn_on_entire_history"])
 
-        results, model_parameters = training_method(training_parameters)
+        results, model_parameters = training_algorithm.train(training_parameters)
         decisions_over_time, fairness_over_time, utility_over_time = results
         statistics = Statistics.build(
             predictions=decisions_over_time,
@@ -203,21 +205,21 @@ class _Trainer():
 
         return (statistics, ModelParameters(model_parameters))
 
-    def train_over_iterations(self, training_parameters, training_method, iterations, asynchronous):
+    def train_over_iterations(self, training_parameters, iterations, asynchronous):
         # multithreaded runs of training
         if asynchronous:
             apply_results = []
             results_per_iterations = []
             pool = Pool(mp.cpu_count())
             for _ in range(0, iterations):
-                apply_results.append(pool.apipe(self._training_iteration, training_parameters, training_method))
+                apply_results.append(pool.apipe(self._training_iteration, training_parameters))
 
             for result in apply_results:
                 results_per_iterations.append(result.get())
         else:
             results_per_iterations = []
             for _ in range(0, iterations):
-                results_per_iterations.append(self._training_iteration(training_parameters, training_method))
+                results_per_iterations.append(self._training_iteration(training_parameters))
 
         total_statistics, total_parameters = _process_results(results_per_iterations)
         return total_statistics, total_parameters
@@ -245,8 +247,6 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
 
     trainer = _Trainer()
     multiple_lambdas = len(fairness_rates) > 1
-    training_algorithm = ConsequentialLearning(
-        current_training_parameters["parameter_optimization"]["learn_on_entire_history"])
 
     if multiple_lambdas:
         overall_statistics = MultiStatistics.build("log", fairness_rates, "Lambda")
@@ -262,7 +262,6 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
         print("## STARTED {} ##".format(info_string))
         current_training_parameters["optimization_target"].fairness_rate = fairness_rate
         statistics, model_parameters = trainer.train_over_iterations(current_training_parameters,
-                                                                     training_algorithm.train,
                                                                      iterations,
                                                                      asynchronous)
         if multiple_lambdas:
