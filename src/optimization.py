@@ -7,14 +7,14 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import check_for_missing_kwargs
+from src.util import check_for_missing_kwargs, get_random
 
 
 ########################################$ OPTIMIZERS ####################################################
 
 # TODO: Add Pytorch supporting optimizer
 
-class Optimizer:
+class StochasticGradientOptimizer:
     def __init__(self, policy, optimization_target):
         super().__init__()
         self.optimization_target = optimization_target
@@ -26,57 +26,97 @@ class Optimizer:
             "lambda": self.optimization_target.fairness_rate
         }
 
-    def update_model_parameters(self, x, s, y, learning_rate, ips_weights=None):
+    def _minibatch(self, batch_size, x, s, y, ips_weights=None):
+        """ Creates minibatches for stochastic gradient ascent according to the epochs and
+        batch size.
+
+        Args:
+            data: The training data
+            batch_size: The minibatch size of SGD.
+        """
+        # minibatching
+        indices = get_random().permutation(x.shape[0])
+        for batch_start in range(0, len(indices), batch_size):
+            batch_end = min(batch_start + batch_size, len(indices))
+
+            x_batch = x[batch_start:batch_end]
+            s_batch = s[batch_start:batch_end]
+            y_batch = y[batch_start:batch_end]
+
+            if ips_weights is not None:
+                ips_weight_batch = ips_weights[batch_start:batch_end]
+            else:
+                ips_weight_batch = None
+
+            yield x_batch, s_batch, y_batch, ips_weight_batch
+
+    def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the model parameters according to the specified update strategy.
 
             Args:
+                learning_rate: The rate with which the model parameters will be updated.
+                batch_size: The size of the batches into which the training data will be subdivided.
                 x: The features of the n samples
                 s: The sensitive attribute of the n samples
                 y: The ground truth labels of the n samples
-                learning_rate: The rate with which the fairness parameter will be updated.
-                ips_weights: The weights used for inverse propensity scoring. If sampling_data=None
+                ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
                 no IPS will be applied.
         """
         raise NotImplementedError(
             "Subclass must override update_model_parameters(self, x, s, y, learning_rate, ips_weights=None)")
 
-    def update_fairness_parameter(self, x, s, y, learning_rate, ips_weights=None):
+    def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the fairness parameter according to the specified update strategy.
 
             Args:
+                learning_rate: The rate with which the fairness parameter will be updated.
+                batch_size: The size of the batches into which the training data will be subdivided.
                 x: The features of the n samples
                 s: The sensitive attribute of the n samples
                 y: The ground truth labels of the n samples
-                learning_rate: The rate with which the fairness parameter will be updated.
-                ips_weights: The weights used for inverse propensity scoring. If sampling_data=None
+                ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
                 no IPS will be applied.
         """
         raise NotImplementedError(
             "Subclass must override update_fairness_parameter(self, x, s, y, learning_rate, ips_weights=None)")
 
 
-class ManualGradientOptimizer(Optimizer):
+class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy, optimization_target):
         assert isinstance(optimization_target, DifferentiableOptimizationTarget)
         super().__init__(policy, optimization_target)
 
-    def update_model_parameters(self, x, s, y, learning_rate, ips_weights=None):
-        # make decision according to current policy
-        decisions, decision_probability = self.policy(x, s)
+    def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
+        # for each minibatch...
+        for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
+            # make decision according to current policy
+            decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
 
-        # call the optimization target for gradient calculation
-        gradient = self.optimization_target.model_parameter_gradient(self.policy, x, s, y, decisions,
-                                                                     decision_probability, ips_weights)
-        self.policy.theta -= learning_rate * gradient
+            # call the optimization target for gradient calculation
+            gradient = self.optimization_target.model_parameter_gradient(self.policy,
+                                                                         x_batch,
+                                                                         s_batch,
+                                                                         y_batch,
+                                                                         decisions_batch,
+                                                                         decision_probability_batch,
+                                                                         ips_weights_batch)
+            self.policy.theta -= learning_rate * gradient
 
-    def update_fairness_parameter(self, x, s, y, learning_rate, ips_weights=None):
-        # make decision according to current policy
-        decisions, decision_probability = self.policy(x, s)
+    def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
+        # for each minibatch...
+        for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
+            # make decision according to current policy
+            decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
 
-        # call the optimization target for gradient calculation
-        gradient = self.optimization_target.fairness_parameter_gradient(self.policy, x, s, y, decisions,
-                                                                        decision_probability, ips_weights)
-        self.optimization_target.fairness_rate += learning_rate * gradient
+            # call the optimization target for gradient calculation
+            gradient = self.optimization_target.fairness_parameter_gradient(self.policy,
+                                                                            x_batch,
+                                                                            s_batch,
+                                                                            y_batch,
+                                                                            decisions_batch,
+                                                                            decision_probability_batch,
+                                                                            ips_weights_batch)
+            self.optimization_target.fairness_rate += learning_rate * gradient
 
 
 #################################### FUNCTION WRAPPERS FOR MANUAL GRADIENT #############################################

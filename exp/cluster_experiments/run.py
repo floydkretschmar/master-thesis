@@ -126,26 +126,25 @@ def single_run(args):
         'parameter_optimization': {
             'batch_size': args.batch_size,
             'epochs': args.epochs,
-            'fix_seeds': True,
             'learning_rate': args.learning_rate,
             'learn_on_entire_history': False,
-            'num_batches': args.num_batches,
             'time_steps': args.time_steps
         },
         'test': {
-            'num_samples': 10000
+            'num_train_samples': args.num_samples,
+            'num_test_samples': 10000,
+            'fix_seeds': True
         }
     }
 
     if args.path:
         if args.fairness_type is not None:
-            training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
-                                                                                        args.cost,
-                                                                                        args.learning_rate,
-                                                                                        args.time_steps,
-                                                                                        args.epochs,
-                                                                                        args.batch_size,
-                                                                                        args.num_batches)
+            training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
+                                                                                   args.cost,
+                                                                                   args.learning_rate,
+                                                                                   args.time_steps,
+                                                                                   args.epochs,
+                                                                                   args.batch_size)
 
             if args.fairness_learning_rate is not None:
                 subfolder = "flr{}/-fe{}-fbs{}-fnb{}".format(args.fairness_learning_rate,
@@ -160,13 +159,12 @@ def single_run(args):
             else:
                 training_parameters["save_path_subfolder"] = subfolder
         else:
-            training_parameters["save_path"] = "{}/no_fairness/c{}/lr{}/ts{}-ep{}-bs{}-nb{}".format(args.path,
-                                                                                                    args.cost,
-                                                                                                    args.learning_rate,
-                                                                                                    args.time_steps,
-                                                                                                    args.epochs,
-                                                                                                    args.batch_size,
-                                                                                                    args.num_batches)
+            training_parameters["save_path"] = "{}/no_fairness/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
+                                                                                               args.cost,
+                                                                                               args.learning_rate,
+                                                                                               args.time_steps,
+                                                                                               args.epochs,
+                                                                                               args.batch_size)
             if args.process_id is not None:
                 training_parameters["save_path_subfolder"] = args.process_id
 
@@ -174,7 +172,6 @@ def single_run(args):
         training_parameters["lagrangian_optimization"] = {
             'epochs': args.fairness_epochs,
             'batch_size': args.fairness_batch_size,
-            'num_batches': args.fairness_num_batches,
             'learning_rate': args.fairness_learning_rate
         }
         training_parameters["optimization_target"]["constructor"] = LagrangianOptimizationTarget
@@ -201,7 +198,7 @@ if __name__ == "__main__":
     parser.add_argument('-ts', '--time_steps', type=int, required=True, help='number of time steps to be used')
     parser.add_argument('-e', '--epochs', type=int, required=True, help='number of epochs to be used')
     parser.add_argument('-bs', '--batch_size', type=int, required=True, help='batch size to be used')
-    parser.add_argument('-nb', '--num_batches', type=int, required=True, help='number of batches to be used')
+    parser.add_argument('-ns', '--num_samples', type=int, required=True, help='number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
     parser.add_argument('-a', '--asynchronous', action='store_true')
     parser.add_argument('--plot', required=False, action='store_true')
@@ -210,15 +207,11 @@ if __name__ == "__main__":
     parser.add_argument('-f', '--fairness_type', type=str, required=False,
                         help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "
                              "if none is selected no fairness criterion is applied")
-    parser.add_argument('-fi', '--fairness_iterations', type=int, required=False,
-                        help='number of iterations that the dual gradient loop will be repeated')
     parser.add_argument('-fv', '--fairness_value', type=float, required=False, help='the value of lambda')
     parser.add_argument('-flr', '--fairness_learning_rate', type=float, required=False,
                         help="define the learning rate of lambda")
     parser.add_argument('-fbs', '--fairness_batch_size', type=int, required=False,
                         help='batch size to be used to learn lambda')
-    parser.add_argument('-fnb', '--fairness_num_batches', type=int, required=False,
-                        help='number of batches to be used to learn lambda')
     parser.add_argument('-fe', '--fairness_epochs', type=int, required=False,
                         help='number of epochs to be used to learn lambda')
 

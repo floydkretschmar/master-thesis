@@ -8,7 +8,8 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import stack, get_random
+from src.util import stack
+from src.training_evaluation import Statistics, ModelParameters
 
 
 class BaseLearningAlgorithm:
@@ -43,28 +44,6 @@ class BaseLearningAlgorithm:
         pos_decision_idx = pos_decision_idx[decisions == 1]
 
         return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
-
-    def _minibatch(self, data, batch_size):
-        """ Creates minibatches for stochastic gradient ascent according to the epochs and
-        batch size.
-        
-        Args:
-            policy: The policy from which the data has been drawn.
-            data: The training data
-            batch_size: The minibatch size of SGD.
-            epochs: The number of epochs the training algorithm will run.
-        """
-        # minibatching
-        indices = get_random().permutation(data["x"].shape[0])
-        for batch_start in range(0, len(indices), batch_size):
-            batch_end = min(batch_start + batch_size, len(indices))
-
-            x_batch = data["x"][batch_start:batch_end]
-            s_batch = data["s"][batch_start:batch_end]
-            y_batch = data["y"][batch_start:batch_end]
-            ips_weight_batch = data["ips_weights"][batch_start:batch_end]
-
-            yield x_batch, s_batch, y_batch, ips_weight_batch
 
     def _update_buffer(self, x, s, y, ips_weights):
         """ Update the internal buffer of the training algorithm.
@@ -138,9 +117,19 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         distribution = training_parameters["distribution"]
         policy = deepcopy(training_parameters["model"])
         optimization_target = deepcopy(training_parameters["optimization_target"])
-        x_test, s_test, y_test = deepcopy(training_parameters["test"])
-
         optimizer = policy.optimizer(optimization_target)
+        dual_optimization = "lagrangian_optimization" in training_parameters
+
+        # Prepare data seeds
+        training_seeds = training_parameters["data"]["training_seeds"] if "training_seeds" in training_parameters[
+            "data"] else [None] * training_parameters["parameter_optimization"]["time_steps"]
+        test_seed = training_parameters["data"]["test_seed"] if "test_seed" in training_parameters[
+            "data"] else None
+
+        # Get test data
+        x_test, s_test, y_test = distribution.sample_test_dataset(
+            n_test=training_parameters["data"]["num_test_samples"],
+            seed=test_seed)
 
         # Store initial policy decisions
         decisions_over_time, decision_probabilities = policy(x_test, s_test)
@@ -167,6 +156,11 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         theta_decay_rate = training_parameters["parameter_optimization"]["decay_rate"]
         theta_decay_step = training_parameters["parameter_optimization"]["decay_step"]
 
+        if dual_optimization:
+            lambda_learning_rate = training_parameters["lagrangian_optimization"]["learning_rate"]
+            lambda_decay_rate = training_parameters["lagrangian_optimization"]["decay_rate"]
+            lambda_decay_step = training_parameters["lagrangian_optimization"]["decay_step"]
+
         for i in range(0, training_parameters["parameter_optimization"]["time_steps"]):
             # decay theta learning rate
             if i % theta_decay_step == 0 and i != 0:
@@ -174,36 +168,35 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
             # Collect training data
             data = distribution.sample_train_dataset(
-                n_train=training_parameters["parameter_optimization"]["batch_size"]
-                        * training_parameters["parameter_optimization"]["num_batches"],
-                seed=training_parameters["parameter_optimization"]["seeds"][i]
-                if "seeds" in training_parameters["parameter_optimization"] else None)
+                n_train=training_parameters["data"]["num_train_samples"],
+                seed=training_seeds[i])
             x_train, s_train, y_train = self._filter_by_policy(data, policy)
 
             ips_weights = policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
-            # train if at least one full batch can be formed from filtered data
+            ##### TRAIN THETA #####
             for _ in range(0, training_parameters["parameter_optimization"]["epochs"]):
-                ##### TRAIN THETA #####
-                for x, s, y, ips_weights_batch in self._minibatch(
-                        data=self.data_history,
-                        batch_size=training_parameters["parameter_optimization"]["batch_size"]):
-                    optimizer.update_model_parameters(x, s, y, theta_learning_rate, ips_weights_batch)
+                optimizer.update_model_parameters(theta_learning_rate,
+                                                  training_parameters["parameter_optimization"]["batch_size"],
+                                                  self.data_history["x"],
+                                                  self.data_history["s"],
+                                                  self.data_history["y"],
+                                                  self.data_history["ips_weights"])
 
             ##### TRAIN LAMBDA #####
-            if "lagrangian_optimization" in training_parameters:
-                lambda_learning_rate = training_parameters["lagrangian_optimization"]["learning_rate"]
+            if dual_optimization:
+                # decay lambda learning rate
+                if i % lambda_decay_step == 0 and i != 0:
+                    lambda_learning_rate *= lambda_decay_rate
+
                 for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
-                    # train lambda for the generated training data
-                    for x, s, y, ips_weights_batch in self._minibatch(
-                            data=self.data_history,
-                            batch_size=training_parameters["lagrangian_optimization"]["batch_size"]):
-                        optimizer.update_fairness_parameter(x,
-                                                            s,
-                                                            y,
-                                                            lambda_learning_rate,
-                                                            ips_weights_batch)
+                    optimizer.update_fairness_parameter(lambda_learning_rate,
+                                                        training_parameters["lagrangian_optimization"]["batch_size"],
+                                                        self.data_history["x"],
+                                                        self.data_history["s"],
+                                                        self.data_history["y"],
+                                                        self.data_history["ips_weights"])
 
             # Evaluate performance on test set after training ...
             decisions, decision_probabilities = policy(x_test, s_test)
@@ -229,7 +222,12 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             model_parameters["model_parameters"] = [deepcopy(parameters)]
 
         self._reset_buffer()
-        return (decisions_over_time,
-                np.array(fairness_over_time, dtype=float).reshape(-1, 1),
-                np.array(utilities_over_time, dtype=float).reshape(-1, 1)), \
-               model_parameters
+        statistics = Statistics.build(
+            predictions=decisions_over_time,
+            observations=x_test,
+            fairness=np.array(fairness_over_time, dtype=float).reshape(-1, 1),
+            utility=np.array(utilities_over_time, dtype=float).reshape(-1, 1),
+            protected_attributes=s_test,
+            ground_truths=y_test)
+
+        return statistics, ModelParameters(model_parameters)

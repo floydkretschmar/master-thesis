@@ -9,7 +9,7 @@ import numpy as np
 from copy import deepcopy
 # pylint: disable=no-name-in-module
 from src.util import sigmoid, get_random
-from src.optimization import ManualGradientOptimizer
+from src.optimization import ManualStochasticGradientOptimizer
 
 
 # TODO: Add Pytorch supporting policy (e.g. simple MLP)
@@ -102,9 +102,9 @@ class BasePolicy:
         """
         raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
 
-    def optimizer(self, optimization_target, use_sensitive_attributes):
+    def optimizer(self, optimization_target):
         raise NotImplementedError(
-            "Subclass must override optimizer(self, optimization_target, use_sensitive_attributes).")
+            "Subclass must override optimizer(self, optimization_target).")
 
     def reset(self):
         raise NotImplementedError("Subclass must override reset(self).")
@@ -143,7 +143,7 @@ class ManualGradientPolicy(BasePolicy):
         raise NotImplementedError("Subclass must override log_policy_gradient(self, x, s).")
 
     def optimizer(self, optimization_target):
-        return ManualGradientOptimizer(self, optimization_target)
+        return ManualStochasticGradientOptimizer(self, optimization_target)
 
     def reset(self):
         self._theta = deepcopy(self._initial_theta)

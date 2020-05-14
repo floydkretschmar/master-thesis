@@ -14,7 +14,7 @@ from copy import deepcopy
 
 from src.consequential_learning import ConsequentialLearning
 from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, get_list_of_seeds
-from src.training_evaluation import Statistics, MultiStatistics, ModelParameters
+from src.training_evaluation import MultiStatistics
 from src.optimization import FairnessFunction, UtilityFunction
 
 
@@ -25,7 +25,7 @@ def _check_for_missing_training_parameters(training_parameters):
         training_parameters: The parameters used to configure the consequential learning algorithm.
     """
     check_for_missing_kwargs("training()",
-                             ["model", "distribution", "optimization_target", "parameter_optimization", "test"],
+                             ["model", "distribution", "optimization_target", "parameter_optimization", "data"],
                              training_parameters)
 
     if isinstance(training_parameters["model"], dict):
@@ -39,15 +39,15 @@ def _check_for_missing_training_parameters(training_parameters):
                                  training_parameters["optimization_target"])
 
     check_for_missing_kwargs("training()",
-                             ["batch_size", "epochs", "fix_seeds", "learning_rate", "learn_on_entire_history",
-                              "num_batches", "time_steps"],
+                             ["batch_size", "epochs", "learning_rate", "learn_on_entire_history", "time_steps"],
                              training_parameters["parameter_optimization"])
 
-    check_for_missing_kwargs("training()", ["num_samples"], training_parameters["test"])
+    check_for_missing_kwargs("training()", ["num_test_samples", "fix_seeds", "num_train_samples"],
+                             training_parameters["data"])
 
     if "lagrangian_optimization" in training_parameters:
         check_for_missing_kwargs("training()",
-                                 ["batch_size", "epochs", "learning_rate", "num_batches"],
+                                 ["batch_size", "epochs", "learning_rate"],
                                  training_parameters["lagrangian_optimization"])
 
 
@@ -86,7 +86,6 @@ def _prepare_training(training_parameters):
         base_save_path = None
 
     ##################### PREPARE THETA OPTIMIZATION #####################
-
     if isinstance(training_parameters["optimization_target"], dict):
         # wrap utility and fairness functions with appropriate wrapper functions
         utility_fct = UtilityFunction(
@@ -124,18 +123,15 @@ def _prepare_training(training_parameters):
             = training_parameters["parameter_optimization"]["time_steps"] + 1
 
     ##################### GENERATE DATA AND SEEDS #####################
-
-    # if fixed seeding for parameter optimization: get one seed per time step for data generation
-    if current_training_parameters["parameter_optimization"]["fix_seeds"]:
-        current_training_parameters["parameter_optimization"]["seeds"] = get_list_of_seeds(
+    # if fixed seeding for parameter optimization: get one seed per time step for data generation and one seed for
+    # test set generation
+    if current_training_parameters["data"]["fix_seeds"]:
+        current_training_parameters["data"]["training_seeds"] = get_list_of_seeds(
             training_parameters["parameter_optimization"]["time_steps"])
 
-    # generate one set of test data across all threads in advance
-    current_training_parameters["test"] = current_training_parameters["distribution"].sample_test_dataset(
-        n_test=training_parameters["test"]["num_samples"])
+        current_training_parameters["data"]["test_seed"] = get_list_of_seeds(1)
 
     ##################### PERPARE LAGRANGIAN OPTIMIZATION #####################
-
     if "lagrangian_optimization" in current_training_parameters:
         # if decay_rate and decay_step not specified: set them in a way such that there is no decay of the lr
         if "decay_rate" not in training_parameters["lagrangian_optimization"]:
@@ -189,21 +185,9 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
 
 class _Trainer():
     def _training_iteration(self, training_parameters):
-        x_test, s_test, y_test = training_parameters["test"]
         training_algorithm = ConsequentialLearning(
             training_parameters["parameter_optimization"]["learn_on_entire_history"])
-
-        results, model_parameters = training_algorithm.train(training_parameters)
-        decisions_over_time, fairness_over_time, utility_over_time = results
-        statistics = Statistics.build(
-            predictions=decisions_over_time,
-            observations=x_test,
-            fairness=fairness_over_time,
-            utility=utility_over_time,
-            protected_attributes=s_test,
-            ground_truths=y_test)
-
-        return (statistics, ModelParameters(model_parameters))
+        return training_algorithm.train(training_parameters)
 
     def train_over_iterations(self, training_parameters, iterations, asynchronous):
         # multithreaded runs of training
@@ -252,12 +236,11 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
         overall_statistics = MultiStatistics.build("log", fairness_rates, "Lambda")
 
     for fairness_rate in fairness_rates:
-        info_string = "// LR = {} // TS = {} // E = {} // BS = {} // NB = {} // FR = {}".format(
+        info_string = "// LR = {} // TS = {} // E = {} // BS = {} // FR = {}".format(
             current_training_parameters["parameter_optimization"]["learning_rate"],
             current_training_parameters["parameter_optimization"]["time_steps"],
             current_training_parameters["parameter_optimization"]["epochs"],
             current_training_parameters["parameter_optimization"]["batch_size"],
-            current_training_parameters["parameter_optimization"]["num_batches"],
             fairness_rate)
         print("## STARTED {} ##".format(info_string))
         current_training_parameters["optimization_target"].fairness_rate = fairness_rate

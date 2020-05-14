@@ -16,19 +16,16 @@ def _fairness_extensions(args, fairness_rates, build=False):
         if args.fairness_learning_rates is not None:
             for learning_rate in args.fairness_learning_rates:
                 for batch_size in args.fairness_batch_sizes:
-                    num_batches = args.fairness_num_samples // batch_size
                     for epochs in args.fairness_epochs:
                         if build:
-                            extensions.append("{} -flr {} -fbs {} -fnb {} -fe {}".format(extension,
-                                                                                         learning_rate,
-                                                                                         batch_size,
-                                                                                         num_batches,
-                                                                                         epochs))
+                            extensions.append("{} -flr {} -fbs {} -fe {}".format(extension,
+                                                                                 learning_rate,
+                                                                                 batch_size,
+                                                                                 epochs))
                         else:
                             temp_extension = deepcopy(extension)
                             temp_extension.extend(["-flr", str(learning_rate),
                                                    "-fbs", str(batch_size),
-                                                   "-fnb", str(num_batches),
                                                    "-fe", str(epochs)])
                             extensions.append(temp_extension)
         else:
@@ -74,8 +71,6 @@ def _build_submit_file(args, base_path, lambdas):
                 for time_steps in args.time_steps:
                     for epochs in args.epochs:
                         for batch_size in args.batch_sizes:
-                            num_batches = args.num_samples // batch_size
-                            # for num_batches in num_batches:
                             command = "run.py " \
                                       "-d {} " \
                                       "-c {} " \
@@ -85,7 +80,6 @@ def _build_submit_file(args, base_path, lambdas):
                                       "-ts {} " \
                                       "-e {} " \
                                       "-bs {} " \
-                                      "-nb {} " \
                                       "{} " \
                                       "{} " \
                                       "{}".format(args.data,
@@ -96,7 +90,6 @@ def _build_submit_file(args, base_path, lambdas):
                                                   time_steps,
                                                   epochs,
                                                   batch_size,
-                                                  num_batches,
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-pid $(Process)" if args.queue_num else "")
@@ -120,7 +113,6 @@ def _multi_run(args, base_path, lambdas):
             for time_steps in args.time_steps:
                 for epochs in args.epochs:
                     for batch_size in args.batch_sizes:
-                        num_batches = args.num_samples // batch_size
                         command = ["python", "run.py",
                                    "-d", str(args.data),
                                    "-c", str(cost),
@@ -129,8 +121,7 @@ def _multi_run(args, base_path, lambdas):
                                    "-p", "{}/raw".format(base_path),
                                    "-ts", str(time_steps),
                                    "-e", str(epochs),
-                                   "-bs", str(batch_size),
-                                   "-nb", str(num_batches)]
+                                   "-bs", str(batch_size)]
                         if args.asynchronous:
                             command.append("-a")
                         if args.plot:
