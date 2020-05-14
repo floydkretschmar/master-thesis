@@ -179,8 +179,6 @@ if __name__ == "__main__":
                         help="define the learning rates of lambda")
     parser.add_argument('-fbs', '--fairness_batch_sizes', type=int, required=False, nargs='+',
                         help='batch sizes to be used to learn lambda')
-    parser.add_argument('-fns', '--fairness_num_samples', type=int, required=False,
-                        help='number of batches to be used to learn lambda')
     parser.add_argument('-fe', '--fairness_epochs', type=int, required=False, nargs='+',
                         help='number of epochs to be used to learn lambda')
 
@@ -206,15 +204,13 @@ if __name__ == "__main__":
         elif args.fairness_type is not None and \
                 ((args.fairness_epochs is None or
                   args.fairness_learning_rates is None or
-                  args.fairness_batch_sizes is None or
-                  args.fairness_num_samples is None) and not
+                  args.fairness_batch_sizes is None) and not
                  (args.fairness_epochs is None and
                   args.fairness_learning_rates is None and
-                  args.fairness_batch_sizes is None and
-                  args.fairness_num_samples is None)):
+                  args.fairness_batch_sizes is None)):
             parser.error(
                 '--fairness_epochs, --fairness_learning_rates, fairness_batch_sizes and '
-                '--fairness_num_samples have to be fully specified or not specified at all')
+                'have to be fully specified or not specified at all')
         elif args.fairness_values is not None:
             lambdas = args.fairness_values
         elif args.fairness_lower_bound is not None and args.fairness_upper_bound is not None:

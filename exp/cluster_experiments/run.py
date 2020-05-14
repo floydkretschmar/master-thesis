@@ -130,7 +130,7 @@ def single_run(args):
             'learn_on_entire_history': False,
             'time_steps': args.time_steps
         },
-        'test': {
+        'data': {
             'num_train_samples': args.num_samples,
             'num_test_samples': 10000,
             'fix_seeds': True
@@ -147,10 +147,9 @@ def single_run(args):
                                                                                    args.batch_size)
 
             if args.fairness_learning_rate is not None:
-                subfolder = "flr{}/-fe{}-fbs{}-fnb{}".format(args.fairness_learning_rate,
-                                                             args.fairness_epochs,
-                                                             args.fairness_batch_size,
-                                                             args.fairness_num_batches)
+                subfolder = "flr{}/-fe{}-fbs{}".format(args.fairness_learning_rate,
+                                                       args.fairness_epochs,
+                                                       args.fairness_batch_size)
             else:
                 subfolder = args.fairness_value
 
@@ -223,12 +222,10 @@ if __name__ == "__main__":
     if args.fairness_type is not None and \
             ((args.fairness_epochs is None or
               args.fairness_learning_rate is None or
-              args.fairness_batch_size is None or
-              args.fairness_num_batches is None) and not
+              args.fairness_batch_size is None) and not
              (args.fairness_epochs is None and
               args.fairness_learning_rate is None and
-              args.fairness_batch_size is None and
-              args.fairness_num_batches is None)):
+              args.fairness_batch_size is None)):
         parser.error('--fairness_epochs, --fairness_learning_rate, fairness_batch_size and '
-                     '--fairness_num_batches have to be fully specified or not specified at all')
+                     'have to be fully specified or not specified at all')
     single_run(args)
