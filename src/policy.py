@@ -6,6 +6,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
+from copy import deepcopy
 # pylint: disable=no-name-in-module
 from src.util import sigmoid, get_random
 from src.optimization import ManualStochasticGradientOptimizer
@@ -101,9 +102,10 @@ class BasePolicy:
         """
         raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
 
-    def optimizer(self, optimization_target):
+    @staticmethod
+    def optimizer(policy, optimization_target):
         raise NotImplementedError(
-            "Subclass must override optimizer(self, optimization_target).")
+            "Subclass must override optimizer(policy, optimization_target).")
 
 
 class ManualGradientPolicy(BasePolicy):
@@ -134,8 +136,9 @@ class ManualGradientPolicy(BasePolicy):
         """
         raise NotImplementedError("Subclass must override log_policy_gradient(self, x, s).")
 
-    def optimizer(self, optimization_target):
-        return ManualStochasticGradientOptimizer(self, optimization_target)
+    @staticmethod
+    def optimizer(policy, optimization_target):
+        return ManualStochasticGradientOptimizer(policy, optimization_target)
 
 
 class LogisticPolicy(ManualGradientPolicy):
@@ -147,8 +150,8 @@ class LogisticPolicy(ManualGradientPolicy):
 
     def copy(self):
         approx_policy = LogisticPolicy(
-            self.theta.copy(),
-            self.feature_map,
+            deepcopy(self.theta),
+            deepcopy(self.feature_map),
             self.use_sensitive_attributes)
         return approx_policy
 
