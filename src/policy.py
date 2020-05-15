@@ -6,7 +6,6 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
-from copy import deepcopy
 # pylint: disable=no-name-in-module
 from src.util import sigmoid, get_random
 from src.optimization import ManualStochasticGradientOptimizer
@@ -72,7 +71,7 @@ class BasePolicy:
         Returns:
             probability: The Probability of a positive decision.
         """
-        raise NotImplementedError("Subclass must override calculate probability(features).")
+        raise NotImplementedError("Subclass must override _probability(features).")
 
     def copy(self):
         """ Creates a deep copy of the policy.
@@ -106,18 +105,11 @@ class BasePolicy:
         raise NotImplementedError(
             "Subclass must override optimizer(self, optimization_target).")
 
-    def reset(self):
-        raise NotImplementedError("Subclass must override reset(self).")
-
 
 class ManualGradientPolicy(BasePolicy):
     def __init__(self, use_sensitive_attributes, theta):
         super().__init__(use_sensitive_attributes)
-        self._theta = self.initialize_theta(theta)
-        self._initial_theta = deepcopy(self._theta)
-
-    def initialize_theta(self, theta):
-        return np.array(theta)
+        self._theta = np.array(theta)
 
     @property
     def theta(self):
@@ -144,9 +136,6 @@ class ManualGradientPolicy(BasePolicy):
 
     def optimizer(self, optimization_target):
         return ManualStochasticGradientOptimizer(self, optimization_target)
-
-    def reset(self):
-        self._theta = deepcopy(self._initial_theta)
 
 
 class LogisticPolicy(ManualGradientPolicy):

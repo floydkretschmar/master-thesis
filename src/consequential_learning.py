@@ -93,16 +93,26 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         """
         super(ConsequentialLearning, self).__init__(learn_on_entire_history)
 
-    def _train_model_parameters(self, policy, optimizer, training_parameters):
-        """ Executes the training algorithm.
+    def _train_model_parameters(self, optimizer, epochs, learning_rate, batch_size):
+        """ Executes the core training of the model parameters theta.
 
         Args:
-            training_parameters: The parameters used to configure the consequential learning algorithm.
+            optimizer: The optimization algorithm used to train the policy.
+            epochs: The amount of epochs for which the model training runs.
+            learning_rate: The learning rate with which the policy is updated.
+            batch_size: The size of the batches into which the training data will be split.
 
         Yields:
             decisions_over_time: The decisions made by a policy at timestep t over all time steps
             trained_model_parameters: The model parameters at the final timestep T
         """
+        for _ in range(0, epochs):
+            optimizer.update_model_parameters(learning_rate,
+                                              batch_size,
+                                              self.data_history["x"],
+                                              self.data_history["s"],
+                                              self.data_history["y"],
+                                              self.data_history["ips_weights"])
 
     def train(self, training_parameters):
         """ Executes consequential learning.
@@ -175,28 +185,34 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             ips_weights = policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
-            ##### TRAIN THETA #####
-            for _ in range(0, training_parameters["parameter_optimization"]["epochs"]):
-                optimizer.update_model_parameters(theta_learning_rate,
-                                                  training_parameters["parameter_optimization"]["batch_size"],
-                                                  self.data_history["x"],
-                                                  self.data_history["s"],
-                                                  self.data_history["y"],
-                                                  self.data_history["ips_weights"])
-
-            ##### TRAIN LAMBDA #####
             if dual_optimization:
                 # decay lambda learning rate
                 if i % lambda_decay_step == 0 and i != 0:
                     lambda_learning_rate *= lambda_decay_rate
 
+                # for the dual gradient algorithm:
+                # 1. Train model parameters (until convergence)
+                # 2. Update fairness rate
+                # 3. Repeat 1. for #epochs
+                optimizer.create_checkpoint()
                 for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
+                    self._train_model_parameters(optimizer,
+                                                 training_parameters["parameter_optimization"]["epochs"],
+                                                 theta_learning_rate,
+                                                 training_parameters["parameter_optimization"]["batch_size"])
+
                     optimizer.update_fairness_parameter(lambda_learning_rate,
                                                         training_parameters["lagrangian_optimization"]["batch_size"],
                                                         self.data_history["x"],
                                                         self.data_history["s"],
                                                         self.data_history["y"],
                                                         self.data_history["ips_weights"])
+                    optimizer.restore_checkpoint()
+
+            self._train_model_parameters(optimizer,
+                                         training_parameters["parameter_optimization"]["epochs"],
+                                         theta_learning_rate,
+                                         training_parameters["parameter_optimization"]["batch_size"])
 
             # Evaluate performance on test set after training ...
             decisions, decision_probabilities = policy(x_test, s_test)

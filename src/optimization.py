@@ -17,14 +17,17 @@ from src.util import check_for_missing_kwargs, get_random
 class StochasticGradientOptimizer:
     def __init__(self, policy, optimization_target):
         super().__init__()
-        self.optimization_target = optimization_target
-        self.policy = policy
+        self._optimization_target = optimization_target
+        self._policy = policy
+        self._saved_policy = policy.copy()
 
-    def get_parameters(self):
-        return {
-            "theta": self.policy.get_model_parameters(),
-            "lambda": self.optimization_target.fairness_rate
-        }
+    @property
+    def optimization_target(self):
+        return self._optimization_target
+
+    @property
+    def policy(self):
+        return self._policy
 
     def _minibatch(self, batch_size, x, s, y, ips_weights=None):
         """ Creates minibatches for stochastic gradient ascent according to the epochs and
@@ -49,6 +52,18 @@ class StochasticGradientOptimizer:
                 ips_weight_batch = None
 
             yield x_batch, s_batch, y_batch, ips_weight_batch
+
+    def create_checkpoint(self):
+        self._saved_policy = self.policy.copy()
+
+    def restore_checkpoint(self):
+        self._policy = self._saved_policy.copy()
+
+    def get_parameters(self):
+        return {
+            "theta": self.policy.get_model_parameters(),
+            "lambda": self.optimization_target.fairness_rate
+        }
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the model parameters according to the specified update strategy.
