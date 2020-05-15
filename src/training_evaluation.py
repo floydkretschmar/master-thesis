@@ -147,7 +147,7 @@ def EOP(statistics, prot):
                                                                                                          Statistics.TRUE_POSITIVE_RATE)
 
 
-class Statistics():
+class Statistics:
     # Scale Measures:
     X_VALUES = "X_VALUES"
     X_SCALE = "X_SCALE"
@@ -211,7 +211,10 @@ class Statistics():
         self.results = deepcopy(results)
 
     @staticmethod
-    def build(predictions, observations, fairness, utility, protected_attributes, ground_truths):
+    def build(predictions,
+              protected_attributes,
+              ground_truths,
+              utility_function):
         results = {
             Statistics.X_VALUES: list(range(0, predictions.shape[1])),
             Statistics.X_SCALE: "linear",
@@ -220,12 +223,15 @@ class Statistics():
 
         for prot in ["all", "unprotected", "protected"]:
             if prot == "unprotected":
+                filtered_protected_attributes = protected_attributes[protected_attributes == 0]
                 filtered_predictions = predictions[(protected_attributes == 0).squeeze(), :]
                 filtered_ground_truths = np.expand_dims(ground_truths[protected_attributes == 0], axis=1)
             elif prot == "protected":
+                filtered_protected_attributes = protected_attributes[protected_attributes == 1]
                 filtered_predictions = predictions[(protected_attributes == 1).squeeze(), :]
                 filtered_ground_truths = np.expand_dims(ground_truths[protected_attributes == 1], axis=1)
             else:
+                filtered_protected_attributes = protected_attributes
                 filtered_predictions = predictions
                 filtered_ground_truths = ground_truths
 
@@ -233,7 +239,8 @@ class Statistics():
 
             # calculate base statistics during creation of statistics object
             results[prot] = {
-                Statistics.UTILITY: utility,
+                Statistics.UTILITY: utility_function(s=filtered_protected_attributes, y=filtered_ground_truths,
+                                                     decisions=filtered_predictions).reshape(-1, 1),
                 Statistics.NUM_INDIVIDUALS: len(filtered_ground_truths),
                 Statistics.NUM_NEGATIVES: len(filtered_ground_truths[filtered_ground_truths == 0]),
                 Statistics.NUM_POSITIVES: len(filtered_ground_truths[filtered_ground_truths == 1]),
@@ -266,7 +273,7 @@ class Statistics():
         results["all"][Statistics.DISPARATE_IMPACT] = None
         results["all"][Statistics.DEMOGRAPHIC_PARITY] = None
         results["all"][Statistics.EQUALITY_OF_OPPORTUNITY] = None
-        results["all"][Statistics.FAIRNESS] = fairness
+
         return Statistics(results)
 
     @staticmethod
@@ -313,7 +320,6 @@ class Statistics():
                             self.results[protected_key][measure_key] = stack(self.results[protected_key][measure_key],
                                                                              measure_value, axis=1)
 
-
 class MultiStatistics(Statistics):
     def __init__(self, results):
         super(MultiStatistics, self).__init__(results)
@@ -354,7 +360,7 @@ class MultiStatistics(Statistics):
         results["all"][MultiStatistics.DISPARATE_IMPACT] = None
         results["all"][MultiStatistics.DEMOGRAPHIC_PARITY] = None
         results["all"][MultiStatistics.EQUALITY_OF_OPPORTUNITY] = None
-        results["all"][MultiStatistics.FAIRNESS] = None
+
         return MultiStatistics(results)
 
     def log_run(self, statistics):

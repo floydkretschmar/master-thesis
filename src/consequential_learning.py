@@ -143,20 +143,6 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
         # Store initial policy decisions
         decisions_over_time, decision_probabilities = policy(x_test, s_test)
-        fairness_over_time = [optimization_target.fairness_function(
-            policy=policy,
-            x=x_test,
-            s=s_test,
-            y=y_test,
-            decisions=decisions_over_time,
-            decision_probabilities=decision_probabilities)]
-        utilities_over_time = [optimization_target.utility_function(
-            policy=policy,
-            x=x_test,
-            s=s_test,
-            y=y_test,
-            decisions=decisions_over_time,
-            decision_probabilities=decision_probabilities)]
 
         model_parameters = {
             "lambdas": [optimizer.get_parameters()["lambda"]],
@@ -217,20 +203,6 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             # Evaluate performance on test set after training ...
             decisions, decision_probabilities = policy(x_test, s_test)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
-            fairness_over_time.append(optimization_target.fairness_function(
-                policy=policy,
-                x=x_test,
-                s=s_test,
-                y=y_test,
-                decisions=decisions,
-                decision_probabilities=decision_probabilities))
-            utilities_over_time.append(optimization_target.utility_function(
-                policy=policy,
-                x=x_test,
-                s=s_test,
-                y=y_test,
-                decisions=decisions,
-                decision_probabilities=decision_probabilities))
 
             # ... and save the parameters of the model
             parameters = optimizer.get_parameters()
@@ -240,10 +212,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         self._reset_buffer()
         statistics = Statistics.build(
             predictions=decisions_over_time,
-            observations=x_test,
-            fairness=np.array(fairness_over_time, dtype=float).reshape(-1, 1),
-            utility=np.array(utilities_over_time, dtype=float).reshape(-1, 1),
             protected_attributes=s_test,
-            ground_truths=y_test)
+            ground_truths=y_test,
+            utility_function=optimization_target.utility_function)
 
         return statistics, ModelParameters(model_parameters)

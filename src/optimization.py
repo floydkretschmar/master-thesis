@@ -153,26 +153,27 @@ class UtilityFunction(DifferentiableFunction):
     def __init__(self, utility_function):
         super().__init__(utility_function)
 
-    def _utility(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        utility = self.function(x=x,
-                                s=s,
+    def _utility(self, s, y, decisions, ips_weights=None):
+        utility = self.function(s=s,
                                 y=y,
-                                decisions=decisions,
-                                decision_probabilities=decision_probabilities,
-                                policy=policy)
+                                decisions=decisions)
         if ips_weights is not None:
             utility *= ips_weights
         return utility
 
     def __call__(self, **function_args):
-        check_for_missing_kwargs("UtilityFunction()", ["x", "s", "y", "decisions", "decision_probabilities", "policy"],
+        check_for_missing_kwargs("UtilityFunction()", ["s", "y", "decisions"],
                                  function_args)
-        return self._utility(**function_args).mean(axis=0)
+        return self._utility(s=function_args["s"],
+                             y=function_args["y"],
+                             decisions=function_args["decisions"]).mean(axis=0)
 
     def gradient(self, **gradient_args):
-        check_for_missing_kwargs("UtilityFunction()", ["x", "s", "y", "decisions", "decision_probabilities", "policy"],
+        check_for_missing_kwargs("UtilityFunction()", ["s", "y", "decisions"],
                                  gradient_args)
-        utility = self._utility(**gradient_args)
+        utility = self._utility(s=gradient_args["s"],
+                                y=gradient_args["y"],
+                                decisions=gradient_args["decisions"])
 
         log_policy_gradient = gradient_args["policy"].log_policy_gradient(gradient_args["x"], gradient_args["s"])
         utility_grad = log_policy_gradient * utility

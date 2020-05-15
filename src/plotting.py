@@ -15,25 +15,19 @@ from src.training_evaluation import Statistics, ModelParameters
 
 def _plot_results(
         utility,
-        fairness,
         demographic_parity,
         equality_of_opportunity,
         xaxis,
         xlable,
         xscale,
         utility_uncertainty=None,
-        fairness_uncertainty=None,
         demographic_parity_uncertainty=None,
         equality_of_opportunity_uncertainty=None,
         lambdas=None,
         lambdas_uncertainty=None,
-        file_path=None,
-        plot_fairness=False):
+        file_path=None):
     if lambdas is not None:
-        if plot_fairness:
-            f, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 5, sharex=True, figsize=(25, 10))
-        else:
-            f, (ax1, ax2, ax3, ax5) = plt.subplots(1, 4, sharex=True, figsize=(25, 10))
+        f, (ax1, ax2, ax3, ax5) = plt.subplots(1, 4, sharex=True, figsize=(25, 10))
 
         ax5.plot(xaxis, lambdas)
         ax5.set_xlabel(xlable)
@@ -44,10 +38,7 @@ def _plot_results(
             ax5.fill_between(xaxis, lambdas_uncertainty[0], lambdas_uncertainty[1], alpha=0.3, edgecolor='#060080',
                              facecolor='#928CFF')
     else:
-        if plot_fairness:
-            f, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, sharex=True, figsize=(25, 10))
-        else:
-            f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, figsize=(25, 10))
+        f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, figsize=(25, 10))
 
     ax1.plot(xaxis, utility)
     ax1.set_xlabel(xlable)
@@ -76,16 +67,6 @@ def _plot_results(
         ax3.fill_between(xaxis, equality_of_opportunity_uncertainty[0], equality_of_opportunity_uncertainty[1],
                          alpha=0.3, edgecolor='#060080', facecolor='#928CFF')
 
-    if plot_fairness:
-        ax4.plot(xaxis, fairness)
-        ax4.set_xlabel(xlable)
-        ax4.set_ylabel("Fairness Function")
-        ax4.set_xscale(xscale)
-        # ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
-        if fairness_uncertainty is not None:
-            ax4.fill_between(xaxis, fairness_uncertainty[0], fairness_uncertainty[1], alpha=0.3, edgecolor='#060080',
-                             facecolor='#928CFF')
-
     if file_path is None:
         plt.show()
     else:
@@ -107,7 +88,6 @@ def plot_median(statistics, file_path=None, model_parameters=None, plot_fairness
 
     _plot_results(
         utility=statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.MEDIAN),
-        fairness=statistics.fairness(measure_key=Statistics.FAIRNESS, result_format=Statistics.MEDIAN),
         demographic_parity=statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY,
                                                result_format=Statistics.MEDIAN),
         equality_of_opportunity=statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY,
@@ -118,9 +98,6 @@ def plot_median(statistics, file_path=None, model_parameters=None, plot_fairness
         utility_uncertainty=
         (statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.FIRST_QUARTILE),
          statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.THIRD_QUARTILE)),
-        fairness_uncertainty=
-        (statistics.fairness(measure_key=Statistics.FAIRNESS, result_format=Statistics.FIRST_QUARTILE),
-         statistics.fairness(measure_key=Statistics.FAIRNESS, result_format=Statistics.THIRD_QUARTILE)),
         demographic_parity_uncertainty=
         (statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.FIRST_QUARTILE),
          statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.THIRD_QUARTILE)),
@@ -129,16 +106,12 @@ def plot_median(statistics, file_path=None, model_parameters=None, plot_fairness
          statistics.fairness(measure_key=Statistics.EQUALITY_OF_OPPORTUNITY, result_format=Statistics.THIRD_QUARTILE)),
         lambdas=lambdas,
         lambdas_uncertainty=lambdas_uncertainty,
-        file_path=file_path,
-        plot_fairness=plot_fairness)
+        file_path=file_path)
 
 
 def plot_mean(statistics, file_path=None, model_parameters=None, plot_fairness=False):
     u_mean = statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.MEAN)
     u_stddev = statistics.performance(measure_key=Statistics.UTILITY, result_format=Statistics.STANDARD_DEVIATION)
-
-    f_mean = statistics.fairness(measure_key=Statistics.FAIRNESS, result_format=Statistics.MEAN)
-    f_stddev = statistics.fairness(measure_key=Statistics.FAIRNESS, result_format=Statistics.STANDARD_DEVIATION)
 
     dp_mean = statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY, result_format=Statistics.MEAN)
     dp_stddev = statistics.fairness(measure_key=Statistics.DEMOGRAPHIC_PARITY,
@@ -160,17 +133,14 @@ def plot_mean(statistics, file_path=None, model_parameters=None, plot_fairness=F
 
     _plot_results(
         utility=u_mean,
-        fairness=f_mean,
         demographic_parity=dp_mean,
         equality_of_opportunity=eop_mean,
         xaxis=statistics.results[Statistics.X_VALUES],
         xlable=statistics.results[Statistics.X_NAME],
         xscale=statistics.results[Statistics.X_SCALE],
         utility_uncertainty=(u_mean - u_stddev, u_mean + u_stddev),
-        fairness_uncertainty=(f_mean - f_stddev, f_mean + f_stddev),
         demographic_parity_uncertainty=(dp_mean - dp_stddev, dp_mean + dp_stddev),
         equality_of_opportunity_uncertainty=(eop_mean - eop_stddev, eop_mean + eop_stddev),
         lambdas=lambdas,
         lambdas_uncertainty=lambdas_uncertainty,
-        file_path=file_path,
-        plot_fairness=plot_fairness)
+        file_path=file_path)
