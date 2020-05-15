@@ -11,7 +11,6 @@ if root_path not in sys.path:
 from src.util import stack
 from src.training_evaluation import Statistics, ModelParameters
 
-
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
         self.learn_on_entire_history = learn_on_entire_history
@@ -125,9 +124,10 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             trained_model_parameters: The model parameters at the final timestep T
         """
         distribution = training_parameters["distribution"]
-        policy = deepcopy(training_parameters["model"])
         optimization_target = deepcopy(training_parameters["optimization_target"])
-        optimizer = policy.optimizer(optimization_target)
+        optimizer = deepcopy(training_parameters["model"]).optimizer(
+            deepcopy(training_parameters["model"]),
+            optimization_target)
         dual_optimization = "lagrangian_optimization" in training_parameters
 
         # Prepare data seeds
@@ -142,7 +142,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             seed=test_seed)
 
         # Store initial policy decisions
-        decisions_over_time, decision_probabilities = policy(x_test, s_test)
+        decisions_over_time, decision_probabilities = optimizer.policy(x_test, s_test)
 
         model_parameters = {
             "lambdas": [optimizer.get_parameters()["lambda"]],
@@ -166,9 +166,9 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             data = distribution.sample_train_dataset(
                 n_train=training_parameters["data"]["num_train_samples"],
                 seed=training_seeds[i])
-            x_train, s_train, y_train = self._filter_by_policy(data, policy)
+            x_train, s_train, y_train = self._filter_by_policy(data, optimizer.policy)
 
-            ips_weights = policy.ips_weights(x_train, s_train)
+            ips_weights = optimizer.policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
             if dual_optimization:
@@ -180,7 +180,6 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 # 1. Train model parameters (until convergence)
                 # 2. Update fairness rate
                 # 3. Repeat 1. for #epochs
-                optimizer.create_checkpoint()
                 for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
                     self._train_model_parameters(optimizer,
                                                  training_parameters["parameter_optimization"]["epochs"],
@@ -193,15 +192,14 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                         self.data_history["s"],
                                                         self.data_history["y"],
                                                         self.data_history["ips_weights"])
-                    optimizer.restore_checkpoint()
-
-            self._train_model_parameters(optimizer,
-                                         training_parameters["parameter_optimization"]["epochs"],
-                                         theta_learning_rate,
-                                         training_parameters["parameter_optimization"]["batch_size"])
+            else:
+                self._train_model_parameters(optimizer,
+                                             training_parameters["parameter_optimization"]["epochs"],
+                                             theta_learning_rate,
+                                             training_parameters["parameter_optimization"]["batch_size"])
 
             # Evaluate performance on test set after training ...
-            decisions, decision_probabilities = policy(x_test, s_test)
+            decisions, decision_probabilities = optimizer.policy(x_test, s_test)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
 
             # ... and save the parameters of the model
