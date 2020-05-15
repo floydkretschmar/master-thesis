@@ -294,17 +294,6 @@ class ResamplingDistribution(BaseDistribution):
         y = self.y[indices].reshape((n, -1))
         s = self.s[indices].reshape((n, -1))
 
-        # n_train_remain = max(n_train - self.total_training_samples, 0)
-        # while n_train_remain > 0:
-        #     n = min(self.total_training_samples, n_train_remain)
-        #     indices = random.choice(self.training_sample_indices, n, replace=True)
-        #
-        #     x = np.vstack((x, self.x[indices].reshape((n, -1))))
-        #     y = np.vstack((y, self.y[indices].reshape((n, -1))))
-        #     s = np.vstack((s, self.s[indices].reshape((n, -1))))
-        #
-        #     n_train_remain = max(n_train_remain - self.total_training_samples, 0)
-
         return x, s, y
 
     def _sample_test_dataset_core(self, n_test, random):
