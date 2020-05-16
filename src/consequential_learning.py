@@ -20,13 +20,16 @@ class BaseLearningAlgorithm:
     @property
     def buffer_size(self):
         if self.data_history is not None:
-            return self.data_history["x"].shape[0]
+            return len(self.data_history["s"])
         else:
             return 0
 
     def _clipped_ips_weights(self, policy):
-        sorted_ipsw = np.sort(self.data_history["ips_weights"].squeeze())
-        R = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
+        if self.buffer_size > 1:
+            sorted_ipsw = np.sort(self.data_history["ips_weights"].squeeze())
+            R = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
+        else:
+            R = self.data_history["ips_weights"][0]
         _, decision_probabilities = policy(self.data_history["x"], self.data_history["s"])
 
         clipped_ips_weights = deepcopy(self.data_history["ips_weights"])

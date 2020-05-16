@@ -102,12 +102,11 @@ for cost in cost_directories:
                     if os.path.isdir(os.path.join(parameter_setting_path, run))]
 
             if args.analyze:
-                result_columns = ['Learning Rate', 'Time Steps', 'Epochs', 'Batch Size', 'Number of Batches']
+                result_columns = ['Learning Rate', 'Time Steps', 'Epochs', 'Number of Batches']
                 result_row = [re.search("(?<=lr)\d+(\.\d+)*", learning_rate)[0]]
                 result_row.append(re.search("(?<=ts)\d+", parameter_setting)[0])
                 result_row.append(re.search("(?<=ep)\d+", parameter_setting)[0])
                 result_row.append(re.search("(?<=bs)\d+", parameter_setting)[0])
-                result_row.append(re.search("(?<=nb)\d+", parameter_setting)[0])
             else:
                 result_row = None
 
