@@ -185,32 +185,35 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             ips_weights, ips_probabilities = optimizer.policy.ips_weights(x_train, s_train)
             self._update_buffer(x_train, s_train, y_train, ips_weights, ips_probabilities)
 
-            if dual_optimization:
-                # decay lambda learning rate
-                if i % lambda_decay_step == 0 and i != 0:
-                    lambda_learning_rate *= lambda_decay_rate
+            # only train if there is actual training data
+            if self.buffer_size > 0:
+                if dual_optimization:
+                    # decay lambda learning rate
+                    if i % lambda_decay_step == 0 and i != 0:
+                        lambda_learning_rate *= lambda_decay_rate
 
-                # for the dual gradient algorithm:
-                # 1. Train model parameters (until convergence)
-                # 2. Update fairness rate
-                # 3. Repeat 1. for #epochs
-                for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
+                    # for the dual gradient algorithm:
+                    # 1. Train model parameters (until convergence)
+                    # 2. Update fairness rate
+                    # 3. Repeat 1. for #epochs
+                    for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
+                        self._train_model_parameters(optimizer,
+                                                     training_parameters["parameter_optimization"]["epochs"],
+                                                     theta_learning_rate,
+                                                     training_parameters["parameter_optimization"]["batch_size"])
+
+                        optimizer.update_fairness_parameter(lambda_learning_rate,
+                                                            training_parameters["lagrangian_optimization"][
+                                                                "batch_size"],
+                                                            self.data_history["x"],
+                                                            self.data_history["s"],
+                                                            self.data_history["y"],
+                                                            self._clipped_ips_weights(optimizer.policy))
+                else:
                     self._train_model_parameters(optimizer,
                                                  training_parameters["parameter_optimization"]["epochs"],
                                                  theta_learning_rate,
                                                  training_parameters["parameter_optimization"]["batch_size"])
-
-                    optimizer.update_fairness_parameter(lambda_learning_rate,
-                                                        training_parameters["lagrangian_optimization"]["batch_size"],
-                                                        self.data_history["x"],
-                                                        self.data_history["s"],
-                                                        self.data_history["y"],
-                                                        self._clipped_ips_weights(optimizer.policy))
-            else:
-                self._train_model_parameters(optimizer,
-                                             training_parameters["parameter_optimization"]["epochs"],
-                                             theta_learning_rate,
-                                             training_parameters["parameter_optimization"]["batch_size"])
 
             # Evaluate performance on test set after training ...
             decisions, decision_probabilities = optimizer.policy(x_test, s_test)
