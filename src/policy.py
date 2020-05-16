@@ -163,11 +163,12 @@ class LogisticPolicy(ManualGradientPolicy):
 
     def ips_weights(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
-
         sampling_theta = np.expand_dims(self.theta, axis=1)
+
+        prob = sigmoid(np.matmul(phi, sampling_theta))
         weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
 
-        return weights
+        return weights, prob
 
     def log_policy_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))

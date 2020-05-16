@@ -53,12 +53,6 @@ class StochasticGradientOptimizer:
 
             yield x_batch, s_batch, y_batch, ips_weight_batch
 
-    def create_checkpoint(self):
-        self._saved_policy = self.policy.copy()
-
-    def restore_checkpoint(self):
-        self._policy = self._saved_policy.copy()
-
     def get_parameters(self):
         return {
             "theta": self.policy.get_model_parameters(),

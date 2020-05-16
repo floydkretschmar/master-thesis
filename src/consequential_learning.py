@@ -11,6 +11,7 @@ if root_path not in sys.path:
 from src.util import stack
 from src.training_evaluation import Statistics, ModelParameters
 
+
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
         self.learn_on_entire_history = learn_on_entire_history
@@ -22,6 +23,16 @@ class BaseLearningAlgorithm:
             return self.data_history["x"].shape[0]
         else:
             return 0
+
+    def _clipped_ips_weights(self, policy):
+        sorted_ipsw = np.sort(self.data_history["ips_weights"].squeeze())
+        R = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
+        _, decision_probabilities = policy(self.data_history["x"], self.data_history["s"])
+
+        clipped_ips_weights = deepcopy(self.data_history["ips_weights"])
+        clipped_ips_weights[decision_probabilities >= R * self.data_history["ips_probabilities"]] = 0
+
+        return clipped_ips_weights
 
     def _filter_by_policy(self, data, policy):
         """ Makes decisions for the data based on the specified policy and only returns the x, s and y of the 
@@ -44,7 +55,7 @@ class BaseLearningAlgorithm:
 
         return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
 
-    def _update_buffer(self, x, s, y, ips_weights):
+    def _update_buffer(self, x, s, y, ips_weights, ips_probabilities):
         """ Update the internal buffer of the training algorithm.
         
         Args:
@@ -58,10 +69,13 @@ class BaseLearningAlgorithm:
                 "x": x,
                 "s": s,
                 "y": y,
-                "ips_weights": ips_weights
+                "ips_weights": ips_weights,
+                "ips_probabilities": ips_probabilities
             }
         elif self.learn_on_entire_history:
             self.data_history["ips_weights"] = np.vstack((self.data_history["ips_weights"], ips_weights))
+            self.data_history["ips_probabilities"] = np.vstack(
+                (self.data_history["ips_probabilities"], ips_probabilities))
             self.data_history["x"] = np.vstack((self.data_history["x"], x))
             self.data_history["y"] = np.vstack((self.data_history["y"], y))
             self.data_history["s"] = np.vstack((self.data_history["s"], s))
@@ -111,7 +125,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                               self.data_history["x"],
                                               self.data_history["s"],
                                               self.data_history["y"],
-                                              self.data_history["ips_weights"])
+                                              self._clipped_ips_weights(optimizer.policy))
 
     def train(self, training_parameters):
         """ Executes consequential learning.
@@ -168,8 +182,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 seed=training_seeds[i])
             x_train, s_train, y_train = self._filter_by_policy(data, optimizer.policy)
 
-            ips_weights = optimizer.policy.ips_weights(x_train, s_train)
-            self._update_buffer(x_train, s_train, y_train, ips_weights)
+            ips_weights, ips_probabilities = optimizer.policy.ips_weights(x_train, s_train)
+            self._update_buffer(x_train, s_train, y_train, ips_weights, ips_probabilities)
 
             if dual_optimization:
                 # decay lambda learning rate
@@ -191,7 +205,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                         self.data_history["x"],
                                                         self.data_history["s"],
                                                         self.data_history["y"],
-                                                        self.data_history["ips_weights"])
+                                                        self._clipped_ips_weights(optimizer.policy))
             else:
                 self._train_model_parameters(optimizer,
                                              training_parameters["parameter_optimization"]["epochs"],
