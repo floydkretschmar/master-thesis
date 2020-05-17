@@ -15,18 +15,29 @@ from src.util import check_for_missing_kwargs, get_random
 # TODO: Add Pytorch supporting optimizer
 
 class StochasticGradientOptimizer:
+    """ The base class for stochastic gradient methods of optimization. """
+
     def __init__(self, policy, optimization_target):
         super().__init__()
         self._optimization_target = optimization_target
         self._policy = policy
-        self._saved_policy = policy.copy()
 
     @property
     def optimization_target(self):
+        """ Returns the optimization target according to which the optimizer optimizes the policy. """
         return self._optimization_target
 
     @property
+    def parameters(self):
+        """ Returns the paramters being optimized. """
+        return {
+            "theta": self.policy.parameters,
+            "lambda": self.optimization_target.fairness_rate
+        }
+
+    @property
     def policy(self):
+        """ Returns the policy being optimized. """
         return self._policy
 
     def _minibatch(self, batch_size, x, s, y, ips_weights=None):
@@ -52,12 +63,6 @@ class StochasticGradientOptimizer:
                 ips_weight_batch = None
 
             yield x_batch, s_batch, y_batch, ips_weight_batch
-
-    def get_parameters(self):
-        return {
-            "theta": self.policy.get_model_parameters(),
-            "lambda": self.optimization_target.fairness_rate
-        }
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the model parameters according to the specified update strategy.
@@ -91,11 +96,24 @@ class StochasticGradientOptimizer:
 
 
 class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
+    """ The class for stochastic gradient methods of optimization with manual gradient updates. """
+
     def __init__(self, policy, optimization_target):
         assert isinstance(optimization_target, DifferentiableOptimizationTarget)
         super().__init__(policy, optimization_target)
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
+        """ Manually updates the model parameters using stochastic gradient descent.
+
+            Args:
+                learning_rate: The rate with which the model parameters will be updated.
+                batch_size: The size of the batches into which the training data will be subdivided.
+                x: The features of the n samples
+                s: The sensitive attribute of the n samples
+                y: The ground truth labels of the n samples
+                ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
+                no IPS will be applied.
+        """
         # for each minibatch...
         for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
             # make decision according to current policy
@@ -112,6 +130,17 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
             self.policy.theta -= learning_rate * gradient
 
     def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
+        """ Manually updates the fairness parameter using stochastic gradient descent.
+
+            Args:
+                learning_rate: The rate with which the model parameters will be updated.
+                batch_size: The size of the batches into which the training data will be subdivided.
+                x: The features of the n samples
+                s: The sensitive attribute of the n samples
+                y: The ground truth labels of the n samples
+                ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
+                no IPS will be applied.
+        """
         # for each minibatch...
         for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
             # make decision according to current policy
@@ -132,44 +161,77 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
 
 
 class DifferentiableFunction:
+    """ The base class for a differentiable function. """
+
     def __init__(self, function):
         super().__init__()
         self.function = function
 
     def __call__(self, **function_args):
+        """ Returns the value of the function according to the specified parameters.
+
+        Args:
+            function_args: The function arguments.
+
+        Returns:
+            result: The function result.
+        """
         return self.function(**function_args)
 
-    def gradient(self, **gradient_args):
-        raise NotImplementedError("Subclass must override gradient_wrt_model_parameters(self, **gradient_args).")
+    def gradient(self, **function_args):
+        """ Returns the gradient of the function according to the specified parameters.
+
+        Args:
+            function_args: The function arguments.
+
+        Returns:
+            result: The function result.
+        """
+        raise NotImplementedError("Subclass must override gradient(self, **function_args).")
 
 
 class UtilityFunction(DifferentiableFunction):
+    """ The class for a differentiable utility function. """
+
     def __init__(self, utility_function):
+        """ Initializes a new UtilityFunction object.
+
+        Args:
+            utility_function: The function that calculates utility based on the given parameters.
+        """
         super().__init__(utility_function)
 
-    def _utility(self, s, y, decisions, ips_weights=None):
-        utility = self.function(s=s,
-                                y=y,
-                                decisions=decisions)
-        if ips_weights is not None:
-            utility *= ips_weights
+    def _utility(self, **function_args):
+        """ Calculates utility using the underlying function and applies IPS if weights are specified.
+
+        Args:
+            function_args: The utility function arguments.
+        """
+        utility = self.function(**function_args)
+        if function_args["ips_weights"] is not None:
+            utility *= function_args["ips_weights"]
         return utility
 
     def __call__(self, **function_args):
-        check_for_missing_kwargs("UtilityFunction()", ["s", "y", "decisions"],
-                                 function_args)
-        return self._utility(s=function_args["s"],
-                             y=function_args["y"],
-                             decisions=function_args["decisions"]).mean(axis=0)
+        """ Returns the utility for the specified arguments.
 
-    def gradient(self, **gradient_args):
-        check_for_missing_kwargs("UtilityFunction()", ["s", "y", "decisions"],
-                                 gradient_args)
-        utility = self._utility(s=gradient_args["s"],
-                                y=gradient_args["y"],
-                                decisions=gradient_args["decisions"])
+        Args:
+            function_args: The utility function arguments.
+        """
+        function_args["ips_weights"] = function_args["ips_weights"] if "ips_weights" in function_args else None
+        return self._utility(**function_args).mean(axis=0)
 
-        log_policy_gradient = gradient_args["policy"].log_policy_gradient(gradient_args["x"], gradient_args["s"])
+    def gradient(self, **function_args):
+        """ Returns the utility gradient for the specified arguments.
+
+        Args:
+            function_args: The utility function arguments.
+        """
+        check_for_missing_kwargs("UtilityFunction.gradient", ["policy", "x", "s"], function_args)
+        function_args["ips_weights"] = function_args["ips_weights"] if "ips_weights" in function_args else None
+        utility = self._utility(**function_args)
+
+        log_policy_gradient = function_args["policy"].log_policy_gradient(function_args["x"], function_args["s"])
         utility_grad = log_policy_gradient * utility
         return np.mean(utility_grad, axis=0)
 
@@ -180,28 +242,23 @@ class FairnessFunction(DifferentiableFunction):
         self.fairness_gradient_function = fairness_gradient_function
 
     def __call__(self, **function_args):
-        check_for_missing_kwargs("FairnessFunction()", ["x", "s", "y", "decisions", "decision_probabilities", "policy"],
-                                 function_args)
-        fairness = self.function(x=function_args["x"],
-                                 s=function_args["s"],
-                                 y=function_args["y"],
-                                 decisions=function_args["decisions"],
-                                 decision_probabilities=function_args["decision_probabilities"],
-                                 policy=function_args["policy"],
-                                 ips_weights=function_args["ips_weights"] if "ips_weights" in function_args else None)
+        """ Returns the fairness value for the specified arguments.
+
+        Args:
+            function_args: The fairness function arguments.
+        """
+        function_args["ips_weights"] = function_args["ips_weights"] if "ips_weights" in function_args else None
+        fairness = self.function(**function_args)
         return fairness
 
-    def gradient(self, **gradient_args):
-        check_for_missing_kwargs("FairnessFunction()", ["x", "s", "y", "decisions", "decision_probabilities", "policy"],
-                                 gradient_args)
-        fairness_grad = self.fairness_gradient_function(
-            x=gradient_args["x"],
-            s=gradient_args["s"],
-            y=gradient_args["y"],
-            decisions=gradient_args["decisions"],
-            decision_probabilities=gradient_args["decision_probabilities"],
-            policy=gradient_args["policy"],
-            ips_weights=gradient_args["ips_weights"] if "ips_weights" in gradient_args else None)
+    def gradient(self, **function_args):
+        """ Returns the fairness gradient for the specified arguments.
+
+        Args:
+            function_args: The fairness function arguments.
+        """
+        function_args["ips_weights"] = function_args["ips_weights"] if "ips_weights" in function_args else None
+        fairness_grad = self.fairness_gradient_function(**function_args)
         return fairness_grad
 
 
