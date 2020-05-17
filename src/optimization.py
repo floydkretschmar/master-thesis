@@ -1,3 +1,4 @@
+import abc
 import os
 import sys
 
@@ -99,7 +100,7 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
     """ The class for stochastic gradient methods of optimization with manual gradient updates. """
 
     def __init__(self, policy, optimization_target):
-        assert isinstance(optimization_target, DifferentiableOptimizationTarget)
+        assert isinstance(optimization_target, OptimizationTargetGradient)
         super().__init__(policy, optimization_target)
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
@@ -120,13 +121,13 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
             decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
 
             # call the optimization target for gradient calculation
-            gradient = self.optimization_target.model_parameter_gradient(self.policy,
-                                                                         x_batch,
-                                                                         s_batch,
-                                                                         y_batch,
-                                                                         decisions_batch,
-                                                                         decision_probability_batch,
-                                                                         ips_weights_batch)
+            gradient = self.optimization_target.model_parameter_gradient(policy=self.policy,
+                                                                         x=x_batch,
+                                                                         s=s_batch,
+                                                                         y=y_batch,
+                                                                         decisions=decisions_batch,
+                                                                         decision_probabilities=decision_probability_batch,
+                                                                         ips_weights=ips_weights_batch)
             self.policy.theta -= learning_rate * gradient
 
     def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
@@ -147,20 +148,20 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
             decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
 
             # call the optimization target for gradient calculation
-            gradient = self.optimization_target.fairness_parameter_gradient(self.policy,
-                                                                            x_batch,
-                                                                            s_batch,
-                                                                            y_batch,
-                                                                            decisions_batch,
-                                                                            decision_probability_batch,
-                                                                            ips_weights_batch)
+            gradient = self.optimization_target.fairness_parameter_gradient(policy=self.policy,
+                                                                            x=x_batch,
+                                                                            s=s_batch,
+                                                                            y=y_batch,
+                                                                            decisions=decisions_batch,
+                                                                            decision_probabilities=decision_probability_batch,
+                                                                            ips_weights=ips_weights_batch)
             self.optimization_target.fairness_rate += learning_rate * gradient
 
 
 #################################### FUNCTION WRAPPERS FOR MANUAL GRADIENT #############################################
 
 
-class DifferentiableFunction:
+class DifferentiableFunction(abc.ABC):
     """ The base class for a differentiable function. """
 
     def __init__(self, function):
@@ -178,6 +179,7 @@ class DifferentiableFunction:
         """
         return self.function(**function_args)
 
+    @abc.abstractmethod
     def gradient(self, **function_args):
         """ Returns the gradient of the function according to the specified parameters.
 
@@ -237,7 +239,15 @@ class UtilityFunction(DifferentiableFunction):
 
 
 class FairnessFunction(DifferentiableFunction):
+    """ The class for a differentiable fairness function. """
+
     def __init__(self, fairness_function, fairness_gradient_function):
+        """ Initializes a new FairnessFunction object.
+
+        Args:
+            fairness_function: The function that calculates the fariness value based on the given parameters.
+            fairness_gradient_function: The function that calculates the fariness gradient based on the given parameters.
+        """
         super().__init__(fairness_function)
         self.fairness_gradient_function = fairness_gradient_function
 
@@ -264,15 +274,34 @@ class FairnessFunction(DifferentiableFunction):
 
 ########################################$ OPTIMIZATION TARGETS ####################################################
 
-class BaseOptimizationTarget:
-    def __init__(self, initial_fairness_rate, utility_function, fairness_function):
+class BaseOptimizationTarget(abc.ABC):
+    """ The base class for a optimization target of an optimizer. """
+
+    @abc.abstractmethod
+    def __call__(self, **optimization_target_args):
+        pass
+
+
+class OptimizationTargetGradient(abc.ABC):
+    @abc.abstractmethod
+    def model_parameter_gradient(self, **optimization_target_args):
+        pass
+
+    @abc.abstractmethod
+    def fairness_parameter_gradient(self, **optimization_target_args):
+        pass
+
+
+class DualOptimizationTarget(BaseOptimizationTarget, abc.ABC):
+    def __init__(self, fairness_rate, utility_function, fairness_function):
         super().__init__()
-        self._fairness_rate = initial_fairness_rate
+        self._fairness_rate = fairness_rate
         self._utility_function = utility_function
         self._fairness_function = fairness_function
 
-    def __call__(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        raise NotImplementedError("Subclass must override __call__(self, utility, fairness).")
+    @property
+    def fairness_function(self):
+        return self._fairness_function
 
     @property
     def fairness_rate(self):
@@ -286,197 +315,77 @@ class BaseOptimizationTarget:
     def utility_function(self):
         return self._utility_function
 
-    @property
-    def fairness_function(self):
-        return self._fairness_function
 
-    @staticmethod
-    def build(initial_fairness_rate, utility_function, fairness_function):
-        raise NotImplementedError(
-            "Subclass must override build(initial_fairness_rate, utility_function, fairness_function).")
-
-    @staticmethod
-    def _parameter_dictionary(x, s, y, decisions, decision_probabilities, ips_weights, policy):
-        return {
-            "x": x,
-            "s": s,
-            "y": y,
-            "decisions": decisions,
-            "decision_probabilities": decision_probabilities,
-            "ips_weights": ips_weights,
-            "policy": policy
-        }
-
-
-class DifferentiableOptimizationTarget(BaseOptimizationTarget):
-    def __init__(self, optimization_target):
-        self.optimization_target = optimization_target
-
-    def __call__(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        return self.optimization_target(policy, x, s, y, decisions, decision_probabilities, ips_weights)
-
-    @property
-    def fairness_rate(self):
-        return self.optimization_target.fairness_rate
-
-    @fairness_rate.setter
-    def fairness_rate(self, value):
-        self.optimization_target.fairness_rate = value
-
-    @property
-    def utility_function(self):
-        return self.optimization_target.utility_function
-
-    @property
-    def fairness_function(self):
-        return self.optimization_target.fairness_function
-
-    def model_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        raise NotImplementedError("Subclass must override gradient_wrt_model_parameters(self, **gradient_args).")
-
-    def fairness_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        raise NotImplementedError("Subclass must override gradient_wrt_model_parameters(self, **gradient_args).")
-
-
-class PenaltyOptimizationTarget(DifferentiableOptimizationTarget):
-    class _PenaltyOptimizationTarget(BaseOptimizationTarget):
-        def __init__(self, initial_fairness_rate, utility_function, fairness_function):
-            super().__init__(initial_fairness_rate, utility_function, fairness_function)
-
-        def __call__(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-            parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                      ips_weights,
-                                                                      policy)
-            return -self.utility_function(**parameters) + (self.fairness_rate / 2) * self.fairness_function(
-                **parameters) ** 2
-
-    def __init__(self, fairness_constant, utility_function, fairness_function):
+class PenaltyOptimizationTarget(DualOptimizationTarget, OptimizationTargetGradient):
+    def __init__(self, fairness_rate, utility_function, fairness_function):
         assert isinstance(utility_function, DifferentiableFunction)
         assert isinstance(fairness_function, DifferentiableFunction)
-        super().__init__(self._PenaltyOptimizationTarget(fairness_constant, utility_function, fairness_function))
+        DualOptimizationTarget.__init__(self, fairness_rate, utility_function, fairness_function)
 
-    def model_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                  ips_weights,
-                                                                  policy)
-        gradient = -self.utility_function.gradient(**parameters)
+    def __call__(self, **optimization_target_args):
+        return -self.utility_function(**optimization_target_args) + (self.fairness_rate / 2) * self.fairness_function(
+            **optimization_target_args) ** 2
+
+    def model_parameter_gradient(self, **optimization_target_args):
+        gradient = -self.utility_function.gradient(**optimization_target_args)
 
         if self.fairness_rate > 0:
-            fairness = self.fairness_function(**parameters)
-            fairness_gradient = self.fairness_function.gradient(**parameters)
+            fairness = self.fairness_function(**optimization_target_args)
+            fairness_gradient = self.fairness_function.gradient(**optimization_target_args)
 
             grad_fairness = self.fairness_rate * fairness * fairness_gradient
             gradient += grad_fairness
 
         return gradient
 
-    def fairness_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        raise TypeError("Fairness gradient not supported for PenaltyOptimizationTarget")
-
-    @staticmethod
-    def build(initial_fairness_rate, utility_function, fairness_function):
-        if isinstance(utility_function, DifferentiableFunction) and isinstance(fairness_function,
-                                                                               DifferentiableFunction):
-            return PenaltyOptimizationTarget(initial_fairness_rate, utility_function, fairness_function)
-        else:
-            return PenaltyOptimizationTarget._PenaltyOptimizationTarget(initial_fairness_rate, utility_function,
-                                                                        fairness_function)
+    def fairness_parameter_gradient(self, **optimization_target_args):
+        raise TypeError("PenaltyOptimizationTarget does not support training of the fairness parameter.")
 
 
-class LagrangianOptimizationTarget(DifferentiableOptimizationTarget):
-    class _LagrangianOptimizationTarget(BaseOptimizationTarget):
-        def __init__(self, initial_lambda, utility_function, fairness_function):
-            super().__init__(initial_lambda, utility_function, fairness_function)
-
-        def __call__(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-            parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                      ips_weights,
-                                                                      policy)
-            return -self.utility_function(**parameters) + self.fairness_rate * self.fairness_function(**parameters)
-
-    def __init__(self, initial_lambda, utility_function, fairness_function):
+class LagrangianOptimizationTarget(DualOptimizationTarget, OptimizationTargetGradient):
+    def __init__(self, fairness_rate, utility_function, fairness_function):
         assert isinstance(utility_function, DifferentiableFunction)
         assert isinstance(fairness_function, DifferentiableFunction)
-        super().__init__(self._LagrangianOptimizationTarget(initial_lambda, utility_function, fairness_function))
+        DualOptimizationTarget.__init__(self, fairness_rate, utility_function, fairness_function)
 
-    def model_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                  ips_weights,
-                                                                  policy)
-        gradient = -self.utility_function.gradient(**parameters)
+    def __call__(self, **optimization_target_args):
+        return -self.utility_function(**optimization_target_args) + self.fairness_rate * self.fairness_function(
+            **optimization_target_args)
 
-        fairness_gradient = self.fairness_function.gradient(**parameters)
+    def model_parameter_gradient(self, **optimization_target_args):
+        gradient = -self.utility_function.gradient(**optimization_target_args)
+
+        fairness_gradient = self.fairness_function.gradient(**optimization_target_args)
         grad_fairness = self.fairness_rate * fairness_gradient
 
         gradient += grad_fairness
 
         return gradient
 
-    def fairness_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                  ips_weights,
-                                                                  policy)
-        return self.fairness_function(**parameters)
-
-    @staticmethod
-    def build(initial_fairness_rate, utility_function, fairness_function):
-        if isinstance(utility_function, DifferentiableFunction) and isinstance(fairness_function,
-                                                                               DifferentiableFunction):
-            return LagrangianOptimizationTarget(initial_fairness_rate, utility_function, fairness_function)
-        else:
-            return LagrangianOptimizationTarget._LagrangianOptimizationTarget(initial_fairness_rate,
-                                                                              utility_function,
-                                                                              fairness_function)
+    def fairness_parameter_gradient(self, **optimization_target_args):
+        return self.fairness_function(**optimization_target_args)
 
 
 class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
-    class _AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget._LagrangianOptimizationTarget):
-        def __init__(self, initial_lambda, utility_function, fairness_function, penalty_constant):
-            super().__init__(initial_lambda, utility_function, fairness_function)
-            self.penalty_constant = penalty_constant
+    def __init__(self, initial_fairness_rate, utility_function, fairness_function, penalty_constant):
+        super().__init__(initial_fairness_rate, utility_function, fairness_function)
+        self.penalty_constant = penalty_constant
 
-        def __call__(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-            parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                      ips_weights,
-                                                                      policy)
-            lagrangian_result = super.__call__(policy, x, s, y, decisions, decision_probabilities, ips_weights)
+    def __call__(self, **optimization_target_args):
+        lagrangian_result = super.__call__(**optimization_target_args)
+        return lagrangian_result + self.penalty_constant * self.fairness_function(**optimization_target_args)
 
-            return lagrangian_result + self.penalty_constant * self.fairness_function(**parameters)
-
-    def __init__(self, initial_lambda, utility_function, fairness_function, penalty_constant):
-        super().__init__(initial_lambda, utility_function, fairness_function)
-        self.optimization_target = self._AugmentedLagrangianOptimizationTarget(initial_lambda,
-                                                                               utility_function,
-                                                                               fairness_function,
-                                                                               penalty_constant)
-
-    def model_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                  ips_weights,
-                                                                  policy)
+    def model_parameter_gradient(self, **optimization_target_args):
         # lagrangian gradient
-        gradient = super().model_parameter_gradient(policy, x, s, y, decisions, decision_probabilities, ips_weights)
+        gradient = super().model_parameter_gradient(**optimization_target_args)
 
         # augmentation
-        fairness = self.fairness_function(**parameters)
-        fairness_gradient = self.fairness_function.gradient(**parameters)
+        fairness = self.fairness_function(**optimization_target_args)
+        fairness_gradient = self.fairness_function.gradient(**optimization_target_args)
         grad_augmented = self.penalty_constant * fairness * fairness_gradient
         gradient += grad_augmented
 
         return gradient
 
-    def fairness_parameter_gradient(self, policy, x, s, y, decisions, decision_probabilities, ips_weights=None):
-        parameters = BaseOptimizationTarget._parameter_dictionary(x, s, y, decisions, decision_probabilities,
-                                                                  ips_weights,
-                                                                  policy)
-        return self.fairness_function(**parameters)
-
-    @staticmethod
-    def build(initial_fairness_rate, utility_function, fairness_function):
-        if isinstance(utility_function, DifferentiableFunction) and isinstance(fairness_function,
-                                                                               DifferentiableFunction):
-            return AugmentedLagrangianOptimizationTarget(initial_fairness_rate, utility_function, fairness_function)
-        else:
-            return AugmentedLagrangianOptimizationTarget._AugmentedLagrangianOptimizationTarget(initial_fairness_rate,
-                                                                                                utility_function,
-                                                                                                fairness_function)
+    def fairness_parameter_gradient(self, **optimization_target_args):
+        return self.fairness_function(**optimization_target_args)
