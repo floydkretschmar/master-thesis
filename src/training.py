@@ -100,9 +100,9 @@ def _prepare_training(training_parameters):
 
         # construct optimization target
         current_training_parameters["optimization_target"] = training_parameters["optimization_target"][
-            "constructor"].build(initial_fairness_rate=0.0,
-                                 utility_function=utility_fct,
-                                 fairness_function=fairness_fct)
+            "constructor"](fairness_rate=0.0,
+                           utility_function=utility_fct,
+                           fairness_function=fairness_fct)
 
     # construct policy
     if isinstance(training_parameters["model"], dict):

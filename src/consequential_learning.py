@@ -14,17 +14,38 @@ from src.training_evaluation import Statistics, ModelParameters
 
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
+        """ Creates a new instance of a learning algorithm.
+
+        Args:
+            learn_on_entire_history: The flag indicating whether the algorithm should learn on the entire history or
+            just the last time step.
+        """
         self.learn_on_entire_history = learn_on_entire_history
         self.data_history = None
 
     @property
     def buffer_size(self):
+        """ Returns the number of individuals currently stored in the data buffer. """
         if self.data_history is not None:
             return len(self.data_history["s"])
         else:
             return 0
 
     def _clipped_ips_weights(self, policy):
+        """ Implements clipped-wIPS as first introduced by https://www.microsoft.com/en-us/research/wp-content/uploads
+        /2013/11/bottou13a.pdf to ensure numerical stability of the ips weights for unlikely data samples.
+        For data samples with small probability of positive decision by the initial policy pi_0 the IPS weights become
+        very large. Clip ips weights to 0 if the probability of a positive decision under the current polity is bigger
+        than R * probability of a positive decision under the initial policy. According to the paper R is chosen as the
+        fifth largest IPS weight.
+
+        Args:
+            policy: The current policy.
+
+        Returns:
+            clipped_ips_weights: The clipped ips weights where all weights where prob_current_pi > R * prob_pi_0 are set
+            to 0.
+        """
         if self.buffer_size > 1:
             sorted_ipsw = np.sort(self.data_history["ips_weights"].squeeze())
             R = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
@@ -38,8 +59,8 @@ class BaseLearningAlgorithm:
         return clipped_ips_weights
 
     def _filter_by_policy(self, data, policy):
-        """ Makes decisions for the data based on the specified policy and only returns the x, s and y of the 
-        accepted data points, emulating imperfect data collection.
+        """ Makes decisions for the data based on the specified policy pi_0 and only returns the x, s and y of the
+        accepted individuals, emulating imperfect data collection according to some initial decision policy pi_0.
             
         Args:
             data: The dataset of x, s and y based on which the decisions are made.
@@ -59,13 +80,15 @@ class BaseLearningAlgorithm:
         return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
 
     def _update_buffer(self, x, s, y, ips_weights, ips_probabilities):
-        """ Update the internal buffer of the training algorithm.
+        """ Update the internal buffer of the training algorithm. If learn_on_entire_history is specified, new data will
+        be appended, otherwise new data will replace existing data.
         
         Args:
-            policy: The policy from which the data has been drawn.
             x: The features of the n samples
             s: The sensitive attribute of the n samples
             y: The ground truth labels of the n samples
+            ips_weights: The ips weights of the n samples according to the initial policy pi_0.
+            ips_probabilities: The probabilities of a decision for the n samples according to the initial policy pi_0.
         """
         if (self.learn_on_entire_history and self.data_history is None) or not self.learn_on_entire_history:
             self.data_history = {
@@ -84,6 +107,7 @@ class BaseLearningAlgorithm:
             self.data_history["s"] = np.vstack((self.data_history["s"], s))
 
     def _reset_buffer(self):
+        """ Resets the interal data storage. """
         self.data_history = None
 
     def train(self, training_parameters):
@@ -131,14 +155,14 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                               self._clipped_ips_weights(optimizer.policy))
 
     def train(self, training_parameters):
-        """ Executes consequential learning.
+        """ Executes consequential learning according to the specified training parameters.
 
         Args:
             training_parameters: The parameters used to configure the consequential learning algorithm.
 
         Yields:
-            decisions_over_time: The decisions made by a policy at timestep t over all time steps for a single lambda.
-            trained_model_parameters: The model parameters at the final timestep T
+            statistics: The statistics of the training over all timesteps.
+            model_parameters: The model parameters object containing the trained model parameters.
         """
         distribution = training_parameters["distribution"]
         optimization_target = deepcopy(training_parameters["optimization_target"])
@@ -162,7 +186,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         decisions_over_time, decision_probabilities = optimizer.policy(x_test, s_test)
 
         model_parameters = {
-            "lambdas": [optimizer.get_parameters()["lambda"]],
+            "lambdas": [optimizer.parameters["lambda"]],
             "model_parameters": None
         }
         theta_learning_rate = training_parameters["parameter_optimization"]["learning_rate"]
@@ -223,7 +247,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
 
             # ... and save the parameters of the model
-            parameters = optimizer.get_parameters()
+            parameters = optimizer.parameters
             model_parameters["lambdas"].append(deepcopy(parameters["lambda"]))
             model_parameters["model_parameters"] = [deepcopy(parameters)]
 
