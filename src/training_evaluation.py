@@ -181,7 +181,6 @@ class Statistics:
     DISPARATE_IMPACT = "DI"
     DEMOGRAPHIC_PARITY = "DP"
     EQUALITY_OF_OPPORTUNITY = "EOP"
-    FAIRNESS = "FAIR"
 
     # Result Format
     MEAN = MEAN
@@ -280,6 +279,59 @@ class Statistics:
     def build_from_serialized_dictionary(serialized_dict):
         results = _unserialize_dictionary(serialized_dict)
         return Statistics(results)
+
+    @staticmethod
+    def measure_as_human_readable_string(measure):
+        if measure == Statistics.UTILITY:
+            return "Utility"
+        elif measure == Statistics.NUM_INDIVIDUALS:
+            return "Number of Individuals"
+        elif measure == Statistics.NUM_NEGATIVES:
+            return "Number of negative ground truth labels"
+        elif measure == Statistics.NUM_POSITIVES:
+            return "Number of positive ground truth labels"
+        elif measure == Statistics.NUM_PRED_NEGATIVES:
+            return "Number of negative predictions"
+        elif measure == Statistics.NUM_PRED_POSITIVES:
+            return "Number of positive predictions"
+        elif measure == Statistics.TRUE_POSITIVES:
+            return "Number of true positives"
+        elif measure == Statistics.TRUE_NEGATIVES:
+            return "Number of true negatives"
+        elif measure == Statistics.FALSE_POSITIVES:
+            return "Number of false positives"
+        elif measure == Statistics.FALSE_NEGATIVES:
+            return "Number of false negatives"
+        elif measure == Statistics.TRUE_POSITIVE_RATE:
+            return "True positive rate"
+        elif measure == Statistics.FALSE_POSITIVE_RATE:
+            return "False positive rate"
+        elif measure == Statistics.TRUE_NEGATIVE_RATE:
+            return "True negative rate"
+        elif measure == Statistics.FALSE_NEGATIVE_RATE:
+            return "False negative rate"
+        elif measure == Statistics.POSITIVE_PREDICTIVE_VALUE:
+            return "Positive predictive value"
+        elif measure == Statistics.NEGATIVE_PREDICTIVE_VALUE:
+            return "Negative predictive value"
+        elif measure == Statistics.FALSE_DISCOVERY_RATE:
+            return "False discovery rate"
+        elif measure == Statistics.FALSE_OMISSION_RATE:
+            return "False omission rate"
+        elif measure == Statistics.ACCURACY:
+            return "Accuracy"
+        elif measure == Statistics.ERROR_RATE:
+            return "Error rate"
+        elif measure == Statistics.SELECTION_RATE:
+            return "Selection rate"
+        elif measure == Statistics.F1:
+            return "F1 Score"
+        elif measure == Statistics.DISPARATE_IMPACT:
+            return "Disparate impact"
+        elif measure == Statistics.DEMOGRAPHIC_PARITY:
+            return "Demographic parity"
+        elif measure == Statistics.EQUALITY_OF_OPPORTUNITY:
+            return "Equality of Opportunity"
 
     def _get_measure(self, prot, measure_key):
         if self.results[prot][measure_key] is None:

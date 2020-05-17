@@ -156,8 +156,14 @@ for cost in cost_directories:
 
                 # save the merged statistics, parameters and plot them
                 _save_results(output_path, statistics, model_parameters)
-                plot_mean(statistics, file_path=os.path.join(output_path, "results_mean.png"))
-                plot_median(statistics, file_path=os.path.join(output_path, "results_median.png"))
+                plot_mean(statistics=statistics,
+                          performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
+                          fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+                          file_path=os.path.join(output_path, "results_mean.png"))
+                plot_median(statistics=statistics,
+                            performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
+                            fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+                            file_path=os.path.join(output_path, "results_median.png"))
 
             print("finished processing {}".format(parameter_setting_path))
 
