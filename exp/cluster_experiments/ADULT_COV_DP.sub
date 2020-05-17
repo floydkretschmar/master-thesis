@@ -14,7 +14,7 @@ periodic_remove = (JobStatus =?= 2) && ((CurrentTime - JobCurrentStartDate) >= $
 # RESSOURCE SELECTION                                                     #
 # ----------------------------------------------------------------------- #
 
-request_memory = 6144
+request_memory = 8192
 request_cpus = 1
 
 # ----------------------------------------------------------------------- #
