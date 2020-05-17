@@ -12,6 +12,7 @@ from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility
 from src.plotting import plot_mean, plot_median
 from src.training import train
+from src.training_evaluation import Statistics
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution, GermanCreditDistribution
 from src.util import mean_difference
 from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget
@@ -182,8 +183,14 @@ def single_run(args):
         fairness_rates=[initial_lambda])
 
     if args.plot:
-        plot_mean(statistics, "{}/results_mean_time.png".format(run_path))
-        plot_median(statistics, "{}/results_median_time.png".format(run_path))
+        plot_mean(statistics=statistics,
+                  performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
+                  fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+                  run_path="{}/results_mean_time.png".format(run_path))
+        plot_median(statistics=statistics,
+                    performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
+                    fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+                    run_path="{}/results_median_time.png".format(run_path))
 
 
 if __name__ == "__main__":

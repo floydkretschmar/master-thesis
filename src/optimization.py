@@ -279,20 +279,39 @@ class BaseOptimizationTarget(abc.ABC):
 
     @abc.abstractmethod
     def __call__(self, **optimization_target_args):
+        """ Returns the value of the optimization target with regards to the specified parameters.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         pass
 
 
 class OptimizationTargetGradient(abc.ABC):
+    """ The base class for a optimization target gradient. """
+
     @abc.abstractmethod
     def model_parameter_gradient(self, **optimization_target_args):
+        """ Returns the gradient of the optimization target with regards to the policy parameters.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         pass
 
     @abc.abstractmethod
     def fairness_parameter_gradient(self, **optimization_target_args):
+        """ Returns the value of the optimization target with regards to the fairness value.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         pass
 
 
 class DualOptimizationTarget(BaseOptimizationTarget, abc.ABC):
+    """ The base class for a optimization target that combines a utility function with a fairness constraint. """
+
     def __init__(self, fairness_rate, utility_function, fairness_function):
         super().__init__()
         self._fairness_rate = fairness_rate
@@ -301,32 +320,49 @@ class DualOptimizationTarget(BaseOptimizationTarget, abc.ABC):
 
     @property
     def fairness_function(self):
+        """ Returns the fairness function of the combined optimization target. """
         return self._fairness_function
 
     @property
     def fairness_rate(self):
+        """ Returns the fairness rate with which the fairness function is weighted. """
         return self._fairness_rate
 
     @fairness_rate.setter
     def fairness_rate(self, value):
+        """ Sets the fairness rate with which the fairness function is weighted. """
         self._fairness_rate = value
 
     @property
     def utility_function(self):
+        """ Returns the utility function of the combined optimization target. """
         return self._utility_function
 
 
 class PenaltyOptimizationTarget(DualOptimizationTarget, OptimizationTargetGradient):
+    """ The penalty optimization target that conbines utility and fairness constraint via a penalty term and is
+     differentiable with regards to the model parameters."""
+
     def __init__(self, fairness_rate, utility_function, fairness_function):
         assert isinstance(utility_function, DifferentiableFunction)
         assert isinstance(fairness_function, DifferentiableFunction)
         DualOptimizationTarget.__init__(self, fairness_rate, utility_function, fairness_function)
 
     def __call__(self, **optimization_target_args):
+        """ Returns the gradient of the penalty optimization target with regards to the policy parameters.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         return -self.utility_function(**optimization_target_args) + (self.fairness_rate / 2) * self.fairness_function(
             **optimization_target_args) ** 2
 
     def model_parameter_gradient(self, **optimization_target_args):
+        """ Returns the value of the optimization target with regards to the specified parameters.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         gradient = -self.utility_function.gradient(**optimization_target_args)
 
         if self.fairness_rate > 0:
@@ -343,6 +379,9 @@ class PenaltyOptimizationTarget(DualOptimizationTarget, OptimizationTargetGradie
 
 
 class LagrangianOptimizationTarget(DualOptimizationTarget, OptimizationTargetGradient):
+    """ The lagrangian optimization target that conbines utility and fairness constraint via a lagrangien multiplier term
+    and is differentiable with regards to the model parameters as well as the lagrangian multiplier"""
+
     def __init__(self, fairness_rate, utility_function, fairness_function):
         assert isinstance(utility_function, DifferentiableFunction)
         assert isinstance(fairness_function, DifferentiableFunction)
@@ -353,6 +392,11 @@ class LagrangianOptimizationTarget(DualOptimizationTarget, OptimizationTargetGra
             **optimization_target_args)
 
     def model_parameter_gradient(self, **optimization_target_args):
+        """ Returns the gradient of the lagrangian optimization target with regards to the policy parameters.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         gradient = -self.utility_function.gradient(**optimization_target_args)
 
         fairness_gradient = self.fairness_function.gradient(**optimization_target_args)
@@ -363,10 +407,19 @@ class LagrangianOptimizationTarget(DualOptimizationTarget, OptimizationTargetGra
         return gradient
 
     def fairness_parameter_gradient(self, **optimization_target_args):
+        """ Returns the value of the lagrangian optimization target with regards to the fairness value.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         return self.fairness_function(**optimization_target_args)
 
 
 class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
+    """ The augmented lagrangian optimization target that conbines utility and fairness constraint via a lagrangien
+    multiplier term as well as a penalty term and is differentiable with regards to the model parameters as well as
+    the lagrangian multiplier"""
+
     def __init__(self, initial_fairness_rate, utility_function, fairness_function, penalty_constant):
         super().__init__(initial_fairness_rate, utility_function, fairness_function)
         self.penalty_constant = penalty_constant
@@ -376,6 +429,11 @@ class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
         return lagrangian_result + self.penalty_constant * self.fairness_function(**optimization_target_args)
 
     def model_parameter_gradient(self, **optimization_target_args):
+        """ Returns the gradient of the augmented lagrangian optimization target with regards to the policy parameters.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         # lagrangian gradient
         gradient = super().model_parameter_gradient(**optimization_target_args)
 
@@ -388,4 +446,9 @@ class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
         return gradient
 
     def fairness_parameter_gradient(self, **optimization_target_args):
+        """ Returns the value of the augmented lagrangian optimization target with regards to the fairness value.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
         return self.fairness_function(**optimization_target_args)
