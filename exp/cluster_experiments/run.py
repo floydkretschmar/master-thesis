@@ -186,11 +186,11 @@ def single_run(args):
         plot_mean(statistics=statistics,
                   performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
                   fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
-                  run_path="{}/results_mean_time.png".format(run_path))
+                  file_path="{}/results_mean_time.png".format(run_path))
         plot_median(statistics=statistics,
                     performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
                     fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
-                    run_path="{}/results_median_time.png".format(run_path))
+                    file_path="{}/results_median_time.png".format(run_path))
 
 
 if __name__ == "__main__":
