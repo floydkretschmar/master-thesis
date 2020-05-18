@@ -121,7 +121,8 @@ def _multi_run(args, base_path, lambdas):
                                    "-p", "{}/raw".format(base_path),
                                    "-ts", str(time_steps),
                                    "-e", str(epochs),
-                                   "-bs", str(batch_size)]
+                                   "-bs", str(batch_size),
+                                   "-ns", str(args.num_samples)]
                         if args.asynchronous:
                             command.append("-a")
                         if args.plot:
