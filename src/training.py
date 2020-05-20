@@ -122,6 +122,18 @@ def _prepare_training(training_parameters):
         current_training_parameters["parameter_optimization"]["decay_step"] \
             = training_parameters["parameter_optimization"]["time_steps"] + 1
 
+    # if epochs, num_change_iterations or change percentage is not specified, set to default values
+    current_training_parameters["parameter_optimization"]["epochs"] = training_parameters["parameter_optimization"][
+        "epochs"] if "epochs" in training_parameters["parameter_optimization"] else None
+
+    current_training_parameters["parameter_optimization"]["num_change_iterations"] = \
+        training_parameters["parameter_optimization"]["num_change_iterations"] \
+            if "num_change_iterations" in training_parameters["parameter_optimization"] else 5
+
+    current_training_parameters["parameter_optimization"]["change_percentage"] = \
+        training_parameters["parameter_optimization"]["change_percentage"] \
+            if "change_percentage" in training_parameters["parameter_optimization"] else 0.05
+
     ##################### GENERATE DATA AND SEEDS #####################
     # if fixed seeding for parameter optimization: get one seed per time step for data generation and one seed for
     # test set generation

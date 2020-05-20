@@ -133,26 +133,65 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         """
         super(ConsequentialLearning, self).__init__(learn_on_entire_history)
 
-    def _train_model_parameters(self, optimizer, epochs, learning_rate, batch_size):
+    def _train_model_parameters(self, optimizer, learning_rate, training_parameters):
         """ Executes the core training of the model parameters theta.
 
         Args:
             optimizer: The optimization algorithm used to train the policy.
-            epochs: The amount of epochs for which the model training runs.
             learning_rate: The learning rate with which the policy is updated.
             batch_size: The size of the batches into which the training data will be split.
+            epochs: The maximum amount of epochs for which the model training runs. Default is None, meaning the
+            training runs until convergence.
 
         Yields:
             decisions_over_time: The decisions made by a policy at timestep t over all time steps
             trained_model_parameters: The model parameters at the final timestep T
         """
-        for _ in range(0, epochs):
+        batch_size = training_parameters["parameter_optimization"]["batch_size"]
+        epochs = training_parameters["parameter_optimization"]["epochs"]
+        num_change_iterations = training_parameters["parameter_optimization"]["num_change_iterations"]
+        change_percentage = training_parameters["parameter_optimization"]["change_percentage"]
+
+        decisions, decision_probability = optimizer.policy(self.data_history["x"], self.data_history["s"])
+        last_optimization_target = -optimizer.optimization_target(x=self.data_history["x"],
+                                                                  s=self.data_history["s"],
+                                                                  y=self.data_history["y"],
+                                                                  policy=optimizer.policy,
+                                                                  decisions=decisions,
+                                                                  decision_probabilities=decision_probability,
+                                                                  ips_weights=self._clipped_ips_weights(
+                                                                      optimizer.policy))
+        i = 0
+        i_no_change = 0
+        # run until convergence or maximum number of epochs is reached
+        while epochs < i or i_no_change < num_change_iterations:
             optimizer.update_model_parameters(learning_rate,
                                               batch_size,
                                               self.data_history["x"],
                                               self.data_history["s"],
                                               self.data_history["y"],
                                               self._clipped_ips_weights(optimizer.policy))
+
+            decisions, decision_probability = optimizer.policy(self.data_history["x"], self.data_history["s"])
+            current_optimization_target = -optimizer.optimization_target(x=self.data_history["x"],
+                                                                         s=self.data_history["s"],
+                                                                         y=self.data_history["y"],
+                                                                         policy=optimizer.policy,
+                                                                         decisions=decisions,
+                                                                         decision_probabilities=decision_probability,
+                                                                         ips_weights=self._clipped_ips_weights(
+                                                                             optimizer.policy))
+
+            # if the change in the last epoch was smaller than the specified percentage of the last optimization target
+            # value: increase number of iterations without change by one, otherwise reset
+            change = np.abs(last_optimization_target - current_optimization_target)
+            if change < np.abs(current_optimization_target * change_percentage):
+                i_no_change += 1
+            else:
+                i_no_change = 0
+
+            last_optimization_target = current_optimization_target
+            i += 1
 
     def train(self, training_parameters):
         """ Executes consequential learning according to the specified training parameters.
@@ -225,9 +264,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                     # 3. Repeat 1. for #epochs
                     for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
                         self._train_model_parameters(optimizer,
-                                                     training_parameters["parameter_optimization"]["epochs"],
                                                      theta_learning_rate,
-                                                     training_parameters["parameter_optimization"]["batch_size"])
+                                                     training_parameters)
 
                         optimizer.update_fairness_parameter(lambda_learning_rate,
                                                             training_parameters["lagrangian_optimization"][
@@ -238,9 +276,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                             self._clipped_ips_weights(optimizer.policy))
                 else:
                     self._train_model_parameters(optimizer,
-                                                 training_parameters["parameter_optimization"]["epochs"],
-                                                 theta_learning_rate,
-                                                 training_parameters["parameter_optimization"]["batch_size"])
+                                                 theta_learning_rate)
 
             # Evaluate performance on test set after training ...
             decisions, decision_probabilities = optimizer.policy(x_test, s_test)
