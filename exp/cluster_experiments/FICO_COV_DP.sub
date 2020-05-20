@@ -31,123 +31,123 @@ log = /home/fkretschmar/master-thesis/res/FICO/COV_DP/log/experiment.$(Process).
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.0001
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.0001
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.00035938136638046257
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.00035938136638046257
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.001291549665014884
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.001291549665014884
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.004641588833612782
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.004641588833612782
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.016681005372000592
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.016681005372000592
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.05994842503189409
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.05994842503189409
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.21544346900318845
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.21544346900318845
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.7742636826811278
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.7742636826811278
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 2.782559402207126
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 2.782559402207126
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 10.0
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 10.0
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.0001
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.0001
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.00035938136638046257
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.00035938136638046257
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.001291549665014884
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.001291549665014884
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.004641588833612782
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.004641588833612782
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.016681005372000592
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.016681005372000592
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.05994842503189409
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.05994842503189409
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.21544346900318845
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.21544346900318845
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.7742636826811278
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.7742636826811278
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 2.782559402207126
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 2.782559402207126
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 10.0
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 10.0
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.0001
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.0001
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.00035938136638046257
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.00035938136638046257
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.001291549665014884
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.001291549665014884
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.004641588833612782
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.004641588833612782
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.016681005372000592
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.016681005372000592
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.05994842503189409
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.05994842503189409
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.21544346900318845
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.21544346900318845
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.7742636826811278
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.7742636826811278
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 2.782559402207126
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 2.782559402207126
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 10.0
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 10.0
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.0001
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.0001
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.00035938136638046257
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.00035938136638046257
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.001291549665014884
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.001291549665014884
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.004641588833612782
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.004641588833612782
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.016681005372000592
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.016681005372000592
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.05994842503189409
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.05994842503189409
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.21544346900318845
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.21544346900318845
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 0.7742636826811278
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.7742636826811278
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 2.782559402207126
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 2.782559402207126
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 64  --plot   -f COV_DP -fv 10.0
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 10.0
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.0001
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.0001
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.00035938136638046257
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.00035938136638046257
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.001291549665014884
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.001291549665014884
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.004641588833612782
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.004641588833612782
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.016681005372000592
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.016681005372000592
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.05994842503189409
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.05994842503189409
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.21544346900318845
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.21544346900318845
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 0.7742636826811278
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.7742636826811278
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 2.782559402207126
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 2.782559402207126
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 128  --plot   -f COV_DP -fv 10.0
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 10.0
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.0001
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.0001
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.00035938136638046257
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.00035938136638046257
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.001291549665014884
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.001291549665014884
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.004641588833612782
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.004641588833612782
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.016681005372000592
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.016681005372000592
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.05994842503189409
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.05994842503189409
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.21544346900318845
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.21544346900318845
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 0.7742636826811278
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 0.7742636826811278
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 2.782559402207126
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 2.782559402207126
 queue 
-arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -bs 256  --plot   -f COV_DP -fv 10.0
+arguments = run.py -d FICO -c 0.5 -lr 0.05 -i 10 -p /home/fkretschmar/master-thesis/res/FICO/COV_DP/raw -ts 200 -e 40 -ns 4096  --plot   -f COV_DP -fv 10.0
 queue 

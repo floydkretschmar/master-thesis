@@ -426,7 +426,7 @@ class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
 
     def __call__(self, **optimization_target_args):
         lagrangian_result = super.__call__(**optimization_target_args)
-        return lagrangian_result + self.penalty_constant * self.fairness_function(**optimization_target_args)
+        return lagrangian_result + (self.penalty_constant / 2) * self.fairness_function(**optimization_target_args) ** 2
 
     def model_parameter_gradient(self, **optimization_target_args):
         """ Returns the gradient of the augmented lagrangian optimization target with regards to the policy parameters.
