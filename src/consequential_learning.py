@@ -164,7 +164,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         i = 0
         i_no_change = 0
         # run until convergence or maximum number of epochs is reached
-        while epochs < i or i_no_change < num_change_iterations:
+        while i_no_change < num_change_iterations:
             optimizer.update_model_parameters(learning_rate,
                                               batch_size,
                                               self.data_history["x"],
@@ -192,6 +192,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
             last_optimization_target = current_optimization_target
             i += 1
+            if epochs <= i:
+                break
 
     def train(self, training_parameters):
         """ Executes consequential learning according to the specified training parameters.
@@ -276,7 +278,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                             self._clipped_ips_weights(optimizer.policy))
                 else:
                     self._train_model_parameters(optimizer,
-                                                 theta_learning_rate)
+                                                 theta_learning_rate,
+                                                 training_parameters)
 
             # Evaluate performance on test set after training ...
             decisions, decision_probabilities = optimizer.policy(x_test, s_test)
