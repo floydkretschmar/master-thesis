@@ -6,12 +6,12 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import matplotlib
-
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
+
 import tikzplotlib as tpl
-from src.training_evaluation import Statistics, ModelParameters
+from src.training_evaluation import MEAN, MEDIAN
 
 
 def _plot_results(plotting_dictionary, file_path):
@@ -75,88 +75,63 @@ def _plot_results(plotting_dictionary, file_path):
     plt.close('all')
 
 
-def plot_median(statistics, performance_measures, fairness_measures, file_path, model_parameters=None):
-    plotting_dict = _build_plot_dict(statistics, performance_measures, fairness_measures, Statistics.MEDIAN,
-                                     model_parameters)
+def plot_median(x_values,
+                x_label,
+                x_scale,
+                performance_measures,
+                fairness_measures,
+                file_path):
+    plotting_dict = _build_plot_dict(x_values, x_label, x_scale, performance_measures, fairness_measures, MEDIAN)
     _plot_results(plotting_dict, file_path)
 
 
-def plot_mean(statistics, performance_measures, fairness_measures, file_path, model_parameters=None):
-    plotting_dict = _build_plot_dict(statistics, performance_measures, fairness_measures, Statistics.MEAN,
-                                     model_parameters)
+def plot_mean(x_values,
+              x_label,
+              x_scale,
+              performance_measures,
+              fairness_measures,
+              file_path):
+    plotting_dict = _build_plot_dict(x_values, x_label, x_scale, performance_measures, fairness_measures, MEAN)
     _plot_results(plotting_dict, file_path)
 
 
-def _build_plot_dict(statistics, performance_measures, fairness_measures, result_format, model_parameters=None):
+def _build_plot_dict(x_values,
+                     x_label,
+                     x_scale,
+                     performance_measures,
+                     fairness_measures,
+                     result_format):
     p_measures = performance_measures if isinstance(performance_measures, list) else [performance_measures]
     f_measures = fairness_measures if isinstance(fairness_measures, list) else [fairness_measures]
 
     plotting_dict = {
         "plot_info": {
-            "x_axis": statistics.results[Statistics.X_VALUES],
-            "x_label": statistics.results[Statistics.X_NAME],
-            "x_scale": statistics.results[Statistics.X_SCALE]
+            "x_axis": x_values,
+            "x_label": x_label,
+            "x_scale": x_scale
         },
         "performance_measures": {},
         "fairness_measures": {}
     }
 
-    for p_measure in p_measures:
-        measure_label = Statistics.measure_as_human_readable_string(p_measure)
+    for measure_set, measure_set_key in [(p_measures, "performance_measures"), (f_measures, "fairness_measures")]:
+        for measure in measure_set:
+            measure_label = measure.name
 
-        if result_format == Statistics.MEAN:
-            value = statistics.performance(measure_key=p_measure, result_format=Statistics.MEAN)
-            measure_stddev = statistics.performance(measure_key=p_measure, result_format=Statistics.STANDARD_DEVIATION)
-            lower_bound = value - measure_stddev
-            upper_bound = value + measure_stddev
-        elif result_format == Statistics.MEDIAN:
-            value = statistics.performance(measure_key=p_measure, result_format=Statistics.MEDIAN)
-            lower_bound = statistics.performance(measure_key=p_measure, result_format=Statistics.FIRST_QUARTILE)
-            upper_bound = statistics.performance(measure_key=p_measure, result_format=Statistics.THIRD_QUARTILE)
+            if result_format == MEAN:
+                value = measure.mean()
+                measure_stddev = measure.standard_deviation()
+                lower_bound = value - measure_stddev
+                upper_bound = value + measure_stddev
+            elif result_format == MEDIAN:
+                value = measure.median()
+                lower_bound = measure.first_quartile()
+                upper_bound = measure.third_quartile()
 
-        plotting_dict["performance_measures"][measure_label] = {
-            "value": value,
-            "uncertainty_lower_bound": lower_bound,
-            "uncertainty_upper_bound": upper_bound,
-        }
-
-    if model_parameters is not None:
-        if result_format == Statistics.MEAN:
-            plotting_dict["performance_measures"]["Lagrangian Multiplier"] = {
-                "value": model_parameters.get_lagrangians(result_format=ModelParameters.MEAN),
-                "uncertainty_lower_bound": model_parameters.get_lagrangians(result_format=ModelParameters.MEAN) -
-                                           model_parameters.get_lagrangians(
-                                               result_format=ModelParameters.STANDARD_DEVIATION),
-                "uncertainty_upper_bound": model_parameters.get_lagrangians(result_format=ModelParameters.MEAN) +
-                                           model_parameters.get_lagrangians(
-                                               result_format=ModelParameters.STANDARD_DEVIATION),
+            plotting_dict[measure_set_key][measure_label] = {
+                "value": value,
+                "uncertainty_lower_bound": lower_bound,
+                "uncertainty_upper_bound": upper_bound
             }
-        elif result_format == Statistics.MEDIAN:
-            plotting_dict["performance_measures"]["Lagrangian Multiplier"] = {
-                "value": model_parameters.get_lagrangians(result_format=ModelParameters.MEDIAN),
-                "uncertainty_lower_bound": model_parameters.get_lagrangians(
-                    result_format=ModelParameters.FIRST_QUARTILE),
-                "uncertainty_upper_bound": model_parameters.get_lagrangians(
-                    result_format=ModelParameters.THIRD_QUARTILE),
-            }
-
-    for f_measure in f_measures:
-        measure_label = Statistics.measure_as_human_readable_string(f_measure)
-
-        if result_format == Statistics.MEAN:
-            value = statistics.fairness(measure_key=f_measure, result_format=Statistics.MEAN)
-            measure_stddev = statistics.fairness(measure_key=f_measure, result_format=Statistics.STANDARD_DEVIATION)
-            lower_bound = value - measure_stddev
-            upper_bound = value + measure_stddev
-        elif result_format == Statistics.MEDIAN:
-            value = statistics.fairness(measure_key=f_measure, result_format=Statistics.MEDIAN)
-            lower_bound = statistics.fairness(measure_key=f_measure, result_format=Statistics.FIRST_QUARTILE)
-            upper_bound = statistics.fairness(measure_key=f_measure, result_format=Statistics.THIRD_QUARTILE)
-
-        plotting_dict["fairness_measures"][measure_label] = {
-            "value": value,
-            "uncertainty_lower_bound": lower_bound,
-            "uncertainty_upper_bound": upper_bound,
-        }
 
     return plotting_dict

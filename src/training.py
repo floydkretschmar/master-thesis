@@ -245,7 +245,7 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
     multiple_lambdas = len(fairness_rates) > 1
 
     if multiple_lambdas:
-        overall_statistics = MultiStatistics.build("log", fairness_rates, "Lambda")
+        overall_statistics = MultiStatistics()
 
     for fairness_rate in fairness_rates:
         info_string = "// LR = {} // TS = {} // E = {} // BS = {} // FR = {}".format(

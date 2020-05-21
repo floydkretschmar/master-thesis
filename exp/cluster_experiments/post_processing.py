@@ -12,7 +12,7 @@ module_path = os.path.abspath(os.path.join('../..'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-from src.training_evaluation import Statistics, _unserialize_dictionary, MultiStatistics
+from src.training_evaluation import _unserialize_dictionary, MultiStatistics, UTILITY, Statistics
 from src.util import load_dictionary
 from src.training import _save_results, _process_results
 from src.plotting import plot_mean, plot_median
@@ -61,7 +61,7 @@ def fairness(lambdas, fairness_skip=None):
         sorted_fairness_idx = np.argsort(fairness_rates)
         sorted_fairness_idx = sorted_fairness_idx[::fairness_skip]
 
-    overall_statistics = MultiStatistics.build("log", fairness_rates[sorted_fairness_idx], "Lambda")
+    overall_statistics = MultiStatistics()
 
     # load statistics and model parameters for all runs of a parameter setting
     for lambda_idx in sorted_fairness_idx:
@@ -80,7 +80,7 @@ def fairness(lambdas, fairness_skip=None):
 
         overall_statistics.log_run(statistics)
 
-    return overall_statistics
+    return overall_statistics, fairness_rates[sorted_fairness_idx]
 
 
 cost_directories = [os.path.join(args.input_path, cost) for cost in os.listdir(args.input_path)
@@ -111,22 +111,23 @@ for cost in cost_directories:
                 result_row = None
 
             if args.fairness:
-                statistics = fairness(runs, args.fairness_skip)
+                statistics, x_axis = fairness(runs, args.fairness_skip)
                 model_parameters = None
+                x_label = "Lagrangian Multiplier"
+                x_scale = "log"
 
                 if result_row is not None:
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN).max())
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN).min())
-                    result_row.append((statistics.performance(Statistics.UTILITY, Statistics.THIRD_QUARTILE) -
-                                       statistics.performance(Statistics.UTILITY, Statistics.FIRST_QUARTILE)).mean(
-                        axis=0))
-                    result_row.append((statistics.fairness(Statistics.DEMOGRAPHIC_PARITY, Statistics.THIRD_QUARTILE) -
-                                       statistics.performance(Statistics.DEMOGRAPHIC_PARITY,
-                                                              Statistics.FIRST_QUARTILE)).mean(axis=0))
-                    result_row.append(
-                        (statistics.fairness(Statistics.EQUALITY_OF_OPPORTUNITY, Statistics.THIRD_QUARTILE) -
-                         statistics.performance(Statistics.EQUALITY_OF_OPPORTUNITY,
-                                                Statistics.FIRST_QUARTILE)).mean(axis=0))
+                    utility = statistics.get_additonal_measure(UTILITY, "Utility")
+                    demographic_parity = statistics.demographic_parity()
+                    equality_of_opportunity = statistics.equality_of_opportunity()
+
+                    result_row.append(utility.median().max())
+                    result_row.append(utility.median().min())
+                    result_row.append((utility.third_quartile() - utility.first_quartile()).mean(axis=0))
+                    result_row.append((demographic_parity.third_quartile()
+                                       - demographic_parity.first_quartile()).mean(axis=0))
+                    result_row.append((equality_of_opportunity.third_quartile()
+                                       - equality_of_opportunity.first_quartile()).mean(axis=0))
 
                     result_columns.extend(['Maximum median utility',
                                            'Minimum median utility',
@@ -136,17 +137,17 @@ for cost in cost_directories:
                     results.append(result_row)
             else:
                 statistics, model_parameters = combine_runs(runs)
+                x_axis = range(utility.shape[0])
+                x_label = "Time Steps"
+                x_scale = "linear"
 
                 if result_row is not None:
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEDIAN)[-1])
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.THIRD_QUARTILE)[-1] -
-                                      statistics.performance(Statistics.UTILITY, Statistics.FIRST_QUARTILE)[-1])
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.MEAN)[-1])
-                    result_row.append(statistics.performance(Statistics.UTILITY, Statistics.STANDARD_DEVIATION)[-1])
-                    result_columns.extend(['final_median',
-                                           'final_iqr',
-                                           'final_mean',
-                                           'final_std_dev'])
+                    result_row.append(utility.median().max())
+                    result_row.append(utility.median().min())
+                    result_row.append((utility.third_quartile() - utility.first_quartile()).mean(axis=0))
+                    result_columns.extend(['Maximum median utility',
+                                           'Minimum median utility',
+                                           'Average utility IQR'])
                     results.append(result_row)
 
             if args.save:
@@ -156,13 +157,21 @@ for cost in cost_directories:
 
                 # save the merged statistics, parameters and plot them
                 _save_results(output_path, statistics, model_parameters)
-                plot_mean(statistics=statistics,
-                          performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
-                          fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+                plot_mean(x_values=x_axis,
+                          x_label=x_label,
+                          x_scale=x_scale,
+                          performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
+                                                statistics.accuracy()],
+                          fairness_measures=[statistics.demographic_parity(),
+                                             statistics.equality_of_opportunity()],
                           file_path=os.path.join(output_path, "results_mean.png"))
-                plot_median(statistics=statistics,
-                            performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
-                            fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+                plot_median(x_values=x_axis,
+                            x_label=x_label,
+                            x_scale=x_scale,
+                            performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
+                                                  statistics.accuracy()],
+                            fairness_measures=[statistics.demographic_parity(),
+                                               statistics.equality_of_opportunity()],
                             file_path=os.path.join(output_path, "results_median.png"))
 
             print("finished processing {}".format(parameter_setting_path))

@@ -12,12 +12,11 @@ from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility
 from src.plotting import plot_mean, plot_median
 from src.training import train
-from src.training_evaluation import Statistics
+from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution, GermanCreditDistribution
 from src.util import mean_difference
 from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget
 from src.policy import LogisticPolicy
-
 
 # region Fairness Definitions
 
@@ -135,6 +134,26 @@ def single_run(args):
             'num_train_samples': args.num_samples,
             'num_test_samples': 10000,
             'fix_seeds': True
+        },
+        'evaluation': {
+            UTILITY: {
+                'measure_function': lambda s, y, decisions: np.mean(cost_utility(cost_factor=args.cost,
+                                                                                 s=s,
+                                                                                 y=y,
+                                                                                 decisions=decisions)),
+                'detailed': False
+            },
+            COVARIANCE_OF_DECISION_DP: {
+                'measure_function': lambda s, y, decisions: fairness_function(
+                    type="COV_DP",
+                    x=None,
+                    s=s,
+                    y=y,
+                    decisions=decisions,
+                    ips_weights=None,
+                    policy=None),
+                'detailed': False
+            }
         }
     }
 
@@ -183,13 +202,25 @@ def single_run(args):
         fairness_rates=[initial_lambda])
 
     if args.plot:
-        plot_mean(statistics=statistics,
-                  performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
-                  fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+        plot_mean(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+                  x_label="Time steps",
+                  x_scale="linear",
+                  performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
+                                        statistics.accuracy()],
+                  fairness_measures=[statistics.demographic_parity(),
+                                     statistics.equality_of_opportunity(),
+                                     statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
+                                                                      "Covariance of Decision (DP)")],
                   file_path="{}/results_mean_time.png".format(run_path))
-        plot_median(statistics=statistics,
-                    performance_measures=[Statistics.UTILITY, Statistics.ACCURACY],
-                    fairness_measures=[Statistics.DEMOGRAPHIC_PARITY, Statistics.EQUALITY_OF_OPPORTUNITY],
+        plot_median(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+                    x_label="Time steps",
+                    x_scale="linear",
+                    performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
+                                          statistics.accuracy()],
+                    fairness_measures=[statistics.demographic_parity(),
+                                       statistics.equality_of_opportunity(),
+                                       statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
+                                                                        "Covariance of Decision (DP)")],
                     file_path="{}/results_median_time.png".format(run_path))
 
 

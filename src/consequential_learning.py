@@ -291,10 +291,10 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             model_parameters["model_parameters"] = [deepcopy(parameters)]
 
         self._reset_buffer()
-        statistics = Statistics.build(
+        statistics = Statistics(
             predictions=decisions_over_time,
             protected_attributes=s_test,
             ground_truths=y_test,
-            utility_function=optimization_target.utility_function)
+            additonal_measures=training_parameters["evaluation"] if "evaluation" in training_parameters else None)
 
         return statistics, ModelParameters(model_parameters)
