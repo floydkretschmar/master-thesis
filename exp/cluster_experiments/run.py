@@ -14,7 +14,7 @@ from src.plotting import plot_mean, plot_median
 from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution, GermanCreditDistribution
-from src.util import mean_difference
+from src.util import mean_difference, get_list_of_seeds
 from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget
 from src.policy import LogisticPolicy
 
@@ -157,6 +157,20 @@ def single_run(args):
         }
     }
 
+    if args.seed_path:
+        del training_parameters["data"]["fix_seeds"]
+
+        if os.path.isfile(args.seed_path):
+            seeds = np.load(args.seed_path)
+            training_parameters['data']["training_seeds"] = seeds["train"]
+            training_parameters['data']["test_seed"] = seeds["test"]
+        else:
+            train_seeds = get_list_of_seeds(200)
+            test_seeds = get_list_of_seeds(1)
+            training_parameters['data']["training_seeds"] = train_seeds
+            training_parameters['data']["test_seed"] = test_seeds
+            np.savez(args.seed_path, train=train_seeds, test=test_seeds)
+
     if args.path:
         if args.fairness_type is not None:
             training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
@@ -226,6 +240,8 @@ def single_run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
+    parser.add_argument('-sp', '--seed_path', type=str, required=False, help="path for the seeds .npz file")
 
     parser.add_argument('-d', '--data', type=str, required=True,
                         help="select the distribution (FICO, COMPAS, ADULT, GERMAN)")

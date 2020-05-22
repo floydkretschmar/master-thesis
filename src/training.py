@@ -42,7 +42,7 @@ def _check_for_missing_training_parameters(training_parameters):
                              ["batch_size", "epochs", "learning_rate", "learn_on_entire_history", "time_steps"],
                              training_parameters["parameter_optimization"])
 
-    check_for_missing_kwargs("training()", ["num_test_samples", "fix_seeds", "num_train_samples"],
+    check_for_missing_kwargs("training()", ["num_test_samples", "num_train_samples"],
                              training_parameters["data"])
 
     if "lagrangian_optimization" in training_parameters:
@@ -137,7 +137,7 @@ def _prepare_training(training_parameters):
     ##################### GENERATE DATA AND SEEDS #####################
     # if fixed seeding for parameter optimization: get one seed per time step for data generation and one seed for
     # test set generation
-    if current_training_parameters["data"]["fix_seeds"]:
+    if "fix_seeds" in current_training_parameters["data"] and current_training_parameters["data"]["fix_seeds"]:
         current_training_parameters["data"]["training_seeds"] = get_list_of_seeds(
             training_parameters["parameter_optimization"]["time_steps"])
 

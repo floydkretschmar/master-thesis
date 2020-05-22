@@ -74,6 +74,7 @@ def _build_submit_file(args, base_path, lambdas):
                     for epochs in args.epochs:
                         for batch_size in args.batch_sizes:
                             command = "run.py " \
+                                      "-sp {} " \
                                       "-d {} " \
                                       "-c {} " \
                                       "-lr {} " \
@@ -85,7 +86,8 @@ def _build_submit_file(args, base_path, lambdas):
                                       "-ns {} " \
                                       "{} " \
                                       "{} " \
-                                      "{}".format(args.data,
+                                      "{}".format(args.seed_path,
+                                                  args.data,
                                                   cost,
                                                   learning_rate,
                                                   args.iterations,
@@ -126,7 +128,8 @@ def _multi_run(args, base_path, lambdas):
                                    "-ts", str(time_steps),
                                    "-e", str(epochs),
                                    "-bs", str(batch_size),
-                                   "-ns", str(args.num_samples)]
+                                   "-ns", str(args.num_samples),
+                                   "-sp", args.seed_path]
                         if args.asynchronous:
                             command.append("-a")
                         if args.plot:
@@ -148,6 +151,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--data', type=str, required=True,
                         help="select the distribution (FICO, COMPAS, ADULT, GERMAN)")
     parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
+    parser.add_argument('-sp', '--seed_path', type=str, required=False, help="path for the seeds .npz file")
 
     # Policy training parameters
     parser.add_argument('-c', '--costs', type=float, nargs='+', required=True, help="define the utility cost c")
