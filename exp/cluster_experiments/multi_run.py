@@ -82,6 +82,7 @@ def _build_submit_file(args, base_path, lambdas):
                                       "-ts {} " \
                                       "-e {} " \
                                       "-bs {} " \
+                                      "-ns {} " \
                                       "{} " \
                                       "{} " \
                                       "{}".format(args.data,
@@ -92,6 +93,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                   time_steps,
                                                   epochs,
                                                   batch_size,
+                                                  args.num_samples,
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-pid $(Process)" if args.queue_num else "")
