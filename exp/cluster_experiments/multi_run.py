@@ -35,8 +35,10 @@ def _fairness_extensions(args, fairness_rates, build=False):
 
 
 def _build_submit_file(args, base_path, lambdas):
-    sub_file_name = "./{}.sub".format(args.data) if args.fairness_type is None else "./{}_{}.sub".format(args.data,
+    base_name = args.data if not args.file_name else args.file_name
+    sub_file_name = "./{}.sub".format(base_name) if args.fairness_type is None else "./{}_{}.sub".format(base_name,
                                                                                                          args.fairness_type)
+
     print("## Started building {} ##".format(sub_file_name))
 
     with open(sub_file_name, "w") as file:
@@ -171,8 +173,8 @@ if __name__ == "__main__":
     parser.add_argument('-fl', '--fairness_lower_bound', type=float, required=False, help='the lowest value for lambda')
     parser.add_argument('-fu', '--fairness_upper_bound', type=float, required=False,
                         help='the highest value for lambda')
-    parser.add_argument('-fn', '--fairness_number', type=int, required=False, default=20,
-                        help='the number of lambda values tested in the range (default = 20)')
+    parser.add_argument('-fn', '--fairness_number', type=int, required=False, default=-1,
+                        help='the number of lambda values tested in the range.')
 
     parser.add_argument('-fi', '--fairness_iterations', type=int, nargs='+', required=False,
                         help='number of iterations that the dual gradient loop will be repeated')
@@ -185,6 +187,7 @@ if __name__ == "__main__":
 
     # Build script parameters
     parser.add_argument('--build_submit', required=False, action='store_true')
+    parser.add_argument('--file_name', type=str, required=False, help="name of the submit file")
     parser.add_argument('-pp', '--python_path', type=str, required=False, help="path of the python executable")
     parser.add_argument('-q', '--queue_num', type=int, required=False,
                         help="the number of process that should be queued")
@@ -216,10 +219,21 @@ if __name__ == "__main__":
             lambdas = args.fairness_values
         elif args.fairness_lower_bound is not None and args.fairness_upper_bound is not None:
             fairness_num = args.fairness_number
-            lambdas = np.geomspace(args.fairness_lower_bound,
-                                   args.fairness_upper_bound,
-                                   endpoint=True,
-                                   num=fairness_num)
+            if fairness_num != -1:
+                lambdas = np.geomspace(args.fairness_lower_bound,
+                                       args.fairness_upper_bound,
+                                       endpoint=True,
+                                       num=fairness_num)
+            else:
+                current_value = args.fairness_lower_bound
+                power = np.log10(current_value)
+                lambdas = []
+
+                while power + 1 <= np.log10(args.fairness_upper_bound):
+                    lambdas.extend(np.linspace(np.power(10, power), np.power(10, power + 1), num=10).tolist())
+                    power += 1
+                lambdas = np.sort(np.unique(np.array(lambdas, dtype=float)))
+
         else:
             parser.error(
                 'neither --fairness_lower_bound and --fairness_upper_bound nor --fairness_values have been specified')
