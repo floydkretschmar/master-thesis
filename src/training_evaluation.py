@@ -56,23 +56,15 @@ UTILITY = "U"
 COVARIANCE_OF_DECISION_DP = "COV_DP"
 
 
-def _unserialize_value(value):
-    if isinstance(value, dict):
-        return _unserialize_dictionary(value)
+def _unserialize_value(value, recursive_func=None):
+    if isinstance(value, dict) and recursive_func:
+        return recursive_func(value)
     elif isinstance(value, list):
         return np.array(value)
     elif value == "NoneType":
         return None
     else:
         return value
-
-
-def _unserialize_dictionary(dictionary):
-    unserialized_dict = deepcopy(dictionary)
-    for key, value in unserialized_dict.items():
-        unserialized_dict[key] = _unserialize_value(value)
-
-    return unserialized_dict
 
 
 class ModelParameters():
@@ -88,8 +80,16 @@ class ModelParameters():
         self.dict["lambdas"] = np.array(self.dict["lambdas"], dtype=float).reshape(-1, 1)
 
     @staticmethod
+    def _unserialize_dictionary(dictionary):
+        unserialized_dict = deepcopy(dictionary)
+        unserialized_dict["lambdas"] = _unserialize_value(unserialized_dict["lambdas"])
+        unserialized_dict["model_parameters"] = unserialized_dict["model_parameters"]
+
+        return unserialized_dict
+
+    @staticmethod
     def build_from_serialized_dictionary(serialized_dict):
-        results = _unserialize_dictionary(serialized_dict)
+        results = ModelParameters._unserialize_dictionary(serialized_dict)
         return ModelParameters(results)
 
     def merge(self, model_parameters):
@@ -249,8 +249,16 @@ class Statistics:
             self.results["all"][EQUALITY_OF_OPPORTUNITY] = None
 
     @staticmethod
+    def _unserialize_dictionary(dictionary):
+        unserialized_dict = deepcopy(dictionary)
+        for key, value in unserialized_dict.items():
+            unserialized_dict[key] = _unserialize_value(value, Statistics._unserialize_dictionary)
+
+        return unserialized_dict
+
+    @staticmethod
     def build_from_serialized_dictionary(serialized_dict):
-        results = _unserialize_dictionary(serialized_dict)
+        results = Statistics._unserialize_dictionary(serialized_dict)
         stats = Statistics(None, None, None, None)
         stats.results = results
         return stats

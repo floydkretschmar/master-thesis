@@ -12,7 +12,7 @@ module_path = os.path.abspath(os.path.join('../..'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-from src.training_evaluation import _unserialize_dictionary, MultiStatistics, UTILITY, Statistics
+from src.training_evaluation import ModelParameters, MultiStatistics, UTILITY, Statistics
 from src.util import load_dictionary
 from src.training import _save_results, _process_results
 from src.plotting import plot_mean, plot_median
@@ -41,15 +41,14 @@ def combine_runs(runs):
 
         model_parameter_path = os.path.join(run_path, "models.json")
         serialized_model_parameters = load_dictionary(model_parameter_path)
-        model_parameters = _unserialize_dictionary(serialized_model_parameters)
-        model_parameters = model_parameters['0']['0']
+        model_parameters = ModelParameters.build_from_serialized_dictionary(serialized_model_parameters)
 
-        run_results.append([(statistics, model_parameters)])
+        run_results.append((statistics, model_parameters))
 
     # merge statistics and model parameters
     statistcs_over_runs, model_parameters = _process_results(run_results)
 
-    return statistcs_over_runs[0], model_parameters
+    return statistcs_over_runs, model_parameters
 
 
 def fairness(lambdas, fairness_skip=None):
@@ -73,7 +72,7 @@ def fairness(lambdas, fairness_skip=None):
 
         if len(runs) > 0:
             statistics, model_parameters = combine_runs(runs)
-            _save_results(current_lambda_statistics_path, statistics, model_parameters)
+            _save_results(current_lambda_path, statistics, model_parameters)
         else:
             serialized_statistics = load_dictionary(current_lambda_statistics_path)
             statistics = Statistics.build_from_serialized_dictionary(serialized_statistics)
