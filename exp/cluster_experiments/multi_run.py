@@ -74,7 +74,6 @@ def _build_submit_file(args, base_path, lambdas):
                     for epochs in args.epochs:
                         for batch_size in args.batch_sizes:
                             command = "run.py " \
-                                      "-sp {} " \
                                       "-d {} " \
                                       "-c {} " \
                                       "-lr {} " \
@@ -86,8 +85,8 @@ def _build_submit_file(args, base_path, lambdas):
                                       "-ns {} " \
                                       "{} " \
                                       "{} " \
-                                      "{}".format(args.seed_path,
-                                                  args.data,
+                                      "{} " \
+                                      "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
                                                   args.iterations,
@@ -96,6 +95,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                   epochs,
                                                   batch_size,
                                                   args.num_samples,
+                                                  args.seed_path if args.seed_path else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-pid $(Process)" if args.queue_num else "")
@@ -128,12 +128,13 @@ def _multi_run(args, base_path, lambdas):
                                    "-ts", str(time_steps),
                                    "-e", str(epochs),
                                    "-bs", str(batch_size),
-                                   "-ns", str(args.num_samples),
-                                   "-sp", args.seed_path]
+                                   "-ns", str(args.num_samples)]
                         if args.asynchronous:
                             command.append("-a")
                         if args.plot:
                             command.append("--plot")
+                        if args.seed_path:
+                            command.extend(["-sp", args.seed_path])
 
                         if args.fairness_type is not None:
                             for extension in _fairness_extensions(args, lambdas, build=False):
