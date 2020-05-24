@@ -95,7 +95,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                   epochs,
                                                   batch_size,
                                                   args.num_samples,
-                                                  args.seed_path if args.seed_path else "",
+                                                  "-sp {}".format(args.seed_path) if args.seed_path else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-pid $(Process)" if args.queue_num else "")
