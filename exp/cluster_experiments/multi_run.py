@@ -240,10 +240,8 @@ if __name__ == "__main__":
                     lambdas.extend(np.linspace(np.power(10, power), np.power(10, power + 1), num=10).tolist())
                     power += 1
                 lambdas = np.sort(np.unique(np.array(lambdas, dtype=float)))
-
         else:
-            parser.error(
-                'neither --fairness_lower_bound and --fairness_upper_bound nor --fairness_values have been specified')
+            lambdas = [0.0]
     else:
         base_path = "{}/{}".format(args.path, args.data)
 
