@@ -134,6 +134,10 @@ def _prepare_training(training_parameters):
         training_parameters["parameter_optimization"]["change_percentage"] \
             if "change_percentage" in training_parameters["parameter_optimization"] else 0.05
 
+    # if weight clipping is not specified set to false
+    if "clip_weights" not in current_training_parameters["parameter_optimization"]:
+        current_training_parameters["parameter_optimization"]["clip_weights"] = False
+
     ##################### GENERATE DATA AND SEEDS #####################
     # if fixed seeding for parameter optimization: get one seed per time step for data generation and one seed for
     # test set generation

@@ -86,6 +86,7 @@ def _build_submit_file(args, base_path, lambdas):
                                       "{} " \
                                       "{} " \
                                       "{} " \
+                                      "{} " \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -98,6 +99,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                   "-sp {}".format(args.seed_path) if args.seed_path else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
+                                                  "-ipc " if args.ip_weight_clipping else "",
                                                   "-pid $(Process)" if args.queue_num else "")
 
                             if args.fairness_type is not None:
@@ -133,6 +135,8 @@ def _multi_run(args, base_path, lambdas):
                             command.append("-a")
                         if args.plot:
                             command.append("--plot")
+                        if args.ip_weight_clipping:
+                            command.append("-ipc")
                         if args.seed_path:
                             command.extend(["-sp", args.seed_path])
 
@@ -165,7 +169,10 @@ if __name__ == "__main__":
     parser.add_argument('-ns', '--num_samples', type=int, required=True,
                         help='list of number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
+    # ip weighting parameters
+    parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')
 
+    # technical parameters
     parser.add_argument('-a', '--asynchronous', action='store_true')
     parser.add_argument('--plot', required=False, action='store_true')
 

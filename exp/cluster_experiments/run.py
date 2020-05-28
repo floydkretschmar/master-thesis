@@ -128,7 +128,8 @@ def single_run(args):
             'epochs': args.epochs,
             'learning_rate': args.learning_rate,
             'learn_on_entire_history': False,
-            'time_steps': args.time_steps
+            'time_steps': args.time_steps,
+            'clip_weights': args.ip_weight_clipping
         },
         'data': {
             'num_train_samples': args.num_samples,
@@ -253,6 +254,7 @@ if __name__ == "__main__":
     parser.add_argument('-bs', '--batch_size', type=int, required=True, help='batch size to be used')
     parser.add_argument('-ns', '--num_samples', type=int, required=True, help='number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
+    parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')
     parser.add_argument('-a', '--asynchronous', action='store_true')
     parser.add_argument('--plot', required=False, action='store_true')
     parser.add_argument('-pid', '--process_id', type=str, required=False, help="process id for identification")

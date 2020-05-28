@@ -87,18 +87,6 @@ class BasePolicy:
         """
         raise NotImplementedError("Subclass must override copy(self).")
 
-    def ips_weights(self, x, s):
-        """ Calculates the inverse propensity scoring weights according to the formula 1/pi_0(e = 1 | x, s).
-
-        Args:
-            x: The features of the n samples
-            s: The sensitive attribute of the n samples
-
-        Returns:
-            ips_weights: The weights for inverse propensity scoring.
-        """
-        raise NotImplementedError("Subclass must override _ips_weights(self, x, s, sampling_distribution).")
-
     @staticmethod
     def optimizer(policy, optimization_target):
         """ Returns the fitting optimizer that optimizes the specified policy.
@@ -180,15 +168,6 @@ class LogisticPolicy(ManualGradientPolicy):
             deepcopy(self.feature_map),
             self.use_sensitive_attributes)
         return approx_policy
-
-    def ips_weights(self, x, s):
-        phi = self.feature_map(self._extract_features(x, s))
-        sampling_theta = np.expand_dims(self.theta, axis=1)
-
-        prob = sigmoid(np.matmul(phi, sampling_theta))
-        weights = 1.0 + np.exp(-np.matmul(phi, sampling_theta))
-
-        return weights, prob
 
     def log_policy_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))

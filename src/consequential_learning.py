@@ -31,7 +31,7 @@ class BaseLearningAlgorithm:
         else:
             return 0
 
-    def _clipped_ips_weights(self, policy):
+    def _clip_ips_weights(self, ip_weights, probabilities):
         """ Implements clipped-wIPS as first introduced by https://www.microsoft.com/en-us/research/wp-content/uploads
         /2013/11/bottou13a.pdf to ensure numerical stability of the ips weights for unlikely data samples.
         For data samples with small probability of positive decision by the initial policy pi_0 the IPS weights become
@@ -46,15 +46,14 @@ class BaseLearningAlgorithm:
             clipped_ips_weights: The clipped ips weights where all weights where prob_current_pi > R * prob_pi_0 are set
             to 0.
         """
-        if self.buffer_size > 1:
-            sorted_ipsw = np.sort(self.data_history["ips_weights"].squeeze())
-            R = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
+        if ip_weights.shape[0] > 1:
+            sorted_ipsw = np.sort(ip_weights.squeeze())
+            r = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
         else:
-            R = self.data_history["ips_weights"][0]
-        _, decision_probabilities = policy(self.data_history["x"], self.data_history["s"])
+            r = ip_weights[0]
 
-        clipped_ips_weights = deepcopy(self.data_history["ips_weights"])
-        clipped_ips_weights[decision_probabilities >= R * self.data_history["ips_probabilities"]] = 0
+        clipped_ips_weights = deepcopy(ip_weights)
+        clipped_ips_weights[1 > r * probabilities] = 0
 
         return clipped_ips_weights
 
@@ -73,13 +72,13 @@ class BaseLearningAlgorithm:
         """
         x, s, y = data
 
-        decisions, _ = policy(x, s)
+        decisions, probabilities = policy(x, s)
         pos_decision_idx = np.expand_dims(np.arange(decisions.shape[0]), axis=1)
         pos_decision_idx = pos_decision_idx[decisions == 1]
 
-        return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx]
+        return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx], probabilities[pos_decision_idx]
 
-    def _update_buffer(self, x, s, y, ips_weights, ips_probabilities):
+    def _update_buffer(self, x, s, y, ips_weights):
         """ Update the internal buffer of the training algorithm. If learn_on_entire_history is specified, new data will
         be appended, otherwise new data will replace existing data.
         
@@ -95,13 +94,10 @@ class BaseLearningAlgorithm:
                 "x": x,
                 "s": s,
                 "y": y,
-                "ips_weights": ips_weights,
-                "ips_probabilities": ips_probabilities
+                "ips_weights": ips_weights
             }
         elif self.learn_on_entire_history:
             self.data_history["ips_weights"] = np.vstack((self.data_history["ips_weights"], ips_weights))
-            self.data_history["ips_probabilities"] = np.vstack(
-                (self.data_history["ips_probabilities"], ips_probabilities))
             self.data_history["x"] = np.vstack((self.data_history["x"], x))
             self.data_history["y"] = np.vstack((self.data_history["y"], y))
             self.data_history["s"] = np.vstack((self.data_history["s"], s))
@@ -159,8 +155,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                                   policy=optimizer.policy,
                                                                   decisions=decisions,
                                                                   decision_probabilities=decision_probability,
-                                                                  ips_weights=self._clipped_ips_weights(
-                                                                      optimizer.policy))
+                                                                  ips_weights=self.data_history["ips_weights"])
         i = 0
         i_no_change = 0
         # run until convergence or maximum number of epochs is reached
@@ -170,7 +165,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                               self.data_history["x"],
                                               self.data_history["s"],
                                               self.data_history["y"],
-                                              self._clipped_ips_weights(optimizer.policy))
+                                              self.data_history["ips_weights"])
 
             decisions, decision_probability = optimizer.policy(self.data_history["x"], self.data_history["s"])
             current_optimization_target = -optimizer.optimization_target(x=self.data_history["x"],
@@ -179,8 +174,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                                          policy=optimizer.policy,
                                                                          decisions=decisions,
                                                                          decision_probabilities=decision_probability,
-                                                                         ips_weights=self._clipped_ips_weights(
-                                                                             optimizer.policy))
+                                                                         ips_weights=self.data_history["ips_weights"])
 
             # if the change in the last epoch was smaller than the specified percentage of the last optimization target
             # value: increase number of iterations without change by one, otherwise reset
@@ -248,10 +242,16 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             data = distribution.sample_train_dataset(
                 n_train=training_parameters["data"]["num_train_samples"],
                 seed=training_seeds[i])
-            x_train, s_train, y_train = self._filter_by_policy(data, optimizer.policy)
+            x_train, s_train, y_train, pi_0_probabilities = self._filter_by_policy(data, optimizer.policy)
 
-            ips_weights, ips_probabilities = optimizer.policy.ips_weights(x_train, s_train)
-            self._update_buffer(x_train, s_train, y_train, ips_weights, ips_probabilities)
+            if x_train.shape[0] > 0:
+                ips_weights = 1 / pi_0_probabilities
+                if training_parameters["parameter_optimization"]["clip_weights"]:
+                    ips_weights = self._clip_ips_weights(ips_weights, pi_0_probabilities)
+            else:
+                ips_weights = np.ones(x_train.shape)
+
+            self._update_buffer(x_train, s_train, y_train, ips_weights)
 
             # only train if there is actual training data
             if self.buffer_size > 0:
@@ -264,6 +264,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                     # 1. Train model parameters (until convergence)
                     # 2. Update fairness rate
                     # 3. Repeat 1. for #epochs
+                    theta = deepcopy(optimizer.policy._theta)
                     for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
                         self._train_model_parameters(optimizer,
                                                      theta_learning_rate,
@@ -275,7 +276,12 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                             self.data_history["x"],
                                                             self.data_history["s"],
                                                             self.data_history["y"],
-                                                            self._clipped_ips_weights(optimizer.policy))
+                                                            self.data_history["ips_weights"])
+                        optimizer.policy.theta = deepcopy(theta)
+
+                    self._train_model_parameters(optimizer,
+                                                 theta_learning_rate,
+                                                 training_parameters)
                 else:
                     self._train_model_parameters(optimizer,
                                                  theta_learning_rate,
