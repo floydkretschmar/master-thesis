@@ -178,8 +178,9 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
             # if the change in the last epoch was smaller than the specified percentage of the last optimization target
             # value: increase number of iterations without change by one, otherwise reset
-            change = np.abs(last_optimization_target - current_optimization_target)
-            if change < np.abs(current_optimization_target * change_percentage):
+            # change = np.abs(last_optimization_target - current_optimization_target)
+            # if change < np.abs(current_optimization_target * change_percentage):
+            if current_optimization_target < (last_optimization_target * (1 + change_percentage)):
                 i_no_change += 1
             else:
                 i_no_change = 0

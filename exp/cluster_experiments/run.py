@@ -18,6 +18,7 @@ from src.util import mean_difference, get_list_of_seeds
 from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget
 from src.policy import LogisticPolicy
 
+
 # region Fairness Definitions
 
 def calc_benefit(decisions, ips_weights):
@@ -129,7 +130,9 @@ def single_run(args):
             'learning_rate': args.learning_rate,
             'learn_on_entire_history': False,
             'time_steps': args.time_steps,
-            'clip_weights': args.ip_weight_clipping
+            'clip_weights': args.ip_weight_clipping,
+            'change_percentage': args.change_percentage,
+            'change_iterations': args.change_iterations
         },
         'data': {
             'num_train_samples': args.num_samples,
@@ -252,6 +255,13 @@ if __name__ == "__main__":
     parser.add_argument('-ts', '--time_steps', type=int, required=True, help='number of time steps to be used')
     parser.add_argument('-e', '--epochs', type=int, required=True, help='number of epochs to be used')
     parser.add_argument('-bs', '--batch_size', type=int, required=True, help='batch size to be used')
+    parser.add_argument('-ci', '--change_iterations', type=int, required=False, default=5,
+                        help='the number of iterations without the amout of percentage improvemnt specified by '
+                             '--change_percentage after which the training of the policy will be stopped.'
+                             '(Default = 5)')
+    parser.add_argument('-cp', '--change_percentage', type=int, required=False, default=0.05,
+                        help='the percentage of improvement per training epoch that is considered the minimum amount of'
+                             'improvement. (Default = 0.05)')
     parser.add_argument('-ns', '--num_samples', type=int, required=True, help='number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
     parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')

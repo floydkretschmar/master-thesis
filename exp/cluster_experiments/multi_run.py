@@ -87,6 +87,8 @@ def _build_submit_file(args, base_path, lambdas):
                                       "{} " \
                                       "{} " \
                                       "{} " \
+                                      "{} " \
+                                      "{} " \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -97,6 +99,10 @@ def _build_submit_file(args, base_path, lambdas):
                                                   batch_size,
                                                   args.num_samples,
                                                   "-sp {}".format(args.seed_path) if args.seed_path else "",
+                                                  "-ci {}".format(
+                                                      args.change_iterations) if args.change_iterations else "",
+                                                  "-cp {}".format(
+                                                      args.change_percentage) if args.change_percentage else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
@@ -139,6 +145,10 @@ def _multi_run(args, base_path, lambdas):
                             command.append("-ipc")
                         if args.seed_path:
                             command.extend(["-sp", args.seed_path])
+                        if args.change_iterations:
+                            command.extend(["-ci", str(args.change_iterations)])
+                        if args.change_percentage:
+                            command.extend(["-cp", str(args.change_percentage)])
 
                         if args.fairness_type is not None:
                             for extension in _fairness_extensions(args, lambdas, build=False):
@@ -166,6 +176,12 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--epochs', type=int, nargs='+', required=True, help='list of epochs to be used')
     parser.add_argument('-bs', '--batch_sizes', type=int, nargs='+', required=True,
                         help='list of batch sizes to be used')
+    parser.add_argument('-ci', '--change_iterations', type=int, required=False,
+                        help='the number of iterations without the amout of percentage improvemnt specified by '
+                             '--change_percentage after which the training of the policy will be stopped.')
+    parser.add_argument('-cp', '--change_percentage', type=int, required=False,
+                        help='the percentage of improvement per training epoch that is considered the minimum amount of'
+                             'improvement. ')
     parser.add_argument('-ns', '--num_samples', type=int, required=True,
                         help='list of number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')

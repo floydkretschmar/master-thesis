@@ -126,9 +126,9 @@ def _prepare_training(training_parameters):
     current_training_parameters["parameter_optimization"]["epochs"] = training_parameters["parameter_optimization"][
         "epochs"] if "epochs" in training_parameters["parameter_optimization"] else None
 
-    current_training_parameters["parameter_optimization"]["num_change_iterations"] = \
-        training_parameters["parameter_optimization"]["num_change_iterations"] \
-            if "num_change_iterations" in training_parameters["parameter_optimization"] else 5
+    current_training_parameters["parameter_optimization"]["change_iterations"] = \
+        training_parameters["parameter_optimization"]["change_iterations"] \
+            if "change_iterations" in training_parameters["parameter_optimization"] else 5
 
     current_training_parameters["parameter_optimization"]["change_percentage"] = \
         training_parameters["parameter_optimization"]["change_percentage"] \
