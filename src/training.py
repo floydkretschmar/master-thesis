@@ -122,7 +122,7 @@ def _prepare_training(training_parameters):
         current_training_parameters["parameter_optimization"]["decay_step"] \
             = training_parameters["parameter_optimization"]["time_steps"] + 1
 
-    # if epochs, num_change_iterations or change percentage is not specified, set to default values
+    # if epochs, change_iterations or change percentage is not specified, set to default values
     current_training_parameters["parameter_optimization"]["epochs"] = training_parameters["parameter_optimization"][
         "epochs"] if "epochs" in training_parameters["parameter_optimization"] else None
 

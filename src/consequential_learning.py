@@ -145,7 +145,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         """
         batch_size = training_parameters["parameter_optimization"]["batch_size"]
         epochs = training_parameters["parameter_optimization"]["epochs"]
-        num_change_iterations = training_parameters["parameter_optimization"]["num_change_iterations"]
+        num_change_iterations = training_parameters["parameter_optimization"]["change_iterations"]
         change_percentage = training_parameters["parameter_optimization"]["change_percentage"]
 
         decisions, decision_probability = optimizer.policy(self.data_history["x"], self.data_history["s"])
