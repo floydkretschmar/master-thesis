@@ -104,7 +104,7 @@ def single_run(args):
     elif args.data == 'ADULT':
         distibution = AdultCreditDistribution(bias=True, test_percentage=0.2)
     elif args.data == 'GERMAN':
-        distibution = GermanCreditDistribution(bias=True, test_percentage=0.2)
+        distibution = GermanCreditDistribution(bias=True, test_percentage=0.3)
 
     training_parameters = {
         'model': {
