@@ -31,24 +31,6 @@ log = /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/log/experiment.$(Pro
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 1e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 2e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 3.0000000000000004e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 4e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 5e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 6e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 7.000000000000001e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 8e-05
-queue 30
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 9e-05
-queue 30
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.0001
 queue 30
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.00019999999999999998
@@ -86,4 +68,22 @@ queue 30
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.009000000000000001
 queue 30
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.01
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.020000000000000004
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.030000000000000006
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.04000000000000001
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.05000000000000001
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.06000000000000001
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.07
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.08
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.09000000000000001
+queue 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/BEST/ADULT/BD_EOP/raw -ts 200 -e 50 -bs 512 -ns 16384 -sp ./seeds.npz     -ipc  -pid $(Process) -f BD_EOP -fv 0.1
 queue 30
