@@ -267,6 +267,7 @@ if __name__ == "__main__":
             lambdas = [0.0]
     else:
         base_path = "{}/{}".format(args.path, args.data)
+        lambdas = [0.0]
 
     if args.build_submit:
         _build_submit_file(args, base_path, lambdas)
