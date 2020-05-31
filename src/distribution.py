@@ -343,13 +343,13 @@ class AdultCreditDistribution(ResamplingDistribution):
         data = AdultDataset()
 
         # use race as the sensitive attribute
-        race = data.df['sex']
-        s = race.where(race == 'Male', 1)
+        race = data.df['race']
+        s = race.where(race == 'White', 1)
         s.where(s == 1, 0, inplace=True)
         s = s.values.reshape(-1, 1)
 
         # Use capital gain/capital loss and hours per week
-        x = whiten(data=data.df[['hours_per_week']].values.astype(float))
+        x = whiten(data=data.df[['capital_gain', 'capital_loss', 'hours_per_week']].values.astype(float))
 
         # work class, education, marital status and native country in one hot encoding
         for column in ["workclass", "education", "marital_status", "native_country"]:
@@ -374,11 +374,8 @@ class GermanCreditDistribution(ResamplingDistribution):
     def _load_data(self):
         data = GermanDataset()
 
-        # use sex as the sensitive attribute (columns status and sex are switched)
-        sex = data.df['status'].iloc[:, 0]
-        s = sex.where(sex == 'male', 1)
-        s.where(s == 1, 0, inplace=True)
-        s = s.values.reshape(-1, 1)
+        # use age as the sensitive attribute (people between 19-25 = protected, 25-75 = unprotected)
+        s = data.df[data.sensitive_attributes].applymap(lambda item: 0 if item.left == 25 else 1).values
 
         # Use credit amount, installment rate, time in present residence, number of existing credits, number of people
         # liable for and whether or not person is a foreign worker
