@@ -6,6 +6,7 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
@@ -14,7 +15,7 @@ import tikzplotlib as tpl
 from src.training_evaluation import MEAN, MEDIAN
 
 
-def _plot_results(plotting_dictionary, file_path):
+def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row):
     x = plotting_dictionary["plot_info"]["x_axis"]
     x_scale = plotting_dictionary["plot_info"]["x_scale"]
     x_label = plotting_dictionary["plot_info"]["x_label"]
@@ -22,17 +23,21 @@ def _plot_results(plotting_dictionary, file_path):
     performance_measures = plotting_dictionary["performance_measures"]
     fairness_measures = plotting_dictionary["fairness_measures"]
 
-    num_columns = min(len(performance_measures.items()), 3)
-    if num_columns < 3:
-        num_columns = min(max(len(fairness_measures.items()), num_columns), 3)
+    num_columns = min(len(performance_measures.items()), plots_per_row)
+    if num_columns < plots_per_row:
+        num_columns = min(max(len(fairness_measures.items()), num_columns), plots_per_row)
 
-    # get num_rows for maximum of 3 graphs per row
+    # get num_rows for maximum of plots_per_row graphs per row
     num_rows = (len(performance_measures.items()) // num_columns) + (
         1 if len(performance_measures.items()) % num_columns > 0 else 0)
     num_rows += (len(fairness_measures.items()) // num_columns) + (
         1 if len(fairness_measures.items()) % num_columns > 0 else 0)
 
-    figure = plt.figure(constrained_layout=True, figsize=(24, 15), dpi=80)
+    if figsize is None:
+        figure = plt.figure(constrained_layout=True)
+    else:
+        figure = plt.figure(constrained_layout=True, figsize=figsize, dpi=80)
+
     grid = GridSpec(nrows=num_rows, ncols=num_columns, figure=figure)
 
     current_row = 0
@@ -47,7 +52,7 @@ def _plot_results(plotting_dictionary, file_path):
             axis = figure.add_subplot(grid[current_row, current_column])
             axis.plot(x, y)
             axis.set_xlabel(x_label)
-            axis.set_ylabel(y_label)
+            axis.title.set_text(y_label)
             axis.set_xscale(x_scale)
             axis.fill_between(x,
                               y_uncertainty_lower,
@@ -71,7 +76,8 @@ def _plot_results(plotting_dictionary, file_path):
              figure=figure,
              axis_width='\\figwidth',
              axis_height='\\figheight',
-             tex_relative_path_to_data='.')
+             tex_relative_path_to_data='.',
+             extra_groupstyle_parameters={"horizontal sep=1.2cm"})
     plt.close('all')
 
 
@@ -80,9 +86,11 @@ def plot_median(x_values,
                 x_scale,
                 performance_measures,
                 fairness_measures,
-                file_path):
+                file_path,
+                figsize=None,
+                plots_per_row=4):
     plotting_dict = _build_plot_dict(x_values, x_label, x_scale, performance_measures, fairness_measures, MEDIAN)
-    _plot_results(plotting_dict, file_path)
+    _plot_results(plotting_dict, file_path, figsize, plots_per_row)
 
 
 def plot_mean(x_values,
@@ -90,9 +98,11 @@ def plot_mean(x_values,
               x_scale,
               performance_measures,
               fairness_measures,
-              file_path):
+              file_path,
+              figsize=None,
+              plots_per_row=4):
     plotting_dict = _build_plot_dict(x_values, x_label, x_scale, performance_measures, fairness_measures, MEAN)
-    _plot_results(plotting_dict, file_path)
+    _plot_results(plotting_dict, file_path, figsize, plots_per_row)
 
 
 def _build_plot_dict(x_values,

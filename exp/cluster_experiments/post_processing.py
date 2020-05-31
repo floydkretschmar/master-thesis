@@ -12,7 +12,7 @@ module_path = os.path.abspath(os.path.join('../..'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-from src.training_evaluation import ModelParameters, MultiStatistics, UTILITY, Statistics
+from src.training_evaluation import ModelParameters, MultiStatistics, UTILITY, Statistics, COVARIANCE_OF_DECISION_DP
 from src.util import load_dictionary
 from src.training import _save_results, _process_results
 from src.plotting import plot_mean, plot_median
@@ -26,7 +26,15 @@ parser.add_argument('-s', '--save', action='store_true')
 parser.add_argument('-f', '--fairness', action='store_true')
 parser.add_argument('-fs', '--fairness_skip', type=int, required=False,
                     help="only take every #fairness_skip fairness value into account")
+parser.add_argument('-fst', '--fairness_start', type=float, required=False)
 parser.add_argument('-a', '--analyze', action='store_true')
+
+parser.add_argument('-dp', '--demographic_parity', action='store_true')
+parser.add_argument('-eop', '--equality_of_opportunity', action='store_true')
+parser.add_argument('-u', '--utility', action='store_true')
+parser.add_argument('-acc', '--accuracy', action='store_true')
+parser.add_argument('-cov', '--covariance_of_decision', action='store_true')
+parser.add_argument('--combine_measures', action='store_true')
 args = parser.parse_args()
 
 
@@ -61,9 +69,15 @@ def fairness(lambdas, fairness_skip=None):
         sorted_fairness_idx = sorted_fairness_idx[::fairness_skip]
 
     overall_statistics = MultiStatistics()
+    selected_fairness_rates = []
 
     # load statistics and model parameters for all runs of a parameter setting
     for lambda_idx in sorted_fairness_idx:
+        if args.fairness_start is not None and fairness_rates[lambda_idx] < args.fairness_start:
+            continue
+
+        selected_fairness_rates.append(fairness_rates[lambda_idx])
+
         current_lambda_path = lambda_paths[lambda_idx]
         current_lambda_statistics_path = os.path.join(current_lambda_path, "statistics.json")
 
@@ -79,7 +93,7 @@ def fairness(lambdas, fairness_skip=None):
 
         overall_statistics.log_run(statistics)
 
-    return overall_statistics, fairness_rates[sorted_fairness_idx]
+    return overall_statistics, selected_fairness_rates
 
 
 cost_directories = [os.path.join(args.input_path, cost) for cost in os.listdir(args.input_path)
@@ -153,24 +167,40 @@ for cost in cost_directories:
                 output_path = parameter_setting_path.replace(args.input_path, args.output_path)
                 # mkdir output path if necessary
                 Path(output_path).mkdir(parents=True, exist_ok=True)
+                performance_measures = []
+                fairness_measures = []
+
+                if args.utility:
+                    performance_measures.append(statistics.get_additonal_measure(UTILITY, "Utility"))
+                if args.accuracy:
+                    performance_measures.append(statistics.accuracy())
+
+                if args.demographic_parity:
+                    fairness_measures.append(statistics.demographic_parity())
+                if args.equality_of_opportunity:
+                    fairness_measures.append(statistics.equality_of_opportunity())
+                if args.covariance_of_decision:
+                    fairness_measures.append(statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
+                                                                              "Covariance of decision "
+                                                                              "(Demographic Parity)"))
+
+                if args.combine_measures:
+                    performance_measures.extend(fairness_measures)
+                    fairness_measures = []
 
                 # save the merged statistics, parameters and plot them
                 _save_results(output_path, statistics, model_parameters)
                 plot_mean(x_values=x_axis,
                           x_label=x_label,
                           x_scale=x_scale,
-                          performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
-                                                statistics.accuracy()],
-                          fairness_measures=[statistics.demographic_parity(),
-                                             statistics.equality_of_opportunity()],
+                          performance_measures=performance_measures,
+                          fairness_measures=fairness_measures,
                           file_path=os.path.join(output_path, "results_mean.png"))
                 plot_median(x_values=x_axis,
                             x_label=x_label,
                             x_scale=x_scale,
-                            performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
-                                                  statistics.accuracy()],
-                            fairness_measures=[statistics.demographic_parity(),
-                                               statistics.equality_of_opportunity()],
+                            performance_measures=performance_measures,
+                            fairness_measures=fairness_measures,
                             file_path=os.path.join(output_path, "results_median.png"))
 
             print("finished processing {}".format(parameter_setting_path))
