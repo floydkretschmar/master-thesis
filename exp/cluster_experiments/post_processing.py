@@ -181,7 +181,7 @@ for cost in cost_directories:
                     fairness_measures.append(statistics.equality_of_opportunity())
                 if args.covariance_of_decision:
                     fairness_measures.append(statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
-                                                                              "Covariance of decision "
+                                                                              "Covariance of decision \n"
                                                                               "(Demographic Parity)"))
 
                 if args.combine_measures:

@@ -398,6 +398,5 @@ doc/reading/Bishop - Pattern Recognition and Machine Learning.pdf
 */ext/*
 
 ### ignore saved models
-*.json
-*.png
-/res/
+/res/cluster_results
+/res/local_experiments
