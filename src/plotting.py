@@ -77,7 +77,8 @@ def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row):
              axis_width='\\figwidth',
              axis_height='\\figheight',
              tex_relative_path_to_data='.',
-             extra_groupstyle_parameters={"horizontal sep=1.2cm"})
+             extra_groupstyle_parameters={"horizontal sep=1.2cm"},
+             extra_axis_parameters={"scaled y ticks = false, \n yticklabel style = {/pgf/number format/fixed, /pgf/number format/precision=3}"})
     plt.close('all')
 
 
