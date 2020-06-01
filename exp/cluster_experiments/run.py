@@ -93,8 +93,8 @@ def single_run(args):
         fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
         initial_lambda = args.fairness_value
     else:
-        fair_fct = lambda **fairness_params: [0.0]
-        fair_fct_grad = lambda **fairness_params: [0.0]
+        fair_fct = lambda **fairness_params: fairness_function(type='BD_DP', **fairness_params)
+        fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type='BD_DP', **fairness_params)
         initial_lambda = 0.0
 
     if args.data == 'FICO':
