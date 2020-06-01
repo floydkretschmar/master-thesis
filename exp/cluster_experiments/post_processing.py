@@ -23,7 +23,8 @@ parser.add_argument('-i', '--input_path', type=str, required=True, help="the pat
 parser.add_argument('-o', '--output_path', type=str, required=True,
                     help="the path into which the processed data will be saved")
 parser.add_argument('-s', '--save', action='store_true')
-parser.add_argument('-f', '--fairness', action='store_true')
+parser.add_argument('-fsw', '--fairness_sweep', action='store_true')
+parser.add_argument('-fdg', '--fairness_dual_gradient', action='store_true')
 parser.add_argument('-fs', '--fairness_skip', type=int, required=False,
                     help="only take every #fairness_skip fairness value into account")
 parser.add_argument('-fst', '--fairness_start', type=float, required=False)
@@ -96,6 +97,66 @@ def fairness(lambdas, fairness_skip=None):
     return overall_statistics, selected_fairness_rates
 
 
+def _log_result_row(result_row, statistics, dg):
+    utility = statistics.get_additonal_measure(UTILITY, "Utility")
+    demographic_parity = statistics.demographic_parity()
+    equality_of_opportunity = statistics.equality_of_opportunity()
+
+    if not dg:
+        result_row.append(utility.median().max())
+        result_row.append(utility.median().min())
+    else:
+        result_row.append(utility.median()[-1])
+        result_row.append(demographic_parity.median()[-1])
+        result_row.append(equality_of_opportunity.median()[-1])
+
+    result_row.append((utility.third_quartile() - utility.first_quartile()).mean(axis=0))
+    result_row.append((demographic_parity.third_quartile()
+                       - demographic_parity.first_quartile()).mean(axis=0))
+    result_row.append((equality_of_opportunity.third_quartile()
+                       - equality_of_opportunity.first_quartile()).mean(axis=0))
+
+
+def _save(args, statistics, model_parameters, output_path, x_axis, x_label, x_scale):
+    # mkdir output path if necessary
+    Path(output_path).mkdir(parents=True, exist_ok=True)
+    performance_measures = []
+    fairness_measures = []
+
+    if args.utility:
+        performance_measures.append(statistics.get_additonal_measure(UTILITY, "Utility"))
+    if args.accuracy:
+        performance_measures.append(statistics.accuracy())
+
+    if args.demographic_parity:
+        fairness_measures.append(statistics.demographic_parity())
+    if args.equality_of_opportunity:
+        fairness_measures.append(statistics.equality_of_opportunity())
+    if args.covariance_of_decision:
+        fairness_measures.append(statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
+                                                                  "Covariance of decision \n"
+                                                                  "(Demographic Parity)"))
+
+    if args.combine_measures:
+        performance_measures.extend(fairness_measures)
+        fairness_measures = []
+
+    # save the merged statistics, parameters and plot them
+    _save_results(output_path, statistics, model_parameters)
+    plot_mean(x_values=x_axis,
+              x_label=x_label,
+              x_scale=x_scale,
+              performance_measures=performance_measures,
+              fairness_measures=fairness_measures,
+              file_path=os.path.join(output_path, "results_mean.png"))
+    plot_median(x_values=x_axis,
+                x_label=x_label,
+                x_scale=x_scale,
+                performance_measures=performance_measures,
+                fairness_measures=fairness_measures,
+                file_path=os.path.join(output_path, "results_median.png"))
+
+
 cost_directories = [os.path.join(args.input_path, cost) for cost in os.listdir(args.input_path)
                     if os.path.isdir(os.path.join(args.input_path, cost))]
 
@@ -111,97 +172,89 @@ for cost in cost_directories:
                               os.path.isdir(os.path.join(learning_rate_path, parameter_setting))]
 
         for parameter_setting_path, parameter_setting in parameter_settings:
-            runs = [(os.path.join(parameter_setting_path, run), run) for run in os.listdir(parameter_setting_path)
-                    if os.path.isdir(os.path.join(parameter_setting_path, run))]
+            parameter_settings_subfolders = [(os.path.join(parameter_setting_path, run), run) for run in
+                                             os.listdir(parameter_setting_path)
+                                             if os.path.isdir(os.path.join(parameter_setting_path, run))]
 
             if args.analyze:
-                result_columns = ['Learning Rate', 'Time Steps', 'Epochs', 'Number of Batches']
-                result_row = [re.search("(?<=lr)\d+(\.\d+)*", learning_rate)[0]]
-                result_row.append(re.search("(?<=ts)\d+", parameter_setting)[0])
-                result_row.append(re.search("(?<=ep)\d+", parameter_setting)[0])
-                result_row.append(re.search("(?<=bs)\d+", parameter_setting)[0])
+                if args.fairness_dual_gradient:
+                    result_columns = ['Fairness Learning Rate',
+                                      'Fairness Epochs',
+                                      'Fairness Batch size',
+                                      'Final median utility',
+                                      'Final median DP',
+                                      'Final median EOP',
+                                      'Average utility IQR',
+                                      'Average DP IQR',
+                                      'Average EOP IQR']
+                    result_row = []
+                else:
+                    result_columns = ['Learning Rate',
+                                      'Time Steps',
+                                      'Epochs',
+                                      'Number of Batches',
+                                      'Maximum median utility',
+                                      'Minimum median utility',
+                                      'Average utility IQR',
+                                      'Average DP IQR',
+                                      'Average EOP IQR']
+
+                    result_row = [re.search("(?<=lr)\d+(\.\d+)*", learning_rate)[0]]
+                    result_row.append(re.search("(?<=ts)\d+", parameter_setting)[0])
+                    result_row.append(re.search("(?<=ep)\d+", parameter_setting)[0])
+                    result_row.append(re.search("(?<=bs)\d+", parameter_setting)[0])
             else:
                 result_row = None
 
-            if args.fairness:
-                statistics, x_axis = fairness(runs, args.fairness_skip)
-                model_parameters = None
-                x_label = "Lagrangian Multiplier"
-                x_scale = "log"
+            if args.fairness_dual_gradient:
+                for fairness_lr_path, fairness_lr in parameter_settings_subfolders:
+                    fairness_parameter_settings = [(os.path.join(fairness_lr_path, setting), setting) for setting
+                                                   in
+                                                   os.listdir(fairness_lr_path)
+                                                   if os.path.isdir(os.path.join(fairness_lr_path, setting))]
 
-                if result_row is not None:
-                    utility = statistics.get_additonal_measure(UTILITY, "Utility")
-                    demographic_parity = statistics.demographic_parity()
-                    equality_of_opportunity = statistics.equality_of_opportunity()
+                    for fairness_settings_path, fairness_settings in fairness_parameter_settings:
+                        runs = [(os.path.join(fairness_settings_path, run), run) for run in
+                                os.listdir(fairness_settings_path)
+                                if os.path.isdir(os.path.join(fairness_settings_path, run))]
+                        statistics, model_parameters = combine_runs(runs)
+                        utility = statistics.get_additonal_measure(UTILITY, "Utility")
+                        x_axis = range(utility.length)
+                        x_label = "Time Step"
+                        x_scale = "linear"
 
-                    result_row.append(utility.median().max())
-                    result_row.append(utility.median().min())
-                    result_row.append((utility.third_quartile() - utility.first_quartile()).mean(axis=0))
-                    result_row.append((demographic_parity.third_quartile()
-                                       - demographic_parity.first_quartile()).mean(axis=0))
-                    result_row.append((equality_of_opportunity.third_quartile()
-                                       - equality_of_opportunity.first_quartile()).mean(axis=0))
+                        if result_row is not None:
+                            result_row = [re.search("(?<=flr)\d+(\.\d+)*", fairness_lr)[0]]
+                            result_row.append(re.search("(?<=fe)\d+", fairness_settings)[0])
+                            result_row.append(re.search("(?<=fbs)\d+", fairness_settings)[0])
+                            _log_result_row(result_row, statistics, True)
+                            results.append(result_row)
 
-                    result_columns.extend(['Maximum median utility',
-                                           'Minimum median utility',
-                                           'Average utility IQR',
-                                           'Average DP IQR',
-                                           'Average EOP IQR'])
-                    results.append(result_row)
+                        if args.save:
+                            output_path = fairness_settings_path.replace(args.input_path, args.output_path)
+                            _save(args, statistics, model_parameters, output_path, x_axis, x_label, x_scale)
+
+                        print("finished processing {}".format(fairness_settings_path))
             else:
-                statistics, model_parameters = combine_runs(runs)
-                x_axis = range(utility.shape[0])
-                x_label = "Time Steps"
-                x_scale = "linear"
+                if args.fairness_sweep:
+                    statistics, x_axis = fairness(parameter_settings_subfolders, args.fairness_skip)
+                    model_parameters = None
+                    x_label = "Lagrangian Multiplier"
+                    x_scale = "log"
+                else:
+                    statistics, model_parameters = combine_runs(parameter_settings_subfolders)
+                    utility = statistics.get_additonal_measure(UTILITY, "Utility")
+                    x_axis = range(utility.shape[0])
+                    x_label = "Time Step"
+                    x_scale = "linear"
 
                 if result_row is not None:
-                    result_row.append(utility.median().max())
-                    result_row.append(utility.median().min())
-                    result_row.append((utility.third_quartile() - utility.first_quartile()).mean(axis=0))
-                    result_columns.extend(['Maximum median utility',
-                                           'Minimum median utility',
-                                           'Average utility IQR'])
+                    _log_result_row(result_row, statistics, False)
                     results.append(result_row)
 
-            if args.save:
-                output_path = parameter_setting_path.replace(args.input_path, args.output_path)
-                # mkdir output path if necessary
-                Path(output_path).mkdir(parents=True, exist_ok=True)
-                performance_measures = []
-                fairness_measures = []
-
-                if args.utility:
-                    performance_measures.append(statistics.get_additonal_measure(UTILITY, "Utility"))
-                if args.accuracy:
-                    performance_measures.append(statistics.accuracy())
-
-                if args.demographic_parity:
-                    fairness_measures.append(statistics.demographic_parity())
-                if args.equality_of_opportunity:
-                    fairness_measures.append(statistics.equality_of_opportunity())
-                if args.covariance_of_decision:
-                    fairness_measures.append(statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
-                                                                              "Covariance of decision \n"
-                                                                              "(Demographic Parity)"))
-
-                if args.combine_measures:
-                    performance_measures.extend(fairness_measures)
-                    fairness_measures = []
-
-                # save the merged statistics, parameters and plot them
-                _save_results(output_path, statistics, model_parameters)
-                plot_mean(x_values=x_axis,
-                          x_label=x_label,
-                          x_scale=x_scale,
-                          performance_measures=performance_measures,
-                          fairness_measures=fairness_measures,
-                          file_path=os.path.join(output_path, "results_mean.png"))
-                plot_median(x_values=x_axis,
-                            x_label=x_label,
-                            x_scale=x_scale,
-                            performance_measures=performance_measures,
-                            fairness_measures=fairness_measures,
-                            file_path=os.path.join(output_path, "results_median.png"))
+                if args.save:
+                    output_path = parameter_setting_path.replace(args.input_path, args.output_path)
+                    _save(args, statistics, model_parameters, output_path, x_axis, x_label, x_scale)
 
             print("finished processing {}".format(parameter_setting_path))
 

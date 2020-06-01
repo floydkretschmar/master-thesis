@@ -111,6 +111,10 @@ class Statistic:
         self._name = name
 
     @property
+    def length(self):
+        return self._measure.shape[0]
+
+    @property
     def name(self):
         return self._name
 
