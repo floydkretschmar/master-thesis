@@ -1,11 +1,12 @@
 import os
 import sys
+
 root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
-#pylint: disable=no-name-in-module
+# pylint: disable=no-name-in-module
 from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
 
@@ -55,6 +56,7 @@ class BaseDistribution():
         """
         return self._sample_train_dataset_core(n_train, get_random(seed) if seed else get_random())
 
+
 class GenerativeDistribution(BaseDistribution):
     def __init__(self, fraction_protected, bias=False):
         super(GenerativeDistribution, self).__init__(bias)
@@ -96,6 +98,7 @@ class GenerativeDistribution(BaseDistribution):
     def _sample_test_dataset_core(self, n_test, random):
         return self.sample_train_dataset(n_test)
 
+
 class SplitDistribution(GenerativeDistribution):
     def __init__(self, fraction_protected, bias=False):
         super(SplitDistribution, self).__init__(fraction_protected=fraction_protected, bias=bias)
@@ -126,6 +129,7 @@ class SplitDistribution(GenerativeDistribution):
 
         return np.expand_dims(random.binomial(1, yprob), axis=1)
 
+
 class UncalibratedScore(GenerativeDistribution):
     """An distribution modelling an uncalibrated score."""
 
@@ -144,10 +148,10 @@ class UncalibratedScore(GenerativeDistribution):
     def _pdf(self, x):
         """Get the probability of repayment."""
         num = (
-            np.tan(x)
-            + np.tan(self.bound)
-            + self.height
-            * np.exp(-self.width * (x - self.bound - self.shift) ** 4)
+                np.tan(x)
+                + np.tan(self.bound)
+                + self.height
+                * np.exp(-self.width * (x - self.bound - self.shift) ** 4)
         )
         den = 2 * np.tan(self.bound) + self.height
         return num / den
@@ -321,7 +325,9 @@ class COMPASDistribution(ResamplingDistribution):
         s = s.values.reshape(-1, 1)
 
         # Use juvenile felonies, juvenile misdemeanors, juvenile others, prior conviction
-        x = compas_data.df[['juv_fel_count', 'juv_misd_count', 'juv_other_count', 'priors_count']].values
+        x = whiten(
+            data=compas_data.df[['juv_fel_count', 'juv_misd_count', 'juv_other_count', 'priors_count']].values.astype(
+                float))
 
         # Charge Degree categories in one hot encoding
         for category in compas_data.df['c_charge_degree'].unique():
