@@ -420,12 +420,12 @@ class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
     multiplier term as well as a penalty term and is differentiable with regards to the model parameters as well as
     the lagrangian multiplier"""
 
-    def __init__(self, initial_fairness_rate, utility_function, fairness_function, penalty_constant):
-        super().__init__(initial_fairness_rate, utility_function, fairness_function)
+    def __init__(self, fairness_rate, utility_function, fairness_function, penalty_constant):
+        super().__init__(fairness_rate, utility_function, fairness_function)
         self.penalty_constant = penalty_constant
 
     def __call__(self, **optimization_target_args):
-        lagrangian_result = super.__call__(**optimization_target_args)
+        lagrangian_result = super().__call__(**optimization_target_args)
         return lagrangian_result + (self.penalty_constant / 2) * self.fairness_function(**optimization_target_args) ** 2
 
     def model_parameter_gradient(self, **optimization_target_args):
@@ -444,11 +444,3 @@ class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
         gradient += grad_augmented
 
         return gradient
-
-    def fairness_parameter_gradient(self, **optimization_target_args):
-        """ Returns the value of the augmented lagrangian optimization target with regards to the fairness value.
-
-        Args:
-            optimization_target_args: The optimization target arguments.
-        """
-        return self.fairness_function(**optimization_target_args)

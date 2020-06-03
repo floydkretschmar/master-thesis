@@ -90,6 +90,7 @@ def _prepare_training(training_parameters):
         # wrap utility and fairness functions with appropriate wrapper functions
         utility_fct = UtilityFunction(
             training_parameters["optimization_target"]["parameters"]["utility_function"])
+        del current_training_parameters["optimization_target"]["parameters"]["utility_function"]
 
         if "fairness_gradient_function" in training_parameters["optimization_target"]["parameters"]:
             fairness_fct = FairnessFunction(
@@ -97,12 +98,14 @@ def _prepare_training(training_parameters):
                 training_parameters["optimization_target"]["parameters"]["fairness_gradient_function"]
             )
             del current_training_parameters["optimization_target"]["parameters"]["fairness_gradient_function"]
+            del current_training_parameters["optimization_target"]["parameters"]["fairness_function"]
 
         # construct optimization target
         current_training_parameters["optimization_target"] = training_parameters["optimization_target"][
             "constructor"](fairness_rate=0.0,
                            utility_function=utility_fct,
-                           fairness_function=fairness_fct)
+                           fairness_function=fairness_fct,
+                           **current_training_parameters["optimization_target"]["parameters"])
 
     # construct policy
     if isinstance(training_parameters["model"], dict):
