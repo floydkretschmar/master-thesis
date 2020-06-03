@@ -265,7 +265,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                     # 1. Train model parameters (until convergence)
                     # 2. Update fairness rate
                     # 3. Repeat 1. for #epochs
-                    theta = deepcopy(optimizer.policy._theta)
+                    # theta = deepcopy(optimizer.policy._theta)
                     for _ in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
                         self._train_model_parameters(optimizer,
                                                      theta_learning_rate,
@@ -278,11 +278,11 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                             self.data_history["s"],
                                                             self.data_history["y"],
                                                             self.data_history["ips_weights"])
-                        optimizer.policy.theta = deepcopy(theta)
+                        # optimizer.policy.theta = deepcopy(theta)
 
-                    self._train_model_parameters(optimizer,
-                                                 theta_learning_rate,
-                                                 training_parameters)
+                    # self._train_model_parameters(optimizer,
+                    #                              theta_learning_rate,
+                    #                              training_parameters)
                 else:
                     self._train_model_parameters(optimizer,
                                                  theta_learning_rate,
