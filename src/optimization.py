@@ -3,6 +3,7 @@ import os
 import sys
 
 import numpy as np
+from copy import deepcopy
 
 root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
@@ -65,6 +66,12 @@ class StochasticGradientOptimizer:
 
             yield x_batch, s_batch, y_batch, ips_weight_batch
 
+    def create_policy_checkpoint(self):
+        raise NotImplementedError("Subclass must override create_policy_checkpoint(self)")
+
+    def restore_last_policy_checkpoint(self):
+        raise NotImplementedError("Subclass must override restore_last_policy_checkpoint(self)")
+
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the model parameters according to the specified update strategy.
 
@@ -102,6 +109,13 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy, optimization_target):
         assert isinstance(optimization_target, OptimizationTargetGradient)
         super().__init__(policy, optimization_target)
+        self.create_policy_checkpoint()
+
+    def create_policy_checkpoint(self):
+        self._theta = deepcopy(self.policy._theta)
+
+    def restore_last_policy_checkpoint(self):
+        self.policy.theta = deepcopy(self._theta)
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Manually updates the model parameters using stochastic gradient descent.
