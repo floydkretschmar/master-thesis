@@ -199,7 +199,7 @@ for cost in cost_directories:
                                       'Average DP IQR',
                                       'Average EOP IQR']
 
-                    result_row = [re.search("(?<=lr)\d+(\.\d+)*", learning_rate)[0]]
+                    result_row = [re.search("(?<=lr)\d+((\.\d+)|e-\d+)*", learning_rate)[0]]
                     result_row.append(re.search("(?<=ts)\d+", parameter_setting)[0])
                     result_row.append(re.search("(?<=ep)\d+", parameter_setting)[0])
                     result_row.append(re.search("(?<=bs)\d+", parameter_setting)[0])
