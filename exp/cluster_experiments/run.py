@@ -15,7 +15,8 @@ from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution, GermanCreditDistribution
 from src.util import mean_difference, get_list_of_seeds
-from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget
+from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget, \
+    AugmentedLagrangianOptimizationTarget
 from src.policy import LogisticPolicy
 
 
@@ -211,7 +212,12 @@ def single_run(args):
             'batch_size': args.fairness_batch_size,
             'learning_rate': args.fairness_learning_rate
         }
-        training_parameters["optimization_target"]["constructor"] = LagrangianOptimizationTarget
+        if not args.fairness_augmented:
+            training_parameters["optimization_target"]["constructor"] = LagrangianOptimizationTarget
+        else:
+            training_parameters["optimization_target"]["constructor"] = AugmentedLagrangianOptimizationTarget
+            training_parameters["optimization_target"]["parameters"]['penalty_constant'] \
+                = training_parameters['lagrangian_optimization']['learning_rate']
 
     statistics, model_parameters, run_path = train(
         training_parameters,
@@ -279,6 +285,7 @@ if __name__ == "__main__":
                         help='batch size to be used to learn lambda')
     parser.add_argument('-fe', '--fairness_epochs', type=int, required=False,
                         help='number of epochs to be used to learn lambda')
+    parser.add_argument('-faug', '--fairness_augmented', required=False, action='store_true')
 
     args = parser.parse_args()
 

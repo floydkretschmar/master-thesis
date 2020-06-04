@@ -89,6 +89,7 @@ def _build_submit_file(args, base_path, lambdas):
                                       "{} " \
                                       "{} " \
                                       "{} " \
+                                      "{} " \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -106,6 +107,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
+                                                  "-faug" if args.fairness_augmented else "",
                                                   "-pid $(Process)" if args.queue_num else "")
 
                             if args.fairness_type is not None:
@@ -143,6 +145,8 @@ def _multi_run(args, base_path, lambdas):
                             command.append("--plot")
                         if args.ip_weight_clipping:
                             command.append("-ipc")
+                        if args.fairness_augmented:
+                            command.append("-faug")
                         if args.seed_path:
                             command.extend(["-sp", args.seed_path])
                         if args.change_iterations:
@@ -214,6 +218,7 @@ if __name__ == "__main__":
                         help='batch sizes to be used to learn lambda')
     parser.add_argument('-fe', '--fairness_epochs', type=int, required=False, nargs='+',
                         help='number of epochs to be used to learn lambda')
+    parser.add_argument('-faug', '--fairness_augmented', required=False, action='store_true')
 
     # Build script parameters
     parser.add_argument('--build_submit', required=False, action='store_true')
