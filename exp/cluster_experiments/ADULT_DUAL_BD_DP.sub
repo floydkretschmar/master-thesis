@@ -35,71 +35,71 @@ arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-the
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 128 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 256 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 512 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 512 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 512 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.2 -fbs 512 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 128 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 256 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 512 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 512 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 512 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.4 -fbs 512 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 128 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 256 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 512 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 512 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 512 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.6 -fbs 512 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 128 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 256 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 512 -fe 1
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 512 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 512 -fe 50
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/BD_DP/raw -ts 200 -e 50 -bs 512 -ns 16384      -ipc  -pid $(Process) -f BD_DP -fv 0.0 -flr 0.8 -fbs 512 -fe 25
 queue 10
