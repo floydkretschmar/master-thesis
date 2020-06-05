@@ -35,125 +35,125 @@ arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-th
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 25
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 1
 queue 10
 arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 50
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096      -ipc  -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 25
 queue 10
