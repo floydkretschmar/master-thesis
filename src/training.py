@@ -85,28 +85,6 @@ def _prepare_training(training_parameters):
     else:
         base_save_path = None
 
-    ##################### PREPARE THETA OPTIMIZATION #####################
-    if isinstance(training_parameters["optimization_target"], dict):
-        # wrap utility and fairness functions with appropriate wrapper functions
-        utility_fct = UtilityFunction(
-            training_parameters["optimization_target"]["parameters"]["utility_function"])
-        del current_training_parameters["optimization_target"]["parameters"]["utility_function"]
-
-        if "fairness_gradient_function" in training_parameters["optimization_target"]["parameters"]:
-            fairness_fct = FairnessFunction(
-                training_parameters["optimization_target"]["parameters"]["fairness_function"],
-                training_parameters["optimization_target"]["parameters"]["fairness_gradient_function"]
-            )
-            del current_training_parameters["optimization_target"]["parameters"]["fairness_gradient_function"]
-            del current_training_parameters["optimization_target"]["parameters"]["fairness_function"]
-
-        # construct optimization target
-        current_training_parameters["optimization_target"] = training_parameters["optimization_target"][
-            "constructor"](fairness_rate=0.0,
-                           utility_function=utility_fct,
-                           fairness_function=fairness_fct,
-                           **current_training_parameters["optimization_target"]["parameters"])
-
     # construct policy
     if isinstance(training_parameters["model"], dict):
         current_training_parameters["model"] = training_parameters["model"]["constructor"](
