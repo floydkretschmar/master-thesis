@@ -15,14 +15,8 @@ def cost_utility(cost_factor, **utility_parameters):
 
     return decisions * (y - cost_factor)
 
-
-def log_cost_utility(cost_factor, **utility_parameters):
-    # x = utility_parameters["x"]
-    # s = utility_parameters["s"]
+def cost_utility_probability(cost_factor, **utility_parameters):
+    decisions = utility_parameters["decision_probabilities"]
     y = utility_parameters["y"]
-    decision_probabilities = utility_parameters["decision_probabilities"]
 
-    neg_log_likelihood = np.log(decision_probabilities)
-    utility = -neg_log_likelihood * (y - cost_factor)
-
-    return utility
+    return decisions * (y - cost_factor)
