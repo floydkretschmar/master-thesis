@@ -4,16 +4,38 @@ import json
 import numbers
 
 import numpy as np
+import torch
 from numpy.random import RandomState
 
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
+def to_device(torch_object):
+    if torch.cuda.is_available():
+        return torch_object.cuda()
+    else:
+        return torch_object
+
+def from_device(torch_object):
+    if torch_object.is_cuda:
+        return torch_object.cpu()
+    else:
+        return torch_object
 
 def get_random(seed=None):
     if seed is None:
         return RandomState()
     else:
         return RandomState(seed)
+
+def train_validation_split(data, validation_percentage=0.2):
+    data_len = len(data)
+    validation_len = int(data_len*validation_percentage)
+
+    if torch.is_tensor(data):
+        data_train, data_val = torch.utils.data.random_split(data, [data_len-validation_len, validation_len])
+        return data[data_train.indices], data[data_val.indices]
+    elif isinstance(data, np.ndarray):
+        return train_test_split(data, test_percentage=validation_percentage)
 
 
 def get_list_of_seeds(number_of_seeds):
@@ -106,8 +128,13 @@ def mean_difference(target, group_indicator, groups=[0, 1]):
     assert target.shape[0] == group_indicator.shape[0]
 
     s_idx = np.expand_dims(np.arange(group_indicator.shape[0]), axis=1)
-    s_0_idx = s_idx[group_indicator == groups[0]]
-    s_1_idx = s_idx[group_indicator == groups[1]]
+    s_0_mask = group_indicator == groups[0]
+    s_1_mask = group_indicator == groups[1]
+
+    # print(s_1_mask.shape)
+    # print(s_idx.shape)
+    s_0_idx = s_idx[s_0_mask]
+    s_1_idx = s_idx[s_1_mask]
 
     if len(s_0_idx) == 0 or len(s_1_idx) == 0:
         return 0.0
@@ -117,17 +144,27 @@ def mean_difference(target, group_indicator, groups=[0, 1]):
 
     return target_s0 - target_s1
 
+def sort(object):
+    if torch.is_tensor(object):
+        sorted, _ = torch.sort(object)
+        return sorted
+    else:
+        return np.sort(object)
 
 def stack(base_array, new_array, axis):
     if base_array is None:
         return new_array
-    else:
+    elif isinstance(base_array, np.ndarray) and isinstance(new_array, np.ndarray):
         if axis == 0:
             return np.vstack((base_array, new_array))
         elif axis == 1:
             return np.hstack((base_array, new_array))
         else:
             return np.dstack((base_array, new_array))
+    elif torch.is_tensor(base_array) and torch.is_tensor(new_array):
+        return torch.cat((base_array, new_array), dim=axis)
+    else:
+        raise TypeError("Objects are either incompatible or neither a ndarray nor a torch tensor.")
 
 
 def load_dataset(data_file_path):
@@ -172,9 +209,15 @@ def whiten(data, columns=None, conditioning=1e-8):
     return data
 
 
-def train_test_split(x, y, s, test_size):
-    indices = np.array(range(x.shape[0]))
+def train_test_split(*arrays, test_percentage):
+    assert len(arrays) > 0
+    indices = np.array(range(arrays[0].shape[0]))
 
-    boundary = int(len(indices) * test_size)
+    boundary = int(len(indices) * test_percentage)
     test_indices, train_indices = np.split(get_random().permutation(indices), [boundary])
-    return x[train_indices], x[test_indices], y[train_indices], y[test_indices], s[train_indices], s[test_indices]
+
+    splits = []
+    for array in arrays:
+        splits.extend((array[train_indices], array[test_indices]))
+
+    return tuple(splits)
