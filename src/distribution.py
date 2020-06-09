@@ -272,7 +272,7 @@ class ResamplingDistribution(BaseDistribution):
         super(ResamplingDistribution, self).__init__(bias)
         x, s, y = self._load_data()
         self.x, self.x_test, self.y, self.y_test, self.s, self.s_test = train_test_split(x, y, s,
-                                                                                         test_size=test_percentage)
+                                                                                         test_percentage=test_percentage)
         self.total_test_samples = self.x_test.shape[0]
         self.test_sample_indices = np.arange(self.total_test_samples)
 
