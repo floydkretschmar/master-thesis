@@ -13,20 +13,26 @@ from src.functions import cost_utility_probability, cost_utility
 from src.plotting import plot_median
 from src.training import train
 from src.training_evaluation import UTILITY
+from src.feature_map import IdentityFeatureMap
 from src.policy import LogisticPolicy, NeuralNetworkPolicy
 from src.distribution import COMPASDistribution
-from src.optimization import PenaltyOptimizationTarget
+from src.optimization import PenaltyOptimizationTarget, ManualGradientPenaltyOptimizationTarget
 
 bias = True
 distribution = COMPASDistribution(bias=bias, test_percentage=0.2)
 dim_theta = distribution.feature_dimension
 
-optim_target = PenaltyOptimizationTarget(0.0,
-                                         lambda **util_params: torch.mean(cost_utility_probability(cost_factor=0.5, **util_params)),
+# optim_target = PenaltyOptimizationTarget(0.0,
+#                                          lambda **util_params: torch.mean(cost_utility_probability(cost_factor=0.5, **util_params)),
+#                                          lambda **util_params: 0.0)
+optim_target = ManualGradientPenaltyOptimizationTarget(0.0,
+                                         lambda **util_params: np.mean(cost_utility_probability(cost_factor=0.5, **util_params)),
+                                         lambda **util_params: 0.0,
                                          lambda **util_params: 0.0)
 
 training_parameters = {
-    'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+    # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+    'model': LogisticPolicy(np.zeros(dim_theta), IdentityFeatureMap(dim_theta), False),
     'distribution': distribution,
     'optimization_target': optim_target,
     'parameter_optimization': {

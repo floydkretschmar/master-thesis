@@ -489,7 +489,7 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
             **optimization_target_args)
 
 
-class ManualGradientLagrangianOptimizationTarget(DualOptimizationTarget, ManualGradientOptimizationTarget):
+class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, ManualGradientOptimizationTarget):
     def __init__(self, fairness_rate, utility_function, fairness_function, fairness_gradient_function):
         super().__init__(fairness_rate,
                          UtilityFunction(utility_function),

@@ -268,7 +268,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
             # only train if there is actual training data
-            if self.buffer_size > 1:
+            if self.buffer_size > 0:
                 if dual_optimization:
                     # decay lambda learning rate
                     if i % lambda_decay_step == 0 and i != 0:
