@@ -6,15 +6,19 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
+import abc
+import torch
+import torch.nn as nn
+
 from copy import deepcopy
 # pylint: disable=no-name-in-module
-from src.util import sigmoid, get_random
-from src.optimization import ManualStochasticGradientOptimizer
+from src.util import sigmoid, get_random, to_device, from_device
+from src.optimization import ManualStochasticGradientOptimizer, PytorchStochasticGradientOptimizer
 
 
 # TODO: Add Pytorch supporting policy (e.g. simple MLP)
 
-class BasePolicy:
+class BasePolicy(abc.ABC):
     """ The base implementation of a policy """
 
     def __init__(self, use_sensitive_attributes):
@@ -38,9 +42,9 @@ class BasePolicy:
         """
         features = self._extract_features(x, s)
         probability = self._probability(features)
+        decisions = self._decision(probability)
 
-        return np.expand_dims(get_random().binomial(1, probability).astype(float), axis=1), np.expand_dims(probability,
-                                                                                                           axis=1)
+        return decisions, probability
 
     @property
     def parameters(self):
@@ -79,6 +83,9 @@ class BasePolicy:
         """
         raise NotImplementedError("Subclass must override _probability(features).")
 
+    def _decision(self, probability):
+        raise NotImplementedError("Subclass must override _decision(features).")
+
     def copy(self):
         """ Creates a deep copy of the policy.
         
@@ -102,21 +109,20 @@ class BasePolicy:
             "Subclass must override optimizer(policy, optimization_target).")
 
 
-class ManualGradientPolicy(BasePolicy):
+class ManualGradientPolicy(BasePolicy, abc.ABC):
     def __init__(self, use_sensitive_attributes, theta):
         super().__init__(use_sensitive_attributes)
         self._theta = np.array(theta)
 
     @property
-    def theta(self):
-        """ Returns the paramters of the policy. """
-        return self._theta
+    def parameters(self):
+        return deepcopy(self._theta)
 
-    @theta.setter
-    def theta(self, value):
+    @parameters.setter
+    def parameters(self, value):
         """ Sets the paramters of the policy. """
-        assert self.theta.shape == value.shape
-        self._theta = value
+        assert self._theta.shape == value.shape
+        self._theta = deepcopy(value)
 
     def log_policy_gradient(self, x, s):
         """ Calculates the gradient of the logarithm of the current policy used to calculate the utility
@@ -155,20 +161,88 @@ class LogisticPolicy(ManualGradientPolicy):
         super(LogisticPolicy, self).__init__(use_sensitive_attributes, theta)
         self.feature_map = feature_map
 
-    @property
-    def parameters(self):
-        return self.theta.tolist()
-
     def _probability(self, features):
-        return sigmoid(np.matmul(self.feature_map(features), self.theta))
+        return sigmoid(np.matmul(self.feature_map(features), self._theta)).reshape(-1, 1)
+
+    def _decision(self, probability):
+        random = get_random()
+        decisions = random.binomial(1, probability).astype(float)
+        return decisions.reshape(-1, 1)
 
     def copy(self):
         approx_policy = LogisticPolicy(
-            deepcopy(self.theta),
+            deepcopy(self._theta),
             deepcopy(self.feature_map),
             self.use_sensitive_attributes)
         return approx_policy
 
     def log_policy_gradient(self, x, s):
         phi = self.feature_map(self._extract_features(x, s))
-        return phi / np.expand_dims(1.0 + np.exp(np.matmul(phi, self.theta)), axis=1)
+        return phi / np.expand_dims(1.0 + np.exp(np.matmul(phi, self._theta)), axis=1)
+
+
+class PytorchPolicy(BasePolicy, abc.ABC):
+    def __init__(self, use_sensitive_attributes, bias=True, **network_arguments):
+        super().__init__(use_sensitive_attributes)
+        self.bias = bias
+        self.network = self._create_network(bias=bias, **network_arguments)
+
+    def _create_network(self, **network_parameters):
+        raise NotImplementedError("Subclass must override _create_network(self, **network_parameters).")
+
+    def _probability(self, features):
+        features = to_device(features)
+        probability = self.network(features)
+        probability = from_device(probability)
+        return probability.reshape(-1, 1)
+
+    def _decision(self, probability):
+        return torch.bernoulli(probability).reshape(-1, 1)
+
+    @property
+    def parameters(self):
+        return self.network.parameters(), self.network.state_dict()
+
+    @parameters.setter
+    def parameters(self, value):
+        self.network.load_state_dict(value)
+
+    @staticmethod
+    def optimizer(policy, optimization_target):
+        return PytorchStochasticGradientOptimizer(policy, optimization_target)
+
+
+class NeuralNetworkPolicy(PytorchPolicy):
+    """ The implementation of the neural network policy. """
+    class Network(nn.Module):
+        def __init__(self, input_size, bias=True):
+            super(NeuralNetworkPolicy.Network, self).__init__()
+            self.network = nn.Sequential(nn.Linear(input_size, 512, bias=bias),
+                                         nn.ReLU(),
+                                         nn.Linear(512, 256, bias=bias),
+                                         nn.ReLU(),
+                                         nn.Linear(256, 128, bias=bias),
+                                         nn.ReLU(),
+                                         nn.Linear(128, 1, bias=bias),
+                                         nn.Sigmoid())
+
+        def forward(self, features):
+            return self.network(features)
+
+        def get_name(self):
+            return "NeuralNetworkPolicy"
+
+    def __init__(self, input_size, use_sensitive_attributes, bias=True):
+        super(NeuralNetworkPolicy, self).__init__(use_sensitive_attributes=use_sensitive_attributes,
+                                                  bias=bias,
+                                                  input_size=input_size)
+        self.input_size = input_size
+
+    def _create_network(self, **network_parameters):
+        network = NeuralNetworkPolicy.Network(network_parameters["input_size"], network_parameters["bias"])
+        return to_device(network)
+
+    def copy(self):
+        copy = NeuralNetworkPolicy(self.input_size, self.bias)
+        copy.network = deepcopy(self.network)
+        return copy

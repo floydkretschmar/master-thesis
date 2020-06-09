@@ -3,12 +3,13 @@ import sys
 from copy import deepcopy
 
 import numpy as np
+import torch
 
 root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import stack
+from src.util import stack, sort, train_test_split
 from src.training_evaluation import Statistics, ModelParameters
 
 
@@ -47,20 +48,20 @@ class BaseLearningAlgorithm:
             to 0.
         """
         if ip_weights.shape[0] > 1:
-            sorted_ipsw = np.sort(ip_weights.squeeze())
+            sorted_ipsw = sort(ip_weights.squeeze())
             r = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
         else:
             r = ip_weights[0]
 
-        clipped_ips_weights = deepcopy(ip_weights)
-        clipped_ips_weights[1 > r * probabilities] = 0
+        # clipped_ips_weights = deepcopy(ip_weights)
+        ip_weights[1 > r * probabilities] = 0
 
-        return clipped_ips_weights
+        return ip_weights
 
     def _filter_by_policy(self, data, policy):
         """ Makes decisions for the data based on the specified policy pi_0 and only returns the x, s and y of the
         accepted individuals, emulating imperfect data collection according to some initial decision policy pi_0.
-            
+
         Args:
             data: The dataset of x, s and y based on which the decisions are made.
             policy: The policy used to make the data collection decisions.
@@ -73,7 +74,7 @@ class BaseLearningAlgorithm:
         x, s, y = data
 
         decisions, probabilities = policy(x, s)
-        pos_decision_idx = np.expand_dims(np.arange(decisions.shape[0]), axis=1)
+        pos_decision_idx = np.arange(decisions.shape[0]).reshape(-1, 1)
         pos_decision_idx = pos_decision_idx[decisions == 1]
 
         return x[pos_decision_idx], s[pos_decision_idx], y[pos_decision_idx], probabilities[pos_decision_idx]
@@ -81,7 +82,7 @@ class BaseLearningAlgorithm:
     def _update_buffer(self, x, s, y, ips_weights):
         """ Update the internal buffer of the training algorithm. If learn_on_entire_history is specified, new data will
         be appended, otherwise new data will replace existing data.
-        
+
         Args:
             x: The features of the n samples
             s: The sensitive attribute of the n samples
@@ -97,10 +98,10 @@ class BaseLearningAlgorithm:
                 "ips_weights": ips_weights
             }
         elif self.learn_on_entire_history:
-            self.data_history["ips_weights"] = np.vstack((self.data_history["ips_weights"], ips_weights))
-            self.data_history["x"] = np.vstack((self.data_history["x"], x))
-            self.data_history["y"] = np.vstack((self.data_history["y"], y))
-            self.data_history["s"] = np.vstack((self.data_history["s"], s))
+            self.data_history["ips_weights"] = stack(self.data_history["ips_weights"], ips_weights, 0)
+            self.data_history["x"] = stack(self.data_history["x"], x, 0)
+            self.data_history["y"] = stack(self.data_history["y"], y, 0)
+            self.data_history["s"] = stack(self.data_history["s"], s, 0)
 
     def _reset_buffer(self):
         """ Resets the interal data storage. """
@@ -122,7 +123,7 @@ class BaseLearningAlgorithm:
 class ConsequentialLearning(BaseLearningAlgorithm):
     def __init__(self, learn_on_entire_history):
         """ Creates a new instance of a consequential learning algorithm.
-        
+
         Args:
             learn_on_entire_history: The flag indicating whether the algorithm should learn on the entire history or
             just the last time step.
@@ -148,33 +149,44 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         num_change_iterations = training_parameters["parameter_optimization"]["change_iterations"]
         change_percentage = training_parameters["parameter_optimization"]["change_percentage"]
 
-        decisions, decision_probability = optimizer.policy(self.data_history["x"], self.data_history["s"])
-        last_optimization_target = -optimizer.optimization_target(x=self.data_history["x"],
-                                                                  s=self.data_history["s"],
-                                                                  y=self.data_history["y"],
+        x_train, x_val, s_train, s_val, y_train, y_val, ip_weights_train, ip_weights_val = train_test_split(
+            self.data_history["x"],
+            self.data_history["s"],
+            self.data_history["y"],
+            self.data_history["ips_weights"],
+            test_percentage=0.2)
+
+        with torch.no_grad():
+            decisions, decision_probability = optimizer.policy(x_val, s_val)
+
+        last_optimization_target = -optimizer.optimization_target(x=x_val,
+                                                                  s=s_val,
+                                                                  y=y_val,
                                                                   policy=optimizer.policy,
                                                                   decisions=decisions,
                                                                   decision_probabilities=decision_probability,
-                                                                  ips_weights=self.data_history["ips_weights"])
+                                                                  ips_weights=ip_weights_val)
         i = 0
         i_no_change = 0
         # run until convergence or maximum number of epochs is reached
         while i_no_change < num_change_iterations:
             optimizer.update_model_parameters(learning_rate,
                                               batch_size,
-                                              self.data_history["x"],
-                                              self.data_history["s"],
-                                              self.data_history["y"],
-                                              self.data_history["ips_weights"])
+                                              x_train,
+                                              s_train,
+                                              y_train,
+                                              ip_weights_train)
 
-            decisions, decision_probability = optimizer.policy(self.data_history["x"], self.data_history["s"])
-            current_optimization_target = -optimizer.optimization_target(x=self.data_history["x"],
-                                                                         s=self.data_history["s"],
-                                                                         y=self.data_history["y"],
+            with torch.no_grad():
+                decisions, decision_probability = optimizer.policy(x_val, s_val)
+
+            current_optimization_target = -optimizer.optimization_target(x=x_val,
+                                                                         s=s_val,
+                                                                         y=y_val,
                                                                          policy=optimizer.policy,
                                                                          decisions=decisions,
                                                                          decision_probabilities=decision_probability,
-                                                                         ips_weights=self.data_history["ips_weights"])
+                                                                         ips_weights=ip_weights_val)
 
             # if the change in the last epoch was smaller than the specified percentage of the last optimization target
             # value: increase number of iterations without change by one, otherwise reset
@@ -201,10 +213,9 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             model_parameters: The model parameters object containing the trained model parameters.
         """
         distribution = training_parameters["distribution"]
-        optimization_target = deepcopy(training_parameters["optimization_target"])
-        optimizer = deepcopy(training_parameters["model"]).optimizer(
-            deepcopy(training_parameters["model"]),
-            optimization_target)
+        policy = deepcopy(training_parameters["model"])
+        optim_target = training_parameters["optimization_target"]
+        optimizer = policy.optimizer(policy, optim_target)
         dual_optimization = "lagrangian_optimization" in training_parameters
 
         # Prepare data seeds
@@ -217,10 +228,11 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         x_test, s_test, y_test = distribution.sample_test_dataset(
             n_test=training_parameters["data"]["num_test_samples"],
             seed=test_seed)
+        x_test, s_test, y_test = optimizer.preprocess_data(x_test, s_test, y_test)
 
         # Store initial policy decisions
-        decisions_over_time, decision_probabilities = optimizer.policy(x_test, s_test)
-
+        with torch.no_grad():
+            decisions_over_time, decision_probabilities = optimizer.policy(x_test, s_test)
         model_parameters = {
             "lambdas": [optimizer.parameters["lambda"]],
             "model_parameters": None
@@ -240,9 +252,9 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 theta_learning_rate *= theta_decay_rate
 
             # Collect training data
-            data = distribution.sample_train_dataset(
+            data = optimizer.preprocess_data(*distribution.sample_train_dataset(
                 n_train=training_parameters["data"]["num_train_samples"],
-                seed=training_seeds[i])
+                seed=training_seeds[i]))
             x_train, s_train, y_train, pi_0_probabilities = self._filter_by_policy(data, optimizer.policy)
 
             if x_train.shape[0] > 0:
@@ -252,10 +264,11 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             else:
                 ips_weights = np.ones(x_train.shape)
 
+            ips_weights = optimizer.preprocess_data(ips_weights)
             self._update_buffer(x_train, s_train, y_train, ips_weights)
 
             # only train if there is actual training data
-            if self.buffer_size > 0:
+            if self.buffer_size > 1:
                 if dual_optimization:
                     # decay lambda learning rate
                     if i % lambda_decay_step == 0 and i != 0:
@@ -286,7 +299,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                  training_parameters)
 
             # Evaluate performance on test set after training ...
-            decisions, decision_probabilities = optimizer.policy(x_test, s_test)
+            with torch.no_grad():
+                decisions, decision_probabilities = optimizer.policy(x_test, s_test)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
 
             # ... and save the parameters of the model
@@ -295,6 +309,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             model_parameters["model_parameters"] = [deepcopy(parameters)]
 
         self._reset_buffer()
+        decisions_over_time, s_test, y_test = optimizer.postprocess_data(decisions_over_time, s_test, y_test)
         statistics = Statistics(
             predictions=decisions_over_time,
             protected_attributes=s_test,

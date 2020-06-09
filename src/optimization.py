@@ -3,13 +3,15 @@ import os
 import sys
 
 import numpy as np
+import torch
+import torch.optim as optim
 from copy import deepcopy
 
 root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import check_for_missing_kwargs, get_random
+from src.util import check_for_missing_kwargs, get_random, to_device
 
 
 ########################################$ OPTIMIZERS ####################################################
@@ -37,6 +39,10 @@ class StochasticGradientOptimizer:
             "lambda": self.optimization_target.fairness_rate
         }
 
+
+    def preprocess_data(self, x, s, y, ips_weights=None):
+        raise NotImplementedError("Subclass must override preprocess_data(self, x, s, y, ips_weights=None).")
+
     @property
     def policy(self):
         """ Returns the policy being optimized. """
@@ -54,6 +60,9 @@ class StochasticGradientOptimizer:
         indices = get_random().permutation(x.shape[0])
         for batch_start in range(0, len(indices), batch_size):
             batch_end = min(batch_start + batch_size, len(indices))
+
+            if batch_end - batch_start < 2:
+                break
 
             x_batch = x[batch_start:batch_end]
             s_batch = s[batch_start:batch_end]
@@ -88,10 +97,10 @@ class StochasticGradientOptimizer:
             "Subclass must override update_model_parameters(self, x, s, y, learning_rate, ips_weights=None)")
 
     def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
-        """ Updates the fairness parameter according to the specified update strategy.
+        """ Manually updates the fairness parameter using stochastic gradient descent.
 
             Args:
-                learning_rate: The rate with which the fairness parameter will be updated.
+                learning_rate: The rate with which the model parameters will be updated.
                 batch_size: The size of the batches into which the training data will be subdivided.
                 x: The features of the n samples
                 s: The sensitive attribute of the n samples
@@ -99,8 +108,94 @@ class StochasticGradientOptimizer:
                 ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
                 no IPS will be applied.
         """
-        raise NotImplementedError(
-            "Subclass must override update_fairness_parameter(self, x, s, y, learning_rate, ips_weights=None)")
+        # for each minibatch...
+        for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
+            # make decision according to current policy
+            decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
+
+            # call the optimization target for gradient calculation
+            gradient = self.optimization_target.fairness_parameter_gradient(policy=self.policy,
+                                                                            x=x_batch,
+                                                                            s=s_batch,
+                                                                            y=y_batch,
+                                                                            decisions=decisions_batch,
+                                                                            decision_probabilities=decision_probability_batch,
+                                                                            ips_weights=ips_weights_batch)
+            self.optimization_target.fairness_rate += learning_rate * gradient
+
+class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
+    def __init__(self, policy, optimization_target):
+        super().__init__(policy, optimization_target)
+        optimization_parameters, _ = self._policy.parameters
+        self.model_optimizer = optim.SGD(optimization_parameters, lr=0.01)
+
+    @property
+    def parameters(self):
+        params = super().parameters
+        _, state_dict = self.policy.parameters
+        params['theta'] = state_dict
+        return params
+
+    def _process_data(self, process_tensor_func, process_non_tensor_func, *data):
+        return_data = []
+        for array in data:
+            if torch.is_tensor(array):
+                return_data.append(process_tensor_func(array))
+            else:
+                return_data.append(process_non_tensor_func(array))
+
+        if len(return_data) == 1:
+            return return_data[0]
+        else:
+            return tuple(return_data)
+
+    def create_policy_checkpoint(self):
+        _, state_dictionary = self.policy.parameters
+        self._state_dictionary = deepcopy(state_dictionary)
+
+    def restore_last_policy_checkpoint(self):
+        self.policy.parameters = deepcopy(self._state_dictionary)
+
+    def preprocess_data(self, *data):
+        def process_array(array):
+            tensor = torch.from_numpy(array).float()
+            return tensor
+
+        return self._process_data(lambda array: array, process_array, *data)
+
+    def postprocess_data(self, *data):
+        return self._process_data(lambda array: array.detach().numpy(), lambda array: array, *data)
+
+    def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
+        """ Updates the model parameters using stochastic gradient descent.
+
+            Args:
+                learning_rate: The rate with which the model parameters will be updated.
+                batch_size: The size of the batches into which the training data will be subdivided.
+                x: The features of the n samples
+                s: The sensitive attribute of the n samples
+                y: The ground truth labels of the n samples
+                ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
+                no IPS will be applied.
+        """
+        # update learning rate for SGD
+        for param_group in self.model_optimizer.param_groups:
+            param_group['lr'] = learning_rate
+
+        # for each minibatch...
+        for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y,
+                                                                            ips_weights):
+            self.model_optimizer.zero_grad()
+            decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
+            loss = self.optimization_target(policy=self.policy,
+                                            x=x_batch,
+                                            s=s_batch,
+                                            y=y_batch,
+                                            decisions=decisions_batch,
+                                            decision_probabilities=decision_probability_batch,
+                                            ips_weights=ips_weights_batch)
+            loss.backward()
+            self.model_optimizer.step()
 
 
 class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
@@ -112,10 +207,22 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
         self.create_policy_checkpoint()
 
     def create_policy_checkpoint(self):
-        self._theta = deepcopy(self.policy._theta)
+        self._theta = deepcopy(self.policy.parameters)
 
     def restore_last_policy_checkpoint(self):
-        self.policy.theta = deepcopy(self._theta)
+        self.policy.parameters = deepcopy(self._theta)
+
+    def preprocess_data(self, *data):
+        if len(data) == 1:
+            return data[0]
+
+        return data
+
+    def postprocess_data(self, *data):
+        if len(data) == 1:
+            return data[0]
+
+        return data
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Manually updates the model parameters using stochastic gradient descent.
@@ -142,34 +249,8 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
                                                                          decisions=decisions_batch,
                                                                          decision_probabilities=decision_probability_batch,
                                                                          ips_weights=ips_weights_batch)
-            self.policy.theta -= learning_rate * gradient
+            self.policy.parameters -= learning_rate * gradient
 
-    def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
-        """ Manually updates the fairness parameter using stochastic gradient descent.
-
-            Args:
-                learning_rate: The rate with which the model parameters will be updated.
-                batch_size: The size of the batches into which the training data will be subdivided.
-                x: The features of the n samples
-                s: The sensitive attribute of the n samples
-                y: The ground truth labels of the n samples
-                ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
-                no IPS will be applied.
-        """
-        # for each minibatch...
-        for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
-            # make decision according to current policy
-            decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
-
-            # call the optimization target for gradient calculation
-            gradient = self.optimization_target.fairness_parameter_gradient(policy=self.policy,
-                                                                            x=x_batch,
-                                                                            s=s_batch,
-                                                                            y=y_batch,
-                                                                            decisions=decisions_batch,
-                                                                            decision_probabilities=decision_probability_batch,
-                                                                            ips_weights=ips_weights_batch)
-            self.optimization_target.fairness_rate += learning_rate * gradient
 
 #################################### FUNCTION WRAPPERS FOR MANUAL GRADIENT #############################################
 
