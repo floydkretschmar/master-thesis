@@ -3,21 +3,23 @@ import os
 import sys
 
 import numpy as np
+import torch
 
-module_path = os.path.abspath(os.path.join('../..'))
+module_path = os.path.abspath(os.path.join("../.."))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
 from src.feature_map import IdentityFeatureMap
-from src.functions import cost_utility
+from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability
 from src.plotting import plot_mean, plot_median
 from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution, GermanCreditDistribution
-from src.util import mean_difference, get_list_of_seeds
+from src.util import mean_difference, get_list_of_seeds, mean
 from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget, \
-    AugmentedLagrangianOptimizationTarget
-from src.policy import LogisticPolicy
+    AugmentedLagrangianOptimizationTarget, ManualGradientPenaltyOptimizationTarget, \
+    ManualGradientAugmentedLagrangianOptimizationTarget, ManualGradientLagrangianOptimizationTarget
+from src.policy import LogisticPolicy, NeuralNetworkPolicy
 
 
 # region Fairness Definitions
@@ -33,10 +35,10 @@ def calc_covariance(s, decisions, ips_weights):
     new_s = 1 - (2 * s)
 
     if ips_weights is not None:
-        mu_s = np.mean(new_s * ips_weights, axis=0)
+        mu_s = mean(new_s * ips_weights, axis=0)
         d = decisions * ips_weights
     else:
-        mu_s = np.mean(new_s, axis=0)
+        mu_s = mean(new_s, axis=0)
         d = decisions
 
     covariance = (new_s - mu_s) * d
@@ -62,118 +64,164 @@ def fairness_function_gradient(type, **fairness_kwargs):
     if type == "BD_DP":
         return mean_difference(grad, s)
     elif type == "COV_DP":
-        return np.mean(grad, axis=0)
+        return mean(grad, axis=0)
     elif type == "BD_EOP":
         y1_indices = np.where(y == 1)
         return mean_difference(grad[y1_indices], s[y1_indices])
 
 
-def fairness_function(type, **fairness_kwargs):
+def fairness_function(type, neural_network, **fairness_kwargs):
     s = fairness_kwargs["s"]
     decisions = fairness_kwargs["decisions"]
     ips_weights = fairness_kwargs["ips_weights"]
     y = fairness_kwargs["y"]
 
     if type == "BD_DP":
-        benefit = calc_benefit(decisions, ips_weights)
+        if not neural_network:
+            benefit = calc_benefit(decisions, ips_weights)
+        else:
+            benefit = calc_benefit(decisions, None)
+
         return mean_difference(benefit, s)
     elif type == "COV_DP":
-        covariance = calc_covariance(s, decisions, ips_weights)
-        return np.mean(covariance, axis=0)
+        if not neural_network:
+            covariance = calc_covariance(s, decisions, ips_weights)
+        else:
+            covariance = calc_covariance(s, decisions, None)
+
+        return mean(covariance, axis=0)
     elif type == "BD_EOP":
-        benefit = calc_benefit(decisions, ips_weights)
+        if not neural_network:
+            benefit = calc_benefit(decisions, ips_weights)
+        else:
+            benefit = calc_benefit(decisions, None)
         y1_indices = np.where(y == 1)
+
         return mean_difference(benefit[y1_indices], s[y1_indices])
 
 
 # endregion
+def _build_optimization_target(args):
+    neural_network = args.policy_type == "NN"
+
+    additional_args = {}
+    if args.fairness_type is not None and args.fairness_learning_rate is not None:
+        if not args.fairness_augmented:
+            optim_target_constructor = LagrangianOptimizationTarget if neural_network \
+                else ManualGradientLagrangianOptimizationTarget
+        else:
+            optim_target_constructor = AugmentedLagrangianOptimizationTarget if neural_network \
+                else ManualGradientAugmentedLagrangianOptimizationTarget
+            additional_args["penalty_constant"] = args.fairness_learning_rate
+    else:
+        optim_target_constructor = PenaltyOptimizationTarget if neural_network \
+            else ManualGradientPenaltyOptimizationTarget
+
+    if args.fairness_type is None:
+        initial_fairness = 0.0
+        fair_fct = lambda **fairness_params: 0.0
+        fair_fct_grad = lambda **fairness_params: 0.0
+    else:
+        initial_fairness = args.fairness_value
+        fair_fct = lambda **fairness_params: fairness_function(type=args.fairness_type,
+                                                               neural_network=neural_network,
+                                                               **fairness_params)
+        fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
+
+    if not neural_network:
+        return optim_target_constructor(initial_fairness,
+                                        lambda **util_params: cost_utility(cost_factor=0.5, **util_params),
+                                        lambda **util_params: cost_utility_gradient(cost_factor=0.5, **util_params),
+                                        fair_fct,
+                                        fair_fct_grad,
+                                        **additional_args), initial_fairness
+    else:
+        return optim_target_constructor(initial_fairness,
+                                        lambda **util_params: cost_utility_probability(cost_factor=0.5, **util_params),
+                                        fair_fct,
+                                        **additional_args), initial_fairness
+
 
 def single_run(args):
-    if args.fairness_type:
-        fair_fct = lambda **fairness_params: fairness_function(type=args.fairness_type, **fairness_params)
-        fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
-        initial_lambda = args.fairness_value
-    else:
-        fair_fct = lambda **fairness_params: fairness_function(type='BD_DP', **fairness_params)
-        fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type='BD_DP', **fairness_params)
-        initial_lambda = 0.0
-
-    if args.data == 'FICO':
+    if args.data == "FICO":
         distibution = FICODistribution(bias=True, fraction_protected=0.5)
-    elif args.data == 'COMPAS':
+    elif args.data == "COMPAS":
         distibution = COMPASDistribution(bias=True, test_percentage=0.2)
-    elif args.data == 'ADULT':
+    elif args.data == "ADULT":
         distibution = AdultCreditDistribution(bias=True, test_percentage=0.2)
-    elif args.data == 'GERMAN':
+    elif args.data == "GERMAN":
         distibution = GermanCreditDistribution(bias=True, test_percentage=0.3)
 
+    if args.policy_type == "LOG":
+        model = LogisticPolicy(np.zeros((distibution.feature_dimension)),
+                               IdentityFeatureMap(distibution.feature_dimension),
+                               False)
+    elif args.policy_type == "NN":
+        model = NeuralNetworkPolicy(distibution.feature_dimension, False)
+
+    optimization_target, initial_lambda = _build_optimization_target(args)
+
     training_parameters = {
-        'model': {
-            'constructor': LogisticPolicy,
-            'parameters': {
-                "theta": np.zeros((distibution.feature_dimension)),
-                "feature_map": IdentityFeatureMap(distibution.feature_dimension),
-                "use_sensitive_attributes": False
-            }
+        "model": model,
+        "distribution": distibution,
+        "optimization_target": optimization_target,
+        "parameter_optimization": {
+            "batch_size": args.batch_size,
+            "epochs": args.epochs,
+            "learning_rate": args.learning_rate,
+            "learn_on_entire_history": False,
+            "time_steps": args.time_steps,
+            "clip_weights": args.ip_weight_clipping,
+            "change_percentage": args.change_percentage,
+            "change_iterations": args.change_iterations
         },
-        'distribution': distibution,
-        'optimization_target': {
-            'constructor': PenaltyOptimizationTarget,
-            'parameters': {
-                'fairness_function': fair_fct,
-                'fairness_gradient_function': fair_fct_grad,
-                'utility_function': lambda **util_params: cost_utility(cost_factor=args.cost, **util_params)
-            }
+        "data": {
+            "num_train_samples": args.num_samples,
+            "num_test_samples": 10000,
+            "fix_seeds": True
         },
-        'parameter_optimization': {
-            'batch_size': args.batch_size,
-            'epochs': args.epochs,
-            'learning_rate': args.learning_rate,
-            'learn_on_entire_history': False,
-            'time_steps': args.time_steps,
-            'clip_weights': args.ip_weight_clipping,
-            'change_percentage': args.change_percentage,
-            'change_iterations': args.change_iterations
-        },
-        'data': {
-            'num_train_samples': args.num_samples,
-            'num_test_samples': 10000,
-            'fix_seeds': True
-        },
-        'evaluation': {
+        "evaluation": {
             UTILITY: {
-                'measure_function': lambda s, y, decisions: np.mean(cost_utility(cost_factor=args.cost,
-                                                                                 s=s,
-                                                                                 y=y,
-                                                                                 decisions=decisions)),
-                'detailed': False
+                "measure_function": lambda s, y, decisions: mean(cost_utility(cost_factor=args.cost,
+                                                                              s=s,
+                                                                              y=y,
+                                                                              decisions=decisions)),
+                "detailed": False
             },
             COVARIANCE_OF_DECISION_DP: {
-                'measure_function': lambda s, y, decisions: fairness_function(
+                "measure_function": lambda s, y, decisions: fairness_function(
                     type="COV_DP",
+                    neural_network=args.policy_type == "NN",
                     x=None,
                     s=s,
                     y=y,
                     decisions=decisions,
                     ips_weights=None,
                     policy=None),
-                'detailed': False
+                "detailed": False
             }
         }
     }
+
+    if args.fairness_type is not None and args.fairness_learning_rate is not None:
+        training_parameters["lagrangian_optimization"] = {
+            "epochs": args.fairness_epochs,
+            "batch_size": args.fairness_batch_size,
+            "learning_rate": args.fairness_learning_rate
+        }
 
     if args.seed_path:
         del training_parameters["data"]["fix_seeds"]
 
         if os.path.isfile(args.seed_path):
             seeds = np.load(args.seed_path)
-            training_parameters['data']["training_seeds"] = seeds["train"]
-            training_parameters['data']["test_seed"] = seeds["test"]
+            training_parameters["data"]["training_seeds"] = seeds["train"]
+            training_parameters["data"]["test_seed"] = seeds["test"]
         else:
             train_seeds = get_list_of_seeds(200)
             test_seeds = get_list_of_seeds(1)
-            training_parameters['data']["training_seeds"] = train_seeds
-            training_parameters['data']["test_seed"] = test_seeds
+            training_parameters["data"]["training_seeds"] = train_seeds
+            training_parameters["data"]["test_seed"] = test_seeds
             np.savez(args.seed_path, train=train_seeds, test=test_seeds)
 
     if args.path:
@@ -205,19 +253,6 @@ def single_run(args):
                                                                                                args.batch_size)
             if args.process_id is not None:
                 training_parameters["save_path_subfolder"] = args.process_id
-
-    if args.fairness_type is not None and args.fairness_learning_rate is not None:
-        training_parameters["lagrangian_optimization"] = {
-            'epochs': args.fairness_epochs,
-            'batch_size': args.fairness_batch_size,
-            'learning_rate': args.fairness_learning_rate
-        }
-        if not args.fairness_augmented:
-            training_parameters["optimization_target"]["constructor"] = LagrangianOptimizationTarget
-        else:
-            training_parameters["optimization_target"]["constructor"] = AugmentedLagrangianOptimizationTarget
-            training_parameters["optimization_target"]["parameters"]['penalty_constant'] \
-                = training_parameters['lagrangian_optimization']['learning_rate']
 
     statistics, model_parameters, run_path = train(
         training_parameters,
@@ -251,46 +286,48 @@ def single_run(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-sp', '--seed_path', type=str, required=False, help="path for the seeds .npz file")
+    parser.add_argument("-sp", "--seed_path", type=str, required=False, help="path for the seeds .npz file")
 
-    parser.add_argument('-d', '--data', type=str, required=True,
+    parser.add_argument("-d", "--data", type=str, required=True,
                         help="select the distribution (FICO, COMPAS, ADULT, GERMAN)")
-    parser.add_argument('-c', '--cost', type=float, required=True, help="define the utility cost c")
-    parser.add_argument('-lr', '--learning_rate', type=float, required=True, help="define the learning rate of theta")
-    parser.add_argument('-p', '--path', type=str, required=False, help="save path for the result")
-    parser.add_argument('-ts', '--time_steps', type=int, required=True, help='number of time steps to be used')
-    parser.add_argument('-e', '--epochs', type=int, required=True, help='number of epochs to be used')
-    parser.add_argument('-bs', '--batch_size', type=int, required=True, help='batch size to be used')
-    parser.add_argument('-ci', '--change_iterations', type=int, required=False, default=5,
-                        help='the number of iterations without the amout of percentage improvemnt specified by '
-                             '--change_percentage after which the training of the policy will be stopped.'
-                             '(Default = 5)')
-    parser.add_argument('-cp', '--change_percentage', type=int, required=False, default=0.05,
-                        help='the percentage of improvement per training epoch that is considered the minimum amount of'
-                             'improvement. (Default = 0.05)')
-    parser.add_argument('-ns', '--num_samples', type=int, required=True, help='number of batches to be used')
-    parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
-    parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')
-    parser.add_argument('-a', '--asynchronous', action='store_true')
-    parser.add_argument('--plot', required=False, action='store_true')
-    parser.add_argument('-pid', '--process_id', type=str, required=False, help="process id for identification")
+    parser.add_argument("-c", "--cost", type=float, required=True, help="define the utility cost c")
+    parser.add_argument("-lr", "--learning_rate", type=float, required=True, help="define the learning rate of theta")
+    parser.add_argument("-p", "--path", type=str, required=False, help="save path for the result")
+    parser.add_argument("-pt", "--policy_type", type=str, required=False, default="LOG",
+                        help="(NN, LOG), default = LOG")
+    parser.add_argument("-ts", "--time_steps", type=int, required=True, help="number of time steps to be used")
+    parser.add_argument("-e", "--epochs", type=int, required=True, help="number of epochs to be used")
+    parser.add_argument("-bs", "--batch_size", type=int, required=True, help="batch size to be used")
+    parser.add_argument("-ci", "--change_iterations", type=int, required=False, default=5,
+                        help="the number of iterations without the amout of percentage improvemnt specified by "
+                             "--change_percentage after which the training of the policy will be stopped."
+                             "(Default = 5)")
+    parser.add_argument("-cp", "--change_percentage", type=int, required=False, default=0.05,
+                        help="the percentage of improvement per training epoch that is considered the minimum amount of"
+                             "improvement. (Default = 0.05)")
+    parser.add_argument("-ns", "--num_samples", type=int, required=True, help="number of batches to be used")
+    parser.add_argument("-i", "--iterations", type=int, required=True, help="the number of internal iterations")
+    parser.add_argument("-ipc", "--ip_weight_clipping", action="store_true")
+    parser.add_argument("-a", "--asynchronous", action="store_true")
+    parser.add_argument("--plot", required=False, action="store_true")
+    parser.add_argument("-pid", "--process_id", type=str, required=False, help="process id for identification")
 
-    parser.add_argument('-f', '--fairness_type', type=str, required=False,
+    parser.add_argument("-f", "--fairness_type", type=str, required=False,
                         help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "
                              "if none is selected no fairness criterion is applied")
-    parser.add_argument('-fv', '--fairness_value', type=float, required=False, help='the value of lambda')
-    parser.add_argument('-flr', '--fairness_learning_rate', type=float, required=False,
+    parser.add_argument("-fv", "--fairness_value", type=float, required=False, help="the value of lambda")
+    parser.add_argument("-flr", "--fairness_learning_rate", type=float, required=False,
                         help="define the learning rate of lambda")
-    parser.add_argument('-fbs', '--fairness_batch_size', type=int, required=False,
-                        help='batch size to be used to learn lambda')
-    parser.add_argument('-fe', '--fairness_epochs', type=int, required=False,
-                        help='number of epochs to be used to learn lambda')
-    parser.add_argument('-faug', '--fairness_augmented', required=False, action='store_true')
+    parser.add_argument("-fbs", "--fairness_batch_size", type=int, required=False,
+                        help="batch size to be used to learn lambda")
+    parser.add_argument("-fe", "--fairness_epochs", type=int, required=False,
+                        help="number of epochs to be used to learn lambda")
+    parser.add_argument("-faug", "--fairness_augmented", required=False, action="store_true")
 
     args = parser.parse_args()
 
     if args.fairness_type is not None and args.fairness_value is None:
-        parser.error('when using --fairness_type, --fairness_value has to be specified')
+        parser.error("when using --fairness_type, --fairness_value has to be specified")
 
     if args.fairness_type is not None and \
             ((args.fairness_epochs is None or
@@ -299,6 +336,6 @@ if __name__ == "__main__":
              (args.fairness_epochs is None and
               args.fairness_learning_rate is None and
               args.fairness_batch_size is None)):
-        parser.error('--fairness_epochs, --fairness_learning_rate, fairness_batch_size and '
-                     'have to be fully specified or not specified at all')
+        parser.error("--fairness_epochs, --fairness_learning_rate, fairness_batch_size and "
+                     "have to be fully specified or not specified at all")
     single_run(args)

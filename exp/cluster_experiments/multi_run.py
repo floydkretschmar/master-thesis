@@ -90,6 +90,7 @@ def _build_submit_file(args, base_path, lambdas):
                                       "{} " \
                                       "{} " \
                                       "{} " \
+                                      "{} " \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -104,6 +105,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                       args.change_iterations) if args.change_iterations else "",
                                                   "-cp {}".format(
                                                       args.change_percentage) if args.change_percentage else "",
+                                                  "pt {}".format(args.policy_type) if args.policy_type else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
@@ -153,6 +155,8 @@ def _multi_run(args, base_path, lambdas):
                             command.extend(["-ci", str(args.change_iterations)])
                         if args.change_percentage:
                             command.extend(["-cp", str(args.change_percentage)])
+                        if args.policy_type:
+                            command.extend(["-pt", str(args.policy_type)])
 
                         if args.fairness_type is not None:
                             for extension in _fairness_extensions(args, lambdas, build=False):
@@ -173,6 +177,7 @@ if __name__ == "__main__":
     parser.add_argument('-sp', '--seed_path', type=str, required=False, help="path for the seeds .npz file")
 
     # Policy training parameters
+    parser.add_argument("-pt", "--policy_type", type=str, required=False, default="LOG", help="(NN, LOG), default = LOG")
     parser.add_argument('-c', '--costs', type=float, nargs='+', required=True, help="define the utility cost c")
     parser.add_argument('-lr', '--learning_rates', type=float, nargs='+', required=True,
                         help="define the learning rate of theta")
@@ -189,6 +194,7 @@ if __name__ == "__main__":
     parser.add_argument('-ns', '--num_samples', type=int, required=True,
                         help='list of number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
+
     # ip weighting parameters
     parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')
 
