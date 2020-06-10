@@ -7,7 +7,6 @@ if root_path not in sys.path:
 
 import multiprocessing as mp
 from pathos.multiprocessing import ProcessingPool as Pool
-# from multiprocessing import Pool
 import time
 from pathlib import Path
 from copy import deepcopy
@@ -15,7 +14,6 @@ from copy import deepcopy
 from src.consequential_learning import ConsequentialLearning
 from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, get_list_of_seeds
 from src.training_evaluation import MultiStatistics
-from src.optimization import FairnessFunction, UtilityFunction
 
 
 def _check_for_missing_training_parameters(training_parameters):
