@@ -9,7 +9,7 @@ import numpy as np
 import numbers
 from copy import deepcopy
 
-from src.util import stack, serialize_dictionary
+from src.util import stack, serialize_dictionary, mean
 
 # Result Format
 MEAN = "MEAN"
@@ -119,7 +119,7 @@ class Statistic:
         return self._name
 
     def mean(self):
-        return np.mean(self._measure, axis=1)
+        return mean(self._measure, axis=1)
 
     def median(self):
         return np.median(self._measure, axis=1)

@@ -114,6 +114,14 @@ def check_for_missing_kwargs(function_name, required_kwargs, kwargs):
                                                                           ", ".join(missing_kwargs)))
 
 
+def mean(target, axis=None):
+    if isinstance(target, np.ndarray) or isinstance(target, numbers.Number):
+        return np.mean(target, axis=axis)
+    elif torch.is_tensor(target):
+        return torch.mean(target, dim=axis)
+    else:
+        raise TypeError("The given target {} is neither a ndarray nor a torch tensor.".format(target))
+
 def mean_difference(target, group_indicator, groups=[0, 1]):
     """ Calculates the mean difference of the target with regards to the sensitive attribute.
 
@@ -139,8 +147,8 @@ def mean_difference(target, group_indicator, groups=[0, 1]):
     if len(s_0_idx) == 0 or len(s_1_idx) == 0:
         return 0.0
 
-    target_s0 = target[s_0_idx].mean(axis=0)
-    target_s1 = target[s_1_idx].mean(axis=0)
+    target_s0 = mean(target[s_0_idx], axis=0)
+    target_s1 = mean(target[s_1_idx], axis=0)
 
     return target_s0 - target_s1
 
