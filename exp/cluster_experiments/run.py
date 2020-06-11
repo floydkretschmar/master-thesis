@@ -30,7 +30,6 @@ def calc_benefit(decisions, ips_weights):
 
     return decisions
 
-
 def calc_covariance(s, decisions, ips_weights):
     new_s = 1 - (2 * s)
 
@@ -43,7 +42,6 @@ def calc_covariance(s, decisions, ips_weights):
 
     covariance = (new_s - mu_s) * d
     return covariance
-
 
 def fairness_function_gradient(type, **fairness_kwargs):
     policy = fairness_kwargs["policy"]
@@ -68,7 +66,6 @@ def fairness_function_gradient(type, **fairness_kwargs):
     elif type == "BD_EOP":
         y1_indices = np.where(y == 1)
         return mean_difference(grad[y1_indices], s[y1_indices])
-
 
 def fairness_function(type, neural_network, **fairness_kwargs):
     s = fairness_kwargs["s"]
@@ -99,6 +96,19 @@ def fairness_function(type, neural_network, **fairness_kwargs):
 
         return mean_difference(benefit[y1_indices], s[y1_indices])
 
+def measure_cov_dp(s, y, decisions):
+    return fairness_function(
+                type="COV_DP",
+                neural_network=args.policy_type == "NN",
+                x=None,
+                s=s,
+                y=y,
+                decisions=decisions,
+                ips_weights=None,
+                policy=None)
+
+def measure_util(s, y, decisions):
+    return cost_utility(cost_factor=args.cost, s=s, y=y, decisions=decisions)
 
 # endregion
 def _build_optimization_target(args):
@@ -182,22 +192,11 @@ def single_run(args):
         },
         "evaluation": {
             UTILITY: {
-                "measure_function": lambda s, y, decisions: mean(cost_utility(cost_factor=args.cost,
-                                                                              s=s,
-                                                                              y=y,
-                                                                              decisions=decisions)),
+                "measure_function": measure_util,
                 "detailed": False
             },
             COVARIANCE_OF_DECISION_DP: {
-                "measure_function": lambda s, y, decisions: fairness_function(
-                    type="COV_DP",
-                    neural_network=args.policy_type == "NN",
-                    x=None,
-                    s=s,
-                    y=y,
-                    decisions=decisions,
-                    ips_weights=None,
-                    policy=None),
+                "measure_function": measure_cov_dp,
                 "detailed": False
             }
         }
