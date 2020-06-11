@@ -6,7 +6,10 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import multiprocessing as mp
-from pathos.multiprocessing import ProcessingPool as Pool
+# use Pytorch processing and force the spawn method for starting threads when using CUDA
+import torch
+from torch.multiprocessing import Pool
+
 import time
 from pathlib import Path
 from copy import deepcopy
@@ -14,6 +17,7 @@ from copy import deepcopy
 from src.consequential_learning import ConsequentialLearning
 from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, get_list_of_seeds
 from src.training_evaluation import MultiStatistics
+from src.policy import PytorchPolicy
 
 
 def _check_for_missing_training_parameters(training_parameters):
@@ -186,12 +190,14 @@ class _Trainer():
 
     def train_over_iterations(self, training_parameters, iterations, asynchronous):
         # multithreaded runs of training
-        if asynchronous:
+        # Hack to not deal with multithreaded GPU training for now: Disable asynchronous for Pytorch policies using cuda
+        if asynchronous and not (torch.cuda.is_available() and isinstance(training_parameters["model"], PytorchPolicy)):
             apply_results = []
             results_per_iterations = []
             pool = Pool(mp.cpu_count())
             for _ in range(0, iterations):
-                apply_results.append(pool.apipe(self._training_iteration, training_parameters))
+                # apply_results.append(pool.apipe(self._training_iteration, training_parameters))
+                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters,)))
 
             for result in apply_results:
                 results_per_iterations.append(result.get())

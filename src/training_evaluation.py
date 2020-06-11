@@ -56,6 +56,79 @@ UTILITY = "U"
 COVARIANCE_OF_DECISION_DP = "COV_DP"
 
 
+def true_positive_rate(statistics, protected_string, protected):
+    return statistics.results[protected_string][TRUE_POSITIVES] / statistics.results[protected_string][NUM_POSITIVES]
+
+
+def false_positive_rate(statistics, protected_string, protected):
+    return statistics.results[protected_string][FALSE_POSITIVES] / statistics.results[protected_string][
+        NUM_POSITIVES]
+
+
+def true_negative_rate(statistics, protected_string, protected):
+    return statistics.results[protected_string][TRUE_NEGATIVES] / statistics.results[protected_string][
+        NUM_NEGATIVES]
+
+
+def false_negative_rate(statistics, protected_string, protected):
+    return statistics.results[protected_string][FALSE_NEGATIVES] / statistics.results[protected_string][
+        NUM_NEGATIVES]
+
+
+def positive_predictive_value(statistics, protected_string, protected):
+    return statistics.results[protected_string][TRUE_POSITIVES] / statistics.results[protected_string][
+        NUM_PRED_POSITIVES]
+
+
+def negative_predictive_value(statistics, protected_string, protected):
+    return statistics.results[protected_string][TRUE_NEGATIVES] / statistics.results[protected_string][
+        NUM_PRED_NEGATIVES]
+
+
+def false_discovery_rate(statistics, protected_string, protected):
+    return statistics.results[protected_string][FALSE_POSITIVES] / statistics.results[protected_string][
+        NUM_PRED_POSITIVES]
+
+
+def false_omission_rate(statistics, protected_string, protected):
+    return statistics.results[protected_string][FALSE_NEGATIVES] / statistics.results[protected_string][
+        NUM_PRED_NEGATIVES]
+
+
+def accuracy(statistics, protected_string, protected):
+    return (statistics.results[protected_string][TRUE_POSITIVES] + statistics.results[protected_string][
+        TRUE_NEGATIVES]) / \
+           statistics.results[protected_string][NUM_INDIVIDUALS]
+
+
+def error_rate(statistics, protected_string, protected):
+    return 1 - statistics.accuracy(protected)._measure
+
+
+def selection_rate(statistics, protected_string, protected):
+    return statistics.results[protected_string][NUM_PRED_POSITIVES] / statistics.results[protected_string][
+        NUM_INDIVIDUALS]
+
+
+def f1(statistics, protected_string, protected):
+    return 2 * (statistics.true_positive_rate(protected)._measure * statistics.positive_predictive_value(
+        protected)._measure) / (statistics.true_positive_rate(protected)._measure + statistics.positive_predictive_value(
+        protected)._measure)
+
+
+def disparate_impact(statistics, protected_string, protected):
+    return statistics.selection_rate(protected=True)._measure / statistics.selection_rate(protected=False)._measure
+
+
+def demographic_parity(statistics, protected_string, protected):
+    return statistics.selection_rate(protected=True)._measure - statistics.selection_rate(protected=False)._measure
+
+
+def equality_of_opportunity(statistics, protected_string, protected):
+    return statistics.true_positive_rate(protected=True)._measure - statistics.true_positive_rate(
+        protected=False)._measure
+
+
 def _unserialize_value(value, recursive_func=None):
     if isinstance(value, dict) and recursive_func:
         return recursive_func(value)
@@ -137,51 +210,21 @@ class Statistic:
 class Statistics:
     def __init__(self, predictions, protected_attributes, ground_truths, additonal_measures=None):
         self._functions = {
-            TRUE_POSITIVE_RATE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][TRUE_POSITIVES] / statistics.results[protected_string][
-                NUM_POSITIVES],
-            FALSE_POSITIVE_RATE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][FALSE_POSITIVES] / statistics.results[protected_string][
-                NUM_POSITIVES],
-            TRUE_NEGATIVE_RATE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][TRUE_NEGATIVES] / statistics.results[protected_string][
-                NUM_NEGATIVES],
-            FALSE_NEGATIVE_RATE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][FALSE_NEGATIVES] / statistics.results[protected_string][
-                NUM_NEGATIVES],
-            POSITIVE_PREDICTIVE_VALUE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][TRUE_POSITIVES] / statistics.results[protected_string][
-                NUM_PRED_POSITIVES],
-            NEGATIVE_PREDICTIVE_VALUE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][TRUE_NEGATIVES] / statistics.results[protected_string][
-                NUM_PRED_NEGATIVES],
-            FALSE_DISCOVERY_RATE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][FALSE_POSITIVES] / statistics.results[protected_string][
-                NUM_PRED_POSITIVES],
-            FALSE_OMISSION_RATE: lambda statistics, protected_string, protected:
-            statistics.results[protected_string][FALSE_NEGATIVES] / statistics.results[protected_string][
-                NUM_PRED_NEGATIVES],
-            ACCURACY: lambda statistics, protected_string, protected: (statistics.results[protected_string][
-                                                                           TRUE_POSITIVES] +
-                                                                       statistics.results[protected_string][
-                                                                           TRUE_NEGATIVES]) /
-                                                                      statistics.results[protected_string][
-                                                                          NUM_INDIVIDUALS],
-            ERROR_RATE: lambda statistics, protected_string, protected: 1 - statistics.accuracy(protected)._measure,
-            SELECTION_RATE: lambda statistics, protected_string, protected: statistics.results[protected_string][
-                                                                                NUM_PRED_POSITIVES] /
-                                                                            statistics.results[protected_string][
-                                                                                NUM_INDIVIDUALS],
-            F1: lambda statistics, protected_string, protected: 2 * (
-                    statistics.true_positive_rate(protected)._measure * statistics.positive_predictive_value(
-                protected)._measure) / (statistics.true_positive_rate(
-                protected)._measure + statistics.positive_predictive_value(protected)._measure),
-            DISPARATE_IMPACT: lambda statistics, protected_string, protected: statistics.selection_rate(
-                protected=True)._measure / statistics.selection_rate(protected=False)._measure,
-            DEMOGRAPHIC_PARITY: lambda statistics, protected_string, protected: statistics.selection_rate(
-                protected=True)._measure - statistics.selection_rate(protected=False)._measure,
-            EQUALITY_OF_OPPORTUNITY: lambda statistics, protected_string, protected: statistics.true_positive_rate(
-                protected=True)._measure - statistics.true_positive_rate(protected=False)._measure
+            TRUE_POSITIVE_RATE: true_positive_rate,
+            FALSE_POSITIVE_RATE: false_positive_rate,
+            TRUE_NEGATIVE_RATE: true_negative_rate,
+            FALSE_NEGATIVE_RATE: false_negative_rate,
+            POSITIVE_PREDICTIVE_VALUE: positive_predictive_value,
+            NEGATIVE_PREDICTIVE_VALUE: negative_predictive_value,
+            FALSE_DISCOVERY_RATE: false_discovery_rate,
+            FALSE_OMISSION_RATE: false_omission_rate,
+            ACCURACY: accuracy,
+            ERROR_RATE: error_rate,
+            SELECTION_RATE: selection_rate,
+            F1: f1,
+            DISPARATE_IMPACT: disparate_impact,
+            DEMOGRAPHIC_PARITY: demographic_parity,
+            EQUALITY_OF_OPPORTUNITY: equality_of_opportunity
         }
         self.results = {}
 

@@ -30,6 +30,7 @@ def calc_benefit(decisions, ips_weights):
 
     return decisions
 
+
 def calc_covariance(s, decisions, ips_weights):
     new_s = 1 - (2 * s)
 
@@ -43,7 +44,8 @@ def calc_covariance(s, decisions, ips_weights):
     covariance = (new_s - mu_s) * d
     return covariance
 
-def fairness_function_gradient(type, **fairness_kwargs):
+
+def fairness_function_gradient(**fairness_kwargs):
     policy = fairness_kwargs["policy"]
     x = fairness_kwargs["x"]
     s = fairness_kwargs["s"]
@@ -51,27 +53,31 @@ def fairness_function_gradient(type, **fairness_kwargs):
     decisions = fairness_kwargs["decisions"]
     ips_weights = fairness_kwargs["ips_weights"]
 
-    if type == "BD_DP" or type == "BD_EOP":
+    if args.fairness_type == "BD_DP" or args.fairness_type == "BD_EOP":
         result = calc_benefit(decisions, ips_weights)
-    elif type == "COV_DP":
+    elif args.fairness_type == "COV_DP":
         result = calc_covariance(s, decisions, ips_weights)
 
     log_gradient = policy.log_policy_gradient(x, s)
     grad = log_gradient * result
 
-    if type == "BD_DP":
+    if args.fairness_type == "BD_DP":
         return mean_difference(grad, s)
-    elif type == "COV_DP":
+    elif args.fairness_type == "COV_DP":
         return mean(grad, axis=0)
-    elif type == "BD_EOP":
+    elif args.fairness_type == "BD_EOP":
         y1_indices = np.where(y == 1)
         return mean_difference(grad[y1_indices], s[y1_indices])
 
-def fairness_function(type, neural_network, **fairness_kwargs):
+
+def fairness_function(type=None, **fairness_kwargs):
     s = fairness_kwargs["s"]
     decisions = fairness_kwargs["decisions"]
     ips_weights = fairness_kwargs["ips_weights"]
     y = fairness_kwargs["y"]
+
+    type = args.fairness_type if type is None else type
+    neural_network = args.policy_type == "NN"
 
     if type == "BD_DP":
         if not neural_network:
@@ -92,23 +98,37 @@ def fairness_function(type, neural_network, **fairness_kwargs):
             benefit = calc_benefit(decisions, ips_weights)
         else:
             benefit = calc_benefit(decisions, None)
-        y1_indices = np.where(y == 1)
+        y1_indices = np.where(y.squeeze() == 1)
 
         return mean_difference(benefit[y1_indices], s[y1_indices])
 
-def measure_cov_dp(s, y, decisions):
-    return fairness_function(
-                type="COV_DP",
-                neural_network=args.policy_type == "NN",
-                x=None,
-                s=s,
-                y=y,
-                decisions=decisions,
-                ips_weights=None,
-                policy=None)
 
-def measure_util(s, y, decisions):
-    return cost_utility(cost_factor=args.cost, s=s, y=y, decisions=decisions)
+def no_fairness(**fairness_kwargs):
+    return 0.0
+
+
+def covariance_of_decision(s, y, decisions):
+    return fairness_function(
+        type="COV_DP",
+        x=None,
+        s=s,
+        y=y,
+        decisions=decisions,
+        ips_weights=None,
+        policy=None)
+
+
+def utility(**util_params):
+    return cost_utility(cost_factor=args.cost, **util_params)
+
+
+def utility_gradient(**util_params):
+    return cost_utility_gradient(cost_factor=args.cost, **util_params)
+
+
+def utility_nn(**util_params):
+    return cost_utility_probability(cost_factor=args.cost, **util_params)
+
 
 # endregion
 def _build_optimization_target(args):
@@ -129,25 +149,23 @@ def _build_optimization_target(args):
 
     if args.fairness_type is None:
         initial_fairness = 0.0
-        fair_fct = lambda **fairness_params: 0.0
-        fair_fct_grad = lambda **fairness_params: 0.0
+        fair_fct = no_fairness
+        fair_fct_grad = no_fairness
     else:
         initial_fairness = args.fairness_value
-        fair_fct = lambda **fairness_params: fairness_function(type=args.fairness_type,
-                                                               neural_network=neural_network,
-                                                               **fairness_params)
-        fair_fct_grad = lambda **fairness_params: fairness_function_gradient(type=args.fairness_type, **fairness_params)
+        fair_fct = fairness_function
+        fair_fct_grad = fairness_function_gradient
 
     if not neural_network:
         return optim_target_constructor(initial_fairness,
-                                        lambda **util_params: cost_utility(cost_factor=0.5, **util_params),
-                                        lambda **util_params: cost_utility_gradient(cost_factor=0.5, **util_params),
+                                        utility,
+                                        utility_gradient,
                                         fair_fct,
                                         fair_fct_grad,
                                         **additional_args), initial_fairness
     else:
         return optim_target_constructor(initial_fairness,
-                                        lambda **util_params: cost_utility_probability(cost_factor=0.5, **util_params),
+                                        utility_nn,
                                         fair_fct,
                                         **additional_args), initial_fairness
 
@@ -192,11 +210,11 @@ def single_run(args):
         },
         "evaluation": {
             UTILITY: {
-                "measure_function": measure_util,
+                "measure_function": utility,
                 "detailed": False
             },
             COVARIANCE_OF_DECISION_DP: {
-                "measure_function": measure_cov_dp,
+                "measure_function": covariance_of_decision,
                 "detailed": False
             }
         }
