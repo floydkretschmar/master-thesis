@@ -135,18 +135,20 @@ def mean_difference(target, group_indicator, groups=[0, 1]):
     """
     assert target.shape[0] == group_indicator.shape[0]
 
+    if len(group_indicator) < 2:
+        return 0.0
+
     s_idx = np.expand_dims(np.arange(group_indicator.shape[0]), axis=1)
     s_0_mask = group_indicator == groups[0]
     s_1_mask = group_indicator == groups[1]
-
-    if len(s_0_mask) == 0 or len(s_1_mask) == 0 or len(group_indicator) < 2:
-        return 0.0
 
     # print(s_1_mask.shape)
     # print(s_idx.shape)
     s_0_idx = s_idx[s_0_mask]
     s_1_idx = s_idx[s_1_mask]
 
+    if len(s_0_idx) == 0 or len(s_1_idx) == 0:
+        return 0.0
 
     target_s0 = mean(target[s_0_idx], axis=0)
     target_s1 = mean(target[s_1_idx], axis=0)

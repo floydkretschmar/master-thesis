@@ -156,51 +156,52 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             self.data_history["ips_weights"],
             test_percentage=0.2)
 
-        with torch.no_grad():
-            decisions, decision_probability = optimizer.policy(x_val, s_val)
-
-        last_optimization_target = -optimizer.optimization_target(x=x_val,
-                                                                  s=s_val,
-                                                                  y=y_val,
-                                                                  policy=optimizer.policy,
-                                                                  decisions=decisions,
-                                                                  decision_probabilities=decision_probability,
-                                                                  ips_weights=ip_weights_val)
-        i = 0
-        i_no_change = 0
-        # run until convergence or maximum number of epochs is reached
-        while i_no_change < num_change_iterations:
-            optimizer.update_model_parameters(learning_rate,
-                                              batch_size,
-                                              x_train,
-                                              s_train,
-                                              y_train,
-                                              ip_weights_train)
-
+        if len(x_train) > 0 and len(x_val) > 0:
             with torch.no_grad():
                 decisions, decision_probability = optimizer.policy(x_val, s_val)
 
-            current_optimization_target = -optimizer.optimization_target(x=x_val,
-                                                                         s=s_val,
-                                                                         y=y_val,
-                                                                         policy=optimizer.policy,
-                                                                         decisions=decisions,
-                                                                         decision_probabilities=decision_probability,
-                                                                         ips_weights=ip_weights_val)
+            last_optimization_target = -optimizer.optimization_target(x=x_val,
+                                                                      s=s_val,
+                                                                      y=y_val,
+                                                                      policy=optimizer.policy,
+                                                                      decisions=decisions,
+                                                                      decision_probabilities=decision_probability,
+                                                                      ips_weights=ip_weights_val)
+            i = 0
+            i_no_change = 0
+            # run until convergence or maximum number of epochs is reached
+            while i_no_change < num_change_iterations:
+                optimizer.update_model_parameters(learning_rate,
+                                                  batch_size,
+                                                  x_train,
+                                                  s_train,
+                                                  y_train,
+                                                  ip_weights_train)
 
-            # if the change in the last epoch was smaller than the specified percentage of the last optimization target
-            # value: increase number of iterations without change by one, otherwise reset
-            # change = np.abs(last_optimization_target - current_optimization_target)
-            # if change < np.abs(current_optimization_target * change_percentage):
-            if current_optimization_target < (last_optimization_target * (1 + change_percentage)):
-                i_no_change += 1
-            else:
-                i_no_change = 0
+                with torch.no_grad():
+                    decisions, decision_probability = optimizer.policy(x_val, s_val)
 
-            last_optimization_target = current_optimization_target
-            i += 1
-            if epochs <= i:
-                break
+                current_optimization_target = -optimizer.optimization_target(x=x_val,
+                                                                             s=s_val,
+                                                                             y=y_val,
+                                                                             policy=optimizer.policy,
+                                                                             decisions=decisions,
+                                                                             decision_probabilities=decision_probability,
+                                                                             ips_weights=ip_weights_val)
+
+                # if the change in the last epoch was smaller than the specified percentage of the last optimization target
+                # value: increase number of iterations without change by one, otherwise reset
+                # change = np.abs(last_optimization_target - current_optimization_target)
+                # if change < np.abs(current_optimization_target * change_percentage):
+                if current_optimization_target < (last_optimization_target * (1 + change_percentage)):
+                    i_no_change += 1
+                else:
+                    i_no_change = 0
+
+                last_optimization_target = current_optimization_target
+                i += 1
+                if epochs <= i:
+                    break
 
     def train(self, training_parameters):
         """ Executes consequential learning according to the specified training parameters.
