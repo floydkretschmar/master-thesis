@@ -24,136 +24,46 @@ request_cpus = 1
 environment = "PYTHONUNBUFFERED=TRUE"
 executable = /home/fkretschmar/miniconda3/envs/masters-thesis/bin/python
 
-error = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/error/experiment.$(Process).err
-output = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/output/experiment.$(Process).out
-log = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/log/experiment.$(Process).log
+error = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/error/experiment.$(Process).err
+output = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/output/experiment.$(Process).out
+log = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/log/experiment.$(Process).log
 # ----------------------------------------------------------------------- #
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 10
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 4906 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 20
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 4906 -fe 30
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 4906 -fe 50
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 10
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 4906 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 20
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 4906 -fe 30
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 4906 -fe 50
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 512 -fe 10
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 4906 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 512 -fe 20
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 4906 -fe 30
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 512 -fe 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 4906 -fe 50
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 10
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 4906 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 20
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 4906 -fe 30
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 4906 -fe 50
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 10
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 4906 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 20
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 4906 -fe 30
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 4906 -fe 50
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 512 -fe 10
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 4906 -fe 10
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 512 -fe 20
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 4906 -fe 30
 queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 512 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 512 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 512 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 512 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 512 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 512 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 512 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 512 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 512 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 512 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 512 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 512 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 512 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 30
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 512 -fe 10
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 512 -fe 20
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 512 -fe 30
+arguments = run.py -d ADULT -c 0.5 -lr 0.05 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/ADULT/NN/COV_DP/raw -ts 200 -e 50 -bs 512 -ns 16384    -pt NN   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 4906 -fe 50
 queue 10

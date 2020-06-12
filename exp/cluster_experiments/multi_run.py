@@ -105,7 +105,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                       args.change_iterations) if args.change_iterations else "",
                                                   "-cp {}".format(
                                                       args.change_percentage) if args.change_percentage else "",
-                                                  "pt {}".format(args.policy_type) if args.policy_type else "",
+                                                  "-pt {}".format(args.policy_type) if args.policy_type else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
