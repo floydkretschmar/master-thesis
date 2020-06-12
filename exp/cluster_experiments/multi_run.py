@@ -242,7 +242,7 @@ if __name__ == "__main__":
 
     num_fairness_batches = None
     if args.fairness_type is not None:
-        base_path = "{}/{}/{}".format(args.path, args.data, args.fairness_type)
+        base_path = "{}/{}/{}/{}".format(args.path, args.data, args.policy_type, args.fairness_type)
         if (args.fairness_lower_bound is None and args.fairness_upper_bound is not None) or \
                 (args.fairness_lower_bound is not None and args.fairness_upper_bound is None):
             parser.error('--fairness_lower_bound and --fairness_upper_bound have to be specified together')
@@ -277,7 +277,7 @@ if __name__ == "__main__":
         else:
             lambdas = [0.0]
     else:
-        base_path = "{}/{}".format(args.path, args.data)
+        base_path = "{}/{}/{}".format(args.path, args.data, args.policy_type)
         lambdas = [0.0]
 
     if args.build_submit:

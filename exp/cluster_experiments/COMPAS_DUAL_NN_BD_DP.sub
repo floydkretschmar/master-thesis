@@ -24,82 +24,82 @@ request_cpus = 1
 environment = "PYTHONUNBUFFERED=TRUE"
 executable = /home/fkretschmar/miniconda3/envs/masters-thesis/bin/python
 
-error = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/error/experiment.$(Process).err
-output = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/output/experiment.$(Process).out
-log = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/log/experiment.$(Process).log
+error = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/error/experiment.$(Process).err
+output = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/output/experiment.$(Process).out
+log = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/log/experiment.$(Process).log
 # ----------------------------------------------------------------------- #
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 30
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 10
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 10
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 20
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 20
 queue 10
-arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 30
+arguments = run.py -d COMPAS -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/COMPAS/NN/BD_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    pt NN   -ipc   -pid $(Process) -f BD_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 30
 queue 10
