@@ -372,6 +372,9 @@ class PenaltyOptimizationTarget(DualOptimizationTarget):
         return -self.utility_function(**optimization_target_args) + (self.fairness_rate / 2) * self.fairness_function(
             **optimization_target_args) ** 2
 
+    def fairness_parameter_gradient(self, **optimization_target_args):
+        raise TypeError("PenaltyOptimizationTarget does not support training of the fairness parameter.")
+
 
 class ManualGradientPenaltyOptimizationTarget(PenaltyOptimizationTarget, ManualGradientOptimizationTarget):
     def __init__(self, fairness_rate,
@@ -400,9 +403,6 @@ class ManualGradientPenaltyOptimizationTarget(PenaltyOptimizationTarget, ManualG
 
         return gradient
 
-    def fairness_parameter_gradient(self, **optimization_target_args):
-        raise TypeError("PenaltyOptimizationTarget does not support training of the fairness parameter.")
-
 
 class LagrangianOptimizationTarget(DualOptimizationTarget):
     """ The lagrangian optimization target that conbines utility and fairness constraint via a lagrangien multiplier term
@@ -414,6 +414,14 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
     def __call__(self, **optimization_target_args):
         return -self.utility_function(**optimization_target_args) + self.fairness_rate * self.fairness_function(
             **optimization_target_args)
+
+    def fairness_parameter_gradient(self, **optimization_target_args):
+        """ Returns the value of the lagrangian optimization target with regards to the fairness value.
+
+        Args:
+            optimization_target_args: The optimization target arguments.
+        """
+        return self.fairness_function(**optimization_target_args)
 
 
 class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, ManualGradientOptimizationTarget):
@@ -440,14 +448,6 @@ class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, M
         gradient += grad_fairness
 
         return gradient
-
-    def fairness_parameter_gradient(self, **optimization_target_args):
-        """ Returns the value of the lagrangian optimization target with regards to the fairness value.
-
-        Args:
-            optimization_target_args: The optimization target arguments.
-        """
-        return self.fairness_function(**optimization_target_args)
 
 
 class AugmentedLagrangianOptimizationTarget(LagrangianOptimizationTarget):
