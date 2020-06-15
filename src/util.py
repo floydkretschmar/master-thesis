@@ -7,10 +7,11 @@ import numpy as np
 import torch
 from numpy.random import RandomState
 
+CUDA = False
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
 def to_device(torch_object):
-    if torch.cuda.is_available():
+    if torch.cuda.is_available() and CUDA:
         return torch_object.cuda()
     else:
         return torch_object

@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 from copy import deepcopy
 
+import src.util as util
 from src.consequential_learning import ConsequentialLearning
 from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, get_list_of_seeds
 from src.training_evaluation import MultiStatistics
@@ -139,6 +140,9 @@ def _prepare_training(training_parameters):
         if "decay_step" not in training_parameters["lagrangian_optimization"]:
             current_training_parameters["lagrangian_optimization"]["decay_step"] \
                 = training_parameters["parameter_optimization"]["time_steps"] + 1
+
+    if "use_cuda" in current_training_parameters and current_training_parameters["use_cuda"]:
+        util.CUDA = True
 
     return current_training_parameters, base_save_path
 
