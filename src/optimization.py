@@ -5,6 +5,7 @@ import sys
 import numpy as np
 import torch
 import torch.optim as optim
+import numbers
 from copy import deepcopy
 
 root_path = os.path.abspath(os.path.join('.'))
@@ -120,8 +121,13 @@ class StochasticGradientOptimizer:
                                                                             decisions=decisions_batch,
                                                                             decision_probabilities=decision_probability_batch,
                                                                             ips_weights=ips_weights_batch)
-            self.optimization_target.fairness_rate = self.optimization_target.fairness_rate + learning_rate * gradient
 
+            if self.optimization_target.error_delta == 0.0:
+                self.optimization_target.fairness_rate = self.optimization_target.fairness_rate + learning_rate * gradient
+            else:
+                lambda1, lambda2 = self.optimization_target.fairness_rate
+                self.optimization_target.fairness_rate = [max(lambda1 + learning_rate * gradient[0], 0),
+                                                          max(lambda2 + learning_rate * gradient[1], 0)]
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy, optimization_target):
@@ -333,11 +339,21 @@ class ManualGradientOptimizationTarget(abc.ABC):
 class DualOptimizationTarget(BaseOptimizationTarget, abc.ABC):
     """ The base class for a optimization target that combines a utility function with a fairness constraint. """
 
-    def __init__(self, fairness_rate, utility_function, fairness_function):
+    def __init__(self, fairness_rate, utility_function, fairness_function, error_delta=0.0):
         super().__init__()
-        self._fairness_rate = fairness_rate
+        self._error_delta = error_delta
+        if self._error_delta == 0.0:
+            self._fairness_rate = fairness_rate
+        else:
+            self._fairness_rate = (fairness_rate, fairness_rate)
+
         self._utility_function = utility_function
         self._fairness_function = fairness_function
+
+    @property
+    def error_delta(self):
+        """ Returns the fairness rate with which the fairness function is weighted. """
+        return self._error_delta
 
     @property
     def fairness_function(self):
@@ -352,7 +368,10 @@ class DualOptimizationTarget(BaseOptimizationTarget, abc.ABC):
     @fairness_rate.setter
     def fairness_rate(self, value):
         """ Sets the fairness rate with which the fairness function is weighted. """
-        self._fairness_rate = value
+        if self.error_delta != 0.0 and isinstance(value, numbers.Number):
+            self._fairness_rate = (value, value)
+        else:
+            self._fairness_rate = value
 
     @property
     def utility_function(self):
@@ -412,12 +431,18 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
     """ The lagrangian optimization target that conbines utility and fairness constraint via a lagrangien multiplier term
     and is differentiable with regards to the model parameters as well as the lagrangian multiplier"""
 
-    def __init__(self, fairness_rate, utility_function, fairness_function):
-        super().__init__(fairness_rate, utility_function, fairness_function)
+    def __init__(self, fairness_rate, utility_function, fairness_function, error_delta=0.0):
+        super().__init__(fairness_rate, utility_function, fairness_function, error_delta)
 
     def __call__(self, **optimization_target_args):
-        return -self.utility_function(**optimization_target_args) + self.fairness_rate * self.fairness_function(
-            **optimization_target_args)
+        if self.error_delta == 0.0:
+            return -self.utility_function(**optimization_target_args) + self.fairness_rate * self.fairness_function(
+                **optimization_target_args)
+        else:
+            lambda1, lambda2 = self.fairness_rate
+            return -self.utility_function(**optimization_target_args) \
+                   + lambda1 * (-self.fairness_function(**optimization_target_args) - self._error_delta) \
+                   + lambda2 * (self.fairness_function(**optimization_target_args) - self._error_delta)
 
     def fairness_parameter_gradient(self, **optimization_target_args):
         """ Returns the value of the lagrangian optimization target with regards to the fairness value.
@@ -425,7 +450,10 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
         Args:
             optimization_target_args: The optimization target arguments.
         """
-        return self.fairness_function(**optimization_target_args)
+        if self.error_delta == 0.0:
+            return self.fairness_function(**optimization_target_args)
+        else:
+            return -self.fairness_function(**optimization_target_args), self.fairness_function(**optimization_target_args)
 
 
 class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, ManualGradientOptimizationTarget):
@@ -433,10 +461,12 @@ class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, M
                  utility_function,
                  utility_gradient_function,
                  fairness_function,
-                 fairness_gradient_function):
+                 fairness_gradient_function,
+                 error_delta=0.0):
         super().__init__(fairness_rate,
                          DifferentiableFunction(utility_function, utility_gradient_function),
-                         DifferentiableFunction(fairness_function, fairness_gradient_function))
+                         DifferentiableFunction(fairness_function, fairness_gradient_function),
+                         error_delta)
 
     def model_parameter_gradient(self, **optimization_target_args):
         """ Returns the gradient of the lagrangian optimization target with regards to the policy parameters.
@@ -445,12 +475,15 @@ class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, M
             optimization_target_args: The optimization target arguments.
         """
         gradient = -self.utility_function.gradient(**optimization_target_args)
-
         fairness_gradient = self.fairness_function.gradient(**optimization_target_args)
-        grad_fairness = self.fairness_rate * fairness_gradient
+
+        if self.error_delta == 0.0:
+            grad_fairness = self.fairness_rate * fairness_gradient
+        else:
+            lambda1, lambda2 = self.fairness_rate
+            grad_fairness = lambda1 * -fairness_gradient + lambda2 * fairness_gradient
 
         gradient += grad_fairness
-
         return gradient
 
 
