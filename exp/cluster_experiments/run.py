@@ -9,6 +9,7 @@ module_path = os.path.abspath(os.path.join("../.."))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
+import src.util as util
 from src.feature_map import IdentityFeatureMap
 from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability
 from src.plotting import plot_mean, plot_median
@@ -73,8 +74,9 @@ def fairness_function_gradient(**fairness_kwargs):
 def fairness_function(type=None, **fairness_kwargs):
     s = fairness_kwargs["s"]
     ips_weights = fairness_kwargs["ips_weights"] if "ips_weights" in fairness_kwargs else None
-    decisions = fairness_kwargs["decision_probabilities"] if (args.policy_type == "NN" and ips_weights is None) \
-        else fairness_kwargs["decisions"]
+    decisions = "decision_probabilities" not in fairness_kwargs or not (args.policy_type == "NN" and ips_weights is None)
+
+    decisions = fairness_kwargs["decisions"] if decisions else fairness_kwargs["decision_probabilities"]
     y = fairness_kwargs["y"]
 
     type = args.fairness_type if type is None else type
@@ -329,7 +331,12 @@ if __name__ == "__main__":
                         help="number of epochs to be used to learn lambda")
     parser.add_argument("-faug", "--fairness_augmented", required=False, action="store_true")
 
+    parser.add_argument("--CUDA", required=False, action="store_true")
+
     args = parser.parse_args()
+
+    if args.CUDA:
+        util.CUDA = True
 
     if args.fairness_type is not None and args.fairness_value is None:
         parser.error("when using --fairness_type, --fairness_value has to be specified")

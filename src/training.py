@@ -141,9 +141,6 @@ def _prepare_training(training_parameters):
             current_training_parameters["lagrangian_optimization"]["decay_step"] \
                 = training_parameters["parameter_optimization"]["time_steps"] + 1
 
-    if "use_cuda" in current_training_parameters and current_training_parameters["use_cuda"]:
-        util.CUDA = True
-
     return current_training_parameters, base_save_path
 
 
