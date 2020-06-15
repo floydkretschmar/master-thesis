@@ -31,11 +31,165 @@ log = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/log/expe
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 2048 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 4096 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 4096 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 4096 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 10.0 -fbs 4096 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 2048 -fe 100
+queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 4096 -fe 10
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 4096 -fe 30
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 4096 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1.0 -fbs 4096 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 2048 -fe 100
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 4096 -fe 10
 queue 10
@@ -43,11 +197,111 @@ arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thes
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 4096 -fe 50
 queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.1 -fbs 4096 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 2048 -fe 100
+queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 4096 -fe 10
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 4096 -fe 30
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 4096 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.01 -fbs 4096 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 2048 -fe 100
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 4096 -fe 10
 queue 10
@@ -55,15 +309,173 @@ arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thes
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 4096 -fe 50
 queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.001 -fbs 4096 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 2048 -fe 100
+queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 4096 -fe 10
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 4096 -fe 30
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 4096 -fe 50
 queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 0.0001 -fbs 4096 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 2048 -fe 100
+queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 4096 -fe 10
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 4096 -fe 30
 queue 10
 arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 4096 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-05 -fbs 4096 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 64 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 128 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 256 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 512 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 512 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 512 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 512 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 1024 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 1024 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 1024 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 1024 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 2048 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 2048 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 2048 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 2048 -fe 100
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 4096 -fe 10
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 4096 -fe 30
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 4096 -fe 50
+queue 10
+arguments = run.py -d FICO -c 0.5 -lr 0.01 -i 1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT/FICO/LOG/COV_DP/raw -ts 200 -e 50 -bs 128 -ns 4096    -pt LOG   -ipc   -pid $(Process) -f COV_DP -fv 0.0 -flr 1e-06 -fbs 4096 -fe 100
 queue 10
