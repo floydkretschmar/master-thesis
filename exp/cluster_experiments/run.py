@@ -26,7 +26,7 @@ from src.policy import LogisticPolicy, NeuralNetworkPolicy
 
 def calc_benefit(decisions, ips_weights):
     if ips_weights is not None:
-        decisions *= ips_weights
+        decisions = decisions * ips_weights
 
     return decisions
 
@@ -72,34 +72,22 @@ def fairness_function_gradient(**fairness_kwargs):
 
 def fairness_function(type=None, **fairness_kwargs):
     s = fairness_kwargs["s"]
-    decisions = fairness_kwargs["decisions"]
-    ips_weights = fairness_kwargs["ips_weights"]
+    ips_weights = fairness_kwargs["ips_weights"] if "ips_weights" in fairness_kwargs else None
+    decisions = fairness_kwargs["decision_probabilities"] if (args.policy_type == "NN" and ips_weights is None) \
+        else fairness_kwargs["decisions"]
     y = fairness_kwargs["y"]
 
     type = args.fairness_type if type is None else type
-    neural_network = args.policy_type == "NN"
 
     if type == "BD_DP":
-        if not neural_network:
-            benefit = calc_benefit(decisions, ips_weights)
-        else:
-            benefit = calc_benefit(decisions, None)
-
+        benefit = calc_benefit(decisions, ips_weights)
         return mean_difference(benefit, s)
     elif type == "COV_DP":
-        if not neural_network:
-            covariance = calc_covariance(s, decisions, ips_weights)
-        else:
-            covariance = calc_covariance(s, decisions, None)
-
+        covariance = calc_covariance(s, decisions, ips_weights)
         return mean(covariance, axis=0)
     elif type == "BD_EOP":
-        if not neural_network:
-            benefit = calc_benefit(decisions, ips_weights)
-        else:
-            benefit = calc_benefit(decisions, None)
+        benefit = calc_benefit(decisions, ips_weights)
         y1_indices = np.where(y.squeeze() == 1)
-
         return mean_difference(benefit[y1_indices], s[y1_indices])
 
 
