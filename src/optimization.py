@@ -120,7 +120,7 @@ class StochasticGradientOptimizer:
                                                                             decisions=decisions_batch,
                                                                             decision_probabilities=decision_probability_batch,
                                                                             ips_weights=ips_weights_batch)
-            self.optimization_target.fairness_rate += learning_rate * gradient
+            self.optimization_target.fairness_rate = self.optimization_target.fairness_rate + learning_rate * gradient
 
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
@@ -128,6 +128,8 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
         super().__init__(policy, optimization_target)
         optimization_parameters, _ = self._policy.parameters
         self.model_optimizer = optim.SGD(optimization_parameters, lr=0.01)
+        with torch.no_grad():
+            self.optimization_target.fairness_rate = torch.tensor(self.optimization_target.fairness_rate)
 
     @property
     def parameters(self):
@@ -192,10 +194,13 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
                                             s=s_batch,
                                             y=y_batch,
                                             decisions=decisions_batch,
-                                            decision_probabilities=decision_probability_batch,
-                                            ips_weights=ips_weights_batch)
-            loss.backward()
+                                            decision_probabilities=decision_probability_batch)
+            loss.backward(retain_graph=False)
             self.model_optimizer.step()
+
+    def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
+        with torch.no_grad():
+            super().update_fairness_parameter(learning_rate, batch_size, x, s, y, ips_weights)
 
 
 class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
