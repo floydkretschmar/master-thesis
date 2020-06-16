@@ -242,9 +242,10 @@ def single_run(args):
                                                                                    args.batch_size)
 
             if args.fairness_learning_rate is not None:
-                subfolder = "flr{}/-fe{}-fbs{}".format(args.fairness_learning_rate,
-                                                       args.fairness_epochs,
-                                                       args.fairness_batch_size)
+                subfolder = "flr{}/fe{}-fbs{}-fd{}".format(args.fairness_learning_rate,
+                                                           args.fairness_epochs,
+                                                           args.fairness_batch_size,
+                                                           args.fairness_delta if args.fairness_delta else 0.0)
             else:
                 subfolder = args.fairness_value
 
