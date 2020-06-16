@@ -129,6 +129,7 @@ def _build_optimization_target(args):
         if not args.fairness_augmented:
             optim_target_constructor = LagrangianOptimizationTarget if neural_network \
                 else ManualGradientLagrangianOptimizationTarget
+            additional_args["error_delta"] = args.fairness_delta if args.fairness_delta else 0.0
         else:
             optim_target_constructor = AugmentedLagrangianOptimizationTarget if neural_network \
                 else ManualGradientAugmentedLagrangianOptimizationTarget
@@ -330,6 +331,7 @@ if __name__ == "__main__":
     parser.add_argument("-fe", "--fairness_epochs", type=int, required=False,
                         help="number of epochs to be used to learn lambda")
     parser.add_argument("-faug", "--fairness_augmented", required=False, action="store_true")
+    parser.add_argument('-fd', '--fairness_delta', type=float, required=False)
 
     parser.add_argument("--CUDA", required=False, action="store_true")
 

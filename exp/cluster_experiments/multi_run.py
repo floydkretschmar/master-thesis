@@ -91,6 +91,7 @@ def _build_submit_file(args, base_path, lambdas):
                                       "{} " \
                                       "{} " \
                                       "{} " \
+                                      "{} " \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -106,6 +107,7 @@ def _build_submit_file(args, base_path, lambdas):
                                                   "-cp {}".format(
                                                       args.change_percentage) if args.change_percentage else "",
                                                   "-pt {}".format(args.policy_type) if args.policy_type else "",
+                                                  "-fd {}".format(args.fairness_delta) if args.fairness_delta else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
@@ -157,6 +159,8 @@ def _multi_run(args, base_path, lambdas):
                             command.extend(["-cp", str(args.change_percentage)])
                         if args.policy_type:
                             command.extend(["-pt", str(args.policy_type)])
+                        if args.fairness_delta:
+                            command.extend(["-fd", str(args.fairness_delta)])
 
                         if args.fairness_type is not None:
                             for extension in _fairness_extensions(args, lambdas, build=False):
@@ -225,6 +229,7 @@ if __name__ == "__main__":
     parser.add_argument('-fe', '--fairness_epochs', type=int, required=False, nargs='+',
                         help='number of epochs to be used to learn lambda')
     parser.add_argument('-faug', '--fairness_augmented', required=False, action='store_true')
+    parser.add_argument('-fd', '--fairness_delta', type=float, required=False)
 
     # Build script parameters
     parser.add_argument('--build_submit', required=False, action='store_true')
