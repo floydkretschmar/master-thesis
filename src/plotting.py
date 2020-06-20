@@ -10,6 +10,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
+import matplotlib.patches as mpatches
 
 import tikzplotlib as tpl
 from src.training_evaluation import MEAN, MEDIAN
@@ -146,3 +147,25 @@ def _build_plot_dict(x_values,
             }
 
     return plotting_dict
+
+def plot_epoch_statistics(path, fairness, lambdas, gradients, utils):
+    f, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
+
+    ax1.plot(range(0, len(fairness)), fairness, 'g')
+    green_patch = mpatches.Patch(color='green', label='Fairness Function (Test Set)')
+    ax1.legend(handles=[green_patch])
+
+    ax2.plot(range(0, len(lambdas)), lambdas, 'b')
+    black_patch = mpatches.Patch(color='blue', label='Lambda')
+    ax2.legend(handles=[black_patch])
+
+    ax3.plot(range(0, len(gradients)), gradients, 'r')
+    red_patch = mpatches.Patch(color='red', label='Gradient of lambda')
+    ax3.legend(handles=[red_patch])
+
+    ax4.plot(range(0, len(utils)), utils, 'm')
+    orange_patch = mpatches.Patch(color='magenta', label='Utility')
+    ax4.legend(handles=[orange_patch])
+
+    plt.savefig(path)
+    plt.close('all')

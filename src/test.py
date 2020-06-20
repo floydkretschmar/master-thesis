@@ -47,7 +47,6 @@ def fairness_function_gradient(type, **fairness_kwargs):
     policy = fairness_kwargs["policy"]
     x = fairness_kwargs["x"]
     s = fairness_kwargs["s"]
-    y = fairness_kwargs["y"]
     decisions = fairness_kwargs["decisions"]
     ips_weights = fairness_kwargs["ips_weights"]
 
@@ -55,10 +54,6 @@ def fairness_function_gradient(type, **fairness_kwargs):
         result = calc_benefit(decisions, ips_weights)
     elif type == "COV_DP":
         result = calc_covariance(s, decisions, ips_weights)
-    elif type == "COV_DP_DIST":
-        phi = policy.feature_map(policy._extract_features(x, s))
-        distance = np.matmul(phi, policy.theta).reshape(-1, 1)
-        result = calc_covariance(s, distance, ips_weights)
 
     log_gradient = policy.log_policy_gradient(x, s)
     grad = log_gradient * result
@@ -67,20 +62,12 @@ def fairness_function_gradient(type, **fairness_kwargs):
         return mean_difference(grad, s)
     elif type == "COV_DP":
         return np.mean(grad, axis=0)
-    elif type == "COV_DP_DIST":
-        return np.mean(grad, axis=0)
-    elif type == "BD_EOP":
-        y1_indices = np.where(y == 1)
-        return mean_difference(grad[y1_indices], s[y1_indices])
 
 
 def fairness_function(type, **fairness_kwargs):
-    x = fairness_kwargs["x"]
     s = fairness_kwargs["s"]
-    y = fairness_kwargs["y"]
     decisions = fairness_kwargs["decisions"]
-    ips_weights = fairness_kwargs["ips_weights"]
-    policy = fairness_kwargs["policy"]
+    ips_weights = fairness_kwargs["ips_weights"] if "ips_weights" in fairness_kwargs else None
 
     if type == "BD_DP":
         benefit = calc_benefit(decisions, ips_weights)
@@ -88,15 +75,6 @@ def fairness_function(type, **fairness_kwargs):
     elif type == "COV_DP":
         covariance = calc_covariance(s, decisions, ips_weights)
         return np.mean(covariance, axis=0)
-    elif type == "COV_DP_DIST":
-        phi = policy.feature_map(policy._extract_features(x, s))
-        distance = np.matmul(phi, policy.theta).reshape(-1, 1)
-        covariance = calc_covariance(s, distance, ips_weights)
-        return np.mean(covariance, axis=0)
-    elif type == "BD_EOP":
-        benefit = calc_benefit(decisions, ips_weights)
-        y1_indices = np.where(y == 1)
-        return mean_difference(benefit[y1_indices], s[y1_indices])
 
 def no_fairness(**fairness_kwargs):
     return 0.0

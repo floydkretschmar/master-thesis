@@ -9,9 +9,9 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import stack, sort, train_test_split
+from src.util import stack, sort, train_test_split, stable_divide
 from src.training_evaluation import Statistics, ModelParameters
-
+from src.plotting import plot_epoch_statistics
 
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
@@ -31,32 +31,6 @@ class BaseLearningAlgorithm:
             return len(self.data_history["s"])
         else:
             return 0
-
-    def _clip_ips_weights(self, ip_weights, probabilities):
-        """ Implements clipped-wIPS as first introduced by https://www.microsoft.com/en-us/research/wp-content/uploads
-        /2013/11/bottou13a.pdf to ensure numerical stability of the ips weights for unlikely data samples.
-        For data samples with small probability of positive decision by the initial policy pi_0 the IPS weights become
-        very large. Clip ips weights to 0 if the probability of a positive decision under the current polity is bigger
-        than R * probability of a positive decision under the initial policy. According to the paper R is chosen as the
-        fifth largest IPS weight.
-
-        Args:
-            policy: The current policy.
-
-        Returns:
-            clipped_ips_weights: The clipped ips weights where all weights where prob_current_pi > R * prob_pi_0 are set
-            to 0.
-        """
-        if ip_weights.shape[0] > 1:
-            sorted_ipsw = sort(ip_weights.squeeze())
-            r = sorted_ipsw[-5] if len(sorted_ipsw) >= 5 else sorted_ipsw[0]
-        else:
-            r = ip_weights[0]
-
-        # clipped_ips_weights = deepcopy(ip_weights)
-        ip_weights[1 > r * probabilities] = 0
-
-        return ip_weights
 
     def _filter_by_policy(self, data, policy):
         """ Makes decisions for the data based on the specified policy pi_0 and only returns the x, s and y of the
@@ -154,7 +128,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             self.data_history["s"],
             self.data_history["y"],
             self.data_history["ips_weights"],
-            test_percentage=0.2)
+            test_percentage=0.2,
+            seed=optimizer.seed)
 
         if len(x_train) > 0 and len(x_val) > 0:
             with torch.no_grad():
@@ -216,24 +191,18 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         distribution = training_parameters["distribution"]
         policy = deepcopy(training_parameters["model"])
         optim_target = training_parameters["optimization_target"]
-        optimizer = policy.optimizer(policy, optim_target)
+        optimizer = policy.optimizer(optim_target)
         dual_optimization = "lagrangian_optimization" in training_parameters
-
-        # Prepare data seeds
-        training_seeds = training_parameters["data"]["training_seeds"] if "training_seeds" in training_parameters[
-            "data"] else [None] * training_parameters["parameter_optimization"]["time_steps"]
-        test_seed = training_parameters["data"]["test_seed"] if "test_seed" in training_parameters[
-            "data"] else None
 
         # Get test data
         x_test, s_test, y_test = distribution.sample_test_dataset(
-            n_test=training_parameters["data"]["num_test_samples"],
-            seed=test_seed)
+            n_test=training_parameters["data"]["num_test_samples"])
         x_test, s_test, y_test = optimizer.preprocess_data(x_test, s_test, y_test)
 
         # Store initial policy decisions
         with torch.no_grad():
             decisions_over_time, decision_probabilities = optimizer.policy(x_test, s_test)
+
         model_parameters = {
             "lambdas": [optimizer.parameters["lambda"]],
             "model_parameters": None
@@ -254,20 +223,19 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
             # Collect training data
             data = optimizer.preprocess_data(*distribution.sample_train_dataset(
-                n_train=training_parameters["data"]["num_train_samples"],
-                seed=training_seeds[i]))
+                n_train=training_parameters["data"]["num_train_samples"]))
             x_train, s_train, y_train, pi_0_probabilities = self._filter_by_policy(data, optimizer.policy)
 
             if x_train.shape[0] > 0:
-                ips_weights = 1 / pi_0_probabilities
-                if training_parameters["parameter_optimization"]["clip_weights"]:
-                    ips_weights = self._clip_ips_weights(ips_weights, pi_0_probabilities)
-            else:
-                ips_weights = np.ones(x_train.shape)
+                ips_weights = optimizer.preprocess_data(stable_divide(1, pi_0_probabilities))
+                self._update_buffer(x_train, s_train, y_train, ips_weights)
+            elif x_train.shape[0] == 0 and not self.learn_on_entire_history:
+                self.data_history = None
 
-            ips_weights = optimizer.preprocess_data(ips_weights)
-            self._update_buffer(x_train, s_train, y_train, ips_weights)
-
+            fairness_values = []
+            gradient_values = []
+            lambda_values = []
+            util_values = []
             # only train if there is actual training data
             if self.buffer_size > 0:
                 if dual_optimization:
@@ -281,24 +249,39 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                     # 3. Repeat 1. for #epochs
                     optimizer.create_policy_checkpoint()
                     for j in range(0, training_parameters["lagrangian_optimization"]["epochs"]):
+                        optimizer.restore_last_policy_checkpoint()
                         self._train_model_parameters(optimizer,
                                                      theta_learning_rate,
                                                      training_parameters)
 
-                        optimizer.update_fairness_parameter(lambda_learning_rate,
+                        gradient = optimizer.update_fairness_parameter(lambda_learning_rate,
                                                             training_parameters["lagrangian_optimization"][
                                                                 "batch_size"],
                                                             self.data_history["x"],
                                                             self.data_history["s"],
                                                             self.data_history["y"],
                                                             self.data_history["ips_weights"])
-                        if j + 1 < training_parameters["lagrangian_optimization"]["epochs"]:
-                            optimizer.restore_last_policy_checkpoint()
+
+                        d_test, _ = optimizer.policy(x_test, s_test)
+                        fairness = optimizer.optimization_target.fairness_function(s=s_test,
+                                                                                   decisions=d_test)
+                        util = optimizer.optimization_target.utility_function(decisions=d_test, y=y_test)
+                        gradient_values.append(gradient)
+                        lambda_values.append(deepcopy(optimizer.optimization_target.fairness_rate))
+                        fairness_values.append(fairness)
+                        util_values.append(util)
+                        print("Timestep {} Epoch {}: Lambda {} \t Fairness (test) {} \t Utility (test) {}".
+                              format(i, j, optimizer.optimization_target.fairness_rate, fairness, util))
+
                 else:
                     self._train_model_parameters(optimizer,
                                                  theta_learning_rate,
                                                  training_parameters)
-
+            plot_epoch_statistics("{}/timestep_{}.png".format(training_parameters["save_path"], i),
+                                  fairness_values,
+                                  lambda_values,
+                                  gradient_values,
+                                  util_values)
             # Evaluate performance on test set after training ...
             with torch.no_grad():
                 decisions, decision_probabilities = optimizer.policy(x_test, s_test)

@@ -119,7 +119,12 @@ class StochasticGradientOptimizer:
                 y: The ground truth labels of the n samples
                 ips_weights: The weights used for inverse propensity scoring. If ips_weights=None
                 no IPS will be applied.
+
+            returns:
+                average_gradient: The average gradient across all minibatches
         """
+        sum_grad = 0
+        num_batches = 0
         # for each minibatch...
         for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
             # make decision according to current policy
@@ -134,7 +139,8 @@ class StochasticGradientOptimizer:
                                                                             decision_probabilities=decision_probability_batch,
                                                                             ips_weights=ips_weights_batch)
 
-            print(gradient)
+            sum_grad += gradient
+            num_batches += 1
 
             if self.optimization_target.error_delta == 0.0:
                 self.optimization_target.fairness_rate = self.optimization_target.fairness_rate + learning_rate * gradient
@@ -142,6 +148,7 @@ class StochasticGradientOptimizer:
                 lambda1, lambda2 = self.optimization_target.fairness_rate
                 self.optimization_target.fairness_rate = [max(lambda1 + learning_rate * gradient[0], 0),
                                                           max(lambda2 + learning_rate * gradient[1], 0)]
+        return sum_grad/num_batches
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy, optimization_target, seed=None):

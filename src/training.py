@@ -132,6 +132,7 @@ def _prepare_training(training_parameters):
             current_training_parameters["lagrangian_optimization"]["decay_step"] \
                 = training_parameters["parameter_optimization"]["time_steps"] + 1
 
+    current_training_parameters["save_path"] = base_save_path
     return current_training_parameters, base_save_path
 
 
