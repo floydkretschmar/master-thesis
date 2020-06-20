@@ -27,6 +27,12 @@ class StochasticGradientOptimizer:
         self._optimization_target = optimization_target
         self._policy = policy
         self._seed = seed
+        self.beta_1 = 0.9
+        self.beta_2 = 0.999
+        self.v = 0
+        self.m = 0
+        self.t = 1
+        self.epsilon = 0.0000001
 
     @property
     def seed(self):
@@ -48,9 +54,6 @@ class StochasticGradientOptimizer:
             "theta": self.policy.parameters,
             "lambda": self.optimization_target.fairness_rate
         }
-
-    def preprocess_data(self, x, s, y, ips_weights=None):
-        raise NotImplementedError("Subclass must override preprocess_data(self, x, s, y, ips_weights=None).")
 
     @property
     def policy(self):
@@ -137,9 +140,13 @@ class StochasticGradientOptimizer:
                                                                             decisions=decisions_batch,
                                                                             decision_probabilities=decision_probability_batch,
                                                                             ips_weights=ips_weights_batch)
-
-            tmp = self.optimization_target.fairness_rate + learning_rate * gradient
-            self.optimization_target.fairness_rate = tmp
+            self.m = self.beta_1 * self.m + (1 - self.beta_1) * gradient
+            self.v = self.beta_2 * self.v + (1 - self.beta_2) * np.power(gradient, 2)
+            m_hat = self.m / (1 - np.power(self.beta_1, self.t))
+            v_hat = self.v / (1 - np.power(self.beta_2, self.t))
+            new_fairness_rate = self.optimization_target.fairness_rate + learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
+            self.optimization_target.fairness_rate = new_fairness_rate
+            self.t += 1
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy, optimization_target, seed=None):
@@ -156,35 +163,12 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
         params['theta'] = state_dict
         return params
 
-    def _process_data(self, process_tensor_func, process_non_tensor_func, *data):
-        return_data = []
-        for array in data:
-            if torch.is_tensor(array):
-                return_data.append(process_tensor_func(array))
-            else:
-                return_data.append(process_non_tensor_func(array))
-
-        if len(return_data) == 1:
-            return return_data[0]
-        else:
-            return tuple(return_data)
-
     def create_policy_checkpoint(self):
         _, state_dictionary = self.policy.parameters
         self._state_dictionary = deepcopy(state_dictionary)
 
     def restore_last_policy_checkpoint(self):
         self.policy.parameters = deepcopy(self._state_dictionary)
-
-    def preprocess_data(self, *data):
-        def process_array(array):
-            tensor = torch.from_numpy(array).float()
-            return tensor
-
-        return self._process_data(lambda array: array, process_array, *data)
-
-    def postprocess_data(self, *data):
-        return self._process_data(lambda array: array.detach().numpy(), lambda array: array, *data)
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the model parameters using stochastic gradient descent.
@@ -233,18 +217,6 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
 
     def restore_last_policy_checkpoint(self):
         self.policy.parameters = deepcopy(self._theta)
-
-    def preprocess_data(self, *data):
-        if len(data) == 1:
-            return data[0]
-
-        return data
-
-    def postprocess_data(self, *data):
-        if len(data) == 1:
-            return data[0]
-
-        return data
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Manually updates the model parameters using stochastic gradient descent.

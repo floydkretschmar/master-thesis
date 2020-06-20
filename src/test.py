@@ -159,7 +159,7 @@ training_parameters = {
     'lagrangian_optimization': {
         'epochs': 200,
         'batch_size': 4096,
-        'learning_rate': 0.1,
+        'learning_rate': 0.01,
     },
     'evaluation': {
         UTILITY: {

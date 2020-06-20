@@ -12,6 +12,7 @@ if root_path not in sys.path:
 from src.util import stack, train_test_split, stable_divide
 from src.training_evaluation import Statistics, ModelParameters
 from src.plotting import plot_epoch_statistics
+from src.optimization import PytorchStochasticGradientOptimizer
 
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
@@ -173,8 +174,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
                 last_optimization_target = current_optimization_target
                 i += 1
-                if epochs <= i:
-                    break
+                # if epochs <= i:
+                #     break
 
     def train(self, training_parameters):
         """ Executes consequential learning according to the specified training parameters.
@@ -191,11 +192,11 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         optim_target = training_parameters["optimization_target"]
         optimizer = policy.optimizer(optim_target)
         dual_optimization = "lagrangian_optimization" in training_parameters
+        as_tensor = isinstance(optimizer, PytorchStochasticGradientOptimizer)
 
         # Get test data
         x_test, s_test, y_test = distribution.sample_test_dataset(
-            n_test=training_parameters["data"]["num_test_samples"])
-        x_test, s_test, y_test = optimizer.preprocess_data(x_test, s_test, y_test)
+            n_test=training_parameters["data"]["num_test_samples"], as_tensor=as_tensor)
 
         # Store initial policy decisions
         with torch.no_grad():
@@ -220,12 +221,12 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                 theta_learning_rate *= theta_decay_rate
 
             # Collect training data
-            data = optimizer.preprocess_data(*distribution.sample_train_dataset(
-                n_train=training_parameters["data"]["num_train_samples"]))
+            data = distribution.sample_train_dataset(n_train=training_parameters["data"]["num_train_samples"],
+                                                     as_tensor=as_tensor)
             x_train, s_train, y_train, pi_0_probabilities = self._filter_by_policy(data, optimizer.policy)
 
             if x_train.shape[0] > 0:
-                ips_weights = optimizer.preprocess_data(stable_divide(1, pi_0_probabilities))
+                ips_weights = stable_divide(1, pi_0_probabilities)
                 self._update_buffer(x_train, s_train, y_train, ips_weights)
             elif x_train.shape[0] == 0 and not self.learn_on_entire_history:
                 self.data_history = None
@@ -291,7 +292,14 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             model_parameters["model_parameters"] = [deepcopy(parameters)]
 
         self._reset_buffer()
-        decisions_over_time, s_test, y_test = optimizer.postprocess_data(decisions_over_time, s_test, y_test)
+        return_data = []
+        for data in [decisions_over_time, s_test, y_test]:
+            if torch.is_tensor(data):
+                return_data.append(data.to_numpy())
+            else:
+                return_data.append(data)
+
+        decisions_over_time, s_test, y_test = tuple(return_data)
         statistics = Statistics(
             predictions=decisions_over_time,
             protected_attributes=s_test,
