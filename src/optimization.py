@@ -5,6 +5,7 @@ import sys
 import torch
 import torch.optim as optim
 import numbers
+import numpy as np
 from copy import deepcopy
 
 root_path = os.path.abspath(os.path.join('.'))
@@ -123,8 +124,6 @@ class StochasticGradientOptimizer:
             returns:
                 average_gradient: The average gradient across all minibatches
         """
-        sum_grad = 0
-        num_batches = 0
         # for each minibatch...
         for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
             # make decision according to current policy
@@ -139,16 +138,8 @@ class StochasticGradientOptimizer:
                                                                             decision_probabilities=decision_probability_batch,
                                                                             ips_weights=ips_weights_batch)
 
-            sum_grad += gradient
-            num_batches += 1
-
-            if self.optimization_target.error_delta == 0.0:
-                self.optimization_target.fairness_rate = self.optimization_target.fairness_rate + learning_rate * gradient
-            else:
-                lambda1, lambda2 = self.optimization_target.fairness_rate
-                self.optimization_target.fairness_rate = [max(lambda1 + learning_rate * gradient[0], 0),
-                                                          max(lambda2 + learning_rate * gradient[1], 0)]
-        return sum_grad/num_batches
+            tmp = self.optimization_target.fairness_rate + learning_rate * gradient
+            self.optimization_target.fairness_rate = tmp
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy, optimization_target, seed=None):
@@ -222,7 +213,6 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
                                             decisions=decisions_batch,
                                             decision_probabilities=decision_probability_batch)
             loss.backward(retain_graph=False)
-
             self.model_optimizer.step()
 
     def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
@@ -361,21 +351,11 @@ class ManualGradientOptimizationTarget(abc.ABC):
 class DualOptimizationTarget(BaseOptimizationTarget, abc.ABC):
     """ The base class for a optimization target that combines a utility function with a fairness constraint. """
 
-    def __init__(self, fairness_rate, utility_function, fairness_function, error_delta=0.0):
+    def __init__(self, fairness_rate, utility_function, fairness_function):
         super().__init__()
-        self._error_delta = error_delta
-        if self._error_delta == 0.0:
-            self._fairness_rate = fairness_rate
-        else:
-            self._fairness_rate = (fairness_rate, fairness_rate)
-
         self._utility_function = utility_function
         self._fairness_function = fairness_function
-
-    @property
-    def error_delta(self):
-        """ Returns the fairness rate with which the fairness function is weighted. """
-        return self._error_delta
+        self._fairness_rate = fairness_rate
 
     @property
     def fairness_function(self):
@@ -390,10 +370,7 @@ class DualOptimizationTarget(BaseOptimizationTarget, abc.ABC):
     @fairness_rate.setter
     def fairness_rate(self, value):
         """ Sets the fairness rate with which the fairness function is weighted. """
-        if self.error_delta != 0.0 and isinstance(value, numbers.Number):
-            self._fairness_rate = (value, value)
-        else:
-            self._fairness_rate = value
+        self._fairness_rate = value
 
     @property
     def utility_function(self):
@@ -454,7 +431,9 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
     and is differentiable with regards to the model parameters as well as the lagrangian multiplier"""
 
     def __init__(self, fairness_rate, utility_function, fairness_function, error_delta=0.0):
-        super().__init__(fairness_rate, utility_function, fairness_function, error_delta)
+        super().__init__(fairness_rate, utility_function, fairness_function)
+        self._error_delta = error_delta
+        self.fairness_rate = fairness_rate
 
     def __call__(self, **optimization_target_args):
         if self.error_delta == 0.0:
@@ -466,6 +445,26 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
                    + lambda1 * (-self.fairness_function(**optimization_target_args) - self._error_delta) \
                    + lambda2 * (self.fairness_function(**optimization_target_args) - self._error_delta)
 
+    @property
+    def error_delta(self):
+        """ Returns the fairness rate with which the fairness function is weighted. """
+        return self._error_delta
+
+    @property
+    def fairness_rate(self):
+        """ Returns the fairness rate with which the fairness function is weighted. """
+        return self._fairness_rate
+
+    @fairness_rate.setter
+    def fairness_rate(self, value):
+        """ Sets the fairness rate with which the fairness function is weighted. """
+        if self.error_delta != 0.0 and isinstance(value, numbers.Number):
+            self._fairness_rate = np.array([value, value])
+        elif self.error_delta != 0.0:
+            self._fairness_rate = np.array([max(value[0], 0), max(value[1], 0)])
+        else:
+            self._fairness_rate = value
+
     def fairness_parameter_gradient(self, **optimization_target_args):
         """ Returns the value of the lagrangian optimization target with regards to the fairness value.
 
@@ -475,7 +474,7 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
         if self.error_delta == 0.0:
             return self.fairness_function(**optimization_target_args)
         else:
-            return -self.fairness_function(**optimization_target_args), self.fairness_function(**optimization_target_args)
+            return np.array([-self.fairness_function(**optimization_target_args), self.fairness_function(**optimization_target_args)]).squeeze()
 
 
 class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, ManualGradientOptimizationTarget):
