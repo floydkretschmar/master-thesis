@@ -164,21 +164,20 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
 class LogisticPolicy(ManualGradientPolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, theta, feature_map, use_sensitive_attributes, seed=None):
-        super(LogisticPolicy, self).__init__(use_sensitive_attributes, theta, seed)
+    def __init__(self, feature_map, use_sensitive_attributes, seed=None):
+        super(LogisticPolicy, self).__init__(use_sensitive_attributes, np.zeros(feature_map.dim_theta), seed)
         self.feature_map = feature_map
 
     def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self._theta)).reshape(-1, 1)
 
     def _decision(self, probability):
-        random = get_random(self._seed)
+        random, _ = get_random(self._seed)
         decisions = random.binomial(1, probability).astype(float)
         return decisions.reshape(-1, 1)
 
     def copy(self):
         approx_policy = LogisticPolicy(
-            deepcopy(self._theta),
             deepcopy(self.feature_map),
             self._use_sensitive_attributes)
         return approx_policy

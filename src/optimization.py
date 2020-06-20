@@ -2,7 +2,6 @@ import abc
 import os
 import sys
 
-import numpy as np
 import torch
 import torch.optim as optim
 import numbers
@@ -69,7 +68,8 @@ class StochasticGradientOptimizer:
         if batch_size >= x.shape[0]:
             yield x, s, y, ips_weights
         else:
-            indices = get_random(self._seed).permutation(x.shape[0])
+            np_random, _ = get_random(self._seed)
+            indices = np_random.permutation(x.shape[0])
             for batch_start in range(0, len(indices), batch_size):
                 batch_end = min(batch_start + batch_size, len(indices))
 

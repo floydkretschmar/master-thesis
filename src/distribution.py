@@ -6,11 +6,11 @@ if root_path not in sys.path:
     sys.path.append(root_path)
 
 import numpy as np
+import torch
 # pylint: disable=no-name-in-module
-from scipy.special import expit as sigmoid
 from scipy.stats.distributions import truncnorm
 
-from src.util import train_test_split, get_random, whiten
+from src.util import train_test_split, get_random, whiten, sigmoid
 from responsibly.dataset import build_FICO_dataset, COMPASDataset, AdultDataset, GermanDataset
 
 
@@ -37,7 +37,16 @@ class BaseDistribution():
     def _sample_train_dataset_core(self, n_train, random):
         raise NotImplementedError("Subclass must override _sample_train_dataset_core(self, n_train).")
 
-    def sample_test_dataset(self, n_test):
+    def _convert_to_torch(self, *args):
+        return_list = []
+        for arg in args:
+            if not torch.is_tensor(arg):
+                return_list.append(torch.from_numpy(arg).float())
+            else:
+                return_list.append(arg)
+        return tuple(return_list)
+
+    def sample_test_dataset(self, n_test, as_tensor=False):
         """
         Draws a nxd matrix of non-sensitive feature vectors, a n-dimensional vector of sensitive attributes 
         and a n-dimensional ground truth vector used for testing.
@@ -49,9 +58,13 @@ class BaseDistribution():
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        return self._sample_test_dataset_core(n_test, get_random(self._seed))
+        np_random, _ = get_random(self._seed)
+        if as_tensor:
+            return self._convert_to_torch(*self._sample_test_dataset_core(n_test, np_random))
+        else:
+            return self._sample_test_dataset_core(n_test, np_random)
 
-    def sample_train_dataset(self, n_train):
+    def sample_train_dataset(self, n_train, as_tensor=False):
         """
         Draws a nxd matrix of non-sensitive feature vectors, a n-dimensional vector of sensitive attributes 
         and a n-dimensional ground truth vector used for training.
@@ -63,7 +76,11 @@ class BaseDistribution():
             x: nxd matrix of non-sensitive feature vectors
             s: n-dimensional vector of sensitive attributes
         """
-        return self._sample_train_dataset_core(n_train, get_random(self._seed))
+        np_random, _ = get_random(self._seed)
+        if as_tensor:
+            return self._convert_to_torch(*self._sample_train_dataset_core(n_train, np_random))
+        else:
+            return self._sample_train_dataset_core(n_train, np_random)
 
 
 class GenerativeDistribution(BaseDistribution):

@@ -12,7 +12,8 @@ LOCK = Lock()
 
 CUDA = False
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
-random_states = { None : RandomState() }
+random_states_np = {None: RandomState()}
+random_states_torch = {None: torch.Generator()}
 
 def to_device(torch_object):
     if torch.cuda.is_available() and CUDA:
@@ -27,12 +28,15 @@ def from_device(torch_object):
         return torch_object
 
 def get_random(seed=200):
-    global random_states
+    global random_states_np, random_states_torch
     LOCK.acquire()
-    if not seed in random_states:
-        random_states[seed] = RandomState(seed)
+    if not seed in random_states_np:
+        random_states_np[seed] = RandomState(seed)
+    if not seed in random_states_torch:
+        random_states_torch[seed] = torch.Generator()
+        random_states_torch[seed].manual_seed(seed)
     LOCK.release()
-    return random_states[seed]
+    return random_states_np[seed], random_states_torch[seed]
 
 def train_validation_split(data, validation_percentage=0.2):
     data_len = len(data)
@@ -47,7 +51,8 @@ def train_validation_split(data, validation_percentage=0.2):
 
 def get_list_of_seeds(number_of_seeds):
     max_value = 2 ** 32 - 1
-    seeds = get_random().randint(
+    np_random, _ = get_random()
+    seeds = np_random.randint(
         0,
         max_value,
         size=number_of_seeds,
@@ -230,7 +235,8 @@ def train_test_split(*arrays, test_percentage, seed=None):
     indices = np.array(range(arrays[0].shape[0]))
 
     boundary = int(len(indices) * test_percentage)
-    test_indices, train_indices = np.split(get_random(seed).permutation(indices), [boundary])
+    np_random, _ = get_random(seed)
+    test_indices, train_indices = np.split(np_random.permutation(indices), [boundary])
 
     splits = []
     for array in arrays:
@@ -242,4 +248,4 @@ def stable_divide(numerator, denominator):
     if isinstance(numerator, np.ndarray) or isinstance(denominator, np.ndarray):
         return np.sign(numerator) * np.sign(denominator) * np.exp(np.log(np.abs(numerator)) - np.log(np.abs(denominator)))
     elif torch.is_tensor(numerator) or torch.is_tensor(denominator):
-        return np.sign(numerator) * np.sign(denominator) * np.exp(np.log(np.abs(numerator)) - np.log(np.abs(denominator)))
+        return torch.sign(numerator) * torch.sign(denominator) * torch.exp(torch.log(torch.abs(numerator)) - torch.log(torch.abs(denominator)))

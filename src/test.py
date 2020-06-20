@@ -33,10 +33,10 @@ def calc_covariance(s, decisions, ips_weights):
     new_s = 1 - (2 * s)
 
     if ips_weights is not None:
-        mu_s = np.mean(new_s * ips_weights, axis=0)
+        mu_s = (new_s * ips_weights).mean(0)
         d = decisions * ips_weights
     else:
-        mu_s = np.mean(new_s, axis=0)
+        mu_s = new_s.mean(0)
         d = decisions
 
     covariance = (new_s - mu_s) * d
@@ -61,7 +61,7 @@ def fairness_function_gradient(type, **fairness_kwargs):
     if type == "BD_DP":
         return mean_difference(grad, s)
     elif type == "COV_DP":
-        return np.mean(grad, axis=0)
+        return grad.mean(0)
 
 
 def fairness_function(type, **fairness_kwargs):
@@ -74,7 +74,7 @@ def fairness_function(type, **fairness_kwargs):
         return mean_difference(benefit, s)
     elif type == "COV_DP":
         covariance = calc_covariance(s, decisions, ips_weights)
-        return np.mean(covariance, axis=0)
+        return covariance.mean(0)
 
 def no_fairness(**fairness_kwargs):
     return 0.0
@@ -141,7 +141,7 @@ optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
 
 training_parameters = {
     # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-    'model': LogisticPolicy(np.zeros(dim_theta), IdentityFeatureMap(dim_theta), False),
+    'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
     'distribution': distribution,
     'optimization_target': optim_target,
     'parameter_optimization': {
@@ -173,21 +173,8 @@ training_parameters = {
     }
 }
 
-# seed_path = "../exp/cluster_experiments/seeds.npz"
-# if os.path.isfile(seed_path):
-#     seeds = np.load(seed_path)
-#     training_parameters['data']["training_seeds"] = seeds["train"]
-#     training_parameters['data']["test_seed"] = seeds["test"]
-# else:
-#     seeds = {}
-#     train_seeds = get_list_of_seeds(200)
-#     test_seeds = get_list_of_seeds(1)
-#     training_parameters['data']["training_seeds"] = train_seeds
-#     training_parameters['data']["test_seed"] = test_seeds
-#     np.savez(seed_path, train=train_seeds, test=test_seeds)
 
-
-training_parameters["save_path"] = "../res/local_experiments/NO_FAIRNESS"
+training_parameters["save_path"] = "../res/local_experiments/TEST"
 statistics, model_parameters, run_path = train(
     training_parameters,
     iterations=[200],

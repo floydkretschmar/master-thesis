@@ -1,8 +1,6 @@
 import os
 import sys
 
-import numpy as np
-
 root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
