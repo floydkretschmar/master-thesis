@@ -20,15 +20,15 @@ from src.optimization import ManualStochasticGradientOptimizer, PytorchStochasti
 
 class BasePolicy(abc.ABC):
     """ The base implementation of a policy """
-
-    def __init__(self, use_sensitive_attributes):
+    def __init__(self, use_sensitive_attributes, seed=None):
         """ Initializes a new BasePolicy object.
         
         Args:
             use_sensitive_attributes: A flag that indicates whether or not the sensitive attributes should be
             used overall or just in evaluating the fairness penalty.
         """
-        self.use_sensitive_attributes = use_sensitive_attributes
+        self._use_sensitive_attributes = use_sensitive_attributes
+        self._seed = seed
 
     def __call__(self, x, s):
         """ Returns the decisions made by the policy for x and s.
@@ -45,6 +45,15 @@ class BasePolicy(abc.ABC):
         decisions = self._decision(probability)
 
         return decisions, probability
+
+
+    @property
+    def seed(self):
+        return self._seed
+
+    @seed.setter
+    def seed(self, value):
+        self._seed = value
 
     @property
     def parameters(self):
@@ -65,7 +74,7 @@ class BasePolicy(abc.ABC):
         Returns:
             features: The relevant features of the samples.
         """
-        if self.use_sensitive_attributes:
+        if self._use_sensitive_attributes:
             features = np.concatenate((x, s), axis=1)
         else:
             features = x
@@ -94,8 +103,7 @@ class BasePolicy(abc.ABC):
         """
         raise NotImplementedError("Subclass must override copy(self).")
 
-    @staticmethod
-    def optimizer(policy, optimization_target):
+    def optimizer(self, optimization_target):
         """ Returns the fitting optimizer that optimizes the specified policy.
 
         Args:
@@ -110,8 +118,8 @@ class BasePolicy(abc.ABC):
 
 
 class ManualGradientPolicy(BasePolicy, abc.ABC):
-    def __init__(self, use_sensitive_attributes, theta):
-        super().__init__(use_sensitive_attributes)
+    def __init__(self, use_sensitive_attributes, theta, seed=None):
+        super().__init__(use_sensitive_attributes, seed)
         self._theta = np.array(theta)
 
     @property
@@ -138,8 +146,7 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
         """
         raise NotImplementedError("Subclass must override log_policy_gradient(self, x, s).")
 
-    @staticmethod
-    def optimizer(policy, optimization_target):
+    def optimizer(self, optimization_target):
         """ Returns the optimizer that optimizes a ManualGradientPolicy.
 
         Args:
@@ -151,21 +158,21 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
             optimizer: The ManualStochasticGradientOptimizer that optimizes the specified policy according to the
             specified optimization target.
         """
-        return ManualStochasticGradientOptimizer(policy, optimization_target)
+        return ManualStochasticGradientOptimizer(self, optimization_target, self._seed)
 
 
 class LogisticPolicy(ManualGradientPolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, theta, feature_map, use_sensitive_attributes):
-        super(LogisticPolicy, self).__init__(use_sensitive_attributes, theta)
+    def __init__(self, theta, feature_map, use_sensitive_attributes, seed=None):
+        super(LogisticPolicy, self).__init__(use_sensitive_attributes, theta, seed)
         self.feature_map = feature_map
 
     def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self._theta)).reshape(-1, 1)
 
     def _decision(self, probability):
-        random = get_random()
+        random = get_random(self._seed)
         decisions = random.binomial(1, probability).astype(float)
         return decisions.reshape(-1, 1)
 
@@ -173,7 +180,7 @@ class LogisticPolicy(ManualGradientPolicy):
         approx_policy = LogisticPolicy(
             deepcopy(self._theta),
             deepcopy(self.feature_map),
-            self.use_sensitive_attributes)
+            self._use_sensitive_attributes)
         return approx_policy
 
     def log_policy_gradient(self, x, s):
@@ -182,8 +189,8 @@ class LogisticPolicy(ManualGradientPolicy):
 
 
 class PytorchPolicy(BasePolicy, abc.ABC):
-    def __init__(self, use_sensitive_attributes, bias=True, **network_arguments):
-        super().__init__(use_sensitive_attributes)
+    def __init__(self, use_sensitive_attributes, bias=True, seed=None, **network_arguments):
+        super().__init__(use_sensitive_attributes, seed)
         self.bias = bias
         self.network = self._create_network(bias=bias, **network_arguments)
 
@@ -207,9 +214,8 @@ class PytorchPolicy(BasePolicy, abc.ABC):
     def parameters(self, value):
         self.network.load_state_dict(value)
 
-    @staticmethod
-    def optimizer(policy, optimization_target):
-        return PytorchStochasticGradientOptimizer(policy, optimization_target)
+    def optimizer(self, optimization_target):
+        return PytorchStochasticGradientOptimizer(self, optimization_target, self._seed)
 
 
 class NeuralNetworkPolicy(PytorchPolicy):

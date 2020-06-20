@@ -6,9 +6,13 @@ import numbers
 import numpy as np
 import torch
 from numpy.random import RandomState
+from threading import Lock
+
+LOCK = Lock()
 
 CUDA = False
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
+random_states = { None : RandomState() }
 
 def to_device(torch_object):
     if torch.cuda.is_available() and CUDA:
@@ -22,11 +26,13 @@ def from_device(torch_object):
     else:
         return torch_object
 
-def get_random(seed=None):
-    if seed is None:
-        return RandomState()
-    else:
-        return RandomState(seed)
+def get_random(seed=200):
+    global random_states
+    LOCK.acquire()
+    if not seed in random_states:
+        random_states[seed] = RandomState(seed)
+    LOCK.release()
+    return random_states[seed]
 
 def train_validation_split(data, validation_percentage=0.2):
     data_len = len(data)
@@ -219,15 +225,21 @@ def whiten(data, columns=None, conditioning=1e-8):
     return data
 
 
-def train_test_split(*arrays, test_percentage):
+def train_test_split(*arrays, test_percentage, seed=None):
     assert len(arrays) > 0
     indices = np.array(range(arrays[0].shape[0]))
 
     boundary = int(len(indices) * test_percentage)
-    test_indices, train_indices = np.split(get_random().permutation(indices), [boundary])
+    test_indices, train_indices = np.split(get_random(seed).permutation(indices), [boundary])
 
     splits = []
     for array in arrays:
         splits.extend((array[train_indices], array[test_indices]))
 
     return tuple(splits)
+
+def stable_divide(numerator, denominator):
+    if isinstance(numerator, np.ndarray) or isinstance(denominator, np.ndarray):
+        return np.sign(numerator) * np.sign(denominator) * np.exp(np.log(np.abs(numerator)) - np.log(np.abs(denominator)))
+    elif torch.is_tensor(numerator) or torch.is_tensor(denominator):
+        return np.sign(numerator) * np.sign(denominator) * np.exp(np.log(np.abs(numerator)) - np.log(np.abs(denominator)))

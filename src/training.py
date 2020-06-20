@@ -122,15 +122,6 @@ def _prepare_training(training_parameters):
     if "clip_weights" not in current_training_parameters["parameter_optimization"]:
         current_training_parameters["parameter_optimization"]["clip_weights"] = False
 
-    ##################### GENERATE DATA AND SEEDS #####################
-    # if fixed seeding for parameter optimization: get one seed per time step for data generation and one seed for
-    # test set generation
-    if "fix_seeds" in current_training_parameters["data"] and current_training_parameters["data"]["fix_seeds"]:
-        current_training_parameters["data"]["training_seeds"] = get_list_of_seeds(
-            training_parameters["parameter_optimization"]["time_steps"])
-
-        current_training_parameters["data"]["test_seed"] = get_list_of_seeds(1)
-
     ##################### PERPARE LAGRANGIAN OPTIMIZATION #####################
     if "lagrangian_optimization" in current_training_parameters:
         # if decay_rate and decay_step not specified: set them in a way such that there is no decay of the lr
@@ -190,13 +181,26 @@ class _Trainer():
         return training_algorithm.train(training_parameters)
 
     def train_over_iterations(self, training_parameters, iterations, asynchronous):
+        if isinstance(iterations, list):
+            seed_list = deepcopy(iterations)
+            num_iterations = len(iterations)
+        else:
+            num_iterations = iterations
+            seed_list = None
+
+        def set_seed(training_parameters, seed):
+            training_parameters["distribution"].seed = seed
+            training_parameters["model"].seed = seed
+
         # multithreaded runs of training
         # Hack to not deal with multithreaded GPU training for now: Disable asynchronous for Pytorch policies using cuda
         if asynchronous and not (torch.cuda.is_available() and isinstance(training_parameters["model"], PytorchPolicy)):
             apply_results = []
             results_per_iterations = []
             pool = Pool(mp.cpu_count())
-            for _ in range(0, iterations):
+            for i in range(0, num_iterations):
+                if seed_list:
+                    set_seed(training_parameters, seed_list[i])
                 # apply_results.append(pool.apipe(self._training_iteration, training_parameters))
                 apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters,)))
 
@@ -204,7 +208,9 @@ class _Trainer():
                 results_per_iterations.append(result.get())
         else:
             results_per_iterations = []
-            for _ in range(0, iterations):
+            for i in range(0, num_iterations):
+                if seed_list:
+                    set_seed(training_parameters, seed_list[i])
                 results_per_iterations.append(self._training_iteration(training_parameters))
 
         total_statistics, total_parameters = _process_results(results_per_iterations)
@@ -217,7 +223,8 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
         
     Args:
         training_parameters: The parameters used to configure the consequential learning algorithm.
-        iterations: The number of times consequential learning will be run for one of the specified
+        iterations: The number of times consequential learning will be run for one of the specified or a list of seed
+                    for each of which one run will be started.
         asynchronous: A flag indicating if the iterations should be executed asynchronously.
 
     Returns:
@@ -227,7 +234,10 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
         or None, when training with fixed lambdas. The ModelParameter object contains theta 
         and lambda values for each timestep over all iterations.
     """
-    assert iterations > 0
+    if isinstance(iterations, list):
+        assert len(iterations) > 0
+    else:
+        assert iterations > 0
 
     current_training_parameters, base_save_path = _prepare_training(training_parameters)
 

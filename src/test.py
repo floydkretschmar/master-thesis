@@ -9,27 +9,157 @@ module_path = os.path.abspath(os.path.join('..'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-from src.functions import cost_utility_probability, cost_utility
+from src.functions import cost_utility, cost_utility_gradient
 from src.plotting import plot_median
 from src.training import train
-from src.training_evaluation import UTILITY
+from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.feature_map import IdentityFeatureMap
 from src.policy import LogisticPolicy, NeuralNetworkPolicy
-from src.distribution import COMPASDistribution
-from src.optimization import PenaltyOptimizationTarget, ManualGradientPenaltyOptimizationTarget
-from src.util import mean
+from src.distribution import COMPASDistribution, FICODistribution
+from src.optimization import ManualGradientLagrangianOptimizationTarget
+from src.util import mean, mean_difference, get_list_of_seeds
+
+
+# region Fairness Definitions
+
+def calc_benefit(decisions, ips_weights):
+    if ips_weights is not None:
+        decisions *= ips_weights
+
+    return decisions
+
+
+def calc_covariance(s, decisions, ips_weights):
+    new_s = 1 - (2 * s)
+
+    if ips_weights is not None:
+        mu_s = np.mean(new_s * ips_weights, axis=0)
+        d = decisions * ips_weights
+    else:
+        mu_s = np.mean(new_s, axis=0)
+        d = decisions
+
+    covariance = (new_s - mu_s) * d
+    return covariance
+
+
+def fairness_function_gradient(type, **fairness_kwargs):
+    policy = fairness_kwargs["policy"]
+    x = fairness_kwargs["x"]
+    s = fairness_kwargs["s"]
+    y = fairness_kwargs["y"]
+    decisions = fairness_kwargs["decisions"]
+    ips_weights = fairness_kwargs["ips_weights"]
+
+    if type == "BD_DP" or type == "BD_EOP":
+        result = calc_benefit(decisions, ips_weights)
+    elif type == "COV_DP":
+        result = calc_covariance(s, decisions, ips_weights)
+    elif type == "COV_DP_DIST":
+        phi = policy.feature_map(policy._extract_features(x, s))
+        distance = np.matmul(phi, policy.theta).reshape(-1, 1)
+        result = calc_covariance(s, distance, ips_weights)
+
+    log_gradient = policy.log_policy_gradient(x, s)
+    grad = log_gradient * result
+
+    if type == "BD_DP":
+        return mean_difference(grad, s)
+    elif type == "COV_DP":
+        return np.mean(grad, axis=0)
+    elif type == "COV_DP_DIST":
+        return np.mean(grad, axis=0)
+    elif type == "BD_EOP":
+        y1_indices = np.where(y == 1)
+        return mean_difference(grad[y1_indices], s[y1_indices])
+
+
+def fairness_function(type, **fairness_kwargs):
+    x = fairness_kwargs["x"]
+    s = fairness_kwargs["s"]
+    y = fairness_kwargs["y"]
+    decisions = fairness_kwargs["decisions"]
+    ips_weights = fairness_kwargs["ips_weights"]
+    policy = fairness_kwargs["policy"]
+
+    if type == "BD_DP":
+        benefit = calc_benefit(decisions, ips_weights)
+        return mean_difference(benefit, s)
+    elif type == "COV_DP":
+        covariance = calc_covariance(s, decisions, ips_weights)
+        return np.mean(covariance, axis=0)
+    elif type == "COV_DP_DIST":
+        phi = policy.feature_map(policy._extract_features(x, s))
+        distance = np.matmul(phi, policy.theta).reshape(-1, 1)
+        covariance = calc_covariance(s, distance, ips_weights)
+        return np.mean(covariance, axis=0)
+    elif type == "BD_EOP":
+        benefit = calc_benefit(decisions, ips_weights)
+        y1_indices = np.where(y == 1)
+        return mean_difference(benefit[y1_indices], s[y1_indices])
+
+def no_fairness(**fairness_kwargs):
+    return 0.0
+
+def eval_covariance_of_decision(s, y, decisions):
+    return fairness_function(
+        type="COV_DP",
+        x=None,
+        s=s,
+        y=y,
+        decisions=decisions,
+        ips_weights=None,
+        policy=None)
+
+
+# endregion
+
+def utility(**util_params):
+    return cost_utility(cost_factor=0.5, **util_params)
+
+def utility_gradient(**util_params):
+    return cost_utility_gradient(cost_factor=0.5, **util_params)
+
+def covariance_of_decision(**fairness_params):
+    return fairness_function(
+        type="COV_DP",
+        **fairness_params)
+
+def benefit_difference_dp(**fairness_params):
+    return fairness_function(
+        type="BD_DP",
+        **fairness_params)
+
+def benefit_difference_eop(**fairness_params):
+    return fairness_function(
+        type="BD_EOP",
+        **fairness_params)
+
+def covariance_of_decision_grad(**fairness_params):
+    return fairness_function_gradient(
+        type="COV_DP",
+        **fairness_params)
+
+def benefit_difference_dp_grad(**fairness_params):
+    return fairness_function_gradient(
+        type="BD_DP",
+        **fairness_params)
+
+def benefit_difference_eop_grad(**fairness_params):
+    return fairness_function_gradient(
+        type="BD_EOP",
+        **fairness_params)
+
 
 bias = True
-distribution = COMPASDistribution(bias=bias, test_percentage=0.2)
+distribution = FICODistribution(bias=bias, fraction_protected=0.5)
 dim_theta = distribution.feature_dimension
 
-# optim_target = PenaltyOptimizationTarget(0.0,
-#                                          lambda **util_params: torch.mean(cost_utility_probability(cost_factor=0.5, **util_params)),
-#                                          lambda **util_params: 0.0)
-optim_target = ManualGradientPenaltyOptimizationTarget(0.0,
-                                         lambda **util_params: mean(cost_utility_probability(cost_factor=0.5, **util_params)),
-                                         lambda **util_params: 0.0,
-                                         lambda **util_params: 0.0)
+optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
+                                                           utility,
+                                                           utility_gradient,
+                                                           benefit_difference_dp,
+                                                           benefit_difference_dp_grad)
 
 training_parameters = {
     # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
@@ -38,32 +168,53 @@ training_parameters = {
     'optimization_target': optim_target,
     'parameter_optimization': {
         'time_steps': 200,
-        'epochs': 50,
+        'epochs': 200,
         'batch_size': 128,
-        'learning_rate': 0.1,
-        'learn_on_entire_history': False,
-        'fix_seeds': True,
-        'clip_weights': True,
-        'change_percentage': 0.01
+        'learning_rate': 0.01,
+        'learn_on_entire_history': True,
+        'change_iterations': 5
     },
     'data': {
-        'num_train_samples': 4096,
+        'num_train_samples': 256 * 30,
         'num_test_samples': 1024
+    },
+    'lagrangian_optimization': {
+        'epochs': 200,
+        'batch_size': 4096,
+        'learning_rate': 0.1,
     },
     'evaluation': {
         UTILITY: {
-            'measure_function': lambda s, y, decisions: mean(cost_utility(y=y, decisions=decisions, cost_factor=0.5)),
+            'measure_function': utility,
+            'detailed': False
+        },
+        COVARIANCE_OF_DECISION_DP: {
+            'measure_function': eval_covariance_of_decision,
             'detailed': False
         }
     }
 }
 
+# seed_path = "../exp/cluster_experiments/seeds.npz"
+# if os.path.isfile(seed_path):
+#     seeds = np.load(seed_path)
+#     training_parameters['data']["training_seeds"] = seeds["train"]
+#     training_parameters['data']["test_seed"] = seeds["test"]
+# else:
+#     seeds = {}
+#     train_seeds = get_list_of_seeds(200)
+#     test_seeds = get_list_of_seeds(1)
+#     training_parameters['data']["training_seeds"] = train_seeds
+#     training_parameters['data']["test_seed"] = test_seeds
+#     np.savez(seed_path, train=train_seeds, test=test_seeds)
+
+
 training_parameters["save_path"] = "../res/local_experiments/NO_FAIRNESS"
 statistics, model_parameters, run_path = train(
     training_parameters,
-    iterations=1,
+    iterations=[200],
     asynchronous=False,
-    fairness_rates=[0.1])
+    fairness_rates=[0.0])
 
 plot_median(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
             x_label="Time steps",
