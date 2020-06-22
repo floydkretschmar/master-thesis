@@ -271,16 +271,15 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                         util_values.append(util)
                         print("Timestep {} Epoch {}: Lambda {} \t Fairness (test) {} \t Utility (test) {}".
                               format(i, j, optimizer.optimization_target.fairness_rate, fairness, util))
-
+                    plot_epoch_statistics("{}/timestep_{}.png".format(training_parameters["save_path"], i),
+                                          fairness_values,
+                                          lambda_values,
+                                          gradient_values,
+                                          util_values)
                 else:
                     self._train_model_parameters(optimizer,
                                                  theta_learning_rate,
                                                  training_parameters)
-            plot_epoch_statistics("{}/timestep_{}.png".format(training_parameters["save_path"], i),
-                                  fairness_values,
-                                  lambda_values,
-                                  gradient_values,
-                                  util_values)
             # Evaluate performance on test set after training ...
             with torch.no_grad():
                 decisions, decision_probabilities = optimizer.policy(x_test, s_test)
@@ -295,7 +294,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         return_data = []
         for data in [decisions_over_time, s_test, y_test]:
             if torch.is_tensor(data):
-                return_data.append(data.to_numpy())
+                return_data.append(data.numpy())
             else:
                 return_data.append(data)
 
