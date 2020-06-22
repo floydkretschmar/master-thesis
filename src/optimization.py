@@ -12,6 +12,7 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
+
 ########################################$ OPTIMIZERS ####################################################
 
 # TODO: Add Pytorch supporting optimizer
@@ -23,12 +24,27 @@ class StochasticGradientOptimizer:
         super().__init__()
         self._optimization_target = optimization_target
         self._policy = policy
-        self.beta_1 = 0.9
-        self.beta_2 = 0.999
-        self.v = 0
-        self.m = 0
-        self.t = 1
-        self.epsilon = 0.0000001
+        self.fairness_update_parameters = self._initialize_update_parameters()
+
+    def _initialize_update_parameters(self):
+        return {
+            "beta_1": 0.9,
+            "beta_2": 0.999,
+            "v": 0,
+            "m": 0,
+            "t": 1,
+            "epsilon": 0.0000001
+        }
+
+    def _update_parameters_and_calculate_gradient(self, update_parameters, gradient):
+        update_parameters["m"] = update_parameters["beta_1"] * update_parameters["m"] + (
+                    1 - update_parameters["beta_1"]) * gradient
+        update_parameters["v"] = update_parameters["beta_2"] * update_parameters["v"] + (
+                    1 - update_parameters["beta_2"]) * np.power(gradient, 2)
+        m_hat = update_parameters["m"] / (1 - np.power(update_parameters["beta_1"], update_parameters["t"]))
+        v_hat = update_parameters["v"] / (1 - np.power(update_parameters["beta_2"], update_parameters["t"]))
+        update_parameters["t"] += 1
+        return m_hat / (np.sqrt(v_hat) + update_parameters["epsilon"])
 
     @property
     def optimization_target(self):
@@ -127,13 +143,11 @@ class StochasticGradientOptimizer:
                                                                             decisions=decisions_batch,
                                                                             decision_probabilities=decision_probability_batch,
                                                                             ips_weights=ips_weights_batch)
-            self.m = self.beta_1 * self.m + (1 - self.beta_1) * gradient
-            self.v = self.beta_2 * self.v + (1 - self.beta_2) * np.power(gradient, 2)
-            m_hat = self.m / (1 - np.power(self.beta_1, self.t))
-            v_hat = self.v / (1 - np.power(self.beta_2, self.t))
-            new_fairness_rate = self.optimization_target.fairness_rate + learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
+
+            adam_gradient = self._update_parameters_and_calculate_gradient(self.fairness_update_parameters, gradient)
+            new_fairness_rate = self.optimization_target.fairness_rate + learning_rate * adam_gradient
             self.optimization_target.fairness_rate = new_fairness_rate
-            self.t += 1
+
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy, optimization_target):
@@ -234,7 +248,6 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
 
 
 #################################### FUNCTION WRAPPERS FOR MANUAL GRADIENT #############################################
-
 
 class DifferentiableFunction:
     """ The base class for a differentiable function. """
@@ -433,7 +446,8 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
         if self.error_delta == 0.0:
             return self.fairness_function(**optimization_target_args)
         else:
-            return np.array([-self.fairness_function(**optimization_target_args), self.fairness_function(**optimization_target_args)]).squeeze()
+            return np.array([-self.fairness_function(**optimization_target_args),
+                             self.fairness_function(**optimization_target_args)]).squeeze()
 
 
 class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, ManualGradientOptimizationTarget):
