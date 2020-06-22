@@ -248,4 +248,8 @@ def stable_divide(numerator, denominator):
     if isinstance(numerator, np.ndarray) or isinstance(denominator, np.ndarray):
         return np.sign(numerator) * np.sign(denominator) * np.exp(np.log(np.abs(numerator)) - np.log(np.abs(denominator)))
     elif torch.is_tensor(numerator) or torch.is_tensor(denominator):
+        if isinstance(numerator, numbers.Number):
+            numerator = torch.full_like(denominator, numerator)
+        elif isinstance(denominator, numbers.Number):
+            denominator = torch.full_like(numerator, denominator)
         return torch.sign(numerator) * torch.sign(denominator) * torch.exp(torch.log(torch.abs(numerator)) - torch.log(torch.abs(denominator)))
