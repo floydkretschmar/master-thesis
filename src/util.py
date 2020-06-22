@@ -11,6 +11,12 @@ from numpy.random import RandomState
 CUDA = False
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
 
+def sign(a):
+    if torch.is_tensor(a):
+        return torch.sign(a)
+    elif isinstance(a, np.ndarray):
+        return np.sign(a)
+
 def to_device(torch_object):
     if torch.cuda.is_available() and CUDA:
         return torch_object.cuda()
