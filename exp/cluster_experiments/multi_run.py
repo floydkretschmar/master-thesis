@@ -1,9 +1,16 @@
-import argparse
 import subprocess
-from copy import deepcopy
+import argparse
+import os
+import sys
 
+from copy import deepcopy
 import numpy as np
 
+module_path = os.path.abspath(os.path.join("../.."))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
+from src.util import get_list_of_seeds
 
 def _fairness_extensions(args, fairness_rates, build=False):
     extensions = []
@@ -34,11 +41,8 @@ def _fairness_extensions(args, fairness_rates, build=False):
     return extensions
 
 
-def _build_submit_file(args, base_path, lambdas):
-    base_name = args.data if not args.file_name else args.file_name
-    sub_file_name = "./{}.sub".format(base_name) if args.fairness_type is None else "./{}_{}.sub".format(base_name,
-                                                                                                         args.fairness_type)
-
+def _build_submit_file(args, base_path, lambdas, seeds):
+    sub_file_name = args.file_path
     print("## Started building {} ##".format(sub_file_name))
 
     with open(sub_file_name, "w") as file:
@@ -77,7 +81,6 @@ def _build_submit_file(args, base_path, lambdas):
                                       "-d {} " \
                                       "-c {} " \
                                       "-lr {} " \
-                                      "-i {} " \
                                       "-p {}" \
                                       "-ts {} " \
                                       "-e {} " \
@@ -91,17 +94,14 @@ def _build_submit_file(args, base_path, lambdas):
                                       "{} " \
                                       "{} " \
                                       "{} " \
-                                      "{} " \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
-                                                  args.iterations,
                                                   "{}/raw ".format(base_path),
                                                   time_steps,
                                                   epochs,
                                                   batch_size,
                                                   args.num_samples,
-                                                  "-sp {}".format(args.seed_path) if args.seed_path else "",
                                                   "-ci {}".format(
                                                       args.change_iterations) if args.change_iterations else "",
                                                   "-cp {}".format(
@@ -112,22 +112,29 @@ def _build_submit_file(args, base_path, lambdas):
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
                                                   "-faug" if args.fairness_augmented else "",
-                                                  "-pid $(Process)" if args.queue_num else "")
+                                                  "-pid $(Process)" if args.iterations else "")
 
                             if args.fairness_type is not None:
-                                for extension in _fairness_extensions(args, lambdas, build=True):
-                                    file.write("arguments = {} {}\n".format(command, extension))
-                                    file.write("queue {}\n".format(args.queue_num
-                                                                   if args.queue_num is not None else ""))
+                                fairness_extensions = [extension for extension in _fairness_extensions(args, lambdas, build=True)]
                             else:
-                                file.write("arguments = {}\n".format(command))
-                                file.write("queue {}\n".format(args.queue_num
-                                                               if args.queue_num is not None else ""))
+                                fairness_extensions = [""]
+
+                            for extension in fairness_extensions:
+                                args = "arguments = {} {}".format(command, extension)
+
+                                if seeds is None:
+                                    file.write("{}\n".format(args))
+                                    file.write("queue {}\n".format(args.iterations if args.iterations is not None else ""))
+                                else:
+                                    for seed in seeds:
+                                        seed_args = "{} -s {}\n".format(args, seed)
+                                        file.write(seed_args)
+                                        file.write("queue\n")
 
     print("## FInished building {} ##".format(sub_file_name))
 
 
-def _multi_run(args, base_path, lambdas):
+def _multi_run(args, base_path, lambdas, seeds):
     for cost in args.costs:
         for learning_rate in args.learning_rates:
             for time_steps in args.time_steps:
@@ -137,7 +144,6 @@ def _multi_run(args, base_path, lambdas):
                                    "-d", str(args.data),
                                    "-c", str(cost),
                                    "-lr", str(learning_rate),
-                                   "-i", str(args.iterations),
                                    "-p", "{}/raw".format(base_path),
                                    "-ts", str(time_steps),
                                    "-e", str(epochs),
@@ -163,12 +169,22 @@ def _multi_run(args, base_path, lambdas):
                             command.extend(["-fd", str(args.fairness_delta)])
 
                         if args.fairness_type is not None:
-                            for extension in _fairness_extensions(args, lambdas, build=False):
-                                temp_command = deepcopy(command)
-                                temp_command.extend(extension)
-                                subprocess.run(temp_command)
+                            fairness_extensions = [extension for extension in
+                                                   _fairness_extensions(args, lambdas, build=True)]
                         else:
-                            subprocess.run(command)
+                            fairness_extensions = []
+
+                        for extension in fairness_extensions:
+                            temp_command = deepcopy(command)
+                            temp_command.extend(extension)
+
+                            for iter in args.iterations:
+                                if seeds is None:
+                                    subprocess.run(temp_command)
+                                else:
+                                    seed = seeds[iter]
+                                    temp_command.extend(["-s", str(seed)])
+                                    subprocess.run(temp_command)
 
 
 if __name__ == "__main__":
@@ -178,7 +194,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--data', type=str, required=True,
                         help="select the distribution (FICO, COMPAS, ADULT, GERMAN)")
     parser.add_argument('-p', '--path', type=str, required=False, help="save path for the results")
-    parser.add_argument('-sp', '--seed_path', type=str, required=False, help="path for the seeds .npz file")
+    parser.add_argument('-sp', '--seed_path', type=str, required=False, help="path for the.npz file storing the seeds")
 
     # Policy training parameters
     parser.add_argument("-pt", "--policy_type", type=str, required=False, default="LOG", help="(NN, LOG), default = LOG")
@@ -197,7 +213,7 @@ if __name__ == "__main__":
                              'improvement. ')
     parser.add_argument('-ns', '--num_samples', type=int, required=True,
                         help='list of number of batches to be used')
-    parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of internal iterations')
+    parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of iterations')
 
     # ip weighting parameters
     parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')
@@ -220,8 +236,6 @@ if __name__ == "__main__":
     parser.add_argument('-fn', '--fairness_number', type=int, required=False, default=-1,
                         help='the number of lambda values tested in the range.')
 
-    parser.add_argument('-fi', '--fairness_iterations', type=int, nargs='+', required=False,
-                        help='number of iterations that the dual gradient loop will be repeated')
     parser.add_argument('-flr', '--fairness_learning_rates', type=float, required=False, nargs='+',
                         help="define the learning rates of lambda")
     parser.add_argument('-fbs', '--fairness_batch_sizes', type=int, required=False, nargs='+',
@@ -233,10 +247,8 @@ if __name__ == "__main__":
 
     # Build script parameters
     parser.add_argument('--build_submit', required=False, action='store_true')
-    parser.add_argument('--file_name', type=str, required=False, help="name of the submit file")
+    parser.add_argument('--file_path', type=str, required=False, help="path and name of the submit file that will be created.")
     parser.add_argument('-pp', '--python_path', type=str, required=False, help="path of the python executable")
-    parser.add_argument('-q', '--queue_num', type=int, required=False,
-                        help="the number of process that should be queued")
     parser.add_argument('--ram', type=int, required=False, help='the RAM requested (default = 6144)', default=6144)
     parser.add_argument('--cpu', type=int, required=False, help='the number of CPUs requested (default = 1)', default=1)
 
@@ -244,6 +256,20 @@ if __name__ == "__main__":
 
     if args.build_submit and args.python_path is None:
         parser.error('when using --build_submit, --python_path has to be specified')
+    if args.build_submit and args.file_path is None:
+        parser.error('when using --build_submit, --file_path has to be specified')
+
+    if args.seed_path:
+        if os.path.isfile(args.seed_path):
+            seeds = np.load(args.seed_path)
+            if len(seeds) != args.iterations:
+                raise TypeError("The specified seed file {} has a different number of seeds than the number of "
+                                "iterations {} specified by -i.".format(args.seed_path, args.iterations))
+        else:
+            seeds = get_list_of_seeds(args.iterations)
+            np.save(args.seed_path, seeds)
+    else:
+        seeds = None
 
     num_fairness_batches = None
     if args.fairness_type is not None:
@@ -286,6 +312,6 @@ if __name__ == "__main__":
         lambdas = [0.0]
 
     if args.build_submit:
-        _build_submit_file(args, base_path, lambdas)
+        _build_submit_file(args, base_path, lambdas, seeds)
     else:
-        _multi_run(args, base_path, lambdas)
+        _multi_run(args, base_path, lambdas, seeds)

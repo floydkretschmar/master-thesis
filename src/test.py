@@ -17,8 +17,7 @@ from src.feature_map import IdentityFeatureMap
 from src.policy import LogisticPolicy, NeuralNetworkPolicy
 from src.distribution import COMPASDistribution, FICODistribution
 from src.optimization import ManualGradientLagrangianOptimizationTarget, LagrangianOptimizationTarget, PenaltyOptimizationTarget
-from src.util import mean, mean_difference, get_list_of_seeds
-
+from src.util import mean, mean_difference, get_list_of_seeds, fix_seed
 
 # region Fairness Definitions
 
@@ -152,9 +151,11 @@ dim_theta = distribution.feature_dimension
 # optim_target = LagrangianOptimizationTarget(0.0, utility, benefit_difference_dp)
 optim_target = PenaltyOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
 
+fix_seed(200)
+
 training_parameters = {
     'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-    #'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+    # 'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
     'distribution': distribution,
     'optimization_target': optim_target,
     'parameter_optimization': {
@@ -190,8 +191,6 @@ training_parameters = {
 training_parameters["save_path"] = "../res/local_experiments/TEST"
 statistics, model_parameters, run_path = train(
     training_parameters,
-    iterations=[200],
-    asynchronous=False,
     fairness_rates=[0.0])
 
 plot_median(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),

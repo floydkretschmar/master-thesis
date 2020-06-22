@@ -3,7 +3,6 @@ import os
 import sys
 
 import numpy as np
-import torch
 
 module_path = os.path.abspath(os.path.join("../.."))
 if module_path not in sys.path:
@@ -16,7 +15,7 @@ from src.plotting import plot_mean, plot_median
 from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.distribution import FICODistribution, COMPASDistribution, AdultCreditDistribution, GermanCreditDistribution
-from src.util import mean_difference, get_list_of_seeds, mean
+from src.util import mean_difference, mean, fix_seed
 from src.optimization import PenaltyOptimizationTarget, LagrangianOptimizationTarget, \
     AugmentedLagrangianOptimizationTarget, ManualGradientPenaltyOptimizationTarget, \
     ManualGradientAugmentedLagrangianOptimizationTarget, ManualGradientLagrangianOptimizationTarget
@@ -172,8 +171,7 @@ def single_run(args):
         distibution = GermanCreditDistribution(bias=True, test_percentage=0.3)
 
     if args.policy_type == "LOG":
-        model = LogisticPolicy(np.zeros((distibution.feature_dimension)),
-                               IdentityFeatureMap(distibution.feature_dimension),
+        model = LogisticPolicy(IdentityFeatureMap(distibution.feature_dimension),
                                False)
     elif args.policy_type == "NN":
         model = NeuralNetworkPolicy(distibution.feature_dimension, False)
@@ -218,20 +216,6 @@ def single_run(args):
             "learning_rate": args.fairness_learning_rate
         }
 
-    if args.seed_path:
-        del training_parameters["data"]["fix_seeds"]
-
-        if os.path.isfile(args.seed_path):
-            seeds = np.load(args.seed_path)
-            training_parameters["data"]["training_seeds"] = seeds["train"]
-            training_parameters["data"]["test_seed"] = seeds["test"]
-        else:
-            train_seeds = get_list_of_seeds(200)
-            test_seeds = get_list_of_seeds(1)
-            training_parameters["data"]["training_seeds"] = train_seeds
-            training_parameters["data"]["test_seed"] = test_seeds
-            np.savez(args.seed_path, train=train_seeds, test=test_seeds)
-
     if args.path:
         if args.fairness_type is not None:
             training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
@@ -265,8 +249,6 @@ def single_run(args):
 
     statistics, model_parameters, run_path = train(
         training_parameters,
-        iterations=args.iterations,
-        asynchronous=args.asynchronous,
         fairness_rates=[initial_lambda])
 
     if args.plot:
@@ -295,7 +277,7 @@ def single_run(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-sp", "--seed_path", type=str, required=False, help="path for the seeds .npz file")
+    parser.add_argument("-s", "--seed", type=int, required=False, help="the random seed for the run.")
 
     parser.add_argument("-d", "--data", type=str, required=True,
                         help="select the distribution (FICO, COMPAS, ADULT, GERMAN)")
@@ -315,9 +297,7 @@ if __name__ == "__main__":
                         help="the percentage of improvement per training epoch that is considered the minimum amount of"
                              "improvement. (Default = 0.05)")
     parser.add_argument("-ns", "--num_samples", type=int, required=True, help="number of batches to be used")
-    parser.add_argument("-i", "--iterations", type=int, required=True, help="the number of internal iterations")
     parser.add_argument("-ipc", "--ip_weight_clipping", action="store_true")
-    parser.add_argument("-a", "--asynchronous", action="store_true")
     parser.add_argument("--plot", required=False, action="store_true")
     parser.add_argument("-pid", "--process_id", type=str, required=False, help="process id for identification")
 
@@ -337,6 +317,8 @@ if __name__ == "__main__":
     parser.add_argument("--CUDA", required=False, action="store_true")
 
     args = parser.parse_args()
+
+    fix_seed(args.seed)
 
     if args.CUDA:
         util.CUDA = True

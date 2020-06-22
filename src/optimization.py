@@ -12,9 +12,6 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import check_for_missing_kwargs, get_random, to_device
-
-
 ########################################$ OPTIMIZERS ####################################################
 
 # TODO: Add Pytorch supporting optimizer
@@ -22,25 +19,16 @@ from src.util import check_for_missing_kwargs, get_random, to_device
 class StochasticGradientOptimizer:
     """ The base class for stochastic gradient methods of optimization. """
 
-    def __init__(self, policy, optimization_target, seed=None):
+    def __init__(self, policy, optimization_target):
         super().__init__()
         self._optimization_target = optimization_target
         self._policy = policy
-        self._seed = seed
         self.beta_1 = 0.9
         self.beta_2 = 0.999
         self.v = 0
         self.m = 0
         self.t = 1
         self.epsilon = 0.0000001
-
-    @property
-    def seed(self):
-        return self._seed
-
-    @seed.setter
-    def seed(self, value):
-        self._seed = value
 
     @property
     def optimization_target(self):
@@ -72,8 +60,7 @@ class StochasticGradientOptimizer:
         if batch_size >= x.shape[0]:
             yield x, s, y, ips_weights
         else:
-            np_random, _ = get_random(self._seed)
-            indices = np_random.permutation(x.shape[0])
+            indices = np.random.permutation(x.shape[0])
             for batch_start in range(0, len(indices), batch_size):
                 batch_end = min(batch_start + batch_size, len(indices))
 
@@ -149,8 +136,8 @@ class StochasticGradientOptimizer:
             self.t += 1
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
-    def __init__(self, policy, optimization_target, seed=None):
-        super().__init__(policy, optimization_target, seed)
+    def __init__(self, policy, optimization_target):
+        super().__init__(policy, optimization_target)
         optimization_parameters, _ = self._policy.parameters
         self.model_optimizer = optim.SGD(optimization_parameters, lr=0.01)
         with torch.no_grad():
@@ -207,9 +194,9 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
 class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
     """ The class for stochastic gradient methods of optimization with manual gradient updates. """
 
-    def __init__(self, policy, optimization_target, seed=None):
+    def __init__(self, policy, optimization_target):
         assert isinstance(optimization_target, ManualGradientOptimizationTarget)
-        super().__init__(policy, optimization_target, seed)
+        super().__init__(policy, optimization_target)
         self.create_policy_checkpoint()
 
     def create_policy_checkpoint(self):

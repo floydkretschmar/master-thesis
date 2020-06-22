@@ -129,8 +129,7 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             self.data_history["s"],
             self.data_history["y"],
             self.data_history["ips_weights"],
-            test_percentage=0.2,
-            seed=optimizer.seed)
+            test_percentage=0.2)
 
         if len(x_train) > 0 and len(x_val) > 0:
             with torch.no_grad():
@@ -263,7 +262,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
                         d_test, _ = optimizer.policy(x_test, s_test)
                         fairness = optimizer.optimization_target.fairness_function(s=s_test,
-                                                                                   decisions=d_test)
+                                                                                   decisions=d_test,
+                                                                                   y=y_test)
                         util = optimizer.optimization_target.utility_function(decisions=d_test, y=y_test)
                         gradient_values.append(gradient)
                         lambda_values.append(deepcopy(optimizer.optimization_target.fairness_rate))

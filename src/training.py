@@ -5,20 +5,13 @@ root_path = os.path.abspath(os.path.join("."))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-import multiprocessing as mp
-# use Pytorch processing and force the spawn method for starting threads when using CUDA
-import torch
-from torch.multiprocessing import Pool
-
 import time
 from pathlib import Path
 from copy import deepcopy
 
-import src.util as util
 from src.consequential_learning import ConsequentialLearning
-from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, get_list_of_seeds
+from src.util import save_dictionary, serialize_dictionary, check_for_missing_kwargs, fix_seed
 from src.training_evaluation import MultiStatistics
-from src.policy import PytorchPolicy
 
 
 def _check_for_missing_training_parameters(training_parameters):
@@ -30,16 +23,6 @@ def _check_for_missing_training_parameters(training_parameters):
     check_for_missing_kwargs("training()",
                              ["model", "distribution", "optimization_target", "parameter_optimization", "data"],
                              training_parameters)
-
-    if isinstance(training_parameters["model"], dict):
-        check_for_missing_kwargs("training()", ["constructor", "parameters"], training_parameters["model"])
-
-    if isinstance(training_parameters["distribution"], dict):
-        check_for_missing_kwargs("training()", ["constructor", "parameters"], training_parameters["distribution"])
-
-    if isinstance(training_parameters["optimization_target"], dict):
-        check_for_missing_kwargs("training()", ["constructor", "parameters"],
-                                 training_parameters["optimization_target"])
 
     check_for_missing_kwargs("training()",
                              ["batch_size", "epochs", "learning_rate", "learn_on_entire_history", "time_steps"],
@@ -88,16 +71,6 @@ def _prepare_training(training_parameters):
     else:
         base_save_path = None
 
-    # construct policy
-    if isinstance(training_parameters["model"], dict):
-        current_training_parameters["model"] = training_parameters["model"]["constructor"](
-            **training_parameters["model"]["parameters"])
-
-    # construct distribution
-    if isinstance(training_parameters["distribution"], dict):
-        current_training_parameters["distribution"] = training_parameters["distribution"]["constructor"](
-            **training_parameters["distribution"]["parameters"])
-
     # if decay_rate and decay_step not specified: set them in a way such that there is no decay of the lr
     if "decay_rate" not in training_parameters["parameter_optimization"]:
         current_training_parameters["parameter_optimization"]["decay_rate"] = 1
@@ -136,7 +109,7 @@ def _prepare_training(training_parameters):
     return current_training_parameters, base_save_path
 
 
-def _process_results(results_per_run):
+def merge_run_results(results_per_run):
     overall_statistics, overall_model_parameters = results_per_run[0]
 
     for run, run_result in enumerate(results_per_run[1:]):
@@ -175,50 +148,7 @@ def _save_results(base_save_path, statistics, model_parameters=None, sub_directo
     save_dictionary(serialized_statistics, statistics_save_path)
 
 
-class _Trainer():
-    def _training_iteration(self, training_parameters):
-        training_algorithm = ConsequentialLearning(
-            training_parameters["parameter_optimization"]["learn_on_entire_history"])
-        return training_algorithm.train(training_parameters)
-
-    def train_over_iterations(self, training_parameters, iterations, asynchronous):
-        if isinstance(iterations, list):
-            seed_list = deepcopy(iterations)
-            num_iterations = len(iterations)
-        else:
-            num_iterations = iterations
-            seed_list = None
-
-        def set_seed(training_parameters, seed):
-            training_parameters["distribution"].seed = seed
-            training_parameters["model"].seed = seed
-
-        # multithreaded runs of training
-        # Hack to not deal with multithreaded GPU training for now: Disable asynchronous for Pytorch policies using cuda
-        if asynchronous and not (torch.cuda.is_available() and isinstance(training_parameters["model"], PytorchPolicy)):
-            apply_results = []
-            results_per_iterations = []
-            pool = Pool(mp.cpu_count())
-            for i in range(0, num_iterations):
-                if seed_list:
-                    set_seed(training_parameters, seed_list[i])
-                # apply_results.append(pool.apipe(self._training_iteration, training_parameters))
-                apply_results.append(pool.apply_async(self._training_iteration, args=(training_parameters,)))
-
-            for result in apply_results:
-                results_per_iterations.append(result.get())
-        else:
-            results_per_iterations = []
-            for i in range(0, num_iterations):
-                if seed_list:
-                    set_seed(training_parameters, seed_list[i])
-                results_per_iterations.append(self._training_iteration(training_parameters))
-
-        total_statistics, total_parameters = _process_results(results_per_iterations)
-        return total_statistics, total_parameters
-
-
-def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous=True):
+def train(training_parameters, fairness_rates=[0.0]):
     """ Executes multiple runs of consequential learning with the same training parameters
     but different seeds for the specified fairness rates. 
         
@@ -235,14 +165,8 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
         or None, when training with fixed lambdas. The ModelParameter object contains theta 
         and lambda values for each timestep over all iterations.
     """
-    if isinstance(iterations, list):
-        assert len(iterations) > 0
-    else:
-        assert iterations > 0
-
+    #fix_seed(seed)
     current_training_parameters, base_save_path = _prepare_training(training_parameters)
-
-    trainer = _Trainer()
     multiple_lambdas = len(fairness_rates) > 1
 
     if multiple_lambdas:
@@ -257,9 +181,11 @@ def train(training_parameters, iterations=30, fairness_rates=[0.0], asynchronous
             fairness_rate)
         print("## STARTED {} ##".format(info_string))
         current_training_parameters["optimization_target"].fairness_rate = fairness_rate
-        statistics, model_parameters = trainer.train_over_iterations(current_training_parameters,
-                                                                     iterations,
-                                                                     asynchronous)
+
+        training_algorithm = ConsequentialLearning(
+            training_parameters["parameter_optimization"]["learn_on_entire_history"])
+        statistics, model_parameters = training_algorithm.train(current_training_parameters)
+
         if multiple_lambdas:
             overall_statistics.log_run(statistics)
 

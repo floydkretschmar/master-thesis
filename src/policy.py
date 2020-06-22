@@ -12,7 +12,7 @@ import torch.nn as nn
 
 from copy import deepcopy
 # pylint: disable=no-name-in-module
-from src.util import sigmoid, get_random, to_device, from_device
+from src.util import sigmoid, to_device, from_device
 from src.optimization import ManualStochasticGradientOptimizer, PytorchStochasticGradientOptimizer
 
 
@@ -20,15 +20,14 @@ from src.optimization import ManualStochasticGradientOptimizer, PytorchStochasti
 
 class BasePolicy(abc.ABC):
     """ The base implementation of a policy """
-    def __init__(self, use_sensitive_attributes, seed=None):
+    def __init__(self, use_sensitive_attributes):
         """ Initializes a new BasePolicy object.
-        
+
         Args:
             use_sensitive_attributes: A flag that indicates whether or not the sensitive attributes should be
             used overall or just in evaluating the fairness penalty.
         """
         self._use_sensitive_attributes = use_sensitive_attributes
-        self._seed = seed
 
     def __call__(self, x, s):
         """ Returns the decisions made by the policy for x and s.
@@ -45,15 +44,6 @@ class BasePolicy(abc.ABC):
         decisions = self._decision(probability)
 
         return decisions, probability
-
-
-    @property
-    def seed(self):
-        return self._seed
-
-    @seed.setter
-    def seed(self, value):
-        self._seed = value
 
     @property
     def parameters(self):
@@ -118,8 +108,8 @@ class BasePolicy(abc.ABC):
 
 
 class ManualGradientPolicy(BasePolicy, abc.ABC):
-    def __init__(self, use_sensitive_attributes, theta, seed=None):
-        super().__init__(use_sensitive_attributes, seed)
+    def __init__(self, use_sensitive_attributes, theta):
+        super().__init__(use_sensitive_attributes)
         self._theta = np.array(theta)
 
     @property
@@ -158,22 +148,21 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
             optimizer: The ManualStochasticGradientOptimizer that optimizes the specified policy according to the
             specified optimization target.
         """
-        return ManualStochasticGradientOptimizer(self, optimization_target, self._seed)
+        return ManualStochasticGradientOptimizer(self, optimization_target)
 
 
 class LogisticPolicy(ManualGradientPolicy):
     """ The implementation of the logistic policy. """
 
-    def __init__(self, feature_map, use_sensitive_attributes, seed=None):
-        super(LogisticPolicy, self).__init__(use_sensitive_attributes, np.zeros(feature_map.dim_theta), seed)
+    def __init__(self, feature_map, use_sensitive_attributes):
+        super(LogisticPolicy, self).__init__(use_sensitive_attributes, np.zeros(feature_map.dim_theta))
         self.feature_map = feature_map
 
     def _probability(self, features):
         return sigmoid(np.matmul(self.feature_map(features), self._theta)).reshape(-1, 1)
 
     def _decision(self, probability):
-        random, _ = get_random(self._seed)
-        decisions = random.binomial(1, probability).astype(float)
+        decisions = np.random.binomial(1, probability).astype(float)
         return decisions.reshape(-1, 1)
 
     def copy(self):
@@ -188,8 +177,8 @@ class LogisticPolicy(ManualGradientPolicy):
 
 
 class PytorchPolicy(BasePolicy, abc.ABC):
-    def __init__(self, use_sensitive_attributes, bias=True, seed=None, **network_arguments):
-        super().__init__(use_sensitive_attributes, seed)
+    def __init__(self, use_sensitive_attributes, bias=True, **network_arguments):
+        super().__init__(use_sensitive_attributes)
         self.bias = bias
         self.network = self._create_network(bias=bias, **network_arguments)
 
@@ -214,7 +203,7 @@ class PytorchPolicy(BasePolicy, abc.ABC):
         self.network.load_state_dict(value)
 
     def optimizer(self, optimization_target):
-        return PytorchStochasticGradientOptimizer(self, optimization_target, self._seed)
+        return PytorchStochasticGradientOptimizer(self, optimization_target)
 
 
 class NeuralNetworkPolicy(PytorchPolicy):

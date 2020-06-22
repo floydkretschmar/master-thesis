@@ -14,7 +14,7 @@ if module_path not in sys.path:
 
 from src.training_evaluation import ModelParameters, MultiStatistics, UTILITY, Statistics, COVARIANCE_OF_DECISION_DP
 from src.util import load_dictionary
-from src.training import _save_results, _process_results
+from src.training import _save_results, merge_run_results
 from src.plotting import plot_mean, plot_median
 
 # get imput and output path from args
@@ -55,7 +55,7 @@ def combine_runs(runs):
         run_results.append((statistics, model_parameters))
 
     # merge statistics and model parameters
-    statistcs_over_runs, model_parameters = _process_results(run_results)
+    statistcs_over_runs, model_parameters = merge_run_results(run_results)
 
     return statistcs_over_runs, model_parameters
 

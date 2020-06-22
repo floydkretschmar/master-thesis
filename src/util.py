@@ -5,15 +5,11 @@ import numbers
 
 import numpy as np
 import torch
+import random
 from numpy.random import RandomState
-from threading import Lock
-
-LOCK = Lock()
 
 CUDA = False
 np.seterr(divide='ignore', invalid='ignore', over='ignore')
-random_states_np = {None: RandomState()}
-random_states_torch = {None: torch.Generator()}
 
 def to_device(torch_object):
     if torch.cuda.is_available() and CUDA:
@@ -27,16 +23,16 @@ def from_device(torch_object):
     else:
         return torch_object
 
-def get_random(seed=None):
-    global random_states_np, random_states_torch
-    LOCK.acquire()
-    if not seed in random_states_np:
-        random_states_np[seed] = RandomState(seed)
-    if not seed in random_states_torch:
-        random_states_torch[seed] = torch.Generator()
-        random_states_torch[seed].manual_seed(seed)
-    LOCK.release()
-    return random_states_np[seed], random_states_torch[seed]
+def fix_seed(seed=None):
+    if seed is not None:
+        np.random.seed(seed)
+
+        random.seed(seed)
+
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
 
 def train_validation_split(data, validation_percentage=0.2):
     data_len = len(data)
@@ -51,8 +47,7 @@ def train_validation_split(data, validation_percentage=0.2):
 
 def get_list_of_seeds(number_of_seeds):
     max_value = 2 ** 32 - 1
-    np_random, _ = get_random()
-    seeds = np_random.randint(
+    seeds = np.random.randint(
         0,
         max_value,
         size=number_of_seeds,
@@ -230,13 +225,12 @@ def whiten(data, columns=None, conditioning=1e-8):
     return data
 
 
-def train_test_split(*arrays, test_percentage, seed=None):
+def train_test_split(*arrays, test_percentage):
     assert len(arrays) > 0
     indices = np.array(range(arrays[0].shape[0]))
 
     boundary = int(len(indices) * test_percentage)
-    np_random, _ = get_random(seed)
-    test_indices, train_indices = np.split(np_random.permutation(indices), [boundary])
+    test_indices, train_indices = np.split(np.random.permutation(indices), [boundary])
 
     splits = []
     for array in arrays:
