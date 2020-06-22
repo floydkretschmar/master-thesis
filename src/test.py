@@ -9,14 +9,14 @@ module_path = os.path.abspath(os.path.join('..'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-from src.functions import cost_utility, cost_utility_gradient
+from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability
 from src.plotting import plot_median
 from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.feature_map import IdentityFeatureMap
 from src.policy import LogisticPolicy, NeuralNetworkPolicy
 from src.distribution import COMPASDistribution, FICODistribution
-from src.optimization import ManualGradientLagrangianOptimizationTarget
+from src.optimization import ManualGradientLagrangianOptimizationTarget, LagrangianOptimizationTarget, PenaltyOptimizationTarget
 from src.util import mean, mean_difference, get_list_of_seeds
 
 
@@ -24,7 +24,7 @@ from src.util import mean, mean_difference, get_list_of_seeds
 
 def calc_benefit(decisions, ips_weights):
     if ips_weights is not None:
-        decisions *= ips_weights
+        decisions = decisions * ips_weights
 
     return decisions
 
@@ -64,9 +64,13 @@ def fairness_function_gradient(type, **fairness_kwargs):
         return grad.mean(0)
 
 
-def fairness_function(type, **fairness_kwargs):
+def fairness_function(type, nn, **fairness_kwargs):
     s = fairness_kwargs["s"]
-    decisions = fairness_kwargs["decisions"]
+    if nn:
+        decisions = fairness_kwargs["decision_probabilities"]
+    else:
+        decisions = fairness_kwargs["decisions"]
+
     ips_weights = fairness_kwargs["ips_weights"] if "ips_weights" in fairness_kwargs else None
 
     if type == "BD_DP":
@@ -82,6 +86,7 @@ def no_fairness(**fairness_kwargs):
 def eval_covariance_of_decision(s, y, decisions):
     return fairness_function(
         type="COV_DP",
+        nn=False,
         x=None,
         s=s,
         y=y,
@@ -98,19 +103,25 @@ def utility(**util_params):
 def utility_gradient(**util_params):
     return cost_utility_gradient(cost_factor=0.5, **util_params)
 
+def utility_nn(**util_params):
+    return cost_utility_probability(cost_factor=0.5, **util_params)
+
 def covariance_of_decision(**fairness_params):
     return fairness_function(
         type="COV_DP",
+        nn=False,
         **fairness_params)
 
 def benefit_difference_dp(**fairness_params):
     return fairness_function(
         type="BD_DP",
+        nn=False,
         **fairness_params)
 
-def benefit_difference_eop(**fairness_params):
+def benefit_difference_dp_nn(**fairness_params):
     return fairness_function(
-        type="BD_EOP",
+        type="BD_DP",
+        nn=True,
         **fairness_params)
 
 def covariance_of_decision_grad(**fairness_params):
@@ -133,22 +144,24 @@ bias = True
 distribution = FICODistribution(bias=bias, fraction_protected=0.5)
 dim_theta = distribution.feature_dimension
 
-optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
-                                                           utility,
-                                                           utility_gradient,
-                                                           benefit_difference_dp,
-                                                           benefit_difference_dp_grad)
+# optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
+#                                                            utility,
+#                                                            utility_gradient,
+#                                                            benefit_difference_dp,
+#                                                            benefit_difference_dp_grad)
+# optim_target = LagrangianOptimizationTarget(0.0, utility, benefit_difference_dp)
+optim_target = PenaltyOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
 
 training_parameters = {
-    # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-    'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+    'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+    #'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
     'distribution': distribution,
     'optimization_target': optim_target,
     'parameter_optimization': {
-        'time_steps': 200,
+        'time_steps': 10,
         'epochs': 200,
         'batch_size': 128,
-        'learning_rate': 0.01,
+        'learning_rate': 0.1,
         'learn_on_entire_history': True,
         'change_iterations': 5
     },
@@ -156,11 +169,11 @@ training_parameters = {
         'num_train_samples': 256 * 30,
         'num_test_samples': 1024
     },
-    'lagrangian_optimization': {
-        'epochs': 200,
-        'batch_size': 4096,
-        'learning_rate': 0.01,
-    },
+    # 'lagrangian_optimization': {
+    #     'epochs': 200,
+    #     'batch_size': 4096,
+    #     'learning_rate': 0.01,
+    # },
     'evaluation': {
         UTILITY: {
             'measure_function': utility,
