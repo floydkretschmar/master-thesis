@@ -27,7 +27,7 @@ def from_device(torch_object):
     else:
         return torch_object
 
-def get_random(seed=200):
+def get_random(seed=None):
     global random_states_np, random_states_torch
     LOCK.acquire()
     if not seed in random_states_np:
