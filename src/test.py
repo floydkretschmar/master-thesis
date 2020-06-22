@@ -20,6 +20,7 @@ from src.optimization import ManualGradientLagrangianOptimizationTarget, Lagrang
 from src.util import mean, mean_difference, get_list_of_seeds, fix_seed
 
 # region Fairness Definitions
+fix_seed(3403344728)
 
 def calc_benefit(decisions, ips_weights):
     if ips_weights is not None:
@@ -141,6 +142,7 @@ def benefit_difference_eop_grad(**fairness_params):
 
 bias = True
 distribution = FICODistribution(bias=bias, fraction_protected=0.5)
+# distribution = COMPASDistribution(bias=bias, test_percentage=0.2)
 dim_theta = distribution.feature_dimension
 
 # optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
@@ -148,10 +150,9 @@ dim_theta = distribution.feature_dimension
 #                                                            utility_gradient,
 #                                                            benefit_difference_dp,
 #                                                            benefit_difference_dp_grad)
-# optim_target = LagrangianOptimizationTarget(0.0, utility, benefit_difference_dp)
-optim_target = PenaltyOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
+optim_target = LagrangianOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
+# optim_target = PenaltyOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
 
-fix_seed(200)
 
 training_parameters = {
     'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
@@ -159,22 +160,22 @@ training_parameters = {
     'distribution': distribution,
     'optimization_target': optim_target,
     'parameter_optimization': {
-        'time_steps': 10,
-        'epochs': 200,
+        'time_steps': 200,
+        'epochs': 50,
         'batch_size': 128,
-        'learning_rate': 0.1,
+        'learning_rate': 0.001,
         'learn_on_entire_history': True,
         'change_iterations': 5
     },
     'data': {
-        'num_train_samples': 256 * 30,
+        'num_train_samples': 4096,
         'num_test_samples': 1024
     },
-    # 'lagrangian_optimization': {
-    #     'epochs': 200,
-    #     'batch_size': 4096,
-    #     'learning_rate': 0.01,
-    # },
+    'lagrangian_optimization': {
+        'epochs': 200,
+        'batch_size': 4096,
+        'learning_rate': 0.01,
+    },
     'evaluation': {
         UTILITY: {
             'measure_function': utility,

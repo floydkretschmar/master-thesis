@@ -264,8 +264,9 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                         d_test, _ = optimizer.policy(x_test, s_test)
                         fairness = optimizer.optimization_target.fairness_function(s=s_test,
                                                                                    decisions=d_test,
+                                                                                   decision_probabilities=d_test,
                                                                                    y=y_test)
-                        util = optimizer.optimization_target.utility_function(decisions=d_test, y=y_test)
+                        util = optimizer.optimization_target.utility_function(decisions=d_test, decision_probabilities=d_test, y=y_test)
                         gradient_values.append(gradient)
                         lambda_values.append(deepcopy(optimizer.optimization_target.fairness_rate))
                         fairness_values.append(fairness)

@@ -12,7 +12,7 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.functions import adam_update, initialize_adam
+from src.functions import ADAM, SGD, OptimizerFunction
 
 ########################################$ OPTIMIZERS ####################################################
 
@@ -24,14 +24,13 @@ class StochasticGradientOptimizer:
     def __init__(self,
                  policy,
                  optimization_target,
-                 fairness_update_function=adam_update,
-                 fairness_parameter_init_function=initialize_adam):
+                 fairness_optimizer_function=ADAM):
+        assert isinstance(fairness_optimizer_function, OptimizerFunction)
         super().__init__()
         self._optimization_target = optimization_target
         self._policy = policy
-        self._fairness_parameter_init_function = fairness_parameter_init_function
-        self._fairness_update_function = fairness_update_function
-        self._fairness_update_parameters = self._fairness_parameter_init_function()
+        self._fairness_optimizer_function = fairness_optimizer_function
+        self._fairness_update_parameters = self._fairness_optimizer_function.initialize()
 
     @property
     def optimization_target(self):
@@ -131,16 +130,20 @@ class StochasticGradientOptimizer:
                                                                             decision_probabilities=decision_probability_batch,
                                                                             ips_weights=ips_weights_batch)
 
-            adam_gradient = self._fairness_update_function(self._fairness_update_parameters, gradient)
-            new_fairness_rate = self.optimization_target.fairness_rate + learning_rate * adam_gradient
+            updated_gradient = self._fairness_optimizer_function.update(gradient, self._fairness_update_parameters)
+            new_fairness_rate = self.optimization_target.fairness_rate + learning_rate * updated_gradient
             self.optimization_target.fairness_rate = new_fairness_rate
 
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
-    def __init__(self, policy, optimization_target):
-        super().__init__(policy, optimization_target)
+    def __init__(self, policy,
+                 optimization_target,
+                 fairness_optimizer_function=ADAM,
+                 pytorch_optimizer_constructor=optim.Adam):
+        super().__init__(policy, optimization_target, fairness_optimizer_function)
+        self._pytorch_optimizer_constructor = pytorch_optimizer_constructor
         optimization_parameters, _ = self._policy.parameters
-        self.model_optimizer = optim.SGD(optimization_parameters, lr=0.01)
+        self.model_optimizer = pytorch_optimizer_constructor(optimization_parameters, lr=0.01)
         with torch.no_grad():
             self.optimization_target.fairness_rate = torch.tensor(self.optimization_target.fairness_rate)
 
@@ -157,6 +160,8 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
 
     def restore_last_policy_checkpoint(self):
         self.policy.parameters = deepcopy(self._state_dictionary)
+        optimization_parameters, _ = self._policy.parameters
+        self.model_optimizer = self._pytorch_optimizer_constructor(optimization_parameters, lr=0.01)
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the model parameters using stochastic gradient descent.
@@ -195,16 +200,25 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
 class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
     """ The class for stochastic gradient methods of optimization with manual gradient updates. """
 
-    def __init__(self, policy, optimization_target):
+    def __init__(self,
+                 policy,
+                 optimization_target,
+                 fairness_optimizer_function=ADAM,
+                 policy_optimizer_function=ADAM):
         assert isinstance(optimization_target, ManualGradientOptimizationTarget)
-        super().__init__(policy, optimization_target)
+        assert isinstance(policy_optimizer_function, OptimizerFunction)
+        super().__init__(policy, optimization_target, fairness_optimizer_function)
+        self._policy_optimizer_function = policy_optimizer_function
+        self._policy_update_parameters = self._policy_optimizer_function.initialize()
         self.create_policy_checkpoint()
 
     def create_policy_checkpoint(self):
         self._theta = deepcopy(self.policy.parameters)
+        self._backup_policy_update_parameters = deepcopy(self._policy_update_parameters)
 
     def restore_last_policy_checkpoint(self):
         self.policy.parameters = deepcopy(self._theta)
+        self._policy_update_parameters = deepcopy(self._backup_policy_update_parameters)
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Manually updates the model parameters using stochastic gradient descent.
@@ -231,7 +245,8 @@ class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
                                                                          decisions=decisions_batch,
                                                                          decision_probabilities=decision_probability_batch,
                                                                          ips_weights=ips_weights_batch)
-            self.policy.parameters -= learning_rate * gradient
+            updated_gradient = self._policy_optimizer_function.update(gradient, self._policy_update_parameters)
+            self.policy.parameters -= learning_rate * updated_gradient
 
 
 #################################### FUNCTION WRAPPERS FOR MANUAL GRADIENT #############################################

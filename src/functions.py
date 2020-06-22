@@ -45,7 +45,7 @@ def cost_utility_probability(cost_factor=0.5, **utility_parameters):
 
 ####################### OPTIMIZER FUNCTIONS #######################
 
-def initialize_adam():
+def _initialize_adam():
     return {
         "beta_1": 0.9,
         "beta_2": 0.999,
@@ -55,7 +55,7 @@ def initialize_adam():
         "epsilon": 0.0000001
     }
 
-def adam_update(update_parameters, gradient):
+def _adam_update(gradient, update_parameters):
     update_parameters["m"] = update_parameters["beta_1"] * update_parameters["m"] + (
                 1 - update_parameters["beta_1"]) * gradient
     update_parameters["v"] = update_parameters["beta_2"] * update_parameters["v"] + (
@@ -65,8 +65,22 @@ def adam_update(update_parameters, gradient):
     update_parameters["t"] += 1
     return m_hat / (np.sqrt(v_hat) + update_parameters["epsilon"])
 
-def initialize_sgd():
+def _initialize_sgd():
     return { }
 
-def sgd_update(update_parameters, gradient):
+def _sgd_update(gradient, update_parameters):
     return gradient
+
+class OptimizerFunction:
+    def __init__(self, init_function, update_function):
+        self._init_function = init_function
+        self._update_function = update_function
+
+    def initialize(self):
+        return self._init_function()
+
+    def update(self, gradient, update_parameters):
+        return self._update_function(gradient, update_parameters)
+
+ADAM = OptimizerFunction(_initialize_adam, _adam_update)
+SGD = OptimizerFunction(_initialize_sgd, _sgd_update)
