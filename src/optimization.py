@@ -25,13 +25,13 @@ class StochasticGradientOptimizer:
                  policy,
                  optimization_target,
                  fairness_update_function=adam_update,
-                 fairness_parameter_init_funciton=initialize_adam):
+                 fairness_parameter_init_function=initialize_adam):
         super().__init__()
         self._optimization_target = optimization_target
         self._policy = policy
-        self._fairness_parameter_init_funciton = fairness_parameter_init_funciton
+        self._fairness_parameter_init_function = fairness_parameter_init_function
         self._fairness_update_function = fairness_update_function
-        self._fairness_update_parameters = self._fairness_parameter_init_funciton()
+        self._fairness_update_parameters = self._fairness_parameter_init_function()
 
     @property
     def optimization_target(self):
