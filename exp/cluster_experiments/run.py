@@ -73,7 +73,8 @@ def fairness_function_gradient(**fairness_kwargs):
 def fairness_function(type=None, **fairness_kwargs):
     s = fairness_kwargs["s"]
     ips_weights = fairness_kwargs["ips_weights"] if "ips_weights" in fairness_kwargs else None
-    decisions = "decision_probabilities" not in fairness_kwargs or not (args.policy_type == "NN" and ips_weights is None)
+    decisions = "decision_probabilities" not in fairness_kwargs or not (
+                args.policy_type == "NN" and ips_weights is None)
 
     decisions = fairness_kwargs["decisions"] if decisions else fairness_kwargs["decision_probabilities"]
     y = fairness_kwargs["y"]
@@ -218,12 +219,13 @@ def single_run(args):
 
     if args.path:
         if args.fairness_type is not None:
-            training_parameters["save_path"] = "{}/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
-                                                                                   args.cost,
-                                                                                   args.learning_rate,
-                                                                                   args.time_steps,
-                                                                                   args.epochs,
-                                                                                   args.batch_size)
+            training_parameters["save_path"] = "{}{}/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
+                                                                                     "/history" if args.history_learning else "/no_history",
+                                                                                     args.cost,
+                                                                                     args.learning_rate,
+                                                                                     args.time_steps,
+                                                                                     args.epochs,
+                                                                                     args.batch_size)
 
             if args.fairness_learning_rate is not None:
                 subfolder = "flr{}/fe{}-fbs{}-fd{}".format(args.fairness_learning_rate,
@@ -296,13 +298,13 @@ if __name__ == "__main__":
     parser.add_argument("-cp", "--change_percentage", type=int, required=False, default=0.05,
                         help="the percentage of improvement per training epoch that is considered the minimum amount of"
                              "improvement. (Default = 0.05)")
-    parser.add_argument("-ns", "--num_samples", type=int, required=True, help="number of samples to be drawn per time step")
+    parser.add_argument("-ns", "--num_samples", type=int, required=True,
+                        help="number of samples to be drawn per time step")
     parser.add_argument("-ns_t", "--num_samples_test", type=int, required=True, help="number of test samples")
     parser.add_argument("-ipc", "--ip_weight_clipping", action="store_true")
     parser.add_argument("--plot", required=False, action="store_true")
     parser.add_argument("-pid", "--process_id", type=str, required=False, help="process id for identification")
     parser.add_argument("-hl", "--history_learning", required=False, action="store_true")
-
 
     parser.add_argument("-f", "--fairness_type", type=str, required=False,
                         help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "

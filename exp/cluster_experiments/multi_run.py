@@ -6,6 +6,16 @@ import sys
 from copy import deepcopy
 import numpy as np
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 module_path = os.path.abspath(os.path.join("../.."))
 if module_path not in sys.path:
     sys.path.append(module_path)
@@ -77,63 +87,64 @@ def _build_submit_file(args, base_path, lambdas, seeds):
                 for time_steps in args.time_steps:
                     for epochs in args.epochs:
                         for batch_size in args.batch_sizes:
-                            command = "run.py " \
-                                      "-d {} " \
-                                      "-c {} " \
-                                      "-lr {} " \
-                                      "-p {}" \
-                                      "-ts {} " \
-                                      "-e {} " \
-                                      "-bs {} " \
-                                      "-ns {} " \
-                                      "-ns_t {} " \
-                                      "{}" \
-                                      "{}" \
-                                      "{}" \
-                                      "{}" \
-                                      "{}" \
-                                      "{}" \
-                                      "{}" \
-                                      "{}" \
-                                      "{}" \
-                                      "{}".format(args.data,
-                                                  cost,
-                                                  learning_rate,
-                                                  "{}/raw ".format(base_path),
-                                                  time_steps,
-                                                  epochs,
-                                                  batch_size,
-                                                  args.num_samples,
-                                                  args.num_samples_test,
-                                                  "-ci {} ".format(
-                                                      args.change_iterations) if args.change_iterations else "",
-                                                  "-cp {} ".format(
-                                                      args.change_percentage) if args.change_percentage else "",
-                                                  "-pt {} ".format(args.policy_type) if args.policy_type else "",
-                                                  "-fd {} ".format(args.fairness_delta) if args.fairness_delta else "",
-                                                  "-a " if args.asynchronous else "",
-                                                  "--plot " if args.plot else "",
-                                                  "-ipc " if args.ip_weight_clipping else "",
-                                                  "-hl " if args.history_learning else "",
-                                                  "-faug " if args.fairness_augmented else "",
-                                                  "-pid $(Process)" if args.iterations else "")
+                            for history_learning in args.history_learning:
+                                command = "run.py " \
+                                          "-d {} " \
+                                          "-c {} " \
+                                          "-lr {} " \
+                                          "-p {}" \
+                                          "-ts {} " \
+                                          "-e {} " \
+                                          "-bs {} " \
+                                          "-ns {} " \
+                                          "-ns_t {} " \
+                                          "{}" \
+                                          "{}" \
+                                          "{}" \
+                                          "{}" \
+                                          "{}" \
+                                          "{}" \
+                                          "{}" \
+                                          "{}" \
+                                          "{}" \
+                                          "{}".format(args.data,
+                                                      cost,
+                                                      learning_rate,
+                                                      "{}/raw ".format(base_path),
+                                                      time_steps,
+                                                      epochs,
+                                                      batch_size,
+                                                      args.num_samples,
+                                                      args.num_samples_test,
+                                                      "-ci {} ".format(
+                                                          args.change_iterations) if args.change_iterations else "",
+                                                      "-cp {} ".format(
+                                                          args.change_percentage) if args.change_percentage else "",
+                                                      "-pt {} ".format(args.policy_type) if args.policy_type else "",
+                                                      "-fd {} ".format(args.fairness_delta) if args.fairness_delta else "",
+                                                      "-a " if args.asynchronous else "",
+                                                      "--plot " if args.plot else "",
+                                                      "-ipc " if args.ip_weight_clipping else "",
+                                                      "-hl " if history_learning else "",
+                                                      "-faug " if args.fairness_augmented else "",
+                                                      "-pid $(Process)" if args.iterations else "")
 
-                            if args.fairness_type is not None:
-                                fairness_extensions = [extension for extension in _fairness_extensions(args, lambdas, build=True)]
-                            else:
-                                fairness_extensions = [""]
-
-                            for extension in fairness_extensions:
-                                args_str = "arguments = {} {}".format(command, extension)
-
-                                if seeds is None:
-                                    file.write("{}\n".format(args_str))
-                                    file.write("queue {}\n".format(args.iterations if args.iterations is not None else ""))
+                                if args.fairness_type is not None:
+                                    fairness_extensions = [extension for extension in _fairness_extensions(args, lambdas, build=True)]
                                 else:
-                                    for seed in seeds:
-                                        seed_args = "{} -s {}\n".format(args_str, seed)
-                                        file.write(seed_args)
-                                        file.write("queue\n")
+                                    fairness_extensions = [""]
+
+                                for extension in fairness_extensions:
+                                    args_str = "arguments = {} {}".format(command, extension)
+
+                                    if seeds is None:
+                                        file.write("{}\n".format(args_str))
+                                        file.write("queue {}\n".format(args.iterations if args.iterations is not None else ""))
+                                    else:
+                                        for seed in seeds:
+                                            seed_args = "{} -s {}\n".format(args_str, seed)
+                                            file.write(seed_args)
+                                            file.write("queue\n")
 
     print("## FInished building {} ##".format(sub_file_name))
 
@@ -144,54 +155,55 @@ def _multi_run(args, base_path, lambdas, seeds):
             for time_steps in args.time_steps:
                 for epochs in args.epochs:
                     for batch_size in args.batch_sizes:
-                        command = ["python", "run.py",
-                                   "-d", str(args.data),
-                                   "-c", str(cost),
-                                   "-lr", str(learning_rate),
-                                   "-p", "{}/raw".format(base_path),
-                                   "-ts", str(time_steps),
-                                   "-e", str(epochs),
-                                   "-bs", str(batch_size),
-                                   "-ns", str(args.num_samples),
-                                   "-ns_t", str(args.num_samples_test)]
-                        if args.asynchronous:
-                            command.append("-a")
-                        if args.history_learning:
-                            command.append("-hl")
-                        if args.plot:
-                            command.append("--plot")
-                        if args.ip_weight_clipping:
-                            command.append("-ipc")
-                        if args.fairness_augmented:
-                            command.append("-faug")
-                        if args.seed_path:
-                            command.extend(["-sp", args.seed_path])
-                        if args.change_iterations:
-                            command.extend(["-ci", str(args.change_iterations)])
-                        if args.change_percentage:
-                            command.extend(["-cp", str(args.change_percentage)])
-                        if args.policy_type:
-                            command.extend(["-pt", str(args.policy_type)])
-                        if args.fairness_delta:
-                            command.extend(["-fd", str(args.fairness_delta)])
+                        for history_learning in args.history_learning:
+                            command = ["python", "run.py",
+                                       "-d", str(args.data),
+                                       "-c", str(cost),
+                                       "-lr", str(learning_rate),
+                                       "-p", "{}/raw".format(base_path),
+                                       "-ts", str(time_steps),
+                                       "-e", str(epochs),
+                                       "-bs", str(batch_size),
+                                       "-ns", str(args.num_samples),
+                                       "-ns_t", str(args.num_samples_test)]
+                            if args.asynchronous:
+                                command.append("-a")
+                            if history_learning:
+                                command.append("-hl")
+                            if args.plot:
+                                command.append("--plot")
+                            if args.ip_weight_clipping:
+                                command.append("-ipc")
+                            if args.fairness_augmented:
+                                command.append("-faug")
+                            if args.seed_path:
+                                command.extend(["-sp", args.seed_path])
+                            if args.change_iterations:
+                                command.extend(["-ci", str(args.change_iterations)])
+                            if args.change_percentage:
+                                command.extend(["-cp", str(args.change_percentage)])
+                            if args.policy_type:
+                                command.extend(["-pt", str(args.policy_type)])
+                            if args.fairness_delta:
+                                command.extend(["-fd", str(args.fairness_delta)])
 
-                        if args.fairness_type is not None:
-                            fairness_extensions = [extension for extension in
-                                                   _fairness_extensions(args, lambdas, build=False)]
-                        else:
-                            fairness_extensions = []
+                            if args.fairness_type is not None:
+                                fairness_extensions = [extension for extension in
+                                                       _fairness_extensions(args, lambdas, build=False)]
+                            else:
+                                fairness_extensions = []
 
-                        for extension in fairness_extensions:
-                            temp_command = deepcopy(command)
-                            temp_command.extend(extension)
+                            for extension in fairness_extensions:
+                                temp_command = deepcopy(command)
+                                temp_command.extend(extension)
 
-                            for iter in range(args.iterations):
-                                if seeds is None:
-                                    subprocess.run(temp_command)
-                                else:
-                                    seed = seeds[iter]
-                                    temp_command.extend(["-s", str(seed)])
-                                    subprocess.run(temp_command)
+                                for iter in range(args.iterations):
+                                    if seeds is None:
+                                        subprocess.run(temp_command)
+                                    else:
+                                        seed = seeds[iter]
+                                        temp_command.extend(["-s", str(seed)])
+                                        subprocess.run(temp_command)
 
 
 if __name__ == "__main__":
@@ -222,7 +234,7 @@ if __name__ == "__main__":
                         help='list of number of samples to drawn each time step')
     parser.add_argument("-ns_t", "--num_samples_test", type=int, required=True, help="number of test samples")
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of iterations')
-    parser.add_argument('-hl', '--history_learning', required=False, action='store_true')
+    parser.add_argument('-hl', '--history_learning', type=str2bool, nargs='+', required=True)
 
     # ip weighting parameters
     parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')
