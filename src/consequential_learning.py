@@ -174,8 +174,8 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
                 last_optimization_target = current_optimization_target
                 i += 1
-                # if epochs <= i:
-                #     break
+                if epochs <= i:
+                    break
 
     def train(self, training_parameters):
         """ Executes consequential learning according to the specified training parameters.
