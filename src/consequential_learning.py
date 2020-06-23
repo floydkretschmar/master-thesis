@@ -227,14 +227,19 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
             if x_train.shape[0] > 0:
                 ips_weights = stable_divide(1, pi_0_probabilities)
+
+                if training_parameters["parameter_optimization"]["clip_weights"]:
+                    s_1_prob = s_train.sum() / len(s_train)
+                    s_0_prob = (1 - s_train).sum() / len(s_train)
+                    s_1_idx = np.where(s_train == 1)
+                    s_0_idx = np.where(s_train == 0)
+                    ips_weights[s_1_idx] = ips_weights[s_1_idx] * s_1_prob
+                    ips_weights[s_0_idx] = ips_weights[s_0_idx] * s_0_prob
+
                 self._update_buffer(x_train, s_train, y_train, ips_weights)
             elif x_train.shape[0] == 0 and not self.learn_on_entire_history:
                 self.data_history = None
 
-            fairness_values = []
-            gradient_values = []
-            lambda_values = []
-            util_values = []
             # only train if there is actual training data
             if self.buffer_size > 0:
                 if dual_optimization:
@@ -260,24 +265,6 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                             self.data_history["s"],
                                                             self.data_history["y"],
                                                             self.data_history["ips_weights"])
-
-                        d_test, _ = optimizer.policy(x_test, s_test)
-                        fairness = optimizer.optimization_target.fairness_function(s=s_test,
-                                                                                   decisions=d_test,
-                                                                                   decision_probabilities=d_test,
-                                                                                   y=y_test)
-                        util = optimizer.optimization_target.utility_function(decisions=d_test, decision_probabilities=d_test, y=y_test)
-                        gradient_values.append(gradient)
-                        lambda_values.append(deepcopy(optimizer.optimization_target.fairness_rate))
-                        fairness_values.append(fairness)
-                        util_values.append(util)
-                        print("Timestep {} Epoch {}: Lambda {} \t Fairness (test) {} \t Utility (test) {}".
-                              format(i, j, optimizer.optimization_target.fairness_rate, fairness, util))
-                    plot_epoch_statistics("{}/timestep_{}.png".format(training_parameters["save_path"], i),
-                                          fairness_values,
-                                          lambda_values,
-                                          gradient_values,
-                                          util_values)
                 else:
                     self._train_model_parameters(optimizer,
                                                  theta_learning_rate,
@@ -286,6 +273,16 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             with torch.no_grad():
                 decisions, decision_probabilities = optimizer.policy(x_test, s_test)
             decisions_over_time = stack(decisions_over_time, decisions, axis=1)
+
+            fairness = optimizer.optimization_target.fairness_function(s=s_test,
+                                                                       decisions=decisions,
+                                                                       decision_probabilities=decisions,
+                                                                       y=y_test)
+            util = optimizer.optimization_target.utility_function(decisions=decisions,
+                                                                  decision_probabilities=decisions,
+                                                                  y=y_test)
+            print("Timestep {}: Lambda {} \t Fairness (test) {} \t Utility (test) {}".
+                  format(i, optimizer.optimization_target.fairness_rate, fairness, util))
 
             # ... and save the parameters of the model
             parameters = optimizer.parameters
