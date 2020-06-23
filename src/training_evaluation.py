@@ -18,17 +18,12 @@ MEDIAN = "MEDIAN"
 FIRST_QUARTILE = "FIRST_QUARTILE"
 THIRD_QUARTILE = "THIRD_QUARTILE"
 
-# Scale Measures:
-X_VALUES = "X_VALUES"
-X_SCALE = "X_SCALE"
-X_NAME = "X_NAME"
-
 # Performance Measures
 NUM_INDIVIDUALS = "A"
 NUM_NEGATIVES = "N"
 NUM_POSITIVES = "P"
 NUM_PRED_NEGATIVES = "NPRED"
-NUM_PRED_POSITIVES = "NPRED"
+NUM_PRED_POSITIVES = "PPRED"
 TRUE_POSITIVES = "TP"
 TRUE_NEGATIVES = "TN"
 FALSE_POSITIVES = "FP"
@@ -106,8 +101,10 @@ def error_rate(statistics, protected_string, protected):
 
 
 def selection_rate(statistics, protected_string, protected):
-    return statistics.results[protected_string][NUM_PRED_POSITIVES] / statistics.results[protected_string][
-        NUM_INDIVIDUALS]
+    pred_pos = statistics.results[protected_string][NUM_PRED_POSITIVES]
+    num_ind = statistics.results[protected_string][NUM_INDIVIDUALS]
+
+    return pred_pos / num_ind
 
 
 def f1(statistics, protected_string, protected):
@@ -121,7 +118,10 @@ def disparate_impact(statistics, protected_string, protected):
 
 
 def demographic_parity(statistics, protected_string, protected):
-    return statistics.selection_rate(protected=True)._measure - statistics.selection_rate(protected=False)._measure
+    sel_prot = statistics.selection_rate(protected=True)._measure
+    sel_unprot = statistics.selection_rate(protected=False)._measure
+    dp = sel_prot - sel_unprot
+    return dp
 
 
 def equality_of_opportunity(statistics, protected_string, protected):
@@ -247,9 +247,9 @@ class Statistics:
 
                 # calculate base statistics during creation of statistics object
                 self.results[prot] = {
-                    NUM_INDIVIDUALS: len(filtered_ground_truths),
-                    NUM_NEGATIVES: len(filtered_ground_truths[filtered_ground_truths == 0]),
-                    NUM_POSITIVES: len(filtered_ground_truths[filtered_ground_truths == 1]),
+                    NUM_INDIVIDUALS: np.array(len(filtered_ground_truths)),
+                    NUM_NEGATIVES: np.array(len(filtered_ground_truths[filtered_ground_truths == 0])),
+                    NUM_POSITIVES: np.array(len(filtered_ground_truths[filtered_ground_truths == 1])),
                     NUM_PRED_NEGATIVES: np.expand_dims(np.sum((1 - filtered_predictions), axis=0), axis=1),
                     NUM_PRED_POSITIVES: np.expand_dims(np.sum(filtered_predictions, axis=0), axis=1),
                     TRUE_POSITIVES: np.expand_dims(
@@ -351,16 +351,14 @@ class Statistics:
         return serialize_dictionary(self.results)
 
     def merge(self, statistics):
-        for (protected_key, protected_value) in statistics.results.items():
-            if protected_key != X_VALUES and protected_key != X_SCALE and protected_key != X_NAME:
-                for (measure_key, measure_value) in protected_value.items():
-                    if measure_key != NUM_INDIVIDUALS and measure_key != NUM_NEGATIVES and measure_key != NUM_POSITIVES:
-                        # if the measure value has not been calculated for either of the merging statistics: reset and let it be recalculated during next call
-                        if measure_value is None or self.results[protected_key][measure_key] is None:
-                            self.results[protected_key][measure_key] = None
-                        else:
-                            self.results[protected_key][measure_key] = stack(self.results[protected_key][measure_key],
-                                                                             measure_value, axis=1)
+        for protected in ["all", "unprotected", "protected"]:
+            for measure in statistics.results[protected].keys():
+                self_measure = deepcopy(self.results[protected][measure])
+                other_measure = deepcopy(statistics.results[protected][measure])
+                if self_measure is None or other_measure is None:
+                    self.results[protected][measure] = None
+                else:
+                    self.results[protected][measure] = stack(self_measure, other_measure, axis=1)
 
     def number_of_samples(self, protected=None):
         return self._get_measure(protected, NUM_INDIVIDUALS)
@@ -507,28 +505,27 @@ class MultiStatistics(Statistics):
 
     def log_run(self, statistics):
         for (protected_key, protected_value) in statistics.results.items():
-            if protected_key != X_VALUES and protected_key != X_SCALE and protected_key != X_NAME:
-                for measure_key in protected_value:
-                    if protected_key == "all":
-                        protected = None
-                    elif protected_key == "protected":
-                        protected = True
-                    else:
-                        protected = False
+            for measure_key in protected_value:
+                if protected_key == "all":
+                    protected = None
+                elif protected_key == "protected":
+                    protected = True
+                else:
+                    protected = False
 
-                    measure_value = statistics._get_measure(protected,
-                                                            measure_key,
-                                                            self._functions[measure_key] if measure_key in
-                                                                                            self._functions else None)
+                measure_value = statistics._get_measure(protected,
+                                                        measure_key,
+                                                        self._functions[measure_key] if measure_key in
+                                                                                        self._functions else None)
 
-                    if isinstance(measure_value, numbers.Number):
-                        value = measure_value
-                    else:
-                        value = measure_value[-1, :].reshape(1, -1)
+                if isinstance(measure_value, numbers.Number):
+                    value = measure_value
+                else:
+                    value = measure_value[-1, :].reshape(1, -1)
 
-                    if measure_key not in self.results[protected_key] or self.results[protected_key][
-                        measure_key] is None:
-                        self.results[protected_key][measure_key] = value
-                    else:
-                        self.results[protected_key][measure_key] = np.vstack(
-                            (self.results[protected_key][measure_key], value))
+                if measure_key not in self.results[protected_key] or self.results[protected_key][
+                    measure_key] is None:
+                    self.results[protected_key][measure_key] = value
+                else:
+                    self.results[protected_key][measure_key] = np.vstack(
+                        (self.results[protected_key][measure_key], value))
