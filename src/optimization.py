@@ -116,6 +116,8 @@ class StochasticGradientOptimizer:
             returns:
                 average_gradient: The average gradient across all minibatches
         """
+        sum_gradients = 0
+        num_batches = 0
         # for each minibatch...
         for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
             # make decision according to current policy
@@ -131,9 +133,14 @@ class StochasticGradientOptimizer:
                                                                             ips_weights=ips_weights_batch)
 
             updated_gradient = self._fairness_optimizer_function.update(gradient, self._fairness_update_parameters)
+
+            sum_gradients = sum_gradients + updated_gradient
+            num_batches += 1
+
             new_fairness_rate = self.optimization_target.fairness_rate + learning_rate * updated_gradient
             self.optimization_target.fairness_rate = new_fairness_rate
 
+        return sum_gradients/num_batches
 
 class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
     def __init__(self, policy,
@@ -196,7 +203,7 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
 
     def update_fairness_parameter(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         with torch.no_grad():
-            super().update_fairness_parameter(learning_rate, batch_size, x, s, y, ips_weights)
+            return super().update_fairness_parameter(learning_rate, batch_size, x, s, y, ips_weights)
 
 
 class ManualStochasticGradientOptimizer(StochasticGradientOptimizer):
