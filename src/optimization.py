@@ -157,11 +157,13 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
     def create_policy_checkpoint(self):
         _, state_dictionary = self.policy.parameters
         self._state_dictionary = deepcopy(state_dictionary)
+        self._backup_policy_update_parameters = self.model_optimizer.state_dict()
 
     def restore_last_policy_checkpoint(self):
         self.policy.parameters = deepcopy(self._state_dictionary)
         optimization_parameters, _ = self._policy.parameters
         self.model_optimizer = self._pytorch_optimizer_constructor(optimization_parameters, lr=0.01)
+        self.model_optimizer.load_state_dict(self._backup_policy_update_parameters)
 
     def update_model_parameters(self, learning_rate, batch_size, x, s, y, ips_weights=None):
         """ Updates the model parameters using stochastic gradient descent.
