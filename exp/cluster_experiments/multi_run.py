@@ -86,14 +86,15 @@ def _build_submit_file(args, base_path, lambdas, seeds):
                                       "-e {} " \
                                       "-bs {} " \
                                       "-ns {} " \
-                                      "{} " \
-                                      "{} " \
-                                      "{} " \
-                                      "{} " \
-                                      "{} " \
-                                      "{} " \
-                                      "{} " \
-                                      "{} " \
+                                      "{}" \
+                                      "{}" \
+                                      "{}" \
+                                      "{}" \
+                                      "{}" \
+                                      "{}" \
+                                      "{}" \
+                                      "{}" \
+                                      "{}" \
                                       "{}".format(args.data,
                                                   cost,
                                                   learning_rate,
@@ -111,7 +112,8 @@ def _build_submit_file(args, base_path, lambdas, seeds):
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
-                                                  "-faug" if args.fairness_augmented else "",
+                                                  "-h " if args.history_learning else "",
+                                                  "-faug " if args.fairness_augmented else "",
                                                   "-pid $(Process)" if args.iterations else "")
 
                             if args.fairness_type is not None:
@@ -151,6 +153,8 @@ def _multi_run(args, base_path, lambdas, seeds):
                                    "-ns", str(args.num_samples)]
                         if args.asynchronous:
                             command.append("-a")
+                        if args.history_learning:
+                            command.append("-h")
                         if args.plot:
                             command.append("--plot")
                         if args.ip_weight_clipping:
@@ -214,6 +218,7 @@ if __name__ == "__main__":
     parser.add_argument('-ns', '--num_samples', type=int, required=True,
                         help='list of number of batches to be used')
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of iterations')
+    parser.add_argument('-h', '--history_learning', required=False, action='store_true')
 
     # ip weighting parameters
     parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')

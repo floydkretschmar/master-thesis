@@ -186,7 +186,7 @@ def single_run(args):
             "batch_size": args.batch_size,
             "epochs": args.epochs,
             "learning_rate": args.learning_rate,
-            "learn_on_entire_history": False,
+            "learn_on_entire_history": args.history_learning,
             "time_steps": args.time_steps,
             "clip_weights": args.ip_weight_clipping,
             "change_percentage": args.change_percentage,
@@ -300,6 +300,8 @@ if __name__ == "__main__":
     parser.add_argument("-ipc", "--ip_weight_clipping", action="store_true")
     parser.add_argument("--plot", required=False, action="store_true")
     parser.add_argument("-pid", "--process_id", type=str, required=False, help="process id for identification")
+    parser.add_argument("-h", "--history_learning", required=False, action="store_true")
+
 
     parser.add_argument("-f", "--fairness_type", type=str, required=False,
                         help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "
