@@ -86,6 +86,7 @@ def _build_submit_file(args, base_path, lambdas, seeds):
                                       "-e {} " \
                                       "-bs {} " \
                                       "-ns {} " \
+                                      "-ns_t {} " \
                                       "{}" \
                                       "{}" \
                                       "{}" \
@@ -103,16 +104,17 @@ def _build_submit_file(args, base_path, lambdas, seeds):
                                                   epochs,
                                                   batch_size,
                                                   args.num_samples,
-                                                  "-ci {}".format(
+                                                  args.num_samples_test,
+                                                  "-ci {} ".format(
                                                       args.change_iterations) if args.change_iterations else "",
-                                                  "-cp {}".format(
+                                                  "-cp {} ".format(
                                                       args.change_percentage) if args.change_percentage else "",
-                                                  "-pt {}".format(args.policy_type) if args.policy_type else "",
-                                                  "-fd {}".format(args.fairness_delta) if args.fairness_delta else "",
+                                                  "-pt {} ".format(args.policy_type) if args.policy_type else "",
+                                                  "-fd {} ".format(args.fairness_delta) if args.fairness_delta else "",
                                                   "-a " if args.asynchronous else "",
                                                   "--plot " if args.plot else "",
                                                   "-ipc " if args.ip_weight_clipping else "",
-                                                  "-h " if args.history_learning else "",
+                                                  "-hl " if args.history_learning else "",
                                                   "-faug " if args.fairness_augmented else "",
                                                   "-pid $(Process)" if args.iterations else "")
 
@@ -122,14 +124,14 @@ def _build_submit_file(args, base_path, lambdas, seeds):
                                 fairness_extensions = [""]
 
                             for extension in fairness_extensions:
-                                args = "arguments = {} {}".format(command, extension)
+                                args_str = "arguments = {} {}".format(command, extension)
 
                                 if seeds is None:
-                                    file.write("{}\n".format(args))
+                                    file.write("{}\n".format(args_str))
                                     file.write("queue {}\n".format(args.iterations if args.iterations is not None else ""))
                                 else:
                                     for seed in seeds:
-                                        seed_args = "{} -s {}\n".format(args, seed)
+                                        seed_args = "{} -s {}\n".format(args_str, seed)
                                         file.write(seed_args)
                                         file.write("queue\n")
 
@@ -150,11 +152,12 @@ def _multi_run(args, base_path, lambdas, seeds):
                                    "-ts", str(time_steps),
                                    "-e", str(epochs),
                                    "-bs", str(batch_size),
-                                   "-ns", str(args.num_samples)]
+                                   "-ns", str(args.num_samples),
+                                   "-ns_t", str(args.num_samples_test)]
                         if args.asynchronous:
                             command.append("-a")
                         if args.history_learning:
-                            command.append("-h")
+                            command.append("-hl")
                         if args.plot:
                             command.append("--plot")
                         if args.ip_weight_clipping:
@@ -174,7 +177,7 @@ def _multi_run(args, base_path, lambdas, seeds):
 
                         if args.fairness_type is not None:
                             fairness_extensions = [extension for extension in
-                                                   _fairness_extensions(args, lambdas, build=True)]
+                                                   _fairness_extensions(args, lambdas, build=False)]
                         else:
                             fairness_extensions = []
 
@@ -182,7 +185,7 @@ def _multi_run(args, base_path, lambdas, seeds):
                             temp_command = deepcopy(command)
                             temp_command.extend(extension)
 
-                            for iter in args.iterations:
+                            for iter in range(args.iterations):
                                 if seeds is None:
                                     subprocess.run(temp_command)
                                 else:
@@ -216,9 +219,10 @@ if __name__ == "__main__":
                         help='the percentage of improvement per training epoch that is considered the minimum amount of'
                              'improvement. ')
     parser.add_argument('-ns', '--num_samples', type=int, required=True,
-                        help='list of number of batches to be used')
+                        help='list of number of samples to drawn each time step')
+    parser.add_argument("-ns_t", "--num_samples_test", type=int, required=True, help="number of test samples")
     parser.add_argument('-i', '--iterations', type=int, required=True, help='the number of iterations')
-    parser.add_argument('-h', '--history_learning', required=False, action='store_true')
+    parser.add_argument('-hl', '--history_learning', required=False, action='store_true')
 
     # ip weighting parameters
     parser.add_argument('-ipc', '--ip_weight_clipping', action='store_true')

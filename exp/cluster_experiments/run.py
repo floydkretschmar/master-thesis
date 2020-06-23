@@ -194,7 +194,7 @@ def single_run(args):
         },
         "data": {
             "num_train_samples": args.num_samples,
-            "num_test_samples": 10000,
+            "num_test_samples": args.num_samples_test,
             "fix_seeds": True
         },
         "evaluation": {
@@ -296,11 +296,12 @@ if __name__ == "__main__":
     parser.add_argument("-cp", "--change_percentage", type=int, required=False, default=0.05,
                         help="the percentage of improvement per training epoch that is considered the minimum amount of"
                              "improvement. (Default = 0.05)")
-    parser.add_argument("-ns", "--num_samples", type=int, required=True, help="number of batches to be used")
+    parser.add_argument("-ns", "--num_samples", type=int, required=True, help="number of samples to be drawn per time step")
+    parser.add_argument("-ns_t", "--num_samples_test", type=int, required=True, help="number of test samples")
     parser.add_argument("-ipc", "--ip_weight_clipping", action="store_true")
     parser.add_argument("--plot", required=False, action="store_true")
     parser.add_argument("-pid", "--process_id", type=str, required=False, help="process id for identification")
-    parser.add_argument("-h", "--history_learning", required=False, action="store_true")
+    parser.add_argument("-hl", "--history_learning", required=False, action="store_true")
 
 
     parser.add_argument("-f", "--fairness_type", type=str, required=False,
