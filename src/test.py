@@ -112,6 +112,12 @@ def covariance_of_decision(**fairness_params):
         nn=False,
         **fairness_params)
 
+def covariance_of_decision_nn(**fairness_params):
+    return fairness_function(
+        type="COV_DP",
+        nn=True,
+        **fairness_params)
+
 def benefit_difference_dp(**fairness_params):
     return fairness_function(
         type="BD_DP",
@@ -148,10 +154,12 @@ dim_theta = distribution.feature_dimension
 optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
                                                            utility,
                                                            utility_gradient,
-                                                           benefit_difference_dp,
-                                                           benefit_difference_dp_grad,
+                                                           # benefit_difference_dp,
+                                                           # benefit_difference_dp_grad,
+                                                          covariance_of_decision,
+                                                          covariance_of_decision_grad,
                                                           error_delta=0.0)
-# optim_target = LagrangianOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn, error_delta=0.0)
+# optim_target = LagrangianOptimizationTarget(0.0, utility_nn, covariance_of_decision_nn, error_delta=0.0)
 # optim_target = PenaltyOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
 
 
@@ -167,7 +175,7 @@ training_parameters = {
         'batch_size': 64,
         # 'learning_rate': 0.001,
         'learning_rate': 0.1,
-        'learn_on_entire_history': True,
+        'learn_on_entire_history': False,
         'change_iterations': 5,
         'clip_weights': True
     },
@@ -178,9 +186,9 @@ training_parameters = {
     },
     'lagrangian_optimization': {
         # 'epochs': 200,
-        'epochs': 20,
+        'epochs': 40,
         'batch_size': 4096,
-        'learning_rate': 0.01
+        'learning_rate': 0.005
     },
     'evaluation': {
         UTILITY: {
@@ -205,7 +213,8 @@ training_parameters = {
 #         'batch_size': 128,
 #         'learning_rate': 0.01,
 #         'learn_on_entire_history': True,
-#         'change_iterations': 5
+#         'change_iterations': 5,
+#         'clip_weights': True
 #     },
 #     'data': {
 #         'num_train_samples': 4096,
