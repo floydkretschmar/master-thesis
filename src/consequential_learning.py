@@ -9,7 +9,7 @@ root_path = os.path.abspath(os.path.join('.'))
 if root_path not in sys.path:
     sys.path.append(root_path)
 
-from src.util import stack, train_test_split, stable_divide, sign
+from src.util import stack, train_test_split, stable_divide, abs, sign
 from src.training_evaluation import Statistics, ModelParameters
 from src.plotting import plot_epoch_statistics
 from src.optimization import PytorchStochasticGradientOptimizer
@@ -166,8 +166,10 @@ class ConsequentialLearning(BaseLearningAlgorithm):
 
                 # if the change in the last epoch was smaller than the specified percentage of the last optimization target
                 # value: increase number of iterations without change by one, otherwise reset
-                s = sign(last_optimization_target)
-                if current_optimization_target <= (last_optimization_target * (1 + change_percentage * s)):
+                # s = sign(last_optimization_target)
+                # if current_optimization_target <= (last_optimization_target * (1 + change_percentage * s)):
+                new_target = last_optimization_target + abs((last_optimization_target * change_percentage))
+                if current_optimization_target <= new_target:
                     i_no_change += 1
                 else:
                     i_no_change = 0
