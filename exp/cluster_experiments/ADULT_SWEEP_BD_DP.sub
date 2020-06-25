@@ -31,726 +31,726 @@ log = /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/log/experiment.$
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
-queue 10
-arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
-queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.001 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.005 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.01 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 60 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 7.196856730011514e-05
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.00019306977288832496
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0005179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.0013894954943731374
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.003727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.01
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.026826957952797246
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.07196856730011514
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.19306977288832497
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 0.5179474679231213
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 1.389495494373136
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 3.727593720314938
+# queue 10
+# arguments = run.py -d ADULT -c 0.5 -lr 0.05 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 90 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -pid $(Process) -f BD_DP -fv 10.0
+# queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 1e-05
 queue 10
 arguments = run.py -d ADULT -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/SWEEP/ADULT/LOG/BD_DP/raw -ts 50 -e 30 -bs 256 -ns 781 -ns_t 9769 -pt LOG -ipc -hl -pid $(Process) -f BD_DP -fv 2.6826957952797274e-05
