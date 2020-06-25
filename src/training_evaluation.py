@@ -136,6 +136,8 @@ def _unserialize_value(value, recursive_func=None):
         return np.array(value)
     elif value == "NoneType":
         return None
+    elif isinstance(value, numbers.Number):
+        return np.array(value).reshape(1, 1)
     else:
         return value
 

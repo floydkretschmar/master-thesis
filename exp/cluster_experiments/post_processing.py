@@ -148,13 +148,15 @@ def _save(args, statistics, model_parameters, output_path, x_axis, x_label, x_sc
               x_scale=x_scale,
               performance_measures=performance_measures,
               fairness_measures=fairness_measures,
-              file_path=os.path.join(output_path, "results_mean.png"))
+              file_path=os.path.join(output_path, "results_mean.png"),
+              figsize=(20, 10))
     plot_median(x_values=x_axis,
                 x_label=x_label,
                 x_scale=x_scale,
                 performance_measures=performance_measures,
                 fairness_measures=fairness_measures,
-                file_path=os.path.join(output_path, "results_median.png"))
+                file_path=os.path.join(output_path, "results_median.png"),
+                figsize=(20, 10))
 
 
 cost_directories = [os.path.join(args.input_path, cost) for cost in os.listdir(args.input_path)
