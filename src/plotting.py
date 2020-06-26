@@ -16,8 +16,8 @@ import tikzplotlib as tpl
 from src.training_evaluation import MEAN, MEDIAN
 
 COLORS = [
-    { "edgecolor": '#060080', "facecolor": '#928CFF' },
-    { "edgecolor": '#558f47', "facecolor": '#c1fcb3' }
+    { "edgecolor": '#060080', "facecolor": '#060080' },
+    { "edgecolor": '#558f47', "facecolor": '#558f47' }
 ]
 
 class Plot():
