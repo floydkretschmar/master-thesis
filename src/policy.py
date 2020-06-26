@@ -14,6 +14,7 @@ from copy import deepcopy
 # pylint: disable=no-name-in-module
 from src.util import sigmoid, to_device, from_device
 from src.optimization import ManualStochasticGradientOptimizer, PytorchStochasticGradientOptimizer
+from src.functions import ADAM, SGD
 
 
 # TODO: Add Pytorch supporting policy (e.g. simple MLP)
@@ -93,7 +94,7 @@ class BasePolicy(abc.ABC):
         """
         raise NotImplementedError("Subclass must override copy(self).")
 
-    def optimizer(self, optimization_target):
+    def optimizer(self, optimization_target, **optimizer_args):
         """ Returns the fitting optimizer that optimizes the specified policy.
 
         Args:
@@ -136,7 +137,7 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
         """
         raise NotImplementedError("Subclass must override log_policy_gradient(self, x, s).")
 
-    def optimizer(self, optimization_target):
+    def optimizer(self, optimization_target, **optimizer_args):
         """ Returns the optimizer that optimizes a ManualGradientPolicy.
 
         Args:
@@ -148,7 +149,16 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
             optimizer: The ManualStochasticGradientOptimizer that optimizes the specified policy according to the
             specified optimization target.
         """
-        return ManualStochasticGradientOptimizer(self, optimization_target)
+        fairness_optimizer_function = optimizer_args["fairness_optimizer_function"] \
+            if "fairness_optimizer_function" in optimizer_args and optimizer_args["fairness_optimizer_function"] is not None \
+            else ADAM
+        policy_optimizer_function = optimizer_args["policy_optimizer_function"] \
+            if "policy_optimizer_function" in optimizer_args and optimizer_args["policy_optimizer_function"] is not None \
+            else SGD
+        return ManualStochasticGradientOptimizer(self,
+                                                 optimization_target,
+                                                 fairness_optimizer_function,
+                                                 policy_optimizer_function)
 
 
 class LogisticPolicy(ManualGradientPolicy):
@@ -202,8 +212,17 @@ class PytorchPolicy(BasePolicy, abc.ABC):
     def parameters(self, value):
         self.network.load_state_dict(value)
 
-    def optimizer(self, optimization_target):
-        return PytorchStochasticGradientOptimizer(self, optimization_target)
+    def optimizer(self, optimization_target, **optimizer_args):
+        fairness_optimizer_function = optimizer_args["fairness_optimizer_function"] \
+            if "fairness_optimizer_function" in optimizer_args and optimizer_args["fairness_optimizer_function"] is not None \
+            else ADAM
+        pytorch_optimizer_constructor = optimizer_args["pytorch_optimizer_constructor"] \
+            if "pytorch_optimizer_constructor" in optimizer_args and optimizer_args["pytorch_optimizer_constructor"] is not None \
+            else torch.optim.Adam
+        return PytorchStochasticGradientOptimizer(self,
+                                                  optimization_target,
+                                                  fairness_optimizer_function,
+                                                  pytorch_optimizer_constructor)
 
 
 class NeuralNetworkPolicy(PytorchPolicy):
