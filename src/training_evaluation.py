@@ -155,8 +155,11 @@ class ModelParameters():
 
         lambdas = np.array(self.dict["lambdas"], dtype=float)
         self.dict["lambdas"] = {}
-        for l in range(lambdas.shape[1]):
-            self.dict["lambdas"][l] = np.array(lambdas[:, l], dtype=float).reshape(-1, 1)
+        if len(lambdas.shape) > 1:
+            for l in range(lambdas.shape[1]):
+                self.dict["lambdas"][l] = lambdas[:, l].reshape(-1, 1)
+        else:
+            self.dict["lambdas"][0] = lambdas.reshape(-1, 1)
 
     @staticmethod
     def _unserialize_dictionary(dictionary):
