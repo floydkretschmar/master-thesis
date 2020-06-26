@@ -28,6 +28,7 @@ parser.add_argument('-fdg', '--fairness_dual_gradient', action='store_true')
 parser.add_argument('-fs', '--fairness_skip', type=int, required=False,
                     help="only take every #fairness_skip fairness value into account")
 parser.add_argument('-fst', '--fairness_start', type=float, required=False)
+parser.add_argument('-fed', '--fairness_end', type=float, required=False)
 parser.add_argument('-a', '--analyze', action='store_true')
 parser.add_argument('-his', '--history', action='store_true')
 
@@ -77,6 +78,8 @@ def fairness(lambdas, fairness_skip=None):
     for lambda_idx in sorted_fairness_idx:
         if args.fairness_start is not None and fairness_rates[lambda_idx] < args.fairness_start:
             continue
+        if args.fairness_end is not None and fairness_rates[lambda_idx] > args.fairness_end:
+            break
 
         selected_fairness_rates.append(fairness_rates[lambda_idx])
 
@@ -162,12 +165,10 @@ def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label,
 
     plot_mean(performance_plots,
               fairness_plots,
-              file_path=os.path.join(output_path, "results_mean.png"),
-              figsize=(20, 10))
+              file_path=os.path.join(output_path, "results_mean.png"))
     plot_median(performance_plots,
                 fairness_plots,
-                file_path=os.path.join(output_path, "results_median.png"),
-                figsize=(20, 10))
+                file_path=os.path.join(output_path, "results_median.png"))
 
 
 def _save_analyze_results(results, path):
