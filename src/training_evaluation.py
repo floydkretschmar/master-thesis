@@ -152,7 +152,11 @@ class ModelParameters():
 
     def __init__(self, model_parameter_dict):
         self.dict = deepcopy(model_parameter_dict)
-        self.dict["lambdas"] = np.array(self.dict["lambdas"], dtype=float).reshape(-1, 1)
+
+        lambdas = np.array(self.dict["lambdas"], dtype=float)
+        self.dict["lambdas"] = {}
+        for l in range(lambdas.shape[1]):
+            self.dict["lambdas"][l] = np.array(lambdas[:, l], dtype=float).reshape(-1, 1)
 
     @staticmethod
     def _unserialize_dictionary(dictionary):
@@ -169,12 +173,17 @@ class ModelParameters():
 
     def merge(self, model_parameters):
         self.dict["model_parameters"].append(model_parameters.dict["model_parameters"])
-        self.dict["lambdas"] = stack(self.dict["lambdas"],
-                                     model_parameters.dict["lambdas"].reshape(-1, 1),
-                                     axis=1)
+
+        for l_idx in self.dict["lambdas"].keys():
+            self.dict["lambdas"][l_idx] = stack(self.dict["lambdas"][l_idx],
+                                         model_parameters.dict["lambdas"][l_idx].reshape(-1, 1),
+                                         axis=1)
 
     def get_lagrangians(self):
-        return Statistic(self.dict["lambdas"], "Lagrangian Multiplier")
+        lagrangians = []
+        for l_idx in self.dict["lambdas"].keys():
+            lagrangians.append(Statistic(self.dict["lambdas"][l_idx], "Lagrangian Multiplier"))
+        return lagrangians
 
     def to_dict(self):
         return deepcopy(self.dict)

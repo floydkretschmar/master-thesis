@@ -173,7 +173,7 @@ optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
                                                           benefit_difference_dp_grad,
                                                           # covariance_of_decision,
                                                           # covariance_of_decision_grad,
-                                                          error_delta=0.01)
+                                                          error_delta=0.001)
 # optim_target = ManualGradientPenaltyOptimizationTarget(0.0,
 #                                                        utility,
 #                                                        utility_gradient,
@@ -319,12 +319,12 @@ def get_plots(statistics, model_parameters):
     plots.append(Plot(range(training_parameters["parameter_optimization"]["time_steps"] + 1),
                       "Time Steps",
                       "linear",
-                      model_parameters.get_lagrangians().name,
-                      model_parameters.get_lagrangians()))
+                      "Lagrangian Multipliers",
+                      *model_parameters.get_lagrangians()))
     return plots
 
 
-save_path = '../res/TEST/ADULT-NO-FAIRNESS-SGD'
+save_path = '../res/TEST/ADULT-error_delta'
 Path(save_path).mkdir(parents=True, exist_ok=True)
 
 # training_parameters["save_path"] = "../res/local_experiments/TEST"
@@ -336,7 +336,7 @@ plot_median(performance_plots=get_plots(overall_statistic, overall_model_paramet
             file_path="{}/run_0.png".format(save_path),
             figsize=(20, 10))
 
-for r in range(29):
+for r in range(5):
     statistics, model_parameters, _ = train(
         training_parameters,
         fairness_rates=[0.0])
