@@ -154,7 +154,7 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
             else ADAM
         policy_optimizer_function = optimizer_args["policy_optimizer_function"] \
             if "policy_optimizer_function" in optimizer_args and optimizer_args["policy_optimizer_function"] is not None \
-            else SGD
+            else ADAM
         return ManualStochasticGradientOptimizer(self,
                                                  optimization_target,
                                                  fairness_optimizer_function,
