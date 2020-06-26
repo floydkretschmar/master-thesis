@@ -3,6 +3,7 @@ import sys
 
 import numpy as np
 import torch
+from pathlib import Path
 
 module_path = os.path.abspath(os.path.join('..'))
 
@@ -10,17 +11,19 @@ if module_path not in sys.path:
     sys.path.append(module_path)
 
 from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability
-from src.plotting import plot_median
+from src.plotting import plot_median, Plot
 from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
 from src.feature_map import IdentityFeatureMap
 from src.policy import LogisticPolicy, NeuralNetworkPolicy
-from src.distribution import COMPASDistribution, FICODistribution
-from src.optimization import ManualGradientLagrangianOptimizationTarget, LagrangianOptimizationTarget, PenaltyOptimizationTarget
+from src.distribution import COMPASDistribution, FICODistribution, AdultCreditDistribution
+from src.optimization import ManualGradientLagrangianOptimizationTarget, LagrangianOptimizationTarget, \
+    PenaltyOptimizationTarget, ManualGradientPenaltyOptimizationTarget
 from src.util import mean, mean_difference, get_list_of_seeds, fix_seed
 
 # region Fairness Definitions
-# fix_seed(3403344728)
+fix_seed(3403344728)
+
 
 def calc_benefit(decisions, ips_weights):
     if ips_weights is not None:
@@ -80,8 +83,10 @@ def fairness_function(type, nn, **fairness_kwargs):
         covariance = calc_covariance(s, decisions, ips_weights)
         return covariance.mean(0)
 
+
 def no_fairness(**fairness_kwargs):
     return 0.0
+
 
 def eval_covariance_of_decision(s, y, decisions):
     return fairness_function(
@@ -100,11 +105,14 @@ def eval_covariance_of_decision(s, y, decisions):
 def utility(**util_params):
     return cost_utility(cost_factor=0.5, **util_params)
 
+
 def utility_gradient(**util_params):
     return cost_utility_gradient(cost_factor=0.5, **util_params)
 
+
 def utility_nn(**util_params):
     return cost_utility_probability(cost_factor=0.5, **util_params)
+
 
 def covariance_of_decision(**fairness_params):
     return fairness_function(
@@ -112,11 +120,13 @@ def covariance_of_decision(**fairness_params):
         nn=False,
         **fairness_params)
 
+
 def covariance_of_decision_nn(**fairness_params):
     return fairness_function(
         type="COV_DP",
         nn=True,
         **fairness_params)
+
 
 def benefit_difference_dp(**fairness_params):
     return fairness_function(
@@ -124,21 +134,25 @@ def benefit_difference_dp(**fairness_params):
         nn=False,
         **fairness_params)
 
+
 def benefit_difference_dp_nn(**fairness_params):
     return fairness_function(
         type="BD_DP",
         nn=True,
         **fairness_params)
 
+
 def covariance_of_decision_grad(**fairness_params):
     return fairness_function_gradient(
         type="COV_DP",
         **fairness_params)
 
+
 def benefit_difference_dp_grad(**fairness_params):
     return fairness_function_gradient(
         type="BD_DP",
         **fairness_params)
+
 
 def benefit_difference_eop_grad(**fairness_params):
     return fairness_function_gradient(
@@ -147,82 +161,87 @@ def benefit_difference_eop_grad(**fairness_params):
 
 
 bias = True
-distribution = FICODistribution(bias=bias, fraction_protected=0.5)
+# distribution = FICODistribution(bias=bias, fraction_protected=0.5)
 # distribution = COMPASDistribution(bias=bias, test_percentage=0.2)
+distribution = AdultCreditDistribution(bias=bias, test_percentage=0.2)
 dim_theta = distribution.feature_dimension
 
 optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
-                                                           utility,
-                                                           utility_gradient,
-                                                           # benefit_difference_dp,
-                                                           # benefit_difference_dp_grad,
-                                                          covariance_of_decision,
-                                                          covariance_of_decision_grad,
-                                                          error_delta=0.0)
+                                                          utility,
+                                                          utility_gradient,
+                                                          benefit_difference_dp,
+                                                          benefit_difference_dp_grad,
+                                                          # covariance_of_decision,
+                                                          # covariance_of_decision_grad,
+                                                          error_delta=0.01)
+# optim_target = ManualGradientPenaltyOptimizationTarget(0.0,
+#                                                        utility,
+#                                                        utility_gradient,
+#                                                        benefit_difference_dp,
+#                                                        benefit_difference_dp_grad)
 # optim_target = LagrangianOptimizationTarget(0.0, utility_nn, covariance_of_decision_nn, error_delta=0.0)
 # optim_target = PenaltyOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
 
 
-training_parameters = {
-    # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-    'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
-    'distribution': distribution,
-    'optimization_target': optim_target,
-    'parameter_optimization': {
-        'time_steps': 100,
-        # 'time_steps': 1,
-        'epochs': 50,
-        'batch_size': 64,
-        # 'learning_rate': 0.001,
-        'learning_rate': 0.1,
-        'learn_on_entire_history': False,
-        'change_iterations': 5,
-        'clip_weights': True
-    },
-    'data': {
-        'num_train_samples': 128,
-        # 'num_train_samples': 4096,
-        'num_test_samples': 1024
-    },
-    'lagrangian_optimization': {
-        # 'epochs': 200,
-        'epochs': 40,
-        'batch_size': 4096,
-        'learning_rate': 0.005
-    },
-    'evaluation': {
-        UTILITY: {
-            'measure_function': utility,
-            'detailed': False
-        },
-        COVARIANCE_OF_DECISION_DP: {
-            'measure_function': eval_covariance_of_decision,
-            'detailed': False
-        }
-    }
-}
-
 # training_parameters = {
-#     'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-#     # 'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+#     # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+#     'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
 #     'distribution': distribution,
 #     'optimization_target': optim_target,
 #     'parameter_optimization': {
-#         'time_steps': 200,
+#         'time_steps': 50,
+#         # 'time_steps': 1,
 #         'epochs': 50,
-#         'batch_size': 128,
-#         'learning_rate': 0.01,
+#         'batch_size': 64,
+#         # 'learning_rate': 0.001,
+#         'learning_rate': 0.1,
 #         'learn_on_entire_history': True,
-#         'change_iterations': 5,
 #         'clip_weights': True
 #     },
 #     'data': {
-#         'num_train_samples': 4096,
-#         'num_test_samples': 1024
+#         'num_train_samples': 128,
+#         # 'num_train_samples': 4096,
+#         'num_test_samples': 1600
 #     },
 #     'lagrangian_optimization': {
-#         'epochs': 200,
-#         'batch_size': 4096,
+#         # 'epochs': 200,
+#         'epochs': 40,
+#         'batch_size': 1600,
+#         'learning_rate': 0.005
+#     },
+#     'evaluation': {
+#         UTILITY: {
+#             'measure_function': utility,
+#             'detailed': False
+#         },
+#         COVARIANCE_OF_DECISION_DP: {
+#             'measure_function': eval_covariance_of_decision,
+#             'detailed': False
+#         }
+#     }
+# }
+
+# training_parameters = {
+#     # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+#     'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+#     'distribution': distribution,
+#     'optimization_target': optim_target,
+#     'parameter_optimization': {
+#         'time_steps': 50,
+#         'epochs': 50,
+#         'batch_size': 98,
+#         # 'learning_rate': 0.001,
+#         'learning_rate': 0.1,
+#         'learn_on_entire_history': False,
+#         'clip_weights': True
+#     },
+#     'data': {
+#         'num_train_samples': 98,
+#         'num_test_samples': 1235
+#     },
+#     'lagrangian_optimization': {
+#         'epochs': 40,
+#         'batch_size': 4900,
 #         'learning_rate': 0.01,
 #     },
 #     'evaluation': {
@@ -237,19 +256,100 @@ training_parameters = {
 #     }
 # }
 
+training_parameters = {
+    # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+    'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+    'distribution': distribution,
+    'optimization_target': optim_target,
+    'parameter_optimization': {
+        'time_steps': 50,
+        # 'time_steps': 1,
+        'epochs': 50,
+        'batch_size': 256,
+        # 'learning_rate': 0.001,
+        'learning_rate': 0.1,
+        'learn_on_entire_history': True,
+        'clip_weights': True
+    },
+    'data': {
+        'num_train_samples': 781,
+        # 'num_train_samples': 4096,
+        'num_test_samples': 9792
+    },
+    'lagrangian_optimization': {
+        # 'epochs': 200,
+        'epochs': 40,
+        'batch_size': 40000,
+        'learning_rate': 0.1
+    },
+    'evaluation': {
+        UTILITY: {
+            'measure_function': utility,
+            'detailed': False
+        },
+        COVARIANCE_OF_DECISION_DP: {
+            'measure_function': eval_covariance_of_decision,
+            'detailed': False
+        }
+    }
+}
 
-training_parameters["save_path"] = "../res/local_experiments/TEST"
-statistics, model_parameters, run_path = train(
+def get_plots(statistics, model_parameters):
+    plots = []
+    plots.append(Plot(range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+                      "Time Steps",
+                      "linear",
+                      "Utility",
+                      statistics.get_additonal_measure(UTILITY, "Utility")))
+    plots.append(Plot(range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+                      "Time Steps",
+                      "linear",
+                      "Accuracy",
+                      statistics.accuracy()))
+    plots.append(Plot(range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+                      "Time Steps",
+                      "linear",
+                      statistics.demographic_parity().name,
+                      statistics.demographic_parity()))
+    plots.append(Plot(range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+                      "Time Steps",
+                      "linear",
+                      statistics.equality_of_opportunity().name,
+                      statistics.equality_of_opportunity()))
+    plots.append(Plot(range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+                      "Time Steps",
+                      "linear",
+                      model_parameters.get_lagrangians().name,
+                      model_parameters.get_lagrangians()))
+    return plots
+
+
+save_path = '../res/TEST/ADULT-NO-FAIRNESS-SGD'
+Path(save_path).mkdir(parents=True, exist_ok=True)
+
+# training_parameters["save_path"] = "../res/local_experiments/TEST"
+overall_statistic, overall_model_parameters, _ = train(
     training_parameters,
     fairness_rates=[0.0])
+plot_median(performance_plots=get_plots(overall_statistic, overall_model_parameters),
+            fairness_plots=[],
+            file_path="{}/run_0.png".format(save_path),
+            figsize=(20, 10))
 
-plot_median(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
-            x_label="Time steps",
-            x_scale="linear",
-            performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
-                                  statistics.demographic_parity(),
-                                  statistics.equality_of_opportunity(),
-                                  model_parameters.get_lagrangians()],
-            fairness_measures=[],
-            file_path="{}/results_median_time.png".format(run_path),
+for r in range(29):
+    statistics, model_parameters, _ = train(
+        training_parameters,
+        fairness_rates=[0.0])
+    plot_median(performance_plots=get_plots(statistics, model_parameters),
+                fairness_plots=[],
+                file_path="{}/run_{}.png".format(save_path, r + 1),
+                figsize=(20, 10))
+
+    overall_statistic.merge(statistics)
+    overall_model_parameters.merge(model_parameters)
+    dp = overall_statistic.demographic_parity()
+
+plot_median(performance_plots=get_plots(overall_statistic, overall_model_parameters),
+            fairness_plots=[],
+            file_path="{}/results_median_time.png".format(save_path),
             figsize=(20, 10))

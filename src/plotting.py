@@ -15,14 +15,47 @@ import matplotlib.patches as mpatches
 import tikzplotlib as tpl
 from src.training_evaluation import MEAN, MEDIAN
 
+COLORS = [
+    { "edgecolor": '#060080', "facecolor": '#928CFF' },
+    { "edgecolor": '#558f47', "facecolor": '#c1fcb3' }
+]
+
+class Plot():
+    def __init__(self, x_axis, x_label, x_scale, y_label, *statistics):
+        self._statistics = statistics
+        self._x_axis = x_axis
+        self._x_label = x_label
+        self._x_scale = x_scale
+        self._y_label = y_label
+
+    @property
+    def statistics(self):
+        return self._statistics
+
+    @property
+    def x_axis(self):
+        return self._x_axis
+
+    @property
+    def x_label(self):
+        return self._x_label
+
+    @property
+    def x_scale(self):
+        return self._x_scale
+
+    @property
+    def y_label(self):
+        return self._y_label
+
 
 def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row):
-    x = plotting_dictionary["plot_info"]["x_axis"]
-    x_scale = plotting_dictionary["plot_info"]["x_scale"]
-    x_label = plotting_dictionary["plot_info"]["x_label"]
+    # x = plotting_dictionary["plot_info"]["x_axis"]
+    # x_scale = plotting_dictionary["plot_info"]["x_scale"]
+    # x_label = plotting_dictionary["plot_info"]["x_label"]
 
-    performance_measures = plotting_dictionary["performance_measures"]
-    fairness_measures = plotting_dictionary["fairness_measures"]
+    performance_measures = plotting_dictionary["performance"]
+    fairness_measures = plotting_dictionary["fairness"]
 
     num_columns = min(len(performance_measures.items()), plots_per_row)
     if num_columns < plots_per_row:
@@ -46,21 +79,26 @@ def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row):
 
     for measure_dict in [performance_measures, fairness_measures]:
         for y_label, y_dict in measure_dict.items():
-            y = y_dict["value"]
-            y_uncertainty_lower = y_dict["uncertainty_lower_bound"]
-            y_uncertainty_upper = y_dict["uncertainty_upper_bound"]
-
+            x = y_dict["x_axis"]
+            x_label = y_dict["x_label"]
+            x_scale = y_dict["x_scale"]
             axis = figure.add_subplot(grid[current_row, current_column])
-            axis.plot(x, y)
-            axis.set_xlabel(x_label)
             axis.title.set_text(y_label)
+            axis.set_xlabel(x_label)
             axis.set_xscale(x_scale)
-            axis.fill_between(x,
-                              y_uncertainty_lower,
-                              y_uncertainty_upper,
-                              alpha=0.3,
-                              edgecolor='#060080',
-                              facecolor='#928CFF')
+
+            for i, y_value in enumerate(y_dict["y_values"]):
+                y = y_value["value"]
+                y_uncertainty_lower = y_value["uncertainty_lower_bound"]
+                y_uncertainty_upper = y_value["uncertainty_upper_bound"]
+
+                axis.plot(x, y, COLORS[i]["edgecolor"])
+                axis.fill_between(x,
+                                  y_uncertainty_lower,
+                                  y_uncertainty_upper,
+                                  alpha=0.3,
+                                  edgecolor=COLORS[i]["edgecolor"],
+                                  color=COLORS[i]["facecolor"])
 
             if current_column < num_columns - 1:
                 current_column += 1
@@ -79,74 +117,61 @@ def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row):
              axis_height='\\figheight',
              tex_relative_path_to_data='.',
              extra_groupstyle_parameters={"horizontal sep=1.2cm"},
-             extra_axis_parameters={"scaled y ticks = false, \n yticklabel style = {/pgf/number format/fixed, /pgf/number format/precision=3}"})
+             extra_axis_parameters={
+                 "scaled y ticks = false, \n yticklabel style = {/pgf/number format/fixed, /pgf/number format/precision=3}"})
     plt.close('all')
 
 
-def plot_median(x_values,
-                x_label,
-                x_scale,
-                performance_measures,
-                fairness_measures,
+def plot_median(performance_plots,
+                fairness_plots,
                 file_path,
                 figsize=None,
                 plots_per_row=4):
-    plotting_dict = _build_plot_dict(x_values, x_label, x_scale, performance_measures, fairness_measures, MEDIAN)
+    plotting_dict = _build_plot_dict(performance_plots, fairness_plots, MEDIAN)
     _plot_results(plotting_dict, file_path, figsize, plots_per_row)
 
 
-def plot_mean(x_values,
-              x_label,
-              x_scale,
-              performance_measures,
-              fairness_measures,
+def  plot_mean(performance_plots,
+              fairness_plots,
               file_path,
               figsize=None,
               plots_per_row=4):
-    plotting_dict = _build_plot_dict(x_values, x_label, x_scale, performance_measures, fairness_measures, MEAN)
+    plotting_dict = _build_plot_dict(performance_plots, fairness_plots, MEAN)
     _plot_results(plotting_dict, file_path, figsize, plots_per_row)
 
 
-def _build_plot_dict(x_values,
-                     x_label,
-                     x_scale,
-                     performance_measures,
-                     fairness_measures,
-                     result_format):
-    p_measures = performance_measures if isinstance(performance_measures, list) else [performance_measures]
-    f_measures = fairness_measures if isinstance(fairness_measures, list) else [fairness_measures]
-
+def _build_plot_dict(performance_plots, fairness_plots, result_format):
     plotting_dict = {
-        "plot_info": {
-            "x_axis": x_values,
-            "x_label": x_label,
-            "x_scale": x_scale
-        },
-        "performance_measures": {},
-        "fairness_measures": {}
+        "performance": {},
+        "fairness": {}
     }
 
-    for measure_set, measure_set_key in [(p_measures, "performance_measures"), (f_measures, "fairness_measures")]:
-        for measure in measure_set:
-            measure_label = measure.name
-
-            if result_format == MEAN:
-                value = measure.mean()
-                measure_stddev = measure.standard_deviation()
-                lower_bound = value - measure_stddev
-                upper_bound = value + measure_stddev
-            elif result_format == MEDIAN:
-                value = measure.median()
-                lower_bound = measure.first_quartile()
-                upper_bound = measure.third_quartile()
-
-            plotting_dict[measure_set_key][measure_label] = {
-                "value": value,
-                "uncertainty_lower_bound": lower_bound,
-                "uncertainty_upper_bound": upper_bound
+    for plots, plot_type in [(performance_plots, "performance"), (fairness_plots, "fairness")]:
+        for plot in plots:
+            plotting_dict[plot_type][plot.y_label] = {
+                "x_axis": plot.x_axis,
+                "x_label": plot.x_label,
+                "x_scale": plot.x_scale,
+                "y_values": []
             }
+            for num_statistic, statistic in enumerate(plot.statistics):
+                if result_format == MEAN:
+                    value = statistic.mean()
+                    measure_stddev = statistic.standard_deviation()
+                    lower_bound = value - measure_stddev
+                    upper_bound = value + measure_stddev
+                elif result_format == MEDIAN:
+                    value = statistic.median()
+                    lower_bound = statistic.first_quartile()
+                    upper_bound = statistic.third_quartile()
+                plotting_dict[plot_type][plot.y_label]["y_values"].append({
+                    "value": value,
+                    "uncertainty_lower_bound": lower_bound,
+                    "uncertainty_upper_bound": upper_bound
+                })
 
     return plotting_dict
+
 
 def plot_epoch_statistics(path, fairness, lambdas, gradients, utils):
     f, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
