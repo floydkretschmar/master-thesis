@@ -253,27 +253,27 @@ def single_run(args):
         training_parameters,
         fairness_rates=[initial_lambda])
 
-    if args.plot:
-        plot_mean(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
-                  x_label="Time steps",
-                  x_scale="linear",
-                  performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
-                                        statistics.accuracy()],
-                  fairness_measures=[statistics.demographic_parity(),
-                                     statistics.equality_of_opportunity(),
-                                     statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
-                                                                      "Covariance of Decision (DP)")],
-                  file_path="{}/results_mean_time.png".format(run_path))
-        plot_median(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
-                    x_label="Time steps",
-                    x_scale="linear",
-                    performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
-                                          statistics.accuracy()],
-                    fairness_measures=[statistics.demographic_parity(),
-                                       statistics.equality_of_opportunity(),
-                                       statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
-                                                                        "Covariance of Decision (DP)")],
-                    file_path="{}/results_median_time.png".format(run_path))
+    # if args.plot:
+    #     plot_mean(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+    #               x_label="Time steps",
+    #               x_scale="linear",
+    #               performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
+    #                                     statistics.accuracy()],
+    #               fairness_measures=[statistics.demographic_parity(),
+    #                                  statistics.equality_of_opportunity(),
+    #                                  statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
+    #                                                                   "Covariance of Decision (DP)")],
+    #               file_path="{}/results_mean_time.png".format(run_path))
+    #     plot_median(x_values=range(training_parameters["parameter_optimization"]["time_steps"] + 1),
+    #                 x_label="Time steps",
+    #                 x_scale="linear",
+    #                 performance_measures=[statistics.get_additonal_measure(UTILITY, "Utility"),
+    #                                       statistics.accuracy()],
+    #                 fairness_measures=[statistics.demographic_parity(),
+    #                                    statistics.equality_of_opportunity(),
+    #                                    statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
+    #                                                                     "Covariance of Decision (DP)")],
+    #                 file_path="{}/results_median_time.png".format(run_path))
 
 
 if __name__ == "__main__":

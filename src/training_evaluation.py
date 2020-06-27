@@ -153,20 +153,23 @@ class ModelParameters():
     def __init__(self, model_parameter_dict):
         self.dict = deepcopy(model_parameter_dict)
 
-        lambdas = np.array(self.dict["lambdas"], dtype=float)
-        self.dict["lambdas"] = {}
-        if len(lambdas.shape) > 1:
-            for l in range(lambdas.shape[1]):
-                self.dict["lambdas"][l] = lambdas[:, l].reshape(-1, 1)
-        else:
-            self.dict["lambdas"][0] = lambdas.reshape(-1, 1)
+        if not isinstance(self.dict["lambdas"], dict):
+            lambdas = np.array(self.dict["lambdas"], dtype=float)
+            self.dict["lambdas"] = {}
+            if len(lambdas.shape) > 1:
+                for l in range(lambdas.shape[1]):
+                    self.dict["lambdas"][l] = lambdas[:, l].reshape(-1, 1)
+            else:
+                self.dict["lambdas"][0] = lambdas.reshape(-1, 1)
 
     @staticmethod
     def _unserialize_dictionary(dictionary):
         unserialized_dict = deepcopy(dictionary)
-        unserialized_dict["lambdas"] = _unserialize_value(unserialized_dict["lambdas"])
-        unserialized_dict["model_parameters"] = unserialized_dict["model_parameters"]
 
+        for lambda_key, lambda_item in unserialized_dict["lambdas"].items():
+            unserialized_dict["lambdas"][lambda_key] = _unserialize_value(lambda_item)
+
+        unserialized_dict["model_parameters"] = unserialized_dict["model_parameters"]
         return unserialized_dict
 
     @staticmethod

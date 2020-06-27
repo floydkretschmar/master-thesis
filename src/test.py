@@ -18,7 +18,7 @@ from src.feature_map import IdentityFeatureMap
 from src.policy import LogisticPolicy, NeuralNetworkPolicy
 from src.distribution import COMPASDistribution, FICODistribution, AdultCreditDistribution
 from src.optimization import ManualGradientLagrangianOptimizationTarget, LagrangianOptimizationTarget, \
-    PenaltyOptimizationTarget, ManualGradientPenaltyOptimizationTarget
+    PenaltyOptimizationTarget, ManualGradientPenaltyOptimizationTarget, ManualGradientAugmentedLagrangianOptimizationTarget
 from src.util import mean, mean_difference, get_list_of_seeds, fix_seed
 
 # region Fairness Definitions
@@ -165,6 +165,7 @@ bias = True
 # distribution = COMPASDistribution(bias=bias, test_percentage=0.2)
 distribution = AdultCreditDistribution(bias=bias, test_percentage=0.2)
 dim_theta = distribution.feature_dimension
+fairness_lr = 0.5
 
 optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
                                                           utility,
@@ -173,7 +174,17 @@ optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
                                                           benefit_difference_dp_grad,
                                                           # covariance_of_decision,
                                                           # covariance_of_decision_grad,
-                                                          error_delta=0.001)
+                                                          # error_delta=0.001)
+                                                          error_delta=0.01)
+
+# optim_target = ManualGradientAugmentedLagrangianOptimizationTarget(0.0,
+#                                                           utility,
+#                                                           utility_gradient,
+#                                                           # benefit_difference_dp,
+#                                                           # benefit_difference_dp_grad,
+#                                                           covariance_of_decision,
+#                                                           covariance_of_decision_grad,
+#                                                           penalty_constant=fairness_lr)
 # optim_target = ManualGradientPenaltyOptimizationTarget(0.0,
 #                                                        utility,
 #                                                        utility_gradient,
@@ -240,9 +251,10 @@ optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
 #         'num_test_samples': 1235
 #     },
 #     'lagrangian_optimization': {
-#         'epochs': 40,
+#         'epochs': 30,
 #         'batch_size': 4900,
-#         'learning_rate': 0.01,
+#         # 'batch_size': 98,
+#         'learning_rate': fairness_lr,
 #     },
 #     'evaluation': {
 #         UTILITY: {
@@ -265,10 +277,10 @@ training_parameters = {
         'time_steps': 50,
         # 'time_steps': 1,
         'epochs': 50,
-        'batch_size': 256,
+        'batch_size': 781,
         # 'learning_rate': 0.001,
         'learning_rate': 0.1,
-        'learn_on_entire_history': True,
+        'learn_on_entire_history': False,
         'clip_weights': True
     },
     'data': {
@@ -278,9 +290,11 @@ training_parameters = {
     },
     'lagrangian_optimization': {
         # 'epochs': 200,
-        'epochs': 40,
-        'batch_size': 40000,
-        'learning_rate': 0.1
+        'epochs': 10,
+        'batch_size': 50000,
+        'learning_rate': fairness_lr,
+        # 'decay_step': 10,
+        # 'decay_rate': 0.9
     },
     'evaluation': {
         UTILITY: {
@@ -324,7 +338,7 @@ def get_plots(statistics, model_parameters):
     return plots
 
 
-save_path = '../res/TEST/ADULT-error_delta'
+save_path = '../res/TEST/DELTA-ADULT-BD_DP-lr0.1-e50-flr{}-fe10-no-history'.format(fairness_lr)
 Path(save_path).mkdir(parents=True, exist_ok=True)
 
 # training_parameters["save_path"] = "../res/local_experiments/TEST"
@@ -336,7 +350,7 @@ plot_median(performance_plots=get_plots(overall_statistic, overall_model_paramet
             file_path="{}/run_0.png".format(save_path),
             figsize=(20, 10))
 
-for r in range(5):
+for r in range(9):
     statistics, model_parameters, _ = train(
         training_parameters,
         fairness_rates=[0.0])
