@@ -32,7 +32,7 @@ def calc_benefit(decisions, ips_weights):
 
 
 def calc_covariance(s, decisions, ips_weights):
-    new_s = 1 - (2 * s)
+    new_s = (2 * s) - 1
 
     if ips_weights is not None:
         mu_s = mean(new_s * ips_weights, axis=0)
