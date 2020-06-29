@@ -24,130 +24,130 @@ request_cpus = 1
 environment = "PYTHONUNBUFFERED=TRUE"
 executable = /home/fkretschmar/miniconda3/envs/masters-thesis/bin/python
 
-error = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/error/experiment.$(Process).err
-output = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/output/experiment.$(Process).out
-log = /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/log/experiment.$(Process).log
+error = /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/error/experiment.$(Process).err
+output = /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/output/experiment.$(Process).out
+log = /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/log/experiment.$(Process).log
 # ----------------------------------------------------------------------- #
 # QUEUE                                                                   #
 # ----------------------------------------------------------------------- #
 
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1638344067
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1638344067
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1965842721
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1965842721
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2243374916
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2243374916
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3208552483
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3208552483
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1518267957
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1518267957
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 24937602
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 24937602
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2534043470
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2534043470
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2664395357
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2664395357
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1922720051
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1922720051
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 666050367
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 666050367
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1075784850
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1075784850
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3115038748
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3115038748
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1331702967
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1331702967
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3328678059
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3328678059
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4265209091
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4265209091
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3223414101
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3223414101
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2598112842
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2598112842
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4049478416
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4049478416
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1882044096
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1882044096
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1497290577
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1497290577
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 482728442
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 482728442
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1729274173
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1729274173
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3153441122
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 3153441122
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2624276989
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2624276989
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4260045577
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4260045577
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1561398880
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 1561398880
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2253403481
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2253403481
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4196523749
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 4196523749
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2557040037
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 2557040037
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 225376265
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -hl -pid $(Process)  -s 225376265
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1638344067
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1638344067
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1965842721
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1965842721
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2243374916
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2243374916
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3208552483
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3208552483
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1518267957
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1518267957
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 24937602
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 24937602
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2534043470
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2534043470
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2664395357
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2664395357
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1922720051
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1922720051
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 666050367
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 666050367
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1075784850
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1075784850
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3115038748
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3115038748
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1331702967
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1331702967
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3328678059
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3328678059
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4265209091
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4265209091
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3223414101
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3223414101
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2598112842
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2598112842
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4049478416
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4049478416
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1882044096
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1882044096
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1497290577
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1497290577
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 482728442
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 482728442
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1729274173
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1729274173
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3153441122
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 3153441122
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2624276989
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2624276989
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4260045577
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4260045577
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1561398880
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 1561398880
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2253403481
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2253403481
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4196523749
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 4196523749
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2557040037
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 2557040037
 queue
-arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/DUAL_GRADIENT_DELTA/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 225376265
+arguments = run.py -d FICO -c 0.5 -lr 0.1 -p /home/fkretschmar/master-thesis/res/NO_FAIRNESS/FICO/LOG/raw -ts 50 -e 50 -bs 64 -ns 128 -ns_t 1600 -pt LOG -ipc -pid $(Process)  -s 225376265
 queue
