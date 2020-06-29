@@ -34,7 +34,8 @@ def calc_benefit(decisions, ips_weights):
 
 def calc_covariance(s, decisions, ips_weights):
     # change label s in {0, 1} to s in {-1, 1}
-    new_s = (2 * s) - 1
+    # new_s = (2 * s) - 1
+    new_s = 1 - (2 * s)
 
     if ips_weights is not None:
         mu_s = (new_s * ips_weights).mean(0)
@@ -339,7 +340,7 @@ def get_plots(statistics, model_parameters):
     return plots
 
 
-save_path = '../res/TEST/FICO-COV_DP-lr0.1-e50-flr{}-fe10-history'.format(fairness_lr)
+save_path = '../res/TEST/FICO-COV_DP-lr0.1-e50-flr{}-fe10-history-2'.format(fairness_lr)
 Path(save_path).mkdir(parents=True, exist_ok=True)
 
 # training_parameters["save_path"] = "../res/local_experiments/TEST"
