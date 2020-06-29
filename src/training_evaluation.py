@@ -166,8 +166,11 @@ class ModelParameters():
     def _unserialize_dictionary(dictionary):
         unserialized_dict = deepcopy(dictionary)
 
-        for lambda_key, lambda_item in unserialized_dict["lambdas"].items():
-            unserialized_dict["lambdas"][lambda_key] = _unserialize_value(lambda_item)
+        if isinstance(unserialized_dict["lambdas"], dict):
+            for lambda_key, lambda_item in unserialized_dict["lambdas"].items():
+                unserialized_dict["lambdas"][lambda_key] = _unserialize_value(lambda_item)
+        else:
+            unserialized_dict["lambdas"] = np.array(unserialized_dict["lambdas"])
 
         unserialized_dict["model_parameters"] = unserialized_dict["model_parameters"]
         return unserialized_dict

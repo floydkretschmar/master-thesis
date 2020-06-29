@@ -105,6 +105,7 @@ def _log_result_row(result_row, statistics, dg):
     utility = statistics.get_additonal_measure(UTILITY, "Utility")
     demographic_parity = statistics.demographic_parity()
     equality_of_opportunity = statistics.equality_of_opportunity()
+    covariance = statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP, "Covariance")
 
     if not dg:
         result_row.append(utility.median().max())
@@ -119,7 +120,8 @@ def _log_result_row(result_row, statistics, dg):
                        - demographic_parity.first_quartile()).mean(axis=0))
     result_row.append((equality_of_opportunity.third_quartile()
                        - equality_of_opportunity.first_quartile()).mean(axis=0))
-
+    result_row.append((covariance.third_quartile()
+                       - covariance.first_quartile()).mean(axis=0))
 
 def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label, x_scale):
     if not isinstance(statistics_list, list):
@@ -274,7 +276,8 @@ if args.analyze:
                           'Final median EOP',
                           'Average utility IQR',
                           'Average DP IQR',
-                          'Average EOP IQR']
+                          'Average EOP IQR',
+                          'Average COV IQR']
     else:
         result_columns = ['Learning Rate',
                           'Time Steps',
@@ -284,7 +287,8 @@ if args.analyze:
                           'Minimum median utility',
                           'Average utility IQR',
                           'Average DP IQR',
-                          'Average EOP IQR']
+                          'Average EOP IQR',
+                          'Average COV IQR']
 
 if args.history:
     history_path = os.path.join(args.input_path, "history")
