@@ -31,6 +31,7 @@ parser.add_argument('-fst', '--fairness_start', type=float, required=False)
 parser.add_argument('-fed', '--fairness_end', type=float, required=False)
 parser.add_argument('-a', '--analyze', action='store_true')
 parser.add_argument('-his', '--history', action='store_true')
+parser.add_argument('--y_lim', type=float, nargs='+', required=False)
 
 parser.add_argument('-dp', '--demographic_parity', action='store_true')
 parser.add_argument('-eop', '--equality_of_opportunity', action='store_true')
@@ -123,6 +124,7 @@ def _log_result_row(result_row, statistics, dg):
     result_row.append((covariance.third_quartile()
                        - covariance.first_quartile()).mean(axis=0))
 
+
 def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label, x_scale):
     if not isinstance(statistics_list, list):
         statistics_list = [statistics_list]
@@ -167,10 +169,12 @@ def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label,
 
     plot_mean(performance_plots,
               fairness_plots,
-              file_path=os.path.join(output_path, "results_mean.png"))
+              file_path=os.path.join(output_path, "results_mean.png"),
+              y_lim=args.y_lim)
     plot_median(performance_plots,
                 fairness_plots,
-                file_path=os.path.join(output_path, "results_median.png"))
+                file_path=os.path.join(output_path, "results_median.png"),
+                y_lim=args.y_lim)
 
 
 def _save_analyze_results(results, path):
@@ -265,6 +269,7 @@ def _process(input_path, output_path, args):
                 print("finished processing {}".format(parameter_setting_path))
     return analyze_results, res
 
+
 results = []
 if args.analyze:
     if args.fairness_dual_gradient:
@@ -297,7 +302,8 @@ if args.history:
     results_history = []
     results_no_history = []
     analyze_res_history, result_history = _process(history_path, os.path.join(args.output_path, "history"), args)
-    analyze_res_no_history, result_no_history = _process(no_history_path, os.path.join(args.output_path, "no_history"), args)
+    analyze_res_no_history, result_no_history = _process(no_history_path, os.path.join(args.output_path, "no_history"),
+                                                         args)
 
     for path, statistics_history, x_axis, x_label, x_scale in result_history:
         statistics_path_no_history = os.path.join(path.replace("history", "no_history"), "statistics.json")

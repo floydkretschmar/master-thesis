@@ -16,9 +16,10 @@ import tikzplotlib as tpl
 from src.training_evaluation import MEAN, MEDIAN
 
 COLORS = [
-    { "edgecolor": '#060080', "facecolor": '#060080' },
-    { "edgecolor": '#558f47', "facecolor": '#558f47' }
+    {"edgecolor": '#060080', "facecolor": '#060080'},
+    {"edgecolor": '#558f47', "facecolor": '#558f47'}
 ]
+
 
 class Plot():
     def __init__(self, x_axis, x_label, x_scale, y_label, *statistics):
@@ -49,7 +50,7 @@ class Plot():
         return self._y_label
 
 
-def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row):
+def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row, y_lim):
     # x = plotting_dictionary["plot_info"]["x_axis"]
     # x_scale = plotting_dictionary["plot_info"]["x_scale"]
     # x_label = plotting_dictionary["plot_info"]["x_label"]
@@ -99,6 +100,8 @@ def _plot_results(plotting_dictionary, file_path, figsize, plots_per_row):
                                   alpha=0.3,
                                   edgecolor=COLORS[i]["edgecolor"],
                                   color=COLORS[i]["facecolor"])
+                if y_lim is not None:
+                    axis.set_ylim(y_lim[0], y_lim[1])
 
             if current_column < num_columns - 1:
                 current_column += 1
@@ -126,18 +129,20 @@ def plot_median(performance_plots,
                 fairness_plots,
                 file_path,
                 figsize=None,
-                plots_per_row=4):
+                plots_per_row=4,
+                y_lim=None):
     plotting_dict = _build_plot_dict(performance_plots, fairness_plots, MEDIAN)
-    _plot_results(plotting_dict, file_path, figsize, plots_per_row)
+    _plot_results(plotting_dict, file_path, figsize, plots_per_row, y_lim)
 
 
-def  plot_mean(performance_plots,
+def plot_mean(performance_plots,
               fairness_plots,
               file_path,
               figsize=None,
-              plots_per_row=4):
+              plots_per_row=4,
+              y_lim=None):
     plotting_dict = _build_plot_dict(performance_plots, fairness_plots, MEAN)
-    _plot_results(plotting_dict, file_path, figsize, plots_per_row)
+    _plot_results(plotting_dict, file_path, figsize, plots_per_row, y_lim)
 
 
 def _build_plot_dict(performance_plots, fairness_plots, result_format):
