@@ -7,6 +7,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from copy import deepcopy
+
 module_path = os.path.abspath(os.path.join('../..'))
 
 if module_path not in sys.path:
@@ -23,6 +25,7 @@ parser.add_argument('-i', '--input_path', type=str, required=True, help="the pat
 parser.add_argument('-o', '--output_path', type=str, required=True,
                     help="the path into which the processed data will be saved")
 parser.add_argument('-s', '--save', action='store_true')
+parser.add_argument('-s_cov', '--switch_covariance', action='store_true')
 parser.add_argument('-fsw', '--fairness_sweep', action='store_true')
 parser.add_argument('-fdg', '--fairness_dual_gradient', action='store_true')
 parser.add_argument('-fs', '--fairness_skip', type=int, required=False,
@@ -139,16 +142,25 @@ def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label,
     eop_statistics = []
     cov_statistics = []
 
-    for statistics in statistics_list:
-        util_statistics.append(statistics.get_additonal_measure(UTILITY, "Utility"))
-        acc_statistics.append(statistics.accuracy())
-        dp_statistics.append(statistics.demographic_parity())
-        eop_statistics.append(statistics.equality_of_opportunity())
-        cov_statistics.append(statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
+    for ixd, statistics in enumerate(statistics_list):
+        tmp_statistics = deepcopy(statistics)
+        if args.switch_covariance and len(statistics_list) == 1:
+            tmp_statistics.results['all'][COVARIANCE_OF_DECISION_DP] = -1 * tmp_statistics.results['all'][COVARIANCE_OF_DECISION_DP]
+
+        util_statistics.append(tmp_statistics.get_additonal_measure(UTILITY, "Utility"))
+        acc_statistics.append(tmp_statistics.accuracy())
+        dp_statistics.append(tmp_statistics.demographic_parity())
+        eop_statistics.append(tmp_statistics.equality_of_opportunity())
+        cov_statistics.append(tmp_statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
                                                                "Covariance of decision \n"
                                                                "(Demographic Parity)"))
-        # save the merged statistics, parameters and plot them
-        _save_results(output_path, statistics, model_parameters)
+
+        if len(statistics_list) > 1:
+            Path("{}/{}".format(output_path, ixd)).mkdir(parents=True, exist_ok=True)
+            # save the merged statistics, parameters and plot them
+            _save_results("{}/{}".format(output_path, ixd), tmp_statistics, model_parameters)
+        else:
+            _save_results(output_path, tmp_statistics, model_parameters)
 
     performance_plots = []
     fairness_plots = []
@@ -305,8 +317,11 @@ if args.history:
     analyze_res_no_history, result_no_history = _process(no_history_path, os.path.join(args.output_path, "no_history"),
                                                          args)
 
-    for path, statistics_history, x_axis, x_label, x_scale in result_history:
+    for path, _, x_axis, x_label, x_scale in result_history:
+        statistics_path_history = os.path.join(path, "statistics.json")
         statistics_path_no_history = os.path.join(path.replace("history", "no_history"), "statistics.json")
+        serialized_statistics = load_dictionary(statistics_path_history)
+        statistics_history = Statistics.build_from_serialized_dictionary(serialized_statistics)
         serialized_statistics = load_dictionary(statistics_path_no_history)
         statistics_no_history = Statistics.build_from_serialized_dictionary(serialized_statistics)
 
