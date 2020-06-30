@@ -10,7 +10,7 @@ module_path = os.path.abspath(os.path.join('..'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability
+from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability, SGD, ADAM
 from src.plotting import plot_median, Plot
 from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
@@ -169,24 +169,24 @@ distribution = FICODistribution(bias=bias, fraction_protected=0.5)
 dim_theta = distribution.feature_dimension
 fairness_lr = 0.01
 
-# optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
-#                                                           utility,
-#                                                           utility_gradient,
-#                                                           benefit_difference_dp,
-#                                                           benefit_difference_dp_grad,
-#                                                           # covariance_of_decision,
-#                                                           # covariance_of_decision_grad,
-#                                                           # error_delta=0.001)
-#                                                           error_delta=0.01)
-
-optim_target = ManualGradientAugmentedLagrangianOptimizationTarget(0.0,
+optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
                                                           utility,
                                                           utility_gradient,
-                                                          # benefit_difference_dp,
-                                                          # benefit_difference_dp_grad,
-                                                          covariance_of_decision,
-                                                          covariance_of_decision_grad,
-                                                          penalty_constant=fairness_lr)
+                                                          benefit_difference_dp,
+                                                          benefit_difference_dp_grad,
+                                                          # covariance_of_decision,
+                                                          # covariance_of_decision_grad,
+                                                          # error_delta=0.001)
+                                                          error_delta=0.0)
+
+# optim_target = ManualGradientAugmentedLagrangianOptimizationTarget(0.0,
+#                                                           utility,
+#                                                           utility_gradient,
+#                                                           # benefit_difference_dp,
+#                                                           # benefit_difference_dp_grad,
+#                                                           covariance_of_decision,
+#                                                           covariance_of_decision_grad,
+#                                                           penalty_constant=fairness_lr)
 # optim_target = ManualGradientPenaltyOptimizationTarget(0.0,
 #                                                        utility,
 #                                                        utility_gradient,
@@ -209,7 +209,8 @@ training_parameters = {
         # 'learning_rate': 0.001,
         'learning_rate': 0.1,
         'learn_on_entire_history': True,
-        'clip_weights': True
+        'clip_weights': True,
+        'training_algorithm': SGD,
     },
     'data': {
         'num_train_samples': 128,
@@ -220,7 +221,8 @@ training_parameters = {
         # 'epochs': 200,
         'epochs': 10,
         'batch_size': 6400,
-        'learning_rate': fairness_lr
+        'learning_rate': fairness_lr,
+        'training_algorithm': ADAM,
     },
     'evaluation': {
         UTILITY: {
@@ -340,7 +342,7 @@ def get_plots(statistics, model_parameters):
     return plots
 
 
-save_path = '../res/TEST/FICO-COV_DP-lr0.1-e50-flr{}-fe10-history-2'.format(fairness_lr)
+save_path = '../res/TEST/FICO-BD_DP-lr0.1-e50-SGD-flr{}-fe10-history-ADAM'.format(fairness_lr)
 Path(save_path).mkdir(parents=True, exist_ok=True)
 
 # training_parameters["save_path"] = "../res/local_experiments/TEST"
