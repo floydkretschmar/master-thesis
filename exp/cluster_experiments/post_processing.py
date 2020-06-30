@@ -265,7 +265,7 @@ def _process(input_path, output_path, args):
                     else:
                         statistics, model_parameters = combine_runs(parameter_settings_subfolders)
                         utility = statistics.get_additonal_measure(UTILITY, "Utility")
-                        x_axis = range(utility.shape[0])
+                        x_axis = range(utility.length)
                         x_label = "Time Step"
                         x_scale = "linear"
 
