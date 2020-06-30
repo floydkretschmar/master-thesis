@@ -149,11 +149,11 @@ class ManualGradientPolicy(BasePolicy, abc.ABC):
             optimizer: The ManualStochasticGradientOptimizer that optimizes the specified policy according to the
             specified optimization target.
         """
-        fairness_optimizer_function = optimizer_args["fairness_optimizer_function"] \
-            if "fairness_optimizer_function" in optimizer_args and optimizer_args["fairness_optimizer_function"] is not None \
+        fairness_optimizer_function = optimizer_args["fairness_training_algorithm"] \
+            if "fairness_training_algorithm" in optimizer_args and optimizer_args["fairness_training_algorithm"] is not None \
             else ADAM
-        policy_optimizer_function = optimizer_args["policy_optimizer_function"] \
-            if "policy_optimizer_function" in optimizer_args and optimizer_args["policy_optimizer_function"] is not None \
+        policy_optimizer_function = optimizer_args["policy_training_algorithm"] \
+            if "policy_training_algorithm" in optimizer_args and optimizer_args["policy_training_algorithm"] is not None \
             else ADAM
         return ManualStochasticGradientOptimizer(self,
                                                  optimization_target,
@@ -213,11 +213,11 @@ class PytorchPolicy(BasePolicy, abc.ABC):
         self.network.load_state_dict(value)
 
     def optimizer(self, optimization_target, **optimizer_args):
-        fairness_optimizer_function = optimizer_args["fairness_optimizer_function"] \
-            if "fairness_optimizer_function" in optimizer_args and optimizer_args["fairness_optimizer_function"] is not None \
+        fairness_optimizer_function = optimizer_args["fairness_training_algorithm"] \
+            if "fairness_training_algorithm" in optimizer_args and optimizer_args["fairness_training_algorithm"] is not None \
             else ADAM
-        pytorch_optimizer_constructor = optimizer_args["pytorch_optimizer_constructor"] \
-            if "pytorch_optimizer_constructor" in optimizer_args and optimizer_args["pytorch_optimizer_constructor"] is not None \
+        pytorch_optimizer_constructor = optimizer_args["policy_training_algorithm"] \
+            if "policy_training_algorithm" in optimizer_args and optimizer_args["policy_training_algorithm"] is not None \
             else torch.optim.Adam
         return PytorchStochasticGradientOptimizer(self,
                                                   optimization_target,

@@ -25,7 +25,7 @@ def _check_for_missing_training_parameters(training_parameters):
                              training_parameters)
 
     check_for_missing_kwargs("training()",
-                             ["batch_size", "epochs", "learning_rate", "learn_on_entire_history", "time_steps"],
+                             ["batch_size", "epochs", "learning_rate", "learn_on_entire_history", "time_steps", "training_algorithm"],
                              training_parameters["parameter_optimization"])
 
     check_for_missing_kwargs("training()", ["num_test_samples", "num_train_samples"],
@@ -33,7 +33,7 @@ def _check_for_missing_training_parameters(training_parameters):
 
     if "lagrangian_optimization" in training_parameters:
         check_for_missing_kwargs("training()",
-                                 ["batch_size", "epochs", "learning_rate"],
+                                 ["batch_size", "epochs", "learning_rate", "training_algorithm"],
                                  training_parameters["lagrangian_optimization"])
 
 

@@ -3,6 +3,7 @@ import os
 import sys
 
 import numpy as np
+import torch
 
 module_path = os.path.abspath(os.path.join("../.."))
 if module_path not in sys.path:
@@ -10,7 +11,7 @@ if module_path not in sys.path:
 
 import src.util as util
 from src.feature_map import IdentityFeatureMap
-from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability
+from src.functions import cost_utility, cost_utility_gradient, cost_utility_probability, ADAM, SGD
 from src.plotting import plot_mean, plot_median
 from src.training import train
 from src.training_evaluation import UTILITY, COVARIANCE_OF_DECISION_DP
@@ -74,7 +75,7 @@ def fairness_function(type=None, **fairness_kwargs):
     s = fairness_kwargs["s"]
     ips_weights = fairness_kwargs["ips_weights"] if "ips_weights" in fairness_kwargs else None
     decisions = "decision_probabilities" not in fairness_kwargs or not (
-                args.policy_type == "NN" and ips_weights is None)
+            args.policy_type == "NN" and ips_weights is None)
 
     decisions = fairness_kwargs["decisions"] if decisions else fairness_kwargs["decision_probabilities"]
     y = fairness_kwargs["y"]
@@ -177,6 +178,17 @@ def single_run(args):
     elif args.policy_type == "NN":
         model = NeuralNetworkPolicy(distibution.feature_dimension, False)
 
+    if args.policy_algorithm == "ADAM":
+        if args.policy_type == "LOG":
+            policy_alg = ADAM
+        elif args.policy_type == "NN":
+            policy_alg = torch.optim.Adam
+    elif args.policy_algorithm == "SGD":
+        if args.policy_type == "LOG":
+            policy_alg = SGD
+        elif args.policy_type == "NN":
+            policy_alg = torch.optim.SGD
+
     optimization_target, initial_lambda = _build_optimization_target(args)
 
     training_parameters = {
@@ -191,7 +203,8 @@ def single_run(args):
             "time_steps": args.time_steps,
             "clip_weights": args.ip_weight_clipping,
             "change_percentage": args.change_percentage,
-            "change_iterations": args.change_iterations
+            "change_iterations": args.change_iterations,
+            "training_algorithm": policy_alg
         },
         "data": {
             "num_train_samples": args.num_samples,
@@ -211,10 +224,16 @@ def single_run(args):
     }
 
     if args.fairness_type is not None and args.fairness_learning_rate is not None:
+        if args.fairness_algorithm == "ADAM":
+            fairness_alg = ADAM
+        elif args.fairness_algorithm == "SGD":
+            fairness_alg = SGD
+
         training_parameters["lagrangian_optimization"] = {
             "epochs": args.fairness_epochs,
             "batch_size": args.fairness_batch_size,
-            "learning_rate": args.fairness_learning_rate
+            "learning_rate": args.fairness_learning_rate,
+            "training_algorithm": fairness_alg
         }
 
     if args.path:
@@ -240,12 +259,13 @@ def single_run(args):
             else:
                 training_parameters["save_path_subfolder"] = subfolder
         else:
-            training_parameters["save_path"] = "{}/no_fairness/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
-                                                                                               args.cost,
-                                                                                               args.learning_rate,
-                                                                                               args.time_steps,
-                                                                                               args.epochs,
-                                                                                               args.batch_size)
+            training_parameters["save_path"] = "{}{}/no_fairness/c{}/lr{}/ts{}-ep{}-bs{}".format(args.path,
+                                                                                                 "/history" if args.history_learning else "/no_history",
+                                                                                                 args.cost,
+                                                                                                 args.learning_rate,
+                                                                                                 args.time_steps,
+                                                                                                 args.epochs,
+                                                                                                 args.batch_size)
             if args.process_id is not None:
                 training_parameters["save_path_subfolder"] = args.process_id
 
@@ -286,8 +306,11 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--cost", type=float, required=True, help="define the utility cost c")
     parser.add_argument("-lr", "--learning_rate", type=float, required=True, help="define the learning rate of theta")
     parser.add_argument("-p", "--path", type=str, required=False, help="save path for the result")
+
     parser.add_argument("-pt", "--policy_type", type=str, required=False, default="LOG",
                         help="(NN, LOG), default = LOG")
+    parser.add_argument("-palg", "--policy_algorithm", type=str, required=False, default="ADAM",
+                        help="(ADAM, SGD), default = ADAM")
     parser.add_argument("-ts", "--time_steps", type=int, required=True, help="number of time steps to be used")
     parser.add_argument("-e", "--epochs", type=int, required=True, help="number of epochs to be used")
     parser.add_argument("-bs", "--batch_size", type=int, required=True, help="batch size to be used")
@@ -309,6 +332,8 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--fairness_type", type=str, required=False,
                         help="select the type of fairness (BD_DP, COV_DP, BD_EOP). "
                              "if none is selected no fairness criterion is applied")
+    parser.add_argument("-falg", "--fairness_algorithm", type=str, required=False, default="ADAM",
+                        help="(ADAM, SGD), default = ADAM")
     parser.add_argument("-fv", "--fairness_value", type=float, required=False, help="the value of lambda")
     parser.add_argument("-flr", "--fairness_learning_rate", type=float, required=False,
                         help="define the learning rate of lambda")

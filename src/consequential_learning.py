@@ -14,6 +14,7 @@ from src.training_evaluation import Statistics, ModelParameters
 from src.plotting import plot_epoch_statistics
 from src.optimization import PytorchStochasticGradientOptimizer
 
+
 class BaseLearningAlgorithm:
     def __init__(self, learn_on_entire_history):
         """ Creates a new instance of a learning algorithm.
@@ -192,8 +193,18 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         distribution = training_parameters["distribution"]
         policy = deepcopy(training_parameters["model"])
         optim_target = training_parameters["optimization_target"]
-        optimizer = policy.optimizer(optim_target)
         dual_optimization = "lagrangian_optimization" in training_parameters
+        if dual_optimization:
+            optimizer_args = {
+                "fairness_training_algorithm": training_parameters["parameter_optimization"]["training_algorithm"],
+                "policy_training_algorithm": training_parameters["lagrangian_optimization"]["training_algorithm"]
+            }
+        else:
+            optimizer_args = {
+                "policy_training_algorithm": training_parameters["lagrangian_optimization"]["training_algorithm"]
+            }
+
+        optimizer = policy.optimizer(optim_target, **optimizer_args)
         as_tensor = isinstance(optimizer, PytorchStochasticGradientOptimizer)
 
         # Get test data
@@ -261,12 +272,12 @@ class ConsequentialLearning(BaseLearningAlgorithm):
                                                      training_parameters)
 
                         gradient = optimizer.update_fairness_parameter(lambda_learning_rate,
-                                                            training_parameters["lagrangian_optimization"][
-                                                                "batch_size"],
-                                                            self.data_history["x"],
-                                                            self.data_history["s"],
-                                                            self.data_history["y"],
-                                                            self.data_history["ips_weights"])
+                                                                       training_parameters["lagrangian_optimization"][
+                                                                           "batch_size"],
+                                                                       self.data_history["x"],
+                                                                       self.data_history["s"],
+                                                                       self.data_history["y"],
+                                                                       self.data_history["ips_weights"])
                 else:
                     self._train_model_parameters(optimizer,
                                                  theta_learning_rate,
