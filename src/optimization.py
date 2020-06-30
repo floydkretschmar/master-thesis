@@ -189,7 +189,7 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
             param_group['lr'] = learning_rate
 
         # for each minibatch...
-        for x_batch, s_batch, y_batch, _ in self._minibatch(batch_size, x, s, y, ips_weights):
+        for x_batch, s_batch, y_batch, ips_weights_batch in self._minibatch(batch_size, x, s, y, ips_weights):
             self.model_optimizer.zero_grad()
             decisions_batch, decision_probability_batch = self.policy(x_batch, s_batch)
             loss = self.optimization_target(policy=self.policy,
@@ -197,7 +197,8 @@ class PytorchStochasticGradientOptimizer(StochasticGradientOptimizer):
                                             s=s_batch,
                                             y=y_batch,
                                             decisions=decisions_batch,
-                                            decision_probabilities=decision_probability_batch)
+                                            decision_probabilities=decision_probability_batch,
+                                            ips_weights=ips_weights_batch)
             loss.backward(retain_graph=False)
             self.model_optimizer.step()
 

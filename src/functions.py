@@ -11,8 +11,12 @@ from src.util import mean
 
 ####################### UTILITY FUNCTIONS #######################
 
-def _utility_core(cost_factor, **utility_parameters):
-    decisions = utility_parameters["decisions"]
+def _utility_core(cost_factor, probs, **utility_parameters):
+    if not probs:
+        decisions = utility_parameters["decisions"]
+    else:
+        decisions = utility_parameters["decision_probabilities"]
+
     y = utility_parameters["y"]
 
     utility = decisions * (y - cost_factor)
@@ -24,12 +28,12 @@ def _utility_core(cost_factor, **utility_parameters):
 
 
 def cost_utility(cost_factor=0.5, **utility_parameters):
-    utility = _utility_core(cost_factor, **utility_parameters)
+    utility = _utility_core(cost_factor, False, **utility_parameters)
     return mean(utility, axis=0)
 
 
 def cost_utility_gradient(cost_factor=0.5, **utility_parameters):
-    utility = _utility_core(cost_factor=cost_factor, **utility_parameters)
+    utility = _utility_core(cost_factor, False, **utility_parameters)
     log_policy_gradient = utility_parameters["policy"].log_policy_gradient(utility_parameters["x"],
                                                                            utility_parameters["s"])
     utility_grad = log_policy_gradient * utility
@@ -37,10 +41,8 @@ def cost_utility_gradient(cost_factor=0.5, **utility_parameters):
 
 
 def cost_utility_probability(cost_factor=0.5, **utility_parameters):
-    decision_probabilities = utility_parameters["decision_probabilities"]
-    y = utility_parameters["y"]
-
-    return mean(decision_probabilities * (y - cost_factor), axis=0)
+    utility = _utility_core(cost_factor, True, **utility_parameters)
+    return mean(utility, axis=0)
 
 
 ####################### OPTIMIZER FUNCTIONS #######################

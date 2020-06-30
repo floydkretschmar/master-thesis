@@ -18,7 +18,7 @@ from src.feature_map import IdentityFeatureMap
 from src.policy import LogisticPolicy, NeuralNetworkPolicy
 from src.distribution import COMPASDistribution, FICODistribution, AdultCreditDistribution
 from src.optimization import ManualGradientLagrangianOptimizationTarget, LagrangianOptimizationTarget, \
-    PenaltyOptimizationTarget, ManualGradientPenaltyOptimizationTarget, ManualGradientAugmentedLagrangianOptimizationTarget
+    PenaltyOptimizationTarget, ManualGradientPenaltyOptimizationTarget, ManualGradientAugmentedLagrangianOptimizationTarget, AugmentedLagrangianOptimizationTarget
 from src.util import mean, mean_difference, get_list_of_seeds, fix_seed
 
 # region Fairness Definitions
@@ -169,15 +169,15 @@ distribution = FICODistribution(bias=bias, fraction_protected=0.5)
 dim_theta = distribution.feature_dimension
 fairness_lr = 0.01
 
-optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
-                                                          utility,
-                                                          utility_gradient,
-                                                          benefit_difference_dp,
-                                                          benefit_difference_dp_grad,
-                                                          # covariance_of_decision,
-                                                          # covariance_of_decision_grad,
-                                                          # error_delta=0.001)
-                                                          error_delta=0.0)
+# optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
+#                                                           utility,
+#                                                           utility_gradient,
+#                                                           benefit_difference_dp,
+#                                                           benefit_difference_dp_grad,
+#                                                           # covariance_of_decision,
+#                                                           # covariance_of_decision_grad,
+#                                                           # error_delta=0.001)
+#                                                           error_delta=0.0)
 
 # optim_target = ManualGradientAugmentedLagrangianOptimizationTarget(0.0,
 #                                                           utility,
@@ -192,13 +192,14 @@ optim_target = ManualGradientLagrangianOptimizationTarget(0.0,
 #                                                        utility_gradient,
 #                                                        benefit_difference_dp,
 #                                                        benefit_difference_dp_grad)
+optim_target = AugmentedLagrangianOptimizationTarget(0.0, utility_nn, covariance_of_decision_nn, penalty_constant=fairness_lr)
 # optim_target = LagrangianOptimizationTarget(0.0, utility_nn, covariance_of_decision_nn, error_delta=0.0)
 # optim_target = PenaltyOptimizationTarget(0.0, utility_nn, benefit_difference_dp_nn)
 
 
 training_parameters = {
-    # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-    'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+    'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+    # 'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
     'distribution': distribution,
     'optimization_target': optim_target,
     'parameter_optimization': {
@@ -206,11 +207,12 @@ training_parameters = {
         # 'time_steps': 1,
         'epochs': 50,
         'batch_size': 64,
-        # 'learning_rate': 0.001,
-        'learning_rate': 0.1,
+        'learning_rate': 0.001,
+        # 'learning_rate': 0.1,
         'learn_on_entire_history': True,
         'clip_weights': True,
-        'training_algorithm': SGD,
+        # 'training_algorithm': ADAM,
+        'training_algorithm': torch.optim.Adam,
     },
     'data': {
         'num_train_samples': 128,
@@ -237,18 +239,19 @@ training_parameters = {
 }
 
 # training_parameters = {
-#     # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-#     'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+#     'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+#     # 'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
 #     'distribution': distribution,
 #     'optimization_target': optim_target,
 #     'parameter_optimization': {
 #         'time_steps': 50,
 #         'epochs': 50,
 #         'batch_size': 98,
-#         # 'learning_rate': 0.001,
-#         'learning_rate': 0.1,
-#         'learn_on_entire_history': False,
-#         'clip_weights': True
+#         'learning_rate': 0.001,
+#         # 'learning_rate': 0.1,
+#         'learn_on_entire_history': True,
+#         'clip_weights': True,
+#         'training_algorithm': torch.optim.Adam
 #     },
 #     'data': {
 #         'num_train_samples': 98,
@@ -257,6 +260,7 @@ training_parameters = {
 #     'lagrangian_optimization': {
 #         'epochs': 30,
 #         'batch_size': 4900,
+#         'training_algorithm': ADAM,
 #         # 'batch_size': 98,
 #         'learning_rate': fairness_lr,
 #     },
@@ -273,8 +277,8 @@ training_parameters = {
 # }
 
 # training_parameters = {
-#     # 'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
-#     'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
+#     'model': NeuralNetworkPolicy(distribution.feature_dimension, False),
+#     # 'model': LogisticPolicy(IdentityFeatureMap(dim_theta), False),
 #     'distribution': distribution,
 #     'optimization_target': optim_target,
 #     'parameter_optimization': {
@@ -282,13 +286,14 @@ training_parameters = {
 #         # 'time_steps': 1,
 #         'epochs': 50,
 #         'batch_size': 781,
-#         # 'learning_rate': 0.001,
-#         'learning_rate': 0.1,
-#         'learn_on_entire_history': False,
-#         'clip_weights': True
+#         'learning_rate': 0.001,
+#         # 'learning_rate': 0.1,
+#         'learn_on_entire_history': True,
+#         'clip_weights': True,
+#         'training_algorithm': torch.optim.Adam
 #     },
 #     'data': {
-#         'num_train_samples': 781,
+#         'num_train_samples': 256,
 #         # 'num_train_samples': 4096,
 #         'num_test_samples': 9792
 #     },
@@ -297,6 +302,7 @@ training_parameters = {
 #         'epochs': 10,
 #         'batch_size': 50000,
 #         'learning_rate': fairness_lr,
+#         'training_algorithm': ADAM,
 #         # 'decay_step': 10,
 #         # 'decay_rate': 0.9
 #     },
@@ -342,7 +348,7 @@ def get_plots(statistics, model_parameters):
     return plots
 
 
-save_path = '../res/TEST/FICO-BD_DP-lr0.1-e50-SGD-flr{}-fe10-history-ADAM'.format(fairness_lr)
+save_path = '../res/TEST/FICO'.format(fairness_lr)
 Path(save_path).mkdir(parents=True, exist_ok=True)
 
 # training_parameters["save_path"] = "../res/local_experiments/TEST"

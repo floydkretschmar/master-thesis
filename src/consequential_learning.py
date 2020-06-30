@@ -239,15 +239,16 @@ class ConsequentialLearning(BaseLearningAlgorithm):
             x_train, s_train, y_train, pi_0_probabilities = self._filter_by_policy(data, optimizer.policy)
 
             if x_train.shape[0] > 0:
-                ips_weights = stable_divide(1, pi_0_probabilities)
+                with torch.no_grad():
+                    ips_weights = stable_divide(1, pi_0_probabilities)
 
-                if training_parameters["parameter_optimization"]["clip_weights"]:
-                    s_1_prob = s_train.sum() / len(s_train)
-                    s_0_prob = (1 - s_train).sum() / len(s_train)
-                    s_1_idx = np.where(s_train == 1)
-                    s_0_idx = np.where(s_train == 0)
-                    ips_weights[s_1_idx] = ips_weights[s_1_idx] * s_1_prob
-                    ips_weights[s_0_idx] = ips_weights[s_0_idx] * s_0_prob
+                    if training_parameters["parameter_optimization"]["clip_weights"]:
+                        s_1_prob = s_train.sum() / len(s_train)
+                        s_0_prob = (1 - s_train).sum() / len(s_train)
+                        s_1_idx = np.where(s_train == 1)
+                        s_0_idx = np.where(s_train == 0)
+                        ips_weights[s_1_idx] = ips_weights[s_1_idx] * s_1_prob
+                        ips_weights[s_0_idx] = ips_weights[s_0_idx] * s_0_prob
 
                 self._update_buffer(x_train, s_train, y_train, ips_weights)
             elif x_train.shape[0] == 0 and not self.learn_on_entire_history:
