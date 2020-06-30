@@ -196,12 +196,12 @@ class ConsequentialLearning(BaseLearningAlgorithm):
         dual_optimization = "lagrangian_optimization" in training_parameters
         if dual_optimization:
             optimizer_args = {
-                "fairness_training_algorithm": training_parameters["parameter_optimization"]["training_algorithm"],
-                "policy_training_algorithm": training_parameters["lagrangian_optimization"]["training_algorithm"]
+                "fairness_training_algorithm": training_parameters["lagrangian_optimization"]["training_algorithm"],
+                "policy_training_algorithm": training_parameters["parameter_optimization"]["training_algorithm"]
             }
         else:
             optimizer_args = {
-                "policy_training_algorithm": training_parameters["lagrangian_optimization"]["training_algorithm"]
+                "policy_training_algorithm": training_parameters["parameter_optimization"]["training_algorithm"]
             }
 
         optimizer = policy.optimizer(optim_target, **optimizer_args)
