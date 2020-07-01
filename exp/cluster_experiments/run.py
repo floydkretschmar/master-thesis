@@ -74,8 +74,7 @@ def fairness_function_gradient(**fairness_kwargs):
 def fairness_function(type=None, **fairness_kwargs):
     s = fairness_kwargs["s"]
     ips_weights = fairness_kwargs["ips_weights"] if "ips_weights" in fairness_kwargs else None
-    decisions = "decision_probabilities" not in fairness_kwargs or not (
-            args.policy_type == "NN" and ips_weights is None)
+    decisions = "decision_probabilities" not in fairness_kwargs or not args.policy_type == "NN"
 
     decisions = fairness_kwargs["decisions"] if decisions else fairness_kwargs["decision_probabilities"]
     y = fairness_kwargs["y"]

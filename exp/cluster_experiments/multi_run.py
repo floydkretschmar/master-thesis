@@ -176,8 +176,6 @@ def _multi_run(args, base_path, lambdas, seeds):
                                 command.append("-ipc")
                             if args.fairness_augmented:
                                 command.append("-faug")
-                            if args.seed_path:
-                                command.extend(["-sp", args.seed_path])
                             if args.change_iterations:
                                 command.extend(["-ci", str(args.change_iterations)])
                             if args.change_percentage:
