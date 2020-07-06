@@ -230,11 +230,11 @@ class NeuralNetworkPolicy(PytorchPolicy):
     class Network(nn.Module):
         def __init__(self, input_size, bias=True):
             super(NeuralNetworkPolicy.Network, self).__init__()
-            self.network = nn.Sequential(nn.Linear(input_size, 512, bias=bias),
+            self.network = nn.Sequential(nn.Linear(input_size, 128, bias=bias),
                                          nn.ReLU(),
-                                         nn.Linear(512, 256, bias=bias),
+                                         nn.Linear(128, 128, bias=bias),
                                          nn.ReLU(),
-                                         nn.Linear(256, 128, bias=bias),
+                                         nn.Linear(128, 128, bias=bias),
                                          nn.ReLU(),
                                          nn.Linear(128, 1, bias=bias),
                                          nn.Sigmoid())
