@@ -37,6 +37,7 @@ parser.add_argument('-his', '--history', action='store_true')
 parser.add_argument('--y_lim', type=float, nargs='+', required=False)
 
 parser.add_argument('-dp', '--demographic_parity', action='store_true')
+parser.add_argument('-lamb', '--lambdas', action='store_true')
 parser.add_argument('-eop', '--equality_of_opportunity', action='store_true')
 parser.add_argument('-u', '--utility', action='store_true')
 parser.add_argument('-acc', '--accuracy', action='store_true')
@@ -131,6 +132,8 @@ def _log_result_row(result_row, statistics, dg):
 def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label, x_scale):
     if not isinstance(statistics_list, list):
         statistics_list = [statistics_list]
+    if not isinstance(model_parameters, list) and model_parameters is not None:
+        model_parameters = [model_parameters]
     # mkdir output path if necessary
     Path(output_path).mkdir(parents=True, exist_ok=True)
     performance_measure_list = []
@@ -141,6 +144,7 @@ def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label,
     dp_statistics = []
     eop_statistics = []
     cov_statistics = []
+    lambda_statistics = []
 
     for ixd, statistics in enumerate(statistics_list):
         tmp_statistics = deepcopy(statistics)
@@ -154,13 +158,15 @@ def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label,
         cov_statistics.append(tmp_statistics.get_additonal_measure(COVARIANCE_OF_DECISION_DP,
                                                                "Covariance of decision \n"
                                                                "(Demographic Parity)"))
+        for lagrangian in model_parameters[ixd].get_lagrangians():
+            lambda_statistics.append(lagrangian)
 
         if len(statistics_list) > 1:
             Path("{}/{}".format(output_path, ixd)).mkdir(parents=True, exist_ok=True)
             # save the merged statistics, parameters and plot them
-            _save_results("{}/{}".format(output_path, ixd), tmp_statistics, model_parameters)
+            _save_results("{}/{}".format(output_path, ixd), tmp_statistics, model_parameters[ixd])
         else:
-            _save_results(output_path, tmp_statistics, model_parameters)
+            _save_results(output_path, tmp_statistics, model_parameters[ixd])
 
     performance_plots = []
     fairness_plots = []
@@ -173,8 +179,9 @@ def _save(args, statistics_list, model_parameters, output_path, x_axis, x_label,
     if args.equality_of_opportunity:
         fairness_plots.append(Plot(x_axis, x_label, x_scale, "Equality of Opportunity", *eop_statistics))
     if args.covariance_of_decision:
-        fairness_plots.append(Plot(x_axis, x_label, x_scale, "Covariance of decision \n"
-                                                             "(Demographic Parity)", *cov_statistics))
+        fairness_plots.append(Plot(x_axis, x_label, x_scale, "Covariance of decision \n (Demographic Parity)", *cov_statistics))
+    if args.lambdas:
+        fairness_plots.append(Plot(x_axis, x_label, x_scale, "Lagrangian Multiplier", *lambda_statistics))
     if args.combine_measures:
         performance_plots.extend(fairness_plots)
         fairness_plots = []
@@ -325,9 +332,16 @@ if args.history:
         serialized_statistics = load_dictionary(statistics_path_no_history)
         statistics_no_history = Statistics.build_from_serialized_dictionary(serialized_statistics)
 
+        model_path_history = os.path.join(path, "models.json")
+        serialized_model = load_dictionary(model_path_history)
+        model_history = ModelParameters.build_from_serialized_dictionary(serialized_model)
+        model_path_no_history = os.path.join(path.replace("history", "no_history"), "models.json")
+        serialized_model = load_dictionary(model_path_no_history)
+        model_no_history = ModelParameters.build_from_serialized_dictionary(serialized_model)
+
         _save(args,
               [statistics_history, statistics_no_history],
-              None,
+              [model_history, model_no_history],
               path.replace("history", "combined"),
               x_axis, x_label, x_scale)
         print("finished processing {}".format(path.replace("history", "combined")))
