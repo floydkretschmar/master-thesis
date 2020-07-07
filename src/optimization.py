@@ -458,8 +458,8 @@ class LagrangianOptimizationTarget(DualOptimizationTarget):
         if self.error_delta == 0.0:
             return self.fairness_function(**optimization_target_args)
         else:
-            return np.array([-self.fairness_function(**optimization_target_args),
-                             self.fairness_function(**optimization_target_args)]).squeeze()
+            return np.array([-self.fairness_function(**optimization_target_args) - self._error_delta,
+                             self.fairness_function(**optimization_target_args) - self._error_delta]).squeeze()
 
 
 class ManualGradientLagrangianOptimizationTarget(LagrangianOptimizationTarget, ManualGradientOptimizationTarget):
